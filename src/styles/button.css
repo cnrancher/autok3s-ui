@@ -1,0 +1,119 @@
+:root{
+  --btn-padding: 0 20px 0 20px;
+  --btn-sm-padding: 0 7px 0 7px;
+  --btn-height: 40px;
+  --btn-sm-height: 30px;
+}
+
+.btn,
+button,
+[class^='btn-'] {
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: var(--btn-padding);
+  border-radius: var(--border-radius);
+  color: white;
+  padding: 15px 40px;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &.bg-transparent {
+    color: var(--body-text);
+  }
+}
+
+.icon-btn {
+  padding: 0;
+  line-height: initial;
+
+  &.btn-sm {
+    padding: 0;
+  }
+
+  & span {
+    padding: 0 10px 0 5px;
+    vertical-align: middle;
+  }
+}
+
+.btn-sm,
+.btn-group-sm > .btn,
+.btn-sm .btn-label {
+  padding: var(--btn-sm-padding);
+  height: var(--btn-sm-height);
+  line-height: 14px;
+}
+
+.role-primary {
+  background: var(--link-text);
+}
+
+.role-secondary {
+  background: transparent;
+  color: var(--primary) !important;
+  border: solid thin var(--primary);
+}
+
+.role-tertiary {
+  background: var(--accent-btn);
+  border: solid thin var(--link-text);
+  color: var(--link-text);
+}
+
+.role-link {
+  background: transparent;
+  color: var(--link-text) !important;
+  padding: var(--btn-padding);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.role-multi-action {
+  background: var(--accent-btn);
+  border: solid thin var(--link-text);
+  color: var(--link-text);
+  border-radius: 2px;
+}
+
+.icon-group i {
+  font-size: 1.5em;
+}
+
+.btn-disabled,
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn {
+  background-color: var(--disabled-bg) !important;
+  color: var(--disabled-text) !important;
+  cursor: not-allowed;
+  border: solid thin var(--input-disabled-border);
+}
+
+.btn-group {
+  position: relative;
+  text-align: initial;
+  vertical-align: middle;
+  padding: 0;
+  border-radius: var(--border-radius);
+
+  & .btn {
+    position: relative;
+    display: inline-block;
+    border-radius: 0;
+    text-align: center;
+
+    &:first-child {
+      border-top-left-radius: var(--border-radius);
+      border-bottom-left-radius: var(--border-radius);
+    }
+
+    &:last-child {
+      border-top-right-radius: var(--border-radius);
+      border-bottom-right-radius: var(--border-radius);
+    }
+  }
+}

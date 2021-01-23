@@ -1,0 +1,140 @@
+html {
+  box-sizing: border-box;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  color: var(--body-text);
+  font-family: 'Fira Sans';
+  direction: ltr;
+  margin: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.dashboard-body {
+  background: var(--body-bg);
+  background: var(--body-gradient);
+}
+
+::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb) !important;
+  border-radius: var(--border-radius);
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-track) !important;
+}
+
+/*
+ * Make all elements from the DOM inherit from the parent box-sizing
+ * Since `*` has a specificity of 0, it does not override the `html` value
+ * making all elements inheriting from the root box-sizing value
+ * See: https://css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice/
+ */
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* :focus, .focused {
+  outline-color: var(--outline);
+  outline-style: solid;
+  outline-width: var(--outline-width);
+} */
+button, .btn {
+  &:focus, &.focused {
+    outline: none;
+    box-shadow: 0 0 0 var(--outline-width) var(--outline);
+  }
+}
+
+hr {
+  height: 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  width: 100%;
+
+  &.dark {
+    border-color: var(--nav-bg);
+  }
+}
+
+hr.vertical {
+  border-top: 0;
+  border-left: 1px solid var(--border);
+  height: 100%;
+  position: absolute;
+  left: 50%;
+  margin-left: -1px;
+  top: 0;
+}
+a {
+  color: var(--link-text);
+  text-decoration: none;
+}
+a:hover, a:active {
+  color: var(--body-text);
+  text-decoration: none;
+}
+
+.section-divider {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.bg-primary {
+  background-color: var(--primary);
+  color: var(--primary-text)
+}
+.bg-info {
+  background-color: var(--info);
+  color: var(--info-text)
+}
+
+.bg-error {
+  background-color: var(--error);
+  color: var(--error-text)
+}
+
+.bg-warning {
+  background-color: var(--warning);
+  color: var(--warning-text)
+}
+
+.bg-success {
+  background-color: var(--success);
+  color: var(--success-text)
+}
+
+.text-primary {
+  color: var(--primary-text)
+}
+.text-info {
+  color: var(--info-text)
+}
+
+.text-error {
+  color: var(--error)
+}
+
+.text-warning {
+  color: var(--warning)
+}
+
+.text-success {
+  color: var(--success)
+}

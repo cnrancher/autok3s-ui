@@ -1,0 +1,195 @@
+<template>
+  <div>
+    <page-header>
+      <template #title><router-link :to="{ name: 'ClusterExplorerSettingsTemplates' }">Template: </router-link>Detail {{name}}</template>
+      <template #actions>
+        <router-link :to="{name: 'ClusterExplorerCoreClustersCreate', query: {templateId}}" class="btn role-secondary">Create Cluster</router-link>
+        <router-link :to="{name: 'ClusterExplorerSettingsTemplatesEdit', params: {templateId}}" class="btn role-secondary">Edit</router-link>
+      </template>
+    </page-header>
+    <loading :loading="loading">
+      <form autocomplete="off">
+        <div class="template-edit-form__base-info">
+          <k-select
+            v-model="currentProvider"
+            label="Provider"
+            required
+            :loading="loading"
+            disabled
+          >
+            <k-option v-for="p in providers" :key="p.id" :value="p.id" :label="p.name"></k-option>
+          </k-select>
+          <string-form
+            v-model.trim="name"
+            label="Name"
+            placeholder="e.g. test"
+            required
+            readonly
+          />
+          <boolean-form
+            v-model="isDefault"
+            label="Default Template"
+            trueLabel="True"
+            falseLabel="False"
+            readonly
+          ></boolean-form>
+        </div>
+        <component readonly v-if="providerSchema.config && providerSchema.options" ref="formRef" :schema="providerSchema" :is="clusterFormComponent"></component>
+        <footer-actions>
+          <router-link :to="{name: 'ClusterExplorerSettingsTemplates'}" class="btn role-secondary">Go Back</router-link>
+        </footer-actions>
+        <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
+        <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>
+      </form>
+    </loading>
+  </div>
+</template>
+<script>
+import {computed, defineComponent, inject, reactive, ref, toRef, toRefs, watch} from 'vue'
+import { useRouter } from 'vue-router'
+import PageHeader from '@/views/components/PageHeader.vue'
+import KInput from '@/components/Input'
+import KButton from '@/components/Button'
+import {Select as KSelect, Option as KOption} from '@/components/Select'
+import KAlert from '@/components/Alert'
+import Loading from '@/components/Loading'
+import FooterActions from '@/views/components/FooterActions.vue'
+import AwsClusterCreateForm from '@/views/components/providerForm/AwsClusterForm.vue'
+import AlibabaClusterCreateForm from '@/views/components/providerForm/AlibabaClusterForm.vue'
+import TencentClusterCreateForm from '@/views/components/providerForm/TencentClusterForm.vue'
+import NativeClusterCreateForm from '@/views/components/providerForm/NativeClusterForm.vue'
+import StringForm from '@/views/components/baseForm/StringForm.vue'
+import BooleanForm from '@/views/components/baseForm/BooleanForm.vue'
+import useProviders from '@/composables/useProviders.js'
+import { overwriteSchemaDefaultValue} from '@/utils/index.js'
+import {capitalize} from 'lodash-es'
+import { cloneDeep } from '@/utils'
+
+export default defineComponent({
+  name: 'TemplateDetail',
+  props: {
+    templateId: {
+      type: String,
+      default: '',
+    },
+  },
+  setup(props) {
+    const templateStore = inject('templateStore')
+    const router = useRouter()
+    const formRef = ref(null)
+    const name = ref('')
+    const currentProvider = ref('')
+    const isDefault = ref(false)
+
+    const formErrors = ref([])
+    const providerSchema = reactive({
+      config: null,
+      options: null
+    })
+
+    const templateId = toRef(props, 'templateId')
+
+    const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
+    const {loading: templateLoading, error: loadTemplateError, templates} = toRefs(templateStore.state)
+
+
+    const loading = computed(() => {
+      return providersLoading.value || templateLoading.value
+    })
+    const errors = computed(() => {
+      const errors = []
+      if (loadProviderError.value) {
+        errors.push(loadProviderError.value)
+      }
+      if (loadTemplateError.value) {
+        errors.push(loadTemplateError.value)
+      }
+      return errors
+    })
+
+    watch([templateId, providers, templates, loading], () => {
+      if (loading.value) {
+        return
+      }
+      if (!templateId.value) {
+        formErrors.value = ['Template id is required']
+        return
+      }
+      const t = templates.value.find((t) => t.id === templateId.value)
+      if (!t) {
+        formErrors.value = [`Template (${templateId.value}) not found`]
+        return
+      }
+      const provider = providers.value.find((p) => p.id === t?.provider)
+      if (!provider) {
+        return
+      }
+      const template = cloneDeep(t)
+      isDefault.value = template['is-default']
+      const defaultVal = {
+        config: Object.keys(template)
+          .filter((k) => k != 'options')
+          .reduce((t, k) => {
+            t[k] = template[k]
+            return t
+          }, {}),
+        options: template.options,
+      }
+      const schema = overwriteSchemaDefaultValue(provider, defaultVal)
+      name.value= schema.config.name.default
+      currentProvider.value = provider.id
+      providerSchema.config = schema.config
+      providerSchema.options = schema.options
+      return
+    }, {
+      immediate: true
+    })
+
+    const clusterFormComponent = computed(() => {
+      const p = currentProvider.value
+      return `${capitalize(p)}ClusterCreateForm`
+    })
+
+    const goBack = () => {
+      router.push({name: 'ClusterExplorerCoreClusters'})
+    }
+    return {
+      formRef,
+      providerSchema,
+      loading,
+      errors,
+      name,
+      currentProvider,
+      providers,
+      clusterFormComponent,
+      goBack,
+      isDefault,
+      formErrors,
+    }
+  },
+  components: {
+    PageHeader,
+    KInput,
+    KButton,
+    KSelect,
+    KOption,
+    KAlert,
+    FooterActions,
+    Loading,
+    AwsClusterCreateForm,
+    AlibabaClusterCreateForm,
+    TencentClusterCreateForm,
+    NativeClusterCreateForm,
+    StringForm,
+    BooleanForm
+  }
+})
+</script>
+<style>
+.template-edit-form__base-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px 10px;
+  padding-bottom: 20px;
+}
+</style>

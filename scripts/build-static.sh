@@ -1,0 +1,31 @@
+#!/bin/bash
+set -e
+set -x
+BUILD_DEBUG="${BUILD_DEBUG:-}"
+if [[ -n "${BUILD_DEBUG}" ]]; then
+    set -x
+    env
+fi
+
+cd $(dirname $0)/..
+echo "Bootstrapping..."
+npm install
+
+source scripts/version.sh
+echo "BRANCH: ${COMMIT_BRANCH:-<none>}"
+echo "TAG: ${GIT_TAG:-<none>}"
+DIR="static"
+
+echo "Building..."
+
+VITE_ENV_commit=${COMMIT} VITE_ENV_version=${VERSION} OUTPUT_DIR=dist/${DIR} npm run build
+
+TARBALL=${VERSION}.tar.gz
+
+echo "Compressing to ${TARBALL}..."
+tar -czf dist/${TARBALL} -C dist ${DIR}/
+
+echo "Cleaning up..."
+rm -r dist/${DIR}
+
+ls -alR dist/
