@@ -73,8 +73,8 @@ export default defineComponent({
         focus()
         firstLine = true
         send(textEncoder.encode(`alias kubectl='kubectl --context ${props.contextId}' \n`))
-        send(textEncoder.encode("# If you want to run other command instead of kubectl, for example, if you're going to use `helm`, you can try `helm --kube-context <cluster-id-just-as-this-console-title>`\n"))
-        send(textEncoder.encode("# If you want to set global kubeconfig context, please run `kubectl config use-context <cluster-id-just-as-this-console-title>`\n"))
+        send(textEncoder.encode("# If you want to run other command instead of kubectl, for example, if you're going to use `helm`, you can try `helm --kube-context " + props.contextId + "`\n"))
+        send(textEncoder.encode("# If you want to set global kubeconfig context, please run `kubectl config use-context " + props.contextId + "`\n"))
       }
     })
     const {maxRetries, period, start, stop} = useSocketRetry(connect, disconnect)
