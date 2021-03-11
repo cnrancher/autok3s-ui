@@ -59,7 +59,7 @@ import { overwriteSchemaDefaultValue} from '@/utils/index.js'
 import { createCluster } from '@/api/cluster';
 import {capitalize} from 'lodash-es'
 import {stringify} from '@/utils/error.js'
-import { cloneDeep } from '@/utils'
+import { cloneDeep, saveCreatingCluster } from '@/utils'
 
 export default defineComponent({
   name: 'CreateCluster',
@@ -316,7 +316,8 @@ export default defineComponent({
       }
       creating.value=true
       try {
-        await createCluster(formData)
+        const { id = '' } = await createCluster(formData)
+        saveCreatingCluster(id)
         goBack()
       } catch (err) {
         formErrors.value = [stringify(err)]

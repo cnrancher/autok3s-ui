@@ -1,6 +1,7 @@
 import { reactive, readonly } from 'vue'
 import { fetchList } from '@/api/cluster.js'
 import {stringify} from '@/utils/error.js'
+import { removeCreatingCluster } from '@/utils'
 
 // state
 export function createStore() {
@@ -32,6 +33,10 @@ function addCluster(state, wmStore) {
     })))
     // view create logs
     clusters.forEach((c) => {
+      const result = removeCreatingCluster(c.id)
+      if (!result) {
+        return
+      }
       wmStore.action.addTab({
         id: `log_${c.id}`,
         component: 'ClusterLogs',
@@ -67,6 +72,10 @@ function updateCluster(state, wmStore) {
       const pre = state.clusters.splice(index, 1, c)
       // view create logs
       if (['upgrading', 'creating'].includes((cluster.status?.status ?? '').toLowerCase())) {
+        const result = removeCreatingCluster(cluster.id)
+        if (!result) {
+          return pre
+        }
         wmStore.action.addTab({
           id: `log_${cluster.id}`,
           component: 'ClusterLogs',

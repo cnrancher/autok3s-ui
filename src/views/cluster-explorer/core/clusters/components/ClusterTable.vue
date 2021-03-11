@@ -101,6 +101,7 @@ import KInput from '@/components/Input'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useCluster from '@/composables/useCluster.js'
 import {stringify} from '@/utils/error.js'
+import { removeCreatingCluster } from '@/utils'
 
 import { computed, inject, reactive, ref, toRef, watchEffect } from 'vue'
 export default defineComponent({
@@ -159,6 +160,7 @@ export default defineComponent({
           break;
         case 'viewLog':
           const [cluster] = data
+          removeCreatingCluster(cluster.id)
           wmStore.action.addTab({
             id: `log_${cluster.id}`,
             component: 'ClusterLogs',
@@ -303,6 +305,7 @@ function useJionNodeModal(clusterId) {
     try {
       const data = Object.assign({}, cluster.value, form)
       await joinNode(data)
+      saveCreatingCluster(cluster.value.id)
     } catch (err) {
       notificationStore.action.notify({
           type: 'error',

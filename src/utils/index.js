@@ -101,3 +101,36 @@ export function convertSchemaToDesc (schema) {
     desc,
   }
 }
+
+const creatingClustersKey = 'auk3s-ui__creating-clusters'
+
+export function saveCreatingCluster(id) {
+  let clusters = []
+  try {
+    const clustersStr = window.sessionStorage.getItem(creatingClustersKey)
+    clusters = JSON.parse(clustersStr ?? '[]')
+  } catch (err) {
+    console.warn('Parse creating clusters data in sessionStorage error', err)
+  }
+  if (!clusters.includes(id)) {
+    clusters.push(id)
+    window.sessionStorage.setItem(creatingClustersKey, JSON.stringify(clusters))
+  }
+}
+
+export function removeCreatingCluster(id) {
+  let clusters = []
+  try {
+    const clustersStr = window.sessionStorage.getItem(creatingClustersKey)
+    clusters = JSON.parse(clustersStr ?? '[]')
+  } catch (err) {
+    console.warn('Parse creating clusters data in sessionStorage error', err)
+  }
+  const index = clusters.indexOf(id)
+  if (index > -1) {
+    clusters.splice(index, 1)
+    window.sessionStorage.setItem(creatingClustersKey, JSON.stringify(clusters))
+    return true
+  }
+  return false
+}
