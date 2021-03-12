@@ -19,7 +19,8 @@
       <k-table-column sortable label="Provider" field="provider"></k-table-column>
       <k-table-column sortable label="Default" field="is-default">
         <template #default="{row}">
-          <k-icon :type="row['is-default'] ? 'favorites-fill': 'favorites'"></k-icon>
+          <!-- <k-icon :type="row['is-default'] ? 'favorites-fill': 'favorites'"></k-icon> -->
+          {{row['is-default'] ? 'True':'False'}}
         </template>
       </k-table-column>
       <k-table-column sortable label="Name" field="name">

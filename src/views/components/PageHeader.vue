@@ -33,7 +33,6 @@
   column-gap: 10px;
   & button.btn{
     color: var(--link-text);
-    border: thin solid var(--link-text);
     background: var(--tooltip-bg);
   }
 }

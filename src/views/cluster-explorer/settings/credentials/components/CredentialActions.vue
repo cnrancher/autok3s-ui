@@ -5,7 +5,8 @@
       <div v-if="actions.length === 0"> No Actions </div>
       <dropdown-menu v-else class="credencial-actions__command">
           <dropdown-menu-item v-for="a in actions" :key="a.command" @click="handleCommand(a.command)">
-            <k-icon :type="a.icon" color="var(--dropdown-text)"></k-icon>{{a.label}}
+            <!-- <k-icon :type="a.icon" color="var(--dropdown-text)"></k-icon> -->
+            {{a.label}}
           </dropdown-menu-item>
         </dropdown-menu>
     </template>

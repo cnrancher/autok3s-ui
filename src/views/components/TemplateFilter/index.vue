@@ -296,6 +296,7 @@ export default defineComponent({
 }
 .template-filter__btn {
   grid-area: btn;
+  height: 40px;
 }
 .template-filter__group-name {
   color: var(--sortable-table-group-label);
