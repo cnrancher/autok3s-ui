@@ -84,6 +84,7 @@ export default defineComponent({
   setup(props) {
     const clusterStore = inject('clusterStore')
     const templateStore = inject('templateStore')
+    const wmStore = inject('windowManagerStore')
     const router = useRouter()
     const formRef = ref(null)
     const name = ref('')
@@ -126,6 +127,7 @@ export default defineComponent({
       const schema = overwriteSchemaDefaultValue(provider, defaultVal, excludeKeys)
       name.value = schema.config.name.default
       currentProvider.value = provider.id
+      providerSchema.id = provider.id
       providerSchema.config = schema.config
       providerSchema.options = schema.options
     }
@@ -318,6 +320,18 @@ export default defineComponent({
       try {
         const { id = '' } = await createCluster(formData)
         saveCreatingCluster(id)
+        if (formData.provider === 'native') {
+          wmStore.action.addTab({
+            id: `log_${id}`,
+            component: 'ClusterLogs',
+            label: `log: ${formData.name}`,
+            icon: 'log',
+            attrs: {
+              cluster: id,
+              provider: formData.provider,
+            }
+          })
+        }
         goBack()
       } catch (err) {
         formErrors.value = [stringify(err)]

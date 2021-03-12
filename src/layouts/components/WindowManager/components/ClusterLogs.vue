@@ -37,6 +37,10 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    provider: {
+      type: String,
+      default: '',
+    },
     show: {
       type: Boolean,
       required: true,
@@ -48,7 +52,7 @@ export default defineComponent({
     const logs = ref([])
     const isFollowing = ref(true)
     
-    const url = `${location.protocol}//${location.host}${import.meta.env.VITE_APP_BASE_API}/logs?cluster=${props.cluster}`
+    const url = `${location.protocol}//${location.host}${import.meta.env.VITE_APP_BASE_API}/logs?cluster=${props.cluster}${props.provider ? `&provider=${props.provider}` : ''}`
     const {readyState, connect} = useEventSource(url, {
       message: (e) => {
         const msg = ansiup.ansi_to_html(e.data)

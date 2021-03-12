@@ -126,6 +126,7 @@ export default defineComponent({
       const schema = overwriteSchemaDefaultValue(provider, defaultVal, excludeKeys)
       name.value = schema.config.name.default
       currentProvider.value = provider.id
+      providerSchema.id = provider.id
       providerSchema.config = schema.config
       providerSchema.options = schema.options
     }

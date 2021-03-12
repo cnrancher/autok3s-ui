@@ -8,9 +8,7 @@ export default function useEventSource(url, eventCallback) {
   const readyState = ref(CLOSED)
   let eventSource = null
   const onClose = (e) => {
-    close()
-    eventCallback?.close?.(e)
-    eventSource = null
+    close(e)
   }
   const onError = (e) => {
     readyState.value = ERROR
@@ -41,11 +39,11 @@ export default function useEventSource(url, eventCallback) {
     readyState.value = CLOSED
     if (eventSource) {
       console.log(`EventSource close: ${url}`)
-      eventSource.close()
       eventSource.removeEventListener('close', onClose)
       eventSource.removeEventListener('error', onError)
       eventSource.removeEventListener('message', onMessage)
       eventSource.removeEventListener('open', onOpen)
+      eventSource.close()
       eventSource = null
       eventCallback?.close?.(e)
     }

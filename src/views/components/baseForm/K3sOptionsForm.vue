@@ -36,6 +36,7 @@
     <template #default>
       <div class="k3s-options-form__content">
         <string-form
+          v-if="form.provider !== 'native'"
           v-model.trim="form.config['master']"
           label="Master"
           :desc="desc.config['master']"
@@ -56,6 +57,7 @@
     <template #default>
       <div class="k3s-options-form__content">
         <string-form
+          v-if="form.provider !== 'native'"
           v-model.trim="form.config['worker']"
           label="Worker"
           :desc="desc.config['worker']"

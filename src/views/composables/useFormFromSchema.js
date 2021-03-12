@@ -15,10 +15,12 @@ function parseSchemaDefaultValue(field) {
 
 export default function useFormFromSchema(schema) {
   const form = reactive({
+    provider: '',
     config: {},
     options: {},
   })
   const desc = reactive({
+    provider: '',
     config: {},
     options: {}
   })
@@ -41,8 +43,10 @@ export default function useFormFromSchema(schema) {
       t[k] = v?.description ?? ''
       return t
     }, {})
+    form.provider = schema.id
     form.config = config
     form.options = options
+    desc.provider = schema.id
     desc.config = configDesc
     desc.options = optionsDesc
   })
@@ -69,6 +73,7 @@ export function useDescFromSchema(schema) {
       t[k] = v?.description ?? ''
       return t
     }, {})
+    desc.provider = schema.id
     desc.config = configDesc
     desc.options = optionsDesc
   })
