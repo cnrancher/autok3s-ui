@@ -1,6 +1,11 @@
 <template>
 <div>
   <div class="credential-table__header">
+    <credential-bulk-actions
+      class="credential-table__actions"
+      :credentials="selectedCredentials"
+      @exec-command="handleCommand">
+    </credential-bulk-actions>
     <input type="search" placeholder="Filter" class="input-sm credential-table__search k-input-search" v-model="searchQuery">
   </div>
   <k-table
@@ -30,6 +35,24 @@
       </div>
     </template>
   </k-table>
+  <k-modal v-model="confirmModalVisible">
+      <template #title>Are you sure?</template>
+      <template #default>
+        <div class="cluster-table__command-confirm">
+          <p>You are attemping to remove the {{commandParams.length === 1 ? 'Credencial' : 'Credencials'}}:</p>
+          <p>
+            <template v-for="(p, index) in commandParams" :key="p.id">
+              {{p.provider}}-{{p.id}}
+              {{index === commandParams.length - 1 ? '': ','}}
+            </template>
+          </p>
+        </div>
+      </template>
+      <template #footer>
+        <k-button class="role-secondary" @click="confirmModalVisible = false">Cancel</k-button>
+        <k-button class="bg-error" @click="deleteCredencials(commandParams)">Delete</k-button>
+      </template>
+    </k-modal>
 </div>
 </template>
 <script>
@@ -41,21 +64,25 @@ import useCredentials from '@/composables/useCredentials.js'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useTableState from '@/composables/useTableState.js'
 import useProviderKeyMap from '../composables/useProviderKeyMap.js'
+import { remove } from '@/api/credential.js';
 import CredentialActions from './CredentialActions.vue'
+import CredentialBulkActions from './CredentialBulkActions.vue'
 import KModal from "@/components/Modal"
 
 function accessKeyFieldValue(data, keyMap) {
-  const v = data.secretFields[keyMap[data.provider]]?.default ?? '';
+  const v = data.secrets[keyMap[data.provider]] ?? '';
   return `${v.slice(0,3)}${v.slice(3).replace(/./g,'*')}`;
 }
 function accessSecretFieldValue(data, secretMap) {
-  const v = data.secretFields[secretMap[data.provider]]?.default ?? '';
+  const v = data.secrets[secretMap[data.provider]] ?? '';
   return v.replace(/./g,'*');
 }
 export default defineComponent({
   setup() {
     const router = useRouter()
-    // const notificationStore = inject('notificationStore')
+    const confirmModalVisible = ref(false)
+    const commandParams = ref([])
+    const notificationStore = inject('notificationStore')
     const {providerKeyMap, providerSecretMap} = useProviderKeyMap()
     const {loading, error, credentials, fetchCredentials} = useCredentials()
     const data = computed(() => {
@@ -66,7 +93,6 @@ export default defineComponent({
           key: accessKeyFieldValue(c, providerKeyMap),
           secret: accessSecretFieldValue(c, providerSecretMap),
         }))
-        .filter((c) => c.key && c.secret)
     })
     const {searchQuery, searchFields, dataMatchingSearchQuery} = useDataSearch(data)
     searchFields.value = ['provider']
@@ -78,15 +104,32 @@ export default defineComponent({
     const handleSelectionChange = (rows) => {
       selectedCredentials.value = rows
     }
+    const deleteCredencials = async (credencials) => {
+      confirmModalVisible.value=false
+      const results = await Promise.allSettled(credencials.map((c) => remove(c.id)))
+      const errors = results
+        .filter((p) => p.status === 'rejected')
+        .map((p) => p.reason)
+      errors.forEach((e) => {
+         notificationStore.action.notify({
+          type: 'error',
+          title: 'Delete Credencial Failed',
+          content: stringify(e)
+        })
+      })
+      fetchCredentials()
+    }
     const handleCommand = ({command, data}) => {
       switch(command) {
         case 'edit':
           router.push({name: 'ClusterExplorerSettingsEdit', params: {credentialId: data[0].id}})
-          break
+          break;
+        case 'delete':
+          commandParams.value = data
+          confirmModalVisible.value=true
+          break;
       }
     }
-    const commandParams = ref([])
-    const confirmModalVisible = ref(false)
     watchEffect(() => {
       if(confirmModalVisible.value === false) {
         commandParams.value=[]
@@ -103,6 +146,7 @@ export default defineComponent({
       handleSelectionChange,
       selectedCredentials,
       commandParams,
+      deleteCredencials,
     }
   },
   components: {
@@ -111,6 +155,7 @@ export default defineComponent({
     KTableColumn,
     CredentialActions,
     KButton,
+    CredentialBulkActions,
   }
 })
 </script>

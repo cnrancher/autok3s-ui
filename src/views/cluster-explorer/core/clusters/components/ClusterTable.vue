@@ -89,7 +89,7 @@
 <script>
 import {defineComponent} from 'vue'
 import { useRouter } from 'vue-router'
-import { remove, joinNode } from '@/api/cluster.js';
+import { remove, joinNode } from '@/api/cluster.js'
 import {TableColumn as KTableColumn, Table as KTable} from '@/components/Table'
 import KModal from "@/components/Modal"
 import ClusterActions from './ClusterActions.vue'

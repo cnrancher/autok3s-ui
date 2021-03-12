@@ -9,7 +9,8 @@
 <script>
 import {defineComponent} from 'vue'
 import PageHeader from '@/views/components/PageHeader.vue'
-import CredentialForm from '../components/CredentialForm.vue'
+import CredentialForm from '../components/CredentialEditForm.vue'
+
 export default defineComponent({
   name: 'CredentialEdit',
   props: {

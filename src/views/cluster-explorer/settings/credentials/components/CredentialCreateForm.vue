@@ -6,7 +6,6 @@
       label="Provider"
       required
       :loading="loading"
-      :disabled="!!credencialId"
     >
       <k-option
         v-for="p in providerOptions"
@@ -34,7 +33,7 @@
   </div>
   <footer-actions>
     <router-link :to="{name: 'ClusterExplorerSettingsCredentials'}" class="btn role-secondary">Cancel</router-link>
-    <k-button class="bg-primary" :loading="loading" @click="saveCredential">{{credencialId ? 'Save':'Create'}}</k-button>
+    <k-button class="bg-primary" :loading="loading" @click="create">Create</k-button>
   </footer-actions>
   <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>
 </div>
@@ -46,7 +45,7 @@ import {startCase} from 'lodash-es'
 import useProviderKeyMap from '../composables/useProviderKeyMap.js'
 import useProviders from '@/composables/useProviders.js'
 import useCredentials from '@/composables/useCredentials.js'
-import { createCredential,updateCredential } from '@/api/credential';
+import { createCredential } from '@/api/credential';
 import KInput from '@/components/Input'
 import { PasswordInput} from '@/components/Input'
 import { Select as KSelect, Option as KOption} from '@/components/Select'
@@ -56,17 +55,12 @@ import FooterActions from '@/views/components/FooterActions.vue'
 import {stringify} from '@/utils/error.js'
 
 export default defineComponent({
-  props: {
-    credencialId: {
-      type: [String, Number],
-    },
-  },
-  setup(props) {
+  setup() {
     const router = useRouter()
     const {providerKeyFieldMap} = useProviderKeyMap()
     const {loading: providersLoading, error: providerError, providers} = useProviders()
     const {loading: credentialLoading, error: credentialError, credentials} = useCredentials()
-    const saving = ref(false)
+    const creating = ref(false)
     const form = reactive(Object.entries(providerKeyFieldMap)
       .reduce((t, [k, v]) => {
         t[k] = {
@@ -78,7 +72,7 @@ export default defineComponent({
     const provider = ref(null)
     const formErrors = ref([])
     const loading = computed(() => {
-      return saving.value || providersLoading.value || credentialLoading.value
+      return creating.value || providersLoading.value || credentialLoading.value
     })
     const errors = computed(() => {
       const errors = []
@@ -92,24 +86,14 @@ export default defineComponent({
       return errors
     })
     const providerOptions = computed(() => {
-      if (!props.credencialId) {
-        console.log()
-        return credentials.value
-          .filter((c) => {
-            if (c.provider === 'native') {
-              return false
-            }
-            return !c.secretFields[providerKeyFieldMap[c.provider]?.key]?.default || !c.secretFields[providerKeyFieldMap[c.provider]?.secret].default
-          })
-          .map((c) => providers.value.find((p) => p.id === c.provider))
-      }
-
-      const c = credentials.value.find((c) => c.id === props.credencialId)
-      if (!c) {
-        return []
-      }
-      const p = providers.value.find((p) => p.id === c.provider)
-      return p ? [p]:[]
+      const credencialProviders = credentials.value
+        .reduce((t, c)=> {
+          if (!t.includes(c.provider)) {
+            t.push(c.provider)
+          }
+          return t
+        }, [])
+      return providers.value.filter((p) => p.id !== 'native' && !credencialProviders.includes(p.id))
     })
     watchEffect(() => {
       if (providerOptions.value.length > 0 && !provider.value) {
@@ -117,9 +101,6 @@ export default defineComponent({
       }
     })
     const validate = () => {
-      if (props.credencialId) {
-        return true
-      }
       const errors = Object.entries(form[provider.value] ?? {}).reduce((t, [k, v]) => {
         if (!v) {
           t.push(`"${startCase(k)}" is required`)
@@ -129,25 +110,21 @@ export default defineComponent({
       formErrors.value = errors
       return errors.length === 0
     }
-    const saveCredential = async () => {
+    const create = async () => {
       if (!validate()) {
         return
       }
-      saving.value = true
+      creating.value = true
       const postData = {
         provider: provider.value,
         secrets: form[provider.value]
       }
       try {
-        if (props.credencialId) {
-          await updateCredential(provider.value, postData)
-        } else {
-          await createCredential(postData)
-        }
+        await createCredential(postData)
       } catch (err) {
         formErrors.value = [stringify(err)]
       }
-      saving.value = false
+      creating.value = false
       router.push({name: 'ClusterExplorerSettingsCredentials'})
     }
     return {
@@ -157,7 +134,7 @@ export default defineComponent({
       loading,
       errors,
       startCase,
-      saveCredential,
+      create,
       providerKeyFieldMap,
     }
   },

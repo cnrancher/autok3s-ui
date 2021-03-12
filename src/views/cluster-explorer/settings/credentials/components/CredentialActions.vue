@@ -33,6 +33,11 @@ export default defineComponent({
           icon: 'editor',
           command: 'edit',
         },
+        {
+          label: 'Delete',
+          icon: 'ashbin',
+          command: 'delete',
+        },
       ]
     })
     const handleCommand = (command) => {
