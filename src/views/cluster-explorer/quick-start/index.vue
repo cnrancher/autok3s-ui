@@ -118,8 +118,8 @@ export default defineComponent({
       providerSchema.id = provider.id
       providerSchema.config = schema.config
       providerSchema.options = schema.options
-      if (schema.config.master === '0') {
-        providerSchema.config.master = '1'
+      if (schema.config.master.default === '0') {
+        providerSchema.config.master.default = '1'
       }
       if (!schema.options['access-key']?.default || !schema.options['secret-key']?.default) {
         showKeyForm.value = true
