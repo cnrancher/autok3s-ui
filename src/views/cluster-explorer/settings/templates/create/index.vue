@@ -3,7 +3,7 @@
     <page-header>
       <template #title><router-link :to="{ name: 'ClusterExplorerSettingsTemplates' }">Template: </router-link>Create</template>
       <template #actions>
-        <template-filter @apply-template="handleApplyTemplate"></template-filter>
+        <template-filter :provider="currentProvider" :disabled="loading || creating" @apply-template="handleApplyTemplate"></template-filter>
       </template>
     </page-header>
     <loading :loading="loading || creating">
@@ -60,11 +60,10 @@ import BooleanForm from '@/views/components/baseForm/BooleanForm.vue'
 import TemplateFilter from '@/views/components/TemplateFilter/index.vue'
 import useProviders from '@/composables/useProviders.js'
 import useCluster from '@/composables/useCluster.js'
-import { overwriteSchemaDefaultValue} from '@/utils/index.js'
 import { create as createTemplate, update as updateTemplate } from '@/api/template.js';
 import {capitalize} from 'lodash-es'
 import {stringify} from '@/utils/error.js'
-import { cloneDeep } from '@/utils'
+import { cloneDeep, overwriteSchemaDefaultValue } from '@/utils'
 
 export default defineComponent({
   name: 'CreateTemplate',
@@ -93,6 +92,7 @@ export default defineComponent({
     const creating = ref(false)
     const formErrors = ref([])
     const providerSchema = reactive({
+      id: '',
       config: null,
       options: null
     })
@@ -102,11 +102,11 @@ export default defineComponent({
     const defaultProvider = toRef(props, 'defaultProvider')
 
     const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
-    const {loading: clsuterLoading, error: loadClusterError, cluster} = useCluster(clusterId)
+    const {loading: clusterLoading, error: loadClusterError, cluster} = useCluster(clusterId)
     const {loading: templateLoading, error: loadTemplateError, templates} = toRefs(templateStore.state)
 
     const loading = computed(() => {
-      return providersLoading.value || clsuterLoading.value || templateLoading.value
+      return providersLoading.value || clusterLoading.value || templateLoading.value
     })
     const errors = computed(() => {
       const errors = []
@@ -253,9 +253,10 @@ export default defineComponent({
     const goBack = () => {
       router.push({name: 'ClusterExplorerSettingsTemplates'})
     }
+    let form = null
     const validate = () => {
       const allRequiredFields = Object.entries(providerSchema).filter(([k, v]) => v?.required).map(([k]) => k);
-      const form = formRef.value?.getForm()
+      form = formRef.value?.getForm()
       if (!form) {
         return false
       }
@@ -285,9 +286,9 @@ export default defineComponent({
     }
     const create = async (e) => {
       if (!validate()) {
+        form = null
         return
       }
-      const form = formRef.value.getForm()
       const formData = {
         'is-default': isDefault.value,
         ...form.config,

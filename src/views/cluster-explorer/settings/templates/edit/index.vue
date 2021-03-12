@@ -58,11 +58,10 @@ import NativeClusterCreateForm from '@/views/components/providerForm/NativeClust
 import StringForm from '@/views/components/baseForm/StringForm.vue'
 import BooleanForm from '@/views/components/baseForm/BooleanForm.vue'
 import useProviders from '@/composables/useProviders.js'
-import { overwriteSchemaDefaultValue} from '@/utils/index.js'
 import { update as updateTemplate } from '@/api/template.js';
 import {capitalize} from 'lodash-es'
 import {stringify} from '@/utils/error.js'
-import { cloneDeep } from '@/utils'
+import { cloneDeep, overwriteSchemaDefaultValue } from '@/utils'
 
 export default defineComponent({
   name: 'EditTemplate',
@@ -83,6 +82,7 @@ export default defineComponent({
     const updating = ref(false)
     const formErrors = ref([])
     const providerSchema = reactive({
+      id: '',
       config: null,
       options: null
     })
@@ -156,9 +156,11 @@ export default defineComponent({
     const goBack = () => {
       router.push({name: 'ClusterExplorerSettingsTemplates'})
     }
+
+    let form = null
     const validate = () => {
       const allRequiredFields = Object.entries(providerSchema).filter(([k, v]) => v?.required).map(([k]) => k);
-      const form = formRef.value?.getForm()
+      form = formRef.value?.getForm()
       if (!form) {
         return false
       }
@@ -183,9 +185,9 @@ export default defineComponent({
     }
     const save = async (e) => {
       if (!validate()) {
+        form = null
         return
       }
-      const form = formRef.value.getForm()
       const formData = {
         'is-defalut': isDefault.value,
         ...form.config,

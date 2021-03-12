@@ -8,7 +8,7 @@
         User quick guides to help you quickly create K3s cluster and add K3s nodes.
       </template>
       <template #actions>
-        <template-filter :provider="currentProvider" @apply-template="handleApplyTemplate"></template-filter>
+        <template-filter :disabled="loading || creating" :provider="currentProvider" @apply-template="handleApplyTemplate"></template-filter>
       </template>
     </page-header>
     <div class="quick-start__content">
@@ -16,44 +16,88 @@
         <img :src="clustcerIcon" />
       </div>
       <div class="quick-start__form">
-        <loading :loading="loading">
-          <component
-           :is="providerFormComponent"
-           :init-form="initForm"
-           :providers="providerOptions"
-           @change-provider="changeProvider"
-           :loading="loading"></component>
+        <loading :loading="loading || creating">
+          <div class="quick-start__base-info">
+            <k-select
+              v-model="currentProvider"
+              label="Provider"
+              required
+              :loading="loading"
+              @change="handleProviderChange"
+            >
+              <k-option v-for="p in providerOptions" :key="p.id" :value="p.id" :label="p.name"></k-option>
+            </k-select>
+            <k-input
+              v-model.trim="name"
+              label="Name"
+              placeholder="e.g. test"
+              required
+            />
+          </div>
+          <component v-if="providerSchema.config && providerSchema.options" ref="formRef" :show-key-form="showKeyForm" :schema="providerSchema" :is="clusterFormComponent"></component>
+          <footer-actions>
+            <k-button class="btn role-secondary" @click="goToCreatePage">Advance</k-button>
+            <k-button class="bg-primary" type="button" :loading="loading || creating" @click="create">Create</k-button>
+          </footer-actions>
+          <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
+          <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>
         </loading>
       </div>
     </div>
-    <alert v-for="(e, index) in errors" type="error" :title="e" :key="index"></alert>
   </div>
 </template>
 <script>
-import {computed, defineComponent, inject, ref, toRefs} from 'vue'
+import {computed, defineComponent, inject, ref, toRef, toRefs, watch, reactive} from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/views/components/PageHeader.vue'
 import TemplateFilter from '@/views/components/TemplateFilter/index.vue'
+import FooterActions from '@/views/components/FooterActions.vue'
+import {Select as KSelect, Option as KOption} from '@/components/Select'
+import KInput from '@/components/Input'
+import KAlert from '@/components/Alert'
+import KButton from '@/components/Button'
 import AwsForm from './components/AwsForm.vue'
 import Loading from '@/components/Loading'
-import Alert from '@/components/Alert'
 import clustcerIcon from '@/assets/images/cluster-single.svg'
 import useProviders from '@/composables/useProviders.js'
-import { cloneDeep } from '@/utils'
+import { createCluster } from '@/api/cluster.js'
+import { cloneDeep, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
+import {capitalize} from 'lodash-es'
+import {stringify} from '@/utils/error.js'
 
 export default defineComponent({
   name: 'QuickStart',
   props: {
     templateId: {
       type: String
+    },
+    defaultProvider: {
+      type: String,
+      default: 'aws'
     }
+
   },
   setup(props) {
     const router = useRouter()
+    const clusterStore = inject('clusterStore')
     const templateStore = inject('templateStore')
-    const refreshForm = ref(new Date().getTime())
+    const formRef = ref(null)
+    const name = ref('')
+    const currentProvider = ref('aws')
+    const showKeyForm = ref(true)
+
+    const creating = ref(false)
+    const formErrors = ref([])
+    const providerSchema = reactive({
+      id: '',
+      config: null,
+      options: null
+    })
+    const templateId = toRef(props, 'templateId')
+    const defaultProvider = toRef(props, 'defaultProvider')
+    const {loading: providerLoading, providers, error: loadProviderError} = useProviders()
     const {loading: templateLoading, error: loadTemplateError, templates} = toRefs(templateStore.state)
-    const {loading: providerLoading, providers, error: loadProviderError, fetchProviders} = useProviders()
+    
     const loading = computed(() => {
       return templateLoading.value || providerLoading.value
     })
@@ -67,48 +111,222 @@ export default defineComponent({
       }
       return errors
     })
-    const currentProvider = ref('aws')
-    const providerFormComponent = computed(() => {
-      return `${currentProvider.value}Form`
-    })
-    const changeProvider = (provider) => {
-      currentProvider.value = provider
+    const updateProviderSchema = (provider, defaultVal, excludeKeys) => {
+      const schema = overwriteSchemaDefaultValue(provider, defaultVal, excludeKeys)
+      name.value = schema.config.name.default
+      currentProvider.value = provider.id
+      providerSchema.id = provider.id
+      providerSchema.config = schema.config
+      providerSchema.options = schema.options
+      if (schema.config.master === '0') {
+        providerSchema.config.master = '1'
+      }
+      if (!schema.options['access-key']?.default || !schema.options['secret-key']?.default) {
+        showKeyForm.value = true
+      } else {
+         showKeyForm.value = false
+      }
     }
+    const clusterFormComponent = computed(() => {
+      const p = currentProvider.value
+      return `${capitalize(p)}Form`
+    })
+
     const providerOptions = computed(() => {
       return providers.value.filter((item) => item.id === 'aws')
     })
-    const initForm = computed(() => {
-      if (props.templateId && refreshForm.value) {
-        const t = templates.value.find((t) => t.id === props.templateId)
-        return t ? cloneDeep(t) : null
+
+    const getProviderDefaultTemplate = (providerId) => {
+      const t = templates.value.find((t) => t.provider === providerId && t['is-default'])
+      return t ? cloneDeep(t) : null
+    }
+    const createFromTemplate = (templateId) => {
+      const template = templates.value.find((t) => t.id === templateId)
+       if (!template) {
+        formErrors.value = [`Template (${templateId}) not found`]
+        return
       }
-      return templates.value.find((t) => t.provider === currentProvider.value && t['is-default'])
-    })
+      const provider = providers.value.find((p) => p.id === template.provider)
+      if (!provider) {
+        formErrors.value = [`Provider (${template.provider}) not found`]
+        return
+      }
+      const t = cloneDeep(template)
+      const defaultVal = {
+        config: Object.keys(t)
+          .filter((k) => k != 'options')
+          .reduce((r, k) => {
+            r[k] = t[k]
+            return r
+          }, {}),
+        options: t.options,
+      }
+      updateProviderSchema(provider, defaultVal)
+    }
+    const createFromProvider = (providerId) => {
+      const provider = providers.value.find((p) => p.id === providerId)
+      if (!provider) {
+        formErrors.value = [`Provider (${providerId}) not found`]
+        return
+      }
+      const t = getProviderDefaultTemplate(providerId)
+      if (t) {
+        const defaultVal = {
+          config: Object.keys(t)
+            .filter((k) => !['options', 'id', 'context-name', 'is-default', 'type', 'links'].includes(k))
+            .reduce((r, k) => {
+              r[k] = t[k]
+              return r
+            }, {}),
+          options: t.options,
+        }
+        updateProviderSchema(provider, defaultVal)
+        return
+      }
+      updateProviderSchema(provider)
+    }
     const handleApplyTemplate = (templateId) => {
       if (props.templateId === templateId) {
-        refreshForm.value = new Date().getTime()
+        createFromTemplate(templateId)
         return
       }
       router.push({name: 'QuickStart', query: {templateId}})
     }
+    watch([templateId, providers, templates, loading], () => {
+      if (loading.value) {
+        return
+      }
+      // create from template
+      if (templateId.value) {
+        createFromTemplate(templateId.value)
+        return
+      }
+      // create from default provider, switch provider
+      if (defaultProvider.value) {
+       createFromProvider(defaultProvider.value)
+       return
+      }
+    }, {
+      immediate: true
+    })
+    let form = null
+    const validate = () => {
+      const allRequiredFields = Object.entries(providerSchema).filter(([k, v]) => v?.required).map(([k]) => k);
+      form = formRef.value?.getForm()
+      if (!form) {
+        return
+      }
+      const errors = allRequiredFields.reduce((t, c) => {
+        if (!form[c]) {
+          t.push(`"${ c }" is required`);
+        }
+        return t;
+      }, []);
+
+      if (!name.value) {
+        errors.unshift(`"Name" is required`)
+      }
+      if (!currentProvider.value) {
+        errors.unshift(`"Provider" is required`)
+      }
+      // validate registry
+      const registry = form?.config?.['registry']
+      if (registry?.trim()) {
+        try {
+          jsyaml.load(registry)
+        } catch (err) {
+          errors.push(err)
+        }
+      }
+      formErrors.value= errors;
+      if (errors.length > 0) {
+        showKeyForm.value = true
+      }
+      return errors.length === 0
+    }
+    const goBack = () => {
+      router.push({name: 'ClusterExplorerCoreClusters'})
+    }
+    const goToCreatePage = () => {
+      if (!form) {
+        form = formRef.value?.getForm()
+      }
+      if (!form) {
+        router.push({name: 'ClusterExplorerCoreClustersCreate', query: { quickStart: currentProvider.value}})
+        return
+      }
+      clusterStore.action.saveQuickStartFormHistory({...cloneDeep(form)})
+      router.push({name: 'ClusterExplorerCoreClustersCreate', query: { quickStart: form.provider }})
+    }
+    const create = async (e) => {
+      if (!validate()) {
+        form = null
+        return
+      }
+      const formData = {
+        ...form.config,
+        name: name.value,
+        provider: currentProvider.value,
+        options: {
+          ...form.options
+        }
+      }
+      creating.value=true
+      try {
+        const { id = '' } = await createCluster(formData)
+        saveCreatingCluster(id)
+        if (formData.provider === 'native') {
+          wmStore.action.addTab({
+            id: `log_${id}`,
+            component: 'ClusterLogs',
+            label: `log: ${formData.name}`,
+            icon: 'log',
+            attrs: {
+              cluster: id,
+              provider: formData.provider,
+            }
+          })
+        }
+        goBack()
+      } catch (err) {
+        formErrors.value = [stringify(err)]
+      }
+      creating.value=false
+    }
+     const handleProviderChange = (value) => {
+      router.push({name: 'QuickStart', query: {defaultProvider: value}})
+    }
+
     return {
+      name,
       clustcerIcon,
       errors,
+      formErrors,
       loading,
+      creating,
+      showKeyForm,
+      formRef,
       providerOptions,
       currentProvider,
-      providerFormComponent,
-      changeProvider,
-      initForm,
+      clusterFormComponent,
+      providerSchema,
       handleApplyTemplate,
+      goToCreatePage,
+      create,
+      handleProviderChange,
     }
   },
   components: {
     PageHeader,
-    Alert,
-    AwsForm,
     Loading,
     TemplateFilter,
+    FooterActions,
+    KAlert,
+    KSelect,
+    KOption,
+    KInput,
+    AwsForm,
+    KButton,
   }
 })
 </script>
@@ -121,5 +339,11 @@ export default defineComponent({
   width: 160px;
   height: 100px;
   object-fit: contain;
+}
+.quick-start__base-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 20px;
+  padding-bottom: 20px;
 }
 </style>

@@ -55,11 +55,10 @@ import TencentClusterCreateForm from '@/views/components/providerForm/TencentClu
 import NativeClusterCreateForm from '@/views/components/providerForm/NativeClusterForm.vue'
 import useProviders from '@/composables/useProviders.js'
 import useCluster from '@/composables/useCluster.js'
-import { overwriteSchemaDefaultValue} from '@/utils/index.js'
-import { createCluster } from '@/api/cluster';
+import { createCluster } from '@/api/cluster.js'
 import {capitalize} from 'lodash-es'
 import {stringify} from '@/utils/error.js'
-import { cloneDeep, saveCreatingCluster } from '@/utils'
+import { cloneDeep, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
 
 export default defineComponent({
   name: 'CreateCluster',
@@ -93,6 +92,7 @@ export default defineComponent({
     const creating = ref(false)
     const formErrors = ref([])
     const providerSchema = reactive({
+      id: '',
       config: null,
       options: null
     })
@@ -103,11 +103,11 @@ export default defineComponent({
     const quickStart = toRef(props, 'quickStart')
 
     const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
-    const {loading: clsuterLoading, error: loadClusterError, cluster} = useCluster(clusterId)
+    const {loading: clusterLoading, error: loadClusterError, cluster} = useCluster(clusterId)
     const {loading: templateLoading, error: loadTemplateError, templates} = toRefs(templateStore.state)
 
     const loading = computed(() => {
-      return providersLoading.value || clsuterLoading.value || templateLoading.value
+      return providersLoading.value || clusterLoading.value || templateLoading.value
     })
     const errors = computed(() => {
       const errors = []
@@ -272,9 +272,10 @@ export default defineComponent({
     const goBack = () => {
       router.push({name: 'ClusterExplorerCoreClusters'})
     }
+    let form = null
     const validate = () => {
       const allRequiredFields = Object.entries(providerSchema).filter(([k, v]) => v?.required).map(([k]) => k);
-      const form = formRef.value?.getForm()
+      form = formRef.value?.getForm()
       if (!form) {
         return
       }
@@ -305,9 +306,9 @@ export default defineComponent({
     }
     const create = async (e) => {
       if (!validate()) {
+        form = null
         return
       }
-      const form = formRef.value.getForm()
       const formData = {
         ...form.config,
         name: name.value,
