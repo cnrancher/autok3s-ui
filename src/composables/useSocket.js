@@ -42,7 +42,7 @@ export default function useSocket(socketUrl, eventCallback) {
       socket.removeEventListener('error', onError)
       socket.removeEventListener('message', onMessage)
       socket.removeEventListener('open', onOpen)
-      socket.close()
+      socket.close(1000)
       socket = null
       eventCallback?.close?.(e)
     }
