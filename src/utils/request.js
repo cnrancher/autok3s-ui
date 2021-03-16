@@ -5,6 +5,7 @@ const service = axios.create({
   timeout: 30000
 })
 service.defaults.headers.common.Accept = 'application/json';
+service.defaults.withCredentials = false
 // request interceptor
 service.interceptors.request.use(
   (config) => {

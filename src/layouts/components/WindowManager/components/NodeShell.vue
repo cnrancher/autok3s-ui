@@ -27,6 +27,8 @@ const stateToClassMap = {
 }
 
 const textEncoder = new TextEncoder()
+const defaultWidth = 20
+const defaultHeight = 40
 
 export default defineComponent({
   name: 'NodeShell',
@@ -50,7 +52,7 @@ export default defineComponent({
   },
   setup(props) {
     const xterm = ref(null)
-    const url = `${location.protocol.replace('http', 'ws')}//${location.host}${import.meta.env.VITE_APP_BASE_API}/mutual?provider=${props.provider}&cluster=${props.clusterId}&node=${props.nodeId}&width=150&height=300`
+    const url = `${location.protocol.replace('http', 'ws')}//${location.host}${import.meta.env.VITE_APP_BASE_API}/mutual?provider=${props.provider}&cluster=${props.clusterId}&node=${props.nodeId}`
 
     const {clear, focus, write, fit, readyState: xtermReadyState} = useTerminal(xterm, (input) => {
       const d = textEncoder.encode(input)
@@ -61,7 +63,7 @@ export default defineComponent({
         fontSize:     12,
       })
 
-    const {readyState, connect, send, disconnect} = useSocket(url, {
+    const {readyState, connect, send, disconnect/*, setQuery*/} = useSocket(url, {
       message: async (e) => {
         const msg = await e.data.text()
         if (msg === 'ping') {
@@ -70,7 +72,7 @@ export default defineComponent({
         write(msg)
       },
       open: () => {
-        fit()
+        fitTerminal()
         focus()
       }
     })
@@ -78,11 +80,29 @@ export default defineComponent({
     maxRetries.value = -1
     period.value === 3000
 
+    const fitTerminal = () => {
+      const dimensions = fit()
+      if (!dimensions) {
+        return
+      }
+      const { rows=defaultHeight, cols=defaultWidth } = dimensions
+      send(JSON.stringify({
+        width:  Math.floor(cols),
+        height: Math.floor(rows),
+      }))
+    }
+
     let stopWatch = watchEffect(() => {
       if (xtermReadyState.value !== DONE) {
         return
       }
-      
+      // const dimensions = fit()
+      // let p = {width: defaultWidth, height: defaultHeight}
+      // if (dimensions) {
+      //   p.width = dimensions.cols
+      //   p.height = dimensions.rows
+      // }
+      // setQuery(p)
       start()
       stopWatch()
       stopWatch = null
@@ -90,13 +110,13 @@ export default defineComponent({
     watchEffect(() => {
       if (props.show) {
         nextTick(() => {
-          fit()
+          fitTerminal()
         })
       }
     })
     useResizeObserver(xterm, () => {
       if (props.show) {
-        fit()
+        fitTerminal()
       }
     })
     return {

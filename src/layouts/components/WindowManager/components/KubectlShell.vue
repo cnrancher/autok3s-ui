@@ -27,6 +27,8 @@ const stateToClassMap = {
 }
 
 const textEncoder = new TextEncoder()
+const defaultWidth = 20
+const defaultHeight = 40
 
 export default defineComponent({
   name: 'KubectlShell',
@@ -42,7 +44,7 @@ export default defineComponent({
   },
   setup(props) {
     const xterm = ref(null)
-    const url = `${location.protocol.replace('http', 'ws')}//${location.host}${import.meta.env.VITE_APP_BASE_API}/config/${props.contextId}&width=150&height=300`
+    const url = `${location.protocol.replace('http', 'ws')}//${location.host}${import.meta.env.VITE_APP_BASE_API}/config/${props.contextId}`
     let firstLine = true
     const {clear, focus, write, fit, readyState: xtermReadyState} = useTerminal(xterm, (input) => {
       const d = textEncoder.encode(input)
@@ -69,7 +71,7 @@ export default defineComponent({
         write(msg)
       },
       open: () => {
-        fit()
+        fitTerminal()
         focus()
         firstLine = true
         send(textEncoder.encode(`alias kubectl='kubectl --context ${props.contextId}' \n`))
@@ -78,8 +80,20 @@ export default defineComponent({
       }
     })
     const {maxRetries, period, start, stop} = useSocketRetry(connect, disconnect)
-    maxRetries.value = -1
+    maxRetries.value = 3
     period.value === 3000
+
+    const fitTerminal = () => {
+      const dimensions = fit()
+      if (!dimensions) {
+        return
+      }
+      const { rows=defaultHeight, cols=defaultWidth } = dimensions
+      send(JSON.stringify({
+        width:  Math.floor(cols),
+        height: Math.floor(rows),
+      }))
+    }
 
     let stopWatch = watchEffect(() => {
       if (xtermReadyState.value !== DONE) {
@@ -92,13 +106,13 @@ export default defineComponent({
     watchEffect(() => {
       if (props.show) {
         nextTick(() => {
-          fit()
+          fitTerminal()
         })
       }
     })
     useResizeObserver(xterm, () => {
       if (props.show) {
-        fit()
+        fitTerminal()
       }
     })
 

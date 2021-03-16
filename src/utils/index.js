@@ -134,3 +134,12 @@ export function removeCreatingCluster(id) {
   }
   return false
 }
+
+export function param(obj) {
+  return Object.entries(obj)
+    .map(([k, v]) => [undefined, null].includes(v) ? `${k}` : `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .join('&')
+}
+export function addParams(url, params) {
+  return `${url}${url.includes('?') ? '&' : '?'}${param(params)}`
+}

@@ -1,4 +1,5 @@
 import {onBeforeUnmount, ref, readonly} from 'vue'
+import {addParams} from '@/utils'
 
 const encoder = new TextEncoder() 
 const encode = (data) => {
@@ -15,9 +16,13 @@ export default function useSocket(socketUrl, eventCallback) {
   if (!socketUrl) {
     throw new Error('WebSocket url is required')
   }
+  let query = null
   let socket = null
   const readyState = ref(CLOSED)
   // const cache = []
+  const setQuery = (q) => {
+    query = q
+  }
   const onClose = (e) => {
     close(e)
   }
@@ -55,9 +60,13 @@ export default function useSocket(socketUrl, eventCallback) {
     if (socket) {
       return socket
     }
-    console.log(`socket connecting: ${socketUrl}`)
+    let url = socketUrl
+    if ( query ) {
+      url = addParams(socketUrl, query)
+    }
+    console.log(`socket connecting: ${url}`)
     readyState.value = CONNECTING
-    socket = new WebSocket(socketUrl)
+    socket = new WebSocket(url)
     socket.addEventListener('close', onClose)
     socket.addEventListener('error', onError)
     socket.addEventListener('message',onMessage)
@@ -74,6 +83,7 @@ export default function useSocket(socketUrl, eventCallback) {
     readyState: readonly(readyState),
     connect,
     send,
-    disconnect
+    disconnect,
+    setQuery,
   }
 }
