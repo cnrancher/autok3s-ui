@@ -30,12 +30,12 @@ export function overwriteSchemaDefaultValue (schema, defaultVal, excludeKeys) {
     excludeOptionsKeys = excludeKeys.filter((k) => k.startsWith('options.')).map((k) => k.substr(8))
   }
   Object.entries(newSchema.config)
-    .filter(([k, v]) => !excludeConfigKeys.includes(k) && v.default !== undefined && defaultVal.config[k] !== undefined)
+    .filter(([k, v]) => !excludeConfigKeys.includes(k) && (v.default !== undefined || defaultVal.config[k] !== undefined))
     .forEach(([k, v]) => {
       v.default = defaultVal.config[k]
     })
   Object.entries(newSchema.options)
-    .filter(([k, v]) => !excludeOptionsKeys.includes(k) && v.default !== undefined && defaultVal.options[k] !== undefined)
+    .filter(([k, v]) => !excludeOptionsKeys.includes(k) && (v.default !== undefined || defaultVal.options[k] !== undefined))
     .forEach(([k, v]) => {
       v.default = defaultVal.options[k]
     })
