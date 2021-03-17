@@ -4,39 +4,40 @@
       <template #title><router-link :to="{ name: 'ClusterExplorerSettingsTemplates' }">Template: </router-link>Edit {{name}}</template>
     </page-header>
     <loading :loading="loading || updating">
-      <form autocomplete="off">
-        <div class="template-create-form__base-info">
-          <k-select
-            v-model="currentProvider"
-            label="Provider"
-            required
-            :loading="loading"
-            disabled
-          >
-            <k-option v-for="p in providers" :key="p.id" :value="p.id" :label="p.name"></k-option>
-          </k-select>
-          <string-form
-            v-model.trim="name"
-            label="Name"
-            placeholder="e.g. test"
-            required
-            readonly
-          />
-          <boolean-form
-            v-model="isDefault"
-            label="Default Template"
-            trueLabel="True"
-            falseLabel="False"
-          ></boolean-form>
-        </div>
-        <component v-if="providerSchema.config && providerSchema.options" ref="formRef" :schema="providerSchema" :is="clusterFormComponent"></component>
-        <footer-actions>
-          <router-link :to="{name: 'ClusterExplorerSettingsTemplates'}" class="btn role-secondary">Cancel</router-link>
-          <k-button class="bg-primary" type="button" :loading="loading || updating" @click="save">Save</k-button>
-        </footer-actions>
-        <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
-        <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>
-      </form>
+      <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
+      <input style="display: none" type="text" />
+      <input style="display: none" type="password" />
+      <div class="template-create-form__base-info">
+        <k-select
+          v-model="currentProvider"
+          label="Provider"
+          required
+          :loading="loading"
+          disabled
+        >
+          <k-option v-for="p in providers" :key="p.id" :value="p.id" :label="p.name"></k-option>
+        </k-select>
+        <string-form
+          v-model.trim="name"
+          label="Name"
+          placeholder="e.g. test"
+          required
+          readonly
+        />
+        <boolean-form
+          v-model="isDefault"
+          label="Default Template"
+          trueLabel="True"
+          falseLabel="False"
+        ></boolean-form>
+      </div>
+      <component v-if="providerSchema.config && providerSchema.options" ref="formRef" :schema="providerSchema" :is="clusterFormComponent"></component>
+      <footer-actions>
+        <router-link :to="{name: 'ClusterExplorerSettingsTemplates'}" class="btn role-secondary">Cancel</router-link>
+        <k-button class="bg-primary" type="button" :loading="loading || updating" @click="save">Save</k-button>
+      </footer-actions>
+      <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
+      <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>
     </loading>
   </div>
 </template>

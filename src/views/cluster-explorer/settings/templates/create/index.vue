@@ -7,6 +7,9 @@
       </template>
     </page-header>
     <loading :loading="loading || creating">
+      <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
+      <input style="display: none" type="text" />
+      <input style="display: none" type="password" />
       <div class="template-create-form__base-info">
         <k-select
           v-model="currentProvider"
