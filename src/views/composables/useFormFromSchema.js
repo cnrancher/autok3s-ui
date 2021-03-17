@@ -10,6 +10,9 @@ function parseSchemaDefaultValue(field) {
   if (field.type === 'bool') {
     return false;
   }
+  if (field.type === 'map') {
+    return {}
+  }
   return ''
 }
 
