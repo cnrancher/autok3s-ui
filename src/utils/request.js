@@ -1,15 +1,22 @@
 import axios from 'axios'
+import Cookies from 'js-cookie'
+
+const csrfKey = 'CSRF'
 
 const service = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
   timeout: 30000
 })
 service.defaults.headers.common.Accept = 'application/json';
-service.defaults.withCredentials = false
+service.defaults.withCredentials = true
 // request interceptor
 service.interceptors.request.use(
   (config) => {
     // do something before request is sent
+    const csrf = Cookies.get(csrfKey)
+    if (csrf) {
+      config.headers['X-API-CSRF'] = csrf
+    }
     return config
   },
   error => {
