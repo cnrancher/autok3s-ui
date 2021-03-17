@@ -109,6 +109,7 @@ export default defineComponent({
   border-radius: 4px;
   position: absolute;
   display: none;
+  max-width: 80vw;
 }
 .k-tooltip--active {
   display: block;
