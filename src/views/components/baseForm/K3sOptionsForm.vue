@@ -5,13 +5,13 @@
       <div class="k3s-options-form__content">
         <string-form
           v-model.trim="form.config['k3s-channel']"
-          label="K3S Channel"
+          label="K3s Channel"
           :desc="desc.config['k3s-channel']"
           :readonly="readonly"
         />
         <string-form
           v-model.trim="form.config['k3s-version']"
-          label="K3S Version"
+          label="K3s Version"
           :desc="desc.config['k3s-version']"
           :readonly="readonly"
         />

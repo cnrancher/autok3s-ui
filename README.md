@@ -1,4 +1,4 @@
-# AUK3S UI
+# AutoK3s UI
 
 ## Browser Support
 
