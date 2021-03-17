@@ -248,14 +248,13 @@ export default defineComponent({
       router.push({name: 'ClusterExplorerCoreClusters'})
     }
     const goToCreatePage = () => {
-      if (!form) {
-        form = formRef.value?.getForm()
-      }
+      const form = formRef.value?.getForm()
       if (!form) {
         router.push({name: 'ClusterExplorerCoreClustersCreate', query: { quickStart: currentProvider.value}})
         return
       }
-      clusterStore.action.saveQuickStartFormHistory({...cloneDeep(form)})
+      form.config.name = name.value
+      clusterStore.action.saveQuickStartFormHistory(form)
       router.push({name: 'ClusterExplorerCoreClustersCreate', query: { quickStart: form.provider }})
     }
     const create = async (e) => {

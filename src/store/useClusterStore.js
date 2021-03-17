@@ -121,7 +121,7 @@ function saveFormHistory(state) {
   return (form) => {
     const h = state.formHistory[form.provider]
     if (h) {
-      if (h.length > state.historySize) {
+      if (h.length >= state.historySize) {
         h.shift()
       }
       h.push(form)
@@ -136,7 +136,7 @@ function saveQuickStartFormHistory(state) {
   return (form) => {
     const h = state.quickStartFormHistory[form.provider]
     if (h) {
-      if (h.length > state.historySize) {
+      if (h.length >= state.historySize) {
         h.shift()
       }
       h.push(form)
