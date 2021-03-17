@@ -135,6 +135,16 @@
           <ssh-private-form :form="form" :desc="desc" :readonly="readonly"></ssh-private-form>
         </template>
       </form-group>
+      <hr class="section-divider">
+      <form-group :closable="true">
+        <template #title>Advance</template>
+        <template #default>
+          <cluster-tags-form
+            v-model="form.options.tags"
+            :desc="desc.options['tags']"
+            :readonly="readonly"></cluster-tags-form>
+        </template>
+      </form-group>
     </tab-pane>
     <tab-pane label="K3s Options" name="k3s">
       <k3s-options-form
@@ -185,6 +195,7 @@ import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
 import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
+import ClusterTagsForm from '../baseForm/ClusterTagsForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
 import { PasswordInput as PasswordForm} from '@/components/Input'
 import { Collapse, CollapseItem } from '@/components/Collapse'
@@ -233,6 +244,7 @@ export default defineComponent({
     CollapseItem,
     K3sOptionsForm,
     SshPrivateForm,
+    ClusterTagsForm,
     FormGroup,
   }
 })
