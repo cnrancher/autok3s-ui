@@ -1,5 +1,17 @@
 <template>
 <div>
+  <page-header>
+    <template #title>
+      Credentials
+    </template>
+    <template #actions>
+        <router-link v-if="credentials.length < 3" :to="{name: 'ClusterExplorerSettingsCreate'}" class="btn bg-primary">Create</router-link>
+        <tooltip v-else>
+          <k-button class="btn bg-primary" disabled>Create</k-button>
+          <template #popover>当前版本每个provider仅支持保存一个credential信息</template>
+        </tooltip>
+      </template>
+  </page-header>
   <div class="credential-table__header">
     <credential-bulk-actions
       class="credential-table__actions"
@@ -68,6 +80,8 @@ import { remove } from '@/api/credential.js';
 import CredentialActions from './CredentialActions.vue'
 import CredentialBulkActions from './CredentialBulkActions.vue'
 import KModal from "@/components/Modal"
+import PageHeader from '@/views/components/PageHeader.vue'
+import Tooltip from '@/components/Tooltip'
 
 function accessKeyFieldValue(data, keyMap) {
   const v = data.secrets[keyMap[data.provider]] ?? '';
@@ -147,6 +161,7 @@ export default defineComponent({
       selectedCredentials,
       commandParams,
       deleteCredencials,
+      credentials,
     }
   },
   components: {
@@ -156,6 +171,8 @@ export default defineComponent({
     CredentialActions,
     KButton,
     CredentialBulkActions,
+    PageHeader,
+    Tooltip,
   }
 })
 </script>
