@@ -67,9 +67,6 @@ export default defineComponent({
     const {readyState, connect, send, disconnect/*, setQuery*/} = useSocket(url, {
       message: async (e) => {
         const msg = await e.data.text()
-        if (msg === 'ping') {
-          return;
-        }
         write(msg)
       },
       open: () => {

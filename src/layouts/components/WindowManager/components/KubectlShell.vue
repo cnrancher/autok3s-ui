@@ -59,9 +59,6 @@ export default defineComponent({
     const {readyState, connect, send, disconnect} = useSocket(url, {
       message: async (e) => {
         const msg = await e.data.text()
-        if (msg === 'ping') {
-          return;
-        }
         if (firstLine && msg.slice(-1)=== '\n') {
           firstLine = false
           return
