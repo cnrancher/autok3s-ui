@@ -6,12 +6,14 @@
         <template #default>
           <div class="native-cluster-create-form__content">
             <ip-address-pool-form
+              ref="masterIps"
               v-model="form.options['master-ips']"
               label="Master IPs"
               :desc="desc.options['master-ips']"
               :readonly="readonly"
             ></ip-address-pool-form>
             <ip-address-pool-form
+              ref="workerIps"
               v-model="form.options['worker-ips']"
               label="Worker IPs"
               :desc="desc.options['worker-ips']"
@@ -124,9 +126,14 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const masterIps = ref(null)
+    const workerIps = ref(null)
     const { form, desc }= useFormFromSchema(props.schema)
     const getForm = () => {
-      return cloneDeep(form)
+      const f = cloneDeep(form)
+      f.options['master-ips'] = masterIps.value.getForm().filter((v) => v).join(',')
+      f.options['worker-ips'] = workerIps.value.getForm().filter((v) => v).join(',')
+      return f
     }
     const visible = ref(false)
     const toggleVisible = () => {
@@ -138,6 +145,8 @@ export default defineComponent({
       getForm,
       visible,
       toggleVisible,
+      masterIps,
+      workerIps,
     }
   },
   components: {

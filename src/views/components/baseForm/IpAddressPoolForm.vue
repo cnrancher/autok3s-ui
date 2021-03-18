@@ -64,11 +64,15 @@ export default defineComponent({
       ips.value.push({ value: '' })
       debounceUpdate()
     }
+    const getForm = () => {
+      return ips.value.map((ip) => ip.value)
+    }
     return {
       ips,
       debounceUpdate,
       remove,
       add,
+      getForm,
     }
   },
   components: {
