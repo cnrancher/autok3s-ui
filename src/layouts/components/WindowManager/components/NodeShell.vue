@@ -11,7 +11,7 @@
 </template>
 <script>
 import Window from './Window.vue'
-import {defineComponent, ref, watchEffect, nextTick} from 'vue'
+import {defineComponent, ref, watchEffect, nextTick, inject} from 'vue'
 import KButton from '@/components/Button'
 import {CLOSED, CONNECTING, CONNECTED} from '@/composables/useSocket.js'
 import useSocket from '@/composables/useSocket.js'
@@ -51,6 +51,7 @@ export default defineComponent({
     }
   },
   setup(props) {
+    const wmStore = inject('windowManagerStore')
     const xterm = ref(null)
     const url = `${location.protocol.replace('http', 'ws')}//${location.host}${import.meta.env.VITE_APP_BASE_API}/mutual?provider=${props.provider}&cluster=${props.clusterId}&node=${props.nodeId}`
 
@@ -74,10 +75,16 @@ export default defineComponent({
       open: () => {
         fitTerminal()
         focus()
+      },
+      close: (e) => {
+        if (e?.code === 1000) {
+          stop()
+          wmStore.action.removeTab(`node-shell_${props.nodeId}`)
+        }
       }
     })
     const {maxRetries, period, start, stop} = useSocketRetry(connect, disconnect)
-    maxRetries.value = -1
+    maxRetries.value = 3
     period.value === 3000
 
     const fitTerminal = () => {

@@ -11,7 +11,7 @@
 </template>
 <script>
 import Window from './Window.vue'
-import {defineComponent, nextTick, ref, watchEffect} from 'vue'
+import {defineComponent, nextTick, ref, watchEffect, inject} from 'vue'
 import KButton from '@/components/Button'
 import {CLOSED, CONNECTING, CONNECTED} from '@/composables/useSocket.js'
 import useSocket from '@/composables/useSocket.js'
@@ -43,6 +43,7 @@ export default defineComponent({
     }
   },
   setup(props) {
+    const wmStore = inject('windowManagerStore')
     const xterm = ref(null)
     const url = `${location.protocol.replace('http', 'ws')}//${location.host}${import.meta.env.VITE_APP_BASE_API}/config/${props.contextId}`
     let firstLine = true
@@ -77,6 +78,12 @@ export default defineComponent({
         send(textEncoder.encode(`alias kubectl='kubectl --context ${props.contextId}' \n`))
         send(textEncoder.encode("# If you want to run other command instead of kubectl, for example, if you're going to use `helm`, you can try `helm --kube-context " + props.contextId + "`\n"))
         send(textEncoder.encode("# If you want to set global kubeconfig context, please run `kubectl config use-context " + props.contextId + "`\n"))
+      },
+      close: (e) => {
+        if (e?.code === 1000) {
+          stop()
+          wmStore.action.removeTab(`kubectl_${props.contextId}`)
+        }
       }
     })
     const {maxRetries, period, start, stop} = useSocketRetry(connect, disconnect)
