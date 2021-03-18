@@ -101,7 +101,7 @@ import KInput from '@/components/Input'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useCluster from '@/composables/useCluster.js'
 import {stringify} from '@/utils/error.js'
-import { removeCreatingCluster } from '@/utils'
+import { removeCreatingCluster, saveCreatingCluster } from '@/utils'
 
 import { computed, inject, reactive, ref, toRef, watchEffect } from 'vue'
 export default defineComponent({
