@@ -46,7 +46,7 @@ export default defineComponent({
     const wmStore = inject('windowManagerStore')
     const xterm = ref(null)
     const url = `${location.protocol.replace('http', 'ws')}//${location.host}${import.meta.env.VITE_APP_BASE_API}/config/${props.contextId}`
-    let firstLine = true
+    let lines = []
     const {clear, focus, write, fit, readyState: xtermReadyState} = useTerminal(xterm, (input) => {
       const d = textEncoder.encode(input)
       send(d)
@@ -59,22 +59,21 @@ export default defineComponent({
     const {readyState, connect, send, disconnect} = useSocket(url, {
       message: async (e) => {
         const msg = await e.data.text()
-        if (firstLine && msg.slice(-1)=== '\n') {
-          firstLine = false
-          return
-        }
-        if (firstLine) {
-          return
-        }
+        // if (lines<2 && ['\r\n', '\r', '\n'].includes(msg.slice(-1))) {
+        //   lines++
+        //   return
+        // }
         write(msg)
       },
       open: () => {
         fitTerminal()
         focus()
-        firstLine = true
-        send(textEncoder.encode(`alias kubectl='kubectl --context ${props.contextId}' \n`))
-        send(textEncoder.encode("# If you want to run other command instead of kubectl, for example, if you're going to use `helm`, you can try `helm --kube-context " + props.contextId + "`\n"))
-        send(textEncoder.encode("# If you want to set global kubeconfig context, please run `kubectl config use-context " + props.contextId + "`\n"))
+        lines=0
+        // send(textEncoder.encode(`alias kubectl='kubectl --context ${props.contextId}' \n`))
+        // send(textEncoder.encode("# If you want to run other command instead of kubectl, for example, if you're going to use `helm`, you can try `helm --kube-context " + props.contextId + "`\n"))
+        // send(textEncoder.encode("# If you want to set global kubeconfig context, please run `kubectl config use-context " + props.contextId + "`\n"))
+        write("# If you want to run other command instead of kubectl, for example, if you're going to use `helm`, you can try `helm --kube-context " + props.contextId + "`\r\n")
+        write("# If you want to set global kubeconfig context, please run `kubectl config use-context " + props.contextId + "`\r\n")
       },
       close: (e) => {
         if (e?.code === 1000) {
