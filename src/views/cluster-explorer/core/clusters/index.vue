@@ -1,7 +1,7 @@
 <template>
   <div>
     <page-header>
-      <template #title>Cluster</template>
+      <template #title>Clusters</template>
       <template #actions>
         <router-link :to="{name: 'ClusterExplorerCoreClustersCreate'}" class="btn bg-primary">Create</router-link>
       </template>
