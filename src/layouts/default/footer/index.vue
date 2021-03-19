@@ -1,6 +1,6 @@
 <template>
   <footer class="k-footer">
-    <div>v{{version}}</div>
+    <div>{{version}}</div>
     <a href="https://github.com/cnrancher/autok3s" target="_blank">Docs</a>
     <dropdown class="k-footer__lang">
       English
