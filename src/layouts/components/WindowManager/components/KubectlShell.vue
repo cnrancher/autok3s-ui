@@ -44,6 +44,7 @@ export default defineComponent({
   },
   setup(props) {
     const wmStore = inject('windowManagerStore')
+    const notificationStore = inject('notificationStore')
     const xterm = ref(null)
     const url = `${location.protocol.replace('http', 'ws')}//${location.host}${import.meta.env.VITE_APP_BASE_API}/config/${props.contextId}`
     let lines = []
@@ -82,9 +83,16 @@ export default defineComponent({
         }
       }
     })
-    const {maxRetries, period, start, stop} = useSocketRetry(connect, disconnect)
+    const {maxRetries, period, start, stop} = useSocketRetry(connect, disconnect, () => {
+      notificationStore.action.notify({
+        type: 'error',
+        duration: 0,
+        title: 'Websocket Disconnect',
+        content: `Disconnect from autoK3s service(contextId:${props.contextId}). Please confirm whether the autoK3s service is running normally`
+      })
+    })
     maxRetries.value = 3
-    period.value === 3000
+    period.value = 3000
 
     const fitTerminal = () => {
       const dimensions = fit()

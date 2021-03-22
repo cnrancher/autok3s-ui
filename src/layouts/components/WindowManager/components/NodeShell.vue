@@ -52,6 +52,7 @@ export default defineComponent({
   },
   setup(props) {
     const wmStore = inject('windowManagerStore')
+    const notificationStore = inject('notificationStore')
     const xterm = ref(null)
     const url = `${location.protocol.replace('http', 'ws')}//${location.host}${import.meta.env.VITE_APP_BASE_API}/mutual?provider=${props.provider}&cluster=${props.clusterId}&node=${props.nodeId}`
 
@@ -80,9 +81,16 @@ export default defineComponent({
         }
       }
     })
-    const {maxRetries, period, start, stop} = useSocketRetry(connect, disconnect)
+    const {maxRetries, period, start, stop} = useSocketRetry(connect, disconnect, () => {
+      notificationStore.action.notify({
+        type: 'error',
+        duration: 0,
+        title: 'Websocket Disconnect',
+        content: `Disconnect from the node(${props.nodeId}). Please confirm whether the related service is running normally`
+      })
+    })
     maxRetries.value = 3
-    period.value === 3000
+    period.value = 3000
 
     const fitTerminal = () => {
       const dimensions = fit()
