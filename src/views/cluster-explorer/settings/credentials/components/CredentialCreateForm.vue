@@ -18,14 +18,14 @@
       :key="p"
       >
       <password-input
-        v-model.trim="form[p][v.secret]"
-        :label="startCase(v.secret)"
+        v-model.trim="form[p][v.key]"
+        :label="startCase(v.key)"
         required
         v-show="p === provider"
       />
       <password-input
-        v-model.trim="form[p][v.key]"
-        :label="startCase(v.key)"
+        v-model.trim="form[p][v.secret]"
+        :label="startCase(v.secret)"
         required
         v-show="p === provider"
       />
