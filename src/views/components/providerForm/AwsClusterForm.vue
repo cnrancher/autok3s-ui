@@ -1,4 +1,6 @@
 <template>
+  <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
+  <input style="display: none" autocomplete="new-password" type="password" />
   <tabs tab-position="left" v-model="acitiveTab">
     <tab-pane label="Credential Options" name="credential">
       <form-group>
