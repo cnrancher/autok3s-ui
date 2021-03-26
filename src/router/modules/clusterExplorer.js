@@ -14,7 +14,10 @@ const clusterExplorerRouter = {
       path: 'quick-start',
       component: () => import('@/views/cluster-explorer/quick-start/index.vue'),
       name: 'QuickStart',
-      props: (route) => ({templateId: route.query.templateId}),
+      props: (route) => ({
+        templateId: route.query.templateId,
+        defaultProvider: route.query.defaultProvider,
+      }),
       meta: { title: 'Quick start' }
     },
     {

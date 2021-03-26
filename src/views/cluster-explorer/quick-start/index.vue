@@ -34,7 +34,7 @@
               required
             />
           </div>
-          <component v-if="providerSchema.config && providerSchema.options" ref="formRef" :show-key-form="showKeyForm" :schema="providerSchema" :is="clusterFormComponent"></component>
+          <component v-if="providerSchema.config && providerSchema.options" ref="formRef" :has-error="hasError" :schema="providerSchema" :is="clusterFormComponent"></component>
           <footer-actions>
             <k-button class="btn role-secondary" @click="goToCreatePage">Advance</k-button>
             <k-button class="bg-primary" type="button" :loading="loading || creating" @click="create">Create</k-button>
@@ -57,6 +57,8 @@ import KInput from '@/components/Input'
 import KAlert from '@/components/Alert'
 import KButton from '@/components/Button'
 import AwsForm from './components/AwsForm.vue'
+import AlibabaForm from './components/AlibabaForm.vue'
+import TencentForm from './components/TencentForm.vue'
 import Loading from '@/components/Loading'
 import clustcerIcon from '@/assets/images/cluster-single.svg'
 import useProviders from '@/composables/useProviders.js'
@@ -133,7 +135,11 @@ export default defineComponent({
     })
 
     const providerOptions = computed(() => {
-      return providers.value.filter((item) => item.id === 'aws')
+      return providers.value.filter((item) => item.id !== 'native')
+    })
+
+    const hasError = computed(() => {
+      return errors.value.length + formErrors.value.length > 0
     })
 
     const getProviderDefaultTemplate = (providerId) => {
@@ -192,7 +198,7 @@ export default defineComponent({
       }
       router.push({name: 'QuickStart', query: {templateId}})
     }
-    watch([templateId, providers, templates, loading], () => {
+    watch([templateId, providers, templates, defaultProvider, loading], () => {
       if (loading.value) {
         return
       }
@@ -301,6 +307,7 @@ export default defineComponent({
       clustcerIcon,
       errors,
       formErrors,
+      hasError,
       loading,
       creating,
       showKeyForm,
@@ -325,6 +332,8 @@ export default defineComponent({
     KOption,
     KInput,
     AwsForm,
+    AlibabaForm,
+    TencentForm,
     KButton,
   }
 })

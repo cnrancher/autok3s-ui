@@ -9,7 +9,7 @@
           <div class="tencent-cluster-create-form__content">
             <password-form
               v-model="form.options['secret-id']"
-              label="Access Key"
+              label="Secret Id"
               :desc="desc.options['secret-id']"
               :readonly="readonly">
             </password-form>

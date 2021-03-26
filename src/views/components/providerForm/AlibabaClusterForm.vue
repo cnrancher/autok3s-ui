@@ -15,7 +15,7 @@
             </password-form>
             <password-form
               v-model="form.options['access-secret']"
-              label="Secret Secret"
+              label="Access Secret"
               :desc="desc.options['access-secret']"
               :readonly="readonly">
             </password-form>

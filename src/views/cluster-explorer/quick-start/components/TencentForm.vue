@@ -12,9 +12,9 @@
     />
     <password-form
       v-show="showKeyForm"
-      v-model.trim="form.options['access-key']"
-      label="Access Key"
-      :desc="desc.options['access-key']"
+      v-model.trim="form.options['secret-id']"
+      label="Secret Id"
+      :desc="desc.options['secret-id']"
       required
     />
     <password-form
@@ -39,7 +39,7 @@
   </div>
 </template>
 <script>
-import {computed,defineComponent} from 'vue'
+import {computed, defineComponent} from 'vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
 import { PasswordInput as PasswordForm} from '@/components/Input'
 import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
@@ -53,7 +53,7 @@ export default defineComponent({
     },
     hasError: {
       type: Boolean,
-      default: false,
+      default: false
     }
   },
   setup(props) {
@@ -68,7 +68,6 @@ export default defineComponent({
       form,
       desc,
       showKeyForm,
-      getForm,
     }
   },
   components: {
