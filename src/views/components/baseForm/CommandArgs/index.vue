@@ -167,40 +167,6 @@ export default defineComponent({
 
     const usedOptions = ref([])
     const customValue = ref([])
-    const initOptions = () => {
-      var reg = /\s+--?/
-      var options = []
-      var str = props.modelValue.trim()
-      var index = str.search(reg)
-
-      while(index > -1) {
-        options.push(str.slice(0, index))
-        str = str.substr(index).trim()
-        index = str.search(reg)
-      }
-      if (str) {
-        options.push(str)
-      }
-      const args = []
-      const customArgs = []
-      options.forEach((item) => {
-        const o = item.split(/\s+/)
-        const arg = props.args.find((a) => a.long === o[0] || a.short === o[0])
-        if (arg) {
-          const v = o.slice(1).join('')
-          args.push({
-            ...arg,
-            modelValue: v,
-          })
-          return
-        }
-        customArgs.push(item)
-      })
-      initOptions()
-      usedOptions.value = args
-      customValue.value = customArgs
-    }
-      
     const options = computed(() => {
       return props.args.filter((a) => !usedOptions.value.some((o) => a.long ? a.long === o.long : a.short === o.short))
     })
@@ -257,6 +223,45 @@ export default defineComponent({
         .filter((o) => !(o.flag && o.modelValue === false))
         .filter((o) => !(o.multiple && !o.modelValue))
         .map((o) => `${o.long ?? o.short} ${o.flag && o.modelValue === true ? '' : o.modelValue ?? ''}`.trim()).join(' ')
+    })
+    const initOptions = () => {
+      var reg = /\s+--?/
+      var options = []
+      var str = props.modelValue.trim()
+      var index = str.search(reg)
+
+      while(index > -1) {
+        options.push(str.slice(0, index))
+        str = str.substr(index).trim()
+        index = str.search(reg)
+      }
+      if (str) {
+        options.push(str)
+      }
+      const args = []
+      const customArgs = []
+      options.forEach((item) => {
+        const o = item.split(/\s+/)
+        const arg = props.args.find((a) => a.long === o[0] || a.short === o[0])
+        if (arg) {
+          const v = o.slice(1).join('')
+          args.push({
+            ...arg,
+            modelValue: v,
+          })
+          return
+        }
+        customArgs.push(item)
+      })
+      usedOptions.value = args
+      customValue.value = customArgs
+    }
+    watch(()=> props.modelValue, (v) => {
+      if (v !== usedOptionsStr.value) {
+         initOptions()
+      }
+    }, {
+      immediate: true
     })
     const removeCustomArg = (index) => {
       customValue.value.splice(index, 1)
