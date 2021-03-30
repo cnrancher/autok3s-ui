@@ -180,7 +180,10 @@ export default defineComponent({
     }]
     const workExtraArgs = [{
       long: '--docker',
+      alias: 'runtime',
       flag: true,
+      values: ['docker', 'containerd'],
+      modelValue: true,
       desc: '(agent/runtime) Use docker instead of containerd'
     }]
     return {
