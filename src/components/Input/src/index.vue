@@ -30,6 +30,7 @@
       :id="inputId"
       :disabled="disabled"
       :autocomplete="autocomplete"
+      :type="type"
       v-bind="$attrs">
     <div class="k-input__suffix" v-if="$slots.suffix">
       <slot name="suffix"></slot>
