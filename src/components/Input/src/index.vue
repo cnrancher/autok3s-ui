@@ -10,15 +10,27 @@
     <div class="k-input__prefix" v-if="$slots.prefix">
       <slot name="prefix">{{prefix}}</slot>
     </div>
+    <textarea v-if="type==='textarea'"
+      class="k-input__textarea"
+      :class="{'k-input--no-label': !label}"
+      :value="modelValue"
+      @input="$emit('update:modelValue', $event.target.value)"
+      :id="inputId"
+      :disabled="disabled"
+      :autocomplete="autocomplete"
+      :rows="rows"
+      v-bind="$attrs"
+    ></textarea>
     <input
-     class="k-input__input"
-     :class="{'k-input--no-label': !label}"
-     :value="modelValue"
-     @input="$emit('update:modelValue', $event.target.value)"
-     :id="inputId"
-     :disabled="disabled"
-     :autocomplete="autocomplete"
-     v-bind="$attrs">
+      v-else
+      class="k-input__input"
+      :class="{'k-input--no-label': !label}"
+      :value="modelValue"
+      @input="$emit('update:modelValue', $event.target.value)"
+      :id="inputId"
+      :disabled="disabled"
+      :autocomplete="autocomplete"
+      v-bind="$attrs">
     <div class="k-input__suffix" v-if="$slots.suffix">
       <slot name="suffix"></slot>
     </div>
@@ -54,6 +66,14 @@ export default {
     autocomplete: {
       type: String,
       default: 'off'
+    },
+    type: {
+      type: String,
+      default: 'text'
+    },
+    rows: {
+      type: Number,
+      default: 2
     }
   },
   emits: ['update:modelValue'],
@@ -112,15 +132,17 @@ export default {
   align-items: center;
   color: #6c6c76;
 }
-input.k-input__input,
-input.k-input__input:hover,
-input.k-input__input:focus {
+input.k-input__input, .k-input__textarea,
+input.k-input__input:hover, .k-input__textarea:hover,
+input.k-input__input:focus, .k-input__textarea:focus {
   grid-area: input;
   border: none;
   background-color: transparent;
   outline: 0;
   color: var(--input-text);
+  padding: 1px 2px;
 }
+
 .k-input--no-label {
   padding: 9px 0;
 }
