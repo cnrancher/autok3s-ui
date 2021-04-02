@@ -235,7 +235,7 @@ export default defineComponent({
         str = str.substr(index).trim()
         index = str.search(reg)
       }
-      if (str) {
+      if (str && !options.includes(str)) {
         options.push(str)
       }
       const args = []
@@ -247,7 +247,7 @@ export default defineComponent({
           const v = o.slice(1).join('')
           args.push({
             ...arg,
-            modelValue: v,
+            modelValue: arg.flag ? true : v,
           })
           return
         }
@@ -257,7 +257,7 @@ export default defineComponent({
       customValue.value = customArgs
     }
     watch(()=> props.modelValue, (v) => {
-      if (v !== usedOptionsStr.value) {
+      if (v !== `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim()) {
          initOptions()
       }
     }, {
