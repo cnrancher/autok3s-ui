@@ -100,6 +100,9 @@
       </div>
     </tab-pane>
   </tabs>
+  <div>
+    <slot></slot>
+  </div>
 </template>
 <script>
 import {defineComponent, ref} from 'vue'

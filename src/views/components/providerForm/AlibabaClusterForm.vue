@@ -186,8 +186,10 @@
         </string-form>
       </div>
     </tab-pane>
-
   </tabs>
+  <div>
+    <slot></slot>
+  </div>
 </template>
 <script>
 import { cloneDeep } from '@/utils'
@@ -213,7 +215,12 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    loadingState: {
+      type: Boolean,
+      default: false
+    }
   },
+  emits: ['update:loadingState'],
   setup(props) {
     const { form, desc }= useFormFromSchema(props.schema)
     const acitiveTab = ref('instance')

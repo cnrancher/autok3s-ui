@@ -3,11 +3,13 @@
     class="k-option"
     :class="{'k-option--selected': currentValue === value}"
     @click="setValue">
-    {{label ?? value}}
+    <slot>
+      {{label ?? value}}
+    </slot>
   </dropdown-menu-item>
 </template>
 <script>
-import {defineComponent, inject, getCurrentInstance, onBeforeUnmount, computed, onMounted} from 'vue'
+import {defineComponent, inject, onBeforeUnmount, computed, onMounted} from 'vue'
 import { DropdownMenuItem }from '@/components/Dropdown'
 export default defineComponent({
   name: 'Option',
@@ -21,13 +23,13 @@ export default defineComponent({
       required: true
     }
   },
-  setup() {
+  setup(props) {
     const selectStore = inject('selectStore')
     if (!selectStore) {
       console.warn('selectStore not provide')
       return
     }
-    const currentOption = getCurrentInstance().proxy
+    const currentOption = {label: props.label, value: props.value}
     selectStore.action.addOption(currentOption)
     onBeforeUnmount(() => {
       selectStore.action.removeOption(currentOption)

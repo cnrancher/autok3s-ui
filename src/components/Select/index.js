@@ -1,4 +1,5 @@
 import Select from './src/index.vue'
 import Option from './src/Option.vue'
-export {Select, Option}
+import OptionGroup from './src/OptionGroup.vue'
+export {Select, Option, OptionGroup}
 export default Select

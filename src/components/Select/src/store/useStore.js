@@ -43,6 +43,12 @@ function setValue(state) {
   }
 }
 
+function removeSelected(state) {
+  return () => {
+    state.value = null
+  }
+}
+
 function clear(state) {
   return () => {
     state.options = null
@@ -50,6 +56,7 @@ function clear(state) {
     state.errors = []
   }
 }
+
 // getters
 function activeOption(state) {
   return computed(() => {
@@ -66,6 +73,7 @@ export function createAction(state) {
     addOption: addOption(state),
     removeOption: removeOption(state),
     setValue: setValue(state),
+    removeSelected: removeSelected(state),
     clear: clear(state)
   }
 }

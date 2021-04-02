@@ -42,7 +42,7 @@
 import {computed, defineComponent, reactive, ref, watchEffect} from 'vue'
 import { useRouter } from 'vue-router'
 import {startCase} from 'lodash-es'
-import useProviderKeyMap from '../composables/useProviderKeyMap.js'
+import useProviderKeyMap from '../../../../composables/useProviderKeyMap.js'
 import useProviders from '@/composables/useProviders.js'
 import useCredentials from '@/composables/useCredentials.js'
 import { createCredential } from '@/api/credential';
