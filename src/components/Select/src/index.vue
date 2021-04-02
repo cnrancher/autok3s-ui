@@ -135,7 +135,8 @@ export default defineComponent({
     const handleClear = () => {
       if (props.clearable) {
         selectStore.action.removeSelected()
-        emit('update:modelValue', null)
+        emit('change', selectStore.state.value)
+        emit('update:modelValue', selectStore.state.value)
       }
     }
 

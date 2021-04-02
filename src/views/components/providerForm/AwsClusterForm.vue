@@ -362,7 +362,7 @@ export default defineComponent({
 
     const subnetOptions = computed(() => {
       const subnetId = form.options['subnet-id']
-      if (subnetId && subnets.value.length === 0) {
+      if (subnetId && subnets.value.length === 0 && form.options['vpc-id'] && form.options.zone) {
         return [
           {
             label: subnetId,
@@ -377,7 +377,7 @@ export default defineComponent({
     })
    const securityGroupOptions = computed(() => {
       const securityGroupId = form.options['security-group']
-      if (securityGroupId && securityGroups.value.length === 0) {
+      if (securityGroupId && securityGroups.value.length === 0 && form.options['vpc-id']) {
         return [
           {
             label: securityGroupId,
@@ -407,10 +407,8 @@ export default defineComponent({
     })
 
     watch([() => form.options.zone, () => form.options['vpc-id']], ([z, vpc]) => {
-      if (z && vpc) {
-        zone.value = z
-        vpcId.value = vpc
-      }
+      zone.value = z
+      vpcId.value = vpc
     }, {
       immediate: true
     })
