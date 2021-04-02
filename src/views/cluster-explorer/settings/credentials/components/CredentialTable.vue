@@ -75,7 +75,7 @@ import KButton from '@/components/Button'
 import useCredentials from '@/composables/useCredentials.js'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useTableState from '@/composables/useTableState.js'
-import useProviderKeyMap from '../composables/useProviderKeyMap.js'
+import useProviderKeyMap from '../../../../composables/useProviderKeyMap.js'
 import { remove } from '@/api/credential.js';
 import CredentialActions from './CredentialActions.vue'
 import CredentialBulkActions from './CredentialBulkActions.vue'

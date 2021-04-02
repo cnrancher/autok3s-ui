@@ -14,7 +14,7 @@
       class="k-input__textarea"
       :class="{'k-input--no-label': !label}"
       :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
+      @[event]="$emit('update:modelValue', $event.target.value)"
       :id="inputId"
       :disabled="disabled"
       :autocomplete="autocomplete"
@@ -26,7 +26,7 @@
       class="k-input__input"
       :class="{'k-input--no-label': !label}"
       :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
+      @[event]="$emit('update:modelValue', $event.target.value)"
       :id="inputId"
       :disabled="disabled"
       :autocomplete="autocomplete"
@@ -78,10 +78,13 @@ export default {
     }
   },
   emits: ['update:modelValue'],
-  setup() {
+  setup(props, {attrs}) {
     const inputId = getId()
+    const { lazy } = attrs?.modelModifiers ?? {}
+    const event = lazy ? 'change' : 'input'
     return {
       inputId,
+      event,
     }
   },
   components: {

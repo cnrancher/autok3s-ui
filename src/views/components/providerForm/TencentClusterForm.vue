@@ -91,9 +91,9 @@
               :readonly="readonly"
             />
             <string-form
-              v-model.trim="form.options['security-group-ids']"
-              label="Security Group Ids"
-              :desc="desc.options['security-group-ids']"
+              v-model.trim="form.options['security-group']"
+              label="Security Group"
+              :desc="desc.options['security-group']"
               :readonly="readonly"
             />
             <boolean-form
@@ -179,14 +179,17 @@
         />
         <string-form
           v-show="form.options['cloud-controller-manager']"
-          v-model.trim="form.options['network-route-table-name']"
+          v-model.trim="form.options['router']"
           label="Network Route Table Name"
-          :desc="desc.options['network-route-table-name']"
+          :desc="desc.options['router']"
           :readonly="readonly"
         />
       </div>
     </tab-pane>
   </tabs>
+  <div>
+    <slot></slot>
+  </div>
 </template>
 <script>
 import { cloneDeep } from '@/utils'
@@ -212,7 +215,12 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    loadingState: {
+      type: Boolean,
+      default: false
+    }
   },
+  emits: ['update:loadingState'],
   setup(props) {
     const { form, desc }= useFormFromSchema(props.schema)
     const acitiveTab = ref('instance')

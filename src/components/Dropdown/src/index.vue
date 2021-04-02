@@ -92,6 +92,8 @@ export default defineComponent({
   border-top-right-radius: 0;
   box-shadow: 0 5px 20px var(--shadow);
   min-width: 160px;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 .k-dropdown--active {
   display: block;

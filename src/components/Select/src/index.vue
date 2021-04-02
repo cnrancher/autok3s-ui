@@ -1,5 +1,7 @@
 <template>
-  <div class="k-select" :class="{ disabled: disabled }">
+  <div class="k-select" :class="{ disabled: disabled }"
+    @mouseenter="hover = true"
+    @mouseleave="hover = false">
     <div class="k-select__label">
       <label v-if="label" :for="inputId">{{label}} <sup v-if="required" class="k-form-item--required">*</sup></label>
       <tooltip v-if="desc">
@@ -22,6 +24,7 @@
         :placeholder="placeholder"
         >
       <k-icon v-if="loading" type="loading"></k-icon>
+      <k-icon v-else-if="showClose" class="k-select__clear" type="close" @click.stop="handleClear"></k-icon>
       <k-icon v-else type="arrow-right-blod" direction="down"></k-icon>
       <template #content>
         <slot></slot>
@@ -33,7 +36,7 @@
   </div>
 </template>
 <script>
-import {computed, defineComponent, nextTick, onMounted, provide, watch, watchEffect} from 'vue'
+import {computed, defineComponent, nextTick, ref, provide, watch, watchEffect} from 'vue'
 import {useIdGenerator} from '@/utils/idGenerator.js'
 import { Dropdown }from '@/components/Dropdown'
 import KIcon from '@/components/Icon'
@@ -74,6 +77,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
     loading: {
       type: Boolean,
       default: false,
@@ -95,7 +102,7 @@ export default defineComponent({
       return selectStore.getter.activeOption?.label
     })
     watchEffect(() => {
-      if (props.modelValue !== undefined && !props.loading ) {
+      if (![null, undefined].includes(props.modelValue) && !props.loading ) {
         nextTick(() => {
           const result = selectStore.action.setValue(props.modelValue)
           if (!result) {
@@ -125,10 +132,24 @@ export default defineComponent({
       ],
       placement: 'bottom-start'
     }
+    const handleClear = () => {
+      if (props.clearable) {
+        selectStore.action.removeSelected()
+        emit('update:modelValue', null)
+      }
+    }
+
+    const hover = ref(false)
+    const showClose = computed(() => {
+      return props.clearable && hover.value && !['', null, undefined].includes(selectStore.state.value)
+    })
     return {
       inputId,
       selectedLabel,
       popperOption,
+      handleClear,
+      showClose,
+      hover,
     }
   },
   components: {
@@ -195,5 +216,8 @@ export default defineComponent({
 }
 .k-select--no-label {
   padding: 9px 0;
+}
+.k-select__clear {
+  cursor: pointer;
 }
 </style>

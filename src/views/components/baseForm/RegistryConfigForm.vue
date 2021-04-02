@@ -235,7 +235,7 @@ export default defineComponent({
       })
     })
     onBeforeUnmount(() => {
-      codemirror.off('change', handleChange)
+      codemirror?.off('change', handleChange)
       codemirror?.toTextArea()
      
       codemirror = null

@@ -197,6 +197,9 @@ export default defineComponent({
         })
       }
     })
+    watch(() => props.provider, () => {
+      currentTemplate.value = null
+    })
     return {
       placeholder,
       searchQuery,
