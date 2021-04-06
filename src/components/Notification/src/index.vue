@@ -63,6 +63,7 @@ export default defineComponent({
   position: fixed;
   display: grid;
   row-gap: 10px;
+  z-index: var(--notification-z-index);
 }
 .k-notification--top-right {
   top: 0;

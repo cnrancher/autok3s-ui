@@ -54,6 +54,11 @@ export default {
             label: 'View Logs',
             icon: 'log',
             command: 'viewLog'
+          },
+          {
+            label: 'Generate CLI Command',
+            icon: 'terminal',
+            command: 'generateCliCommand'
           }
         ]
       }
@@ -73,6 +78,11 @@ export default {
             label: 'View Logs',
             icon: 'log',
             command: 'viewLog'
+          },
+          {
+            label: 'Generate CLI Command',
+            icon: 'terminal',
+            command: 'generateCliCommand'
           }
         ]
       }
@@ -101,12 +111,18 @@ export default {
           label: 'View Logs',
           icon: 'log',
           command: 'viewLog'
-        }
+        },
+        {
+            label: 'Generate CLI Command',
+            icon: 'terminal',
+            command: 'generateCliCommand'
+          }
       ]
     })
     const handleCommand = (command) => {
       emit('exec-command', {command, data: [cloneDeep(props.cluster)]})
     }
+
     return {
       actions,
       handleCommand,
