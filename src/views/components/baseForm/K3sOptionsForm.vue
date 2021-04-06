@@ -161,7 +161,7 @@ export default defineComponent({
       flag: true,
       values: ['docker', 'containerd'],
       modelValue: true,
-      desc: '(agent/runtime) Use docker instead of containerd'
+      desc: '(agent/runtime) Automatic install docker on VM and use docker instead of containerd'
     }, {
       long: '--no-deploy',
       alias: 'disable',
