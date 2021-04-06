@@ -108,4 +108,6 @@
 .k-icon-favorites-fill {
   mask-image: url(./icons/favorites-fill.svg);
 }
-
+.k-icon-download {
+  mask-image: url(./icons/download.svg);
+}

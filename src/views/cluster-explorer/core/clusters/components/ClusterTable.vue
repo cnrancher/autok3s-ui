@@ -84,12 +84,13 @@
         <k-button class="bg-primary" :loading="joinNodeLoading" @click="saveNodes(commandParams)">Save</k-button>
       </template>
     </k-modal>
+    <cli-command v-if="clusterForm && cliModalVisible" v-model:visible="cliModalVisible" :cluster-form="clusterForm"></cli-command>
   </div>
 </template>
 <script>
-import {defineComponent} from 'vue'
+import {defineComponent, watch} from 'vue'
 import { useRouter } from 'vue-router'
-import { remove, joinNode } from '@/api/cluster.js'
+import { remove, joinNode, fetchById } from '@/api/cluster.js'
 import {TableColumn as KTableColumn, Table as KTable} from '@/components/Table'
 import KModal from "@/components/Modal"
 import ClusterActions from './ClusterActions.vue'
@@ -98,10 +99,13 @@ import ClusterStateTag from './ClusterStateTag.vue'
 import KButton from '@/components/Button'
 import Alert from '@/components/Alert'
 import KInput from '@/components/Input'
+import CliCommand from '@/views/components/CliCommand.vue'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useCluster from '@/composables/useCluster.js'
+import useProviders from '@/composables/useProviders.js'
+import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import {stringify} from '@/utils/error.js'
-import { removeCreatingCluster, saveCreatingCluster } from '@/utils'
+import { removeCreatingCluster, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
 
 import { computed, inject, reactive, ref, toRef, watchEffect } from 'vue'
 export default defineComponent({
@@ -113,8 +117,14 @@ export default defineComponent({
     const clustersInStore = toRef(clusterStore.state, 'clusters')
     const {searchQuery, searchFields, dataMatchingSearchQuery: clusters} = useDataSearch(clustersInStore)
     searchFields.value=['status', 'name', 'region', 'master', 'worker']
+
+    // generate cli command
+    const cliModalVisible = ref(false)
+    const clusterForm = ref(null)
+    const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
+
     const loadingStatus = computed(() => {
-      if (clusterStore.state.loading) {
+      if (clusterStore.state.loading || providersLoading.value) {
         return 'loading'
       }
       if (clusterStore.state.error) {
@@ -149,17 +159,17 @@ export default defineComponent({
     // join node
     const clusterId = ref('')
     const {errors: joinNodeErrors, loading: joinNodeLoading, visible: joinNodeModalVisible, desiredNodes, form: joinNodeForm, save: saveNodes } = useJionNodeModal(clusterId)
-    
+
     // delete cluster
     const confirmModalVisible = ref(false)
     const handleCommand = ({command, data}) => {
+      const [cluster] = data
       switch (command) {
         case 'delete':
           commandParams.value = data
           confirmModalVisible.value=true
           break;
         case 'viewLog':
-          const [cluster] = data
           removeCreatingCluster(cluster.id)
           wmStore.action.addTab({
             id: `log_${cluster.id}`,
@@ -172,16 +182,50 @@ export default defineComponent({
           })
           break;
         case 'joinNode':
-          clusterId.value = data[0].id
+          clusterId.value = cluster.id
           joinNodeModalVisible.value = true
           break;
         case 'clone':
         case 'edit':
-          router.push({name: 'ClusterExplorerCoreClustersCreate', query: {clusterId: data[0].id}})
+          router.push({name: 'ClusterExplorerCoreClustersCreate', query: {clusterId: cluster.id}})
           break;
         case 'saveAsTemplate':
-          router.push({name: 'ClusterExplorerSettingsTemplatesCreate', query: {clusterId: data[0].id}})
+          router.push({name: 'ClusterExplorerSettingsTemplatesCreate', query: {clusterId: cluster.id}})
           break;
+        case 'generateCliCommand':
+          if (loadProviderError.value) {
+            notificationStore.action.notify({
+              type: 'error',
+              title: 'Load Provider Failed',
+              content: stringify(loadProviderError.value)
+            })
+            return
+          }
+          fetchById(cluster.id).then((cluster) => {
+            const provider = providers.value.find((p) => p.id === cluster.provider)
+            const defaultVal = {
+              config: Object.keys(cluster)
+                .filter((k) => k != 'options')
+                .reduce((t, k) => {
+                  t[k] = cluster[k]
+                  return t
+                }, {}),
+              options: cluster.options,
+            }
+
+            const schema = overwriteSchemaDefaultValue(provider, defaultVal)
+            const { form }= useFormFromSchema(schema)
+            clusterForm.value = form
+            cliModalVisible.value = true
+          }).catch((err) => {
+            if (err) {
+              notificationStore.action.notify({
+                type: 'error',
+                title: 'Load Cluster Failed',
+                content: stringify(err)
+              })
+            }
+          })
       }
     }
     const deleteClusters = async (clusters) => {
@@ -227,6 +271,8 @@ export default defineComponent({
       desiredNodes,
       joinNodeLoading,
       joinNodeForm,
+      cliModalVisible,
+      clusterForm,
     }
   },
   components: {
@@ -239,6 +285,7 @@ export default defineComponent({
     KButton,
     KInput,
     Alert,
+    CliCommand,
   }
 })
 

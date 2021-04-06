@@ -110,6 +110,7 @@ export default defineComponent({
   position: absolute;
   display: none;
   max-width: 80vw;
+  z-index: var(--tooltip-z-index);
 }
 .k-tooltip--active {
   display: block;

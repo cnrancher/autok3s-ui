@@ -30,11 +30,13 @@
       <component v-if="providerSchema.config && providerSchema.options" ref="formRef" :schema="providerSchema" :is="clusterFormComponent"></component>
       <footer-actions>
         <router-link :to="{name: 'ClusterExplorerCoreClusters'}" class="btn role-secondary">Cancel</router-link>
+        <k-button class="role-secondary" type="button" :loading="loading || creating" @click="showCliModal">Generate CLI Command</k-button>
         <k-button class="bg-primary" type="button" :loading="loading || creating" @click="create">Create</k-button>
       </footer-actions>
       <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
       <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>
     </loading>
+    <cli-command v-model:visible="cliModalVisible" :cluster-form="clusterForm"></cli-command>
   </div>
 </template>
 <script>
@@ -49,6 +51,7 @@ import KAlert from '@/components/Alert'
 import Loading from '@/components/Loading'
 import TemplateFilter from '@/views/components/TemplateFilter/index.vue'
 import FooterActions from '@/views/components/FooterActions.vue'
+import CliCommand from '@/views/components/CliCommand.vue'
 import AwsClusterCreateForm from '@/views/components/providerForm/AwsClusterForm.vue'
 import AlibabaClusterCreateForm from '@/views/components/providerForm/AlibabaClusterForm.vue'
 import TencentClusterCreateForm from '@/views/components/providerForm/TencentClusterForm.vue'
@@ -356,6 +359,14 @@ export default defineComponent({
     //   }
     //   clusterStore.action.saveFormHistory({...f, provider: currentProvider.value})
     // })
+
+    const cliModalVisible = ref(false)
+    const clusterForm = ref({})
+    const showCliModal = () => {
+      cliModalVisible.value = true
+      clusterForm.value = formRef.value?.getForm()
+    }
+
     return {
       formRef,
       providerSchema,
@@ -371,6 +382,9 @@ export default defineComponent({
       create,
       handleProviderChange,
       handleApplyTemplate,
+      showCliModal,
+      cliModalVisible,
+      clusterForm,
     }
   },
   components: {
@@ -387,6 +401,7 @@ export default defineComponent({
     TencentClusterCreateForm,
     NativeClusterCreateForm,
     TemplateFilter,
+    CliCommand,
   }
 })
 </script>

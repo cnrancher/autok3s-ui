@@ -6,6 +6,8 @@
   --nav-bg: transparent;
   /* footer */
   --footer-height: 50px;
+  --tooltip-z-index: 500;
+  --notification-z-index: 400;
   --modal-z-index: 300;
   --popper-z-index: 100;
   --loading-z-index: 200;
