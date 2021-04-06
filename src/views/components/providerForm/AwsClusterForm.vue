@@ -394,6 +394,9 @@ export default defineComponent({
     watch([() => form.options['access-key'], () => form.options['secret-key']], ([accessKey, secretKey]) => {
       accessKeyId.value = accessKey
       secretAccessKey.value = secretKey
+      if (keyInvalid.value === false) {
+        keyInvalid.value = true
+      }
     }, {
       immediate: true,
     })
