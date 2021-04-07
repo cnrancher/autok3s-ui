@@ -189,6 +189,8 @@ export default defineComponent({
         return
       }
       remove()
+      hoverIndex.value = -1
+      searchQuery.value = ''
     })
     watch(dataGroup, () => {
       if (show.value) {
