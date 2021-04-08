@@ -37,6 +37,17 @@
           :desc="desc.config['datastore']"
           :readonly="readonly"
         />
+        <div v-if="more">
+          <combo-box
+            v-model="form.config['k3s-install-script']"
+            label="K3s Install Script"
+            :desc="desc.config['k3s-install-script']"
+            :disabled="readonly"
+            :options="installScriptOptions"
+          ></combo-box>
+        </div>
+        <div v-else></div>
+        <a class="k3s-options-form__more" @click="more = !more">More <k-icon type="arrow-right" :direction="more ? 'down' : ''"></k-icon></a>
       </div>
     </template>
   </form-group>
@@ -125,10 +136,12 @@
   </form-group>
 </template>
 <script>
-import {defineComponent, provide, toRef, ref} from 'vue'
+import {defineComponent, provide, toRef, ref, watch} from 'vue'
 import StringForm from './StringForm.vue'
 import BooleanForm from './BooleanForm.vue'
 import {Select as KSelect, Option as KOption} from '@/components/Select'
+import {ComboBox} from '@/components/ComboBox'
+import KIcon from '@/components/Icon'
 import RegistryConfigForm from './RegistryConfigForm.vue'
 import FormGroup from './FormGroup.vue'
 import CommandArgs from './CommandArgs/index.vue'
@@ -155,6 +168,20 @@ export default defineComponent({
   setup(props) {
     const visible = toRef(props, 'visible')
     provide('parentVisible', visible)
+    const more = ref(false)
+    const installScriptOptions = [
+      'https://get.k3s.io',
+      'http://rancher-mirror.cnrancher.com/k3s/k3s-install.sh',
+    ]
+    watch(() => props.form.config['k3s-install-script'],(installScript) => {
+      if (installScript === installScriptOptions[1]) {
+        props.form.config['k3s-install-mirror'] = 'INSTALL_K3S_MIRROR=cn'
+      } else if (props.form.config['k3s-install-mirror']) {
+        props.form.config['k3s-install-mirror'] = ''
+      }
+    }, {
+      immediate: true
+    })
     const masterExtraArgs = [{
       long: '--docker',
       alias: 'runtime',
@@ -189,6 +216,8 @@ export default defineComponent({
     return {
       masterExtraArgs,
       workExtraArgs,
+      more,
+      installScriptOptions,
     }
   },
   components: {
@@ -199,6 +228,8 @@ export default defineComponent({
     KSelect,
     KOption,
     CommandArgs,
+    ComboBox,
+    KIcon,
   }
 })
 </script>
@@ -211,5 +242,12 @@ export default defineComponent({
 }
 .k3s-options-form__registry {
   grid-column: 1 / span 2;
+}
+.k3s-options-form__more {
+  justify-self: end;
+  align-self: start;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 </style>
