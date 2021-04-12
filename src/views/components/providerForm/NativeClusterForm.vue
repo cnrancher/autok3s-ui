@@ -1,7 +1,7 @@
 <template>
   <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
   <input style="display: none" autocomplete="new-password" type="password" />
-  <tabs tab-position="left">
+  <tabs tab-position="left" v-model="acitiveTab">
     <tab-pane label="Instance Options" name="instance">
       <form-group>
         <template #title>Basic</template>
@@ -84,6 +84,7 @@
     </tab-pane>
     <tab-pane label="K3s Options" name="k3s">
       <k3s-options-form
+        :visible="acitiveTab === 'k3s'"
         :form="form"
         :desc="desc"
         :readonly="readonly">
@@ -137,6 +138,7 @@ export default defineComponent({
       f.options['worker-ips'] = workerIps.value.getForm().filter((v) => v).join(',')
       return f
     }
+    const acitiveTab = ref('instance')
     const visible = ref(false)
     const toggleVisible = () => {
       visible.value = !visible.value
@@ -149,6 +151,7 @@ export default defineComponent({
       toggleVisible,
       masterIps,
       workerIps,
+      acitiveTab,
     }
   },
   components: {
