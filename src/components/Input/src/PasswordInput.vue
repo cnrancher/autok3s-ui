@@ -7,7 +7,7 @@
   </k-input>
 </template>
 <script>
-import {computed, defineComponent, ref} from 'vue'
+import {computed, defineComponent, onBeforeUnmount, ref} from 'vue'
 import KInput from './index.vue'
 import KIcon from '@/components/Icon'
 export default defineComponent({
@@ -25,6 +25,10 @@ export default defineComponent({
     const toggleShow = () => {
       show.value = !show.value
     }
+
+    onBeforeUnmount(() => {
+      show.value = true
+    })
     
     return {
       show,
