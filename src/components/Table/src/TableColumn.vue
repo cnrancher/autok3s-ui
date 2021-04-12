@@ -5,7 +5,7 @@ import useIdGenrator from '@/composables/useIdGenerator.js'
 const {next: nextId, reset: resetId } = useIdGenrator()
 const getFieldValue = (obj, field) => {
   return field.split('.')
-    .reduce((o, i) => o?.[i], obj)
+    .reduce((o, i) => o?.[i], obj) ?? ''
 }
 
 const defaultRenderRowCell = (props) => h('span', {}, `${getFieldValue(props.row, props.column?.field)}`)
