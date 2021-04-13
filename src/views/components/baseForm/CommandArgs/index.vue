@@ -266,6 +266,9 @@ export default defineComponent({
     const removeCustomArg = (index) => {
       customValue.value.splice(index, 1)
       emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
+      nextTick(() => {
+        update()
+      })
     }
     const addCustemArg = () => {
       if (addCustomArgDisabled.value) {
@@ -281,6 +284,9 @@ export default defineComponent({
       customValue.value.push(customCommandArgs.value)
       emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
       customCommandArgs.value = ''
+      nextTick(() => {
+        update()
+      })
     }
 
     const removeOptions = () => {
