@@ -113,12 +113,6 @@
     <template #default>
       <div class="k3s-options-form__content">
         <string-form
-          v-model.trim="form.config['ip']"
-          label="IP"
-          :desc="desc.config['ip']"
-          :readonly="readonly"
-        />
-        <string-form
           v-model.trim="form.config['token']"
           label="Token"
           :desc="desc.config['token']"
