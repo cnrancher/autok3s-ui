@@ -246,7 +246,7 @@ export default defineComponent({
     })
 
     const clusterFormComponent = computed(() => {
-      const p = currentProvider.value
+      const p = providerSchema.id
       return `${capitalize(p)}ClusterCreateForm`
     })
 
