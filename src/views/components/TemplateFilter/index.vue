@@ -11,6 +11,7 @@
       @keydown.down.prevent="handleKeyDown"
       @keydown.up.prevent="handleKeyUp"
       @keydown.esc.stop.prevent="handleKeyESC"
+      @keydown.tab="handleKeyESC"
       @keydown.enter.stop.prevent="handleKeyEnter">
       <div class="template-filter__display-value" v-show="!show">{{templateDisplayValue}}</div>
       <button class="btn bg-primary btn-sm template-filter__btn"
