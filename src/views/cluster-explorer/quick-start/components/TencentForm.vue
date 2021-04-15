@@ -59,7 +59,7 @@ export default defineComponent({
   setup(props) {
     const { form, desc }= useFormFromSchema(props.schema)
     const showKeyForm = computed(() => {
-      return props.hasError || !props.schema.options['access-key']?.default || !props.schema.options['secret-key']?.default
+      return props.hasError || !props.schema.options['secret-id']?.default || !props.schema.options['secret-key']?.default
     })
     const getForm = () => {
       return cloneDeep(form)
