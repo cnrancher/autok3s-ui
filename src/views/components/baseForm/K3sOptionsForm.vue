@@ -37,17 +37,13 @@
           :desc="desc.config['datastore']"
           :readonly="readonly"
         />
-        <div v-if="more">
-          <combo-box
-            v-model="form.config['k3s-install-script']"
-            label="K3s Install Script"
-            :desc="desc.config['k3s-install-script']"
-            :disabled="readonly"
-            :options="installScriptOptions"
-          ></combo-box>
-        </div>
-        <div v-else></div>
-        <a class="k3s-options-form__more" @click="more = !more">More <k-icon type="arrow-right" :direction="more ? 'down' : ''"></k-icon></a>
+        <combo-box
+          v-model="form.config['k3s-install-script']"
+          label="K3s Install Script"
+          :desc="desc.config['k3s-install-script']"
+          :disabled="readonly"
+          :options="installScriptOptions"
+        ></combo-box>
       </div>
     </template>
   </form-group>
@@ -162,7 +158,6 @@ export default defineComponent({
   setup(props) {
     const visible = toRef(props, 'visible')
     provide('parentVisible', visible)
-    const more = ref(false)
     const installScriptOptions = [
       'https://get.k3s.io',
       'http://rancher-mirror.cnrancher.com/k3s/k3s-install.sh',
@@ -210,7 +205,6 @@ export default defineComponent({
     return {
       masterExtraArgs,
       workExtraArgs,
-      more,
       installScriptOptions,
     }
   },
@@ -236,12 +230,5 @@ export default defineComponent({
 }
 .k3s-options-form__registry {
   grid-column: 1 / span 2;
-}
-.k3s-options-form__more {
-  justify-self: end;
-  align-self: start;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
 }
 </style>
