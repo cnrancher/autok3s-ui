@@ -39,6 +39,12 @@ export function overwriteSchemaDefaultValue (schema, defaultVal, excludeKeys) {
     .forEach(([k, v]) => {
       v.default = defaultVal.options[k]
     })
+    if (!newSchema.config['k3s-install-script']?.default) {
+      if (!newSchema.config['k3s-install-script']) {
+        newSchema.config['k3s-install-script'] = {}
+      }
+      newSchema.config['k3s-install-script'].default = 'https://get.k3s.io'
+    }
     return newSchema
 }
 
