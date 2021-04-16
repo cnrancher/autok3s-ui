@@ -46,6 +46,10 @@ export default defineComponent({
     lazy: {
       type: Boolean,
       default: true
+    },
+    delay: {
+      type: Number,
+      default: 500
     }
   },
   setup(props) {
@@ -81,9 +85,13 @@ export default defineComponent({
     }
     const hideTooltip = () => {
       removeTimer()
-      timer = setTimeout(() => {
+      if (props.delay <= 0) {
         show.value = false
-      }, 500)
+      } else {
+        timer = setTimeout(() => {
+          show.value = false
+        }, props.delay)
+      }
     }
     return {
       trigger,
