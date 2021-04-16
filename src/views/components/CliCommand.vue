@@ -10,11 +10,11 @@
             <pre>
 {{registryContent}}
 <div class="cli-command__actions">
-  <tooltip append-to-body>
+  <tooltip append-to-body :delay="0">
     <k-icon type="download" @click="downloadRegistryContent"></k-icon>
     <template #popover>Download Regisrty Content</template>
   </tooltip>
-  <tooltip append-to-body>
+  <tooltip append-to-body :delay="0">
     <k-icon type="clone" @click="copyRegistryContent"></k-icon>
     <template #popover>Copy Regisrty Content</template>
   </tooltip>
@@ -22,17 +22,16 @@
           </div>
         </div>
         <div class="cli-command__content">
+          <div v-if="registryContent">
+          2. Please replace the following <span class="cli-command__registry">{{registryPlaceholder}}</span> as a real file path that you have saved at first step.
+          </div>
           <code>
             <div class="cli-command__actions">
-              <tooltip append-to-body>
+              <tooltip append-to-body :delay="0">
                 <k-icon type="clone" class="cli-command__action" @click="copyCmd"></k-icon>
                 <template #popover>Copy CLI Command</template>
               </tooltip>
             </div>
-            <div class="cli-command__comment" v-if="registryContent">
-              # Please replace the following <span class="cli-command__registry">{{registryPlaceholder}}</span> as a real file path that you have saved at first step.
-            </div>
-            <br>
             <span class="cli-command__cmd">autok3s</span>&nbsp;<span class="cli-command__sub-cmd">create</span>
             <template v-for="(o, index) in cmdOptions" :key="index">
               <span class="cli-command__option">&nbsp;{{o.option}}</span>
@@ -242,6 +241,9 @@ function downloadFile (content, fileName) {
 <style>
 .cli-command__content {
   max-width: 80vw;
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 10px;
   & > code {
     padding: 10px 10px;
     display: block;
@@ -258,6 +260,7 @@ function downloadFile (content, fileName) {
   display: grid;
   grid-template-columns: 1fr;
   row-gap: 10px;
+  margin-bottom: 10px;
   & pre {
     position: relative;
   }
