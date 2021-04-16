@@ -12,7 +12,7 @@
     v-show="form.mode === 'eni'"
     label="max-pool-size"
     type="number"
-    v-model="form['max-pool-size']"
+    v-model="form['terway-max-pool-size']"
     @change="debounceUpdate"
     :readonly="readonly">
   </k-input>

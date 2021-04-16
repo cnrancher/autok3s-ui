@@ -170,18 +170,18 @@
           :readonly="readonly"
         />
         <boolean-form
-          v-model="form.config['terway']"
+          v-model="form.options['terway']"
           label="Terway"
-          :desc="desc.config['terway']"
+          :desc="desc.options['terway']"
           true-value="eni"
           false-value="none"
           :readonly="readonly"
         />
         <string-form
-          v-show="form.config['terway'] === 'eni'"
+          v-show="form.options['terway'] === 'eni'"
           label="Terway Max Pool Size"
           type="number"
-          v-model="form.config['terway-max-pool-size']"
+          v-model="form.options['terway-max-pool-size']"
           :readonly="readonly">
         </string-form>
       </div>
