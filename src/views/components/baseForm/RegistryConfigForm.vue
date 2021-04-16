@@ -8,6 +8,7 @@
       </tooltip>
     </div>
     <div v-if="!options.readOnly" class="registry-config-form__upload">
+      <k-button type="input" class="btn-sm bg-primary registry-config-form__clear" @click="clearContent">Clear</k-button>
       <k-button type="input" class="btn-sm bg-primary" @click.stop.prevent="triggerSelectFile"><k-icon type="upload" color="white"></k-icon> &nbsp; Read from a file</k-button>
       <input
         ref="file"
@@ -208,6 +209,10 @@ export default defineComponent({
       emit('update:modelValue', USTCMirror)
     }
 
+    const clearContent = () => {
+      emit('update:modelValue', '')
+    }
+
     watch(() => props.options, () => {
       if (!codemirror) {
         return
@@ -249,6 +254,7 @@ export default defineComponent({
       triggerSelectFile,
       setAliyunMirror,
       setUSTCMirror,
+      clearContent,
     }
   },
   components: {
@@ -261,7 +267,7 @@ export default defineComponent({
 <style>
 .registry-config-form {
   display: grid;
-  grid-template-columns: max-content 1fr auto;
+  grid-template-columns: max-content 1fr 1fr;
   padding: 8px 8px;
   background-color: var(--input-bg); 
   row-gap: 10px;
@@ -273,11 +279,17 @@ export default defineComponent({
 }
 .registry-config-form__upload {
   justify-self: end;
+  display: grid;
+  grid-auto-flow: column;
+  column-gap: 10px;
 }
 .registry-config-form__file {
   display: none;
 }
 .registry-config-form__content {
+  position: relative;
+  max-height: 400px;
+  overflow: auto;
   grid-column: 1 / span 3;
   & .CodeMirror {
     height: auto;
@@ -292,5 +304,8 @@ export default defineComponent({
   grid-auto-flow: column;
   column-gap: 10px;
   justify-content: left;
+}
+.registry-config-form__clear {
+  justify-self: end;
 }
 </style>
