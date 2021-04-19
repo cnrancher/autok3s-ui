@@ -10,6 +10,7 @@
       <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
       <input style="display: none" type="text" />
       <input style="display: none" type="password" />
+      <k-alert v-if="currentProvider === 'native'" type="warning" title="Native provider only supports create and join with CLI."></k-alert>
       <div class="cluster-create-form__base-info">
         <k-select
           v-model="currentProvider"
