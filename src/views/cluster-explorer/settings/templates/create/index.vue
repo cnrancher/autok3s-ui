@@ -7,6 +7,7 @@
       </template>
     </page-header>
     <loading :loading="loading || creating">
+      <k-alert v-if="currentProvider === 'native'" type="warning" title="Native provider only supports create and join."></k-alert>
       <div class="template-create-form__base-info">
         <k-select
           v-model="currentProvider"
