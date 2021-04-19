@@ -124,7 +124,13 @@ export default defineComponent({
         return ''
       }
       const t = currentTemplate.value
-      return t ? `${t.provider} | ${t.name} | ${t.options.region} | ${t.options.zone}` : ''
+      if (!t) {
+        return ''
+      }
+      if (t.provider === 'native') {
+        return `${t.provider} | ${t.name} | ${t.options.region} | ${t.options.zone}`
+      }
+      return `${t.provider} | ${t.name} | ${t.options.region} | ${t.options.zone}`
     })
     watchEffect(() => {
       currentTemplate.value = props.modelValue
