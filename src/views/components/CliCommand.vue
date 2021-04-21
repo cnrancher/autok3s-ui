@@ -135,7 +135,12 @@ export default defineComponent({
           t.push(o)
           return t
         }, [])
-
+      if (props.clusterForm.provider === 'k3d' && props.clusterForm.config.registry) {
+        options.push({
+          option: '--registry',
+          value: props.clusterForm.config.registry
+        })
+      }
       return options
     })
 

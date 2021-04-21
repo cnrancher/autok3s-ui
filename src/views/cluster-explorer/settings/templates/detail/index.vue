@@ -8,6 +8,8 @@
       </template>
     </page-header>
     <loading :loading="loading">
+      <k-alert v-if="currentProvider === 'native'" type="warning" title="Native provider only supports create and join."></k-alert>
+      <k-alert v-if="currentProvider === 'k3d'" type="warning" title="Highly recommended that K3d provider run in a Linux / Unix environment, do not run K3d provider in MacOS container environment."></k-alert>
       <form autocomplete="off">
         <div class="template-edit-form__base-info">
           <k-select
@@ -57,6 +59,7 @@ import FooterActions from '@/views/components/FooterActions.vue'
 import AwsClusterCreateForm from '@/views/components/providerForm/AwsClusterForm.vue'
 import AlibabaClusterCreateForm from '@/views/components/providerForm/AlibabaClusterForm.vue'
 import TencentClusterCreateForm from '@/views/components/providerForm/TencentClusterForm.vue'
+import K3dClusterCreateForm from '@/views/components/providerForm/K3dClusterForm.vue'
 import NativeClusterCreateForm from '@/views/components/providerForm/NativeClusterForm.vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
 import BooleanForm from '@/views/components/baseForm/BooleanForm.vue'
@@ -180,6 +183,7 @@ export default defineComponent({
     AwsClusterCreateForm,
     AlibabaClusterCreateForm,
     TencentClusterCreateForm,
+    K3dClusterCreateForm,
     NativeClusterCreateForm,
     StringForm,
     BooleanForm

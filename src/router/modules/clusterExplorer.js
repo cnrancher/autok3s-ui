@@ -6,7 +6,7 @@ const clusterExplorerRouter = {
   redirect: '/cluster-explorer/quick-start',
   name: 'ClusterExplorer',
   meta: {
-    title: 'AutoK3s UI',
+    title: import.meta.env.VITE_APP_TITLE,
     icon: 'set',
   },
   children: [

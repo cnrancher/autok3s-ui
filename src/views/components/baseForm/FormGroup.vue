@@ -22,10 +22,15 @@ export default defineComponent({
     closable: {
       type: Boolean,
       default: false,
+    },
+    modelValue: {
+      type: Boolean,
+      default: false
     }
   },
-  setup(props) {
-    const visible = ref(false)
+  emits: ['update:modelValue'],
+  setup(props, {emit}) {
+    const visible = ref(props.modelValue)
     const show = computed(() => {
       if (props.closable) {
         return visible.value
@@ -34,6 +39,7 @@ export default defineComponent({
     })
     const toggleVisible = () => {
       visible.value = !visible.value
+      emit('update:modelValue', visible.value)
     }
     return {
       visible,

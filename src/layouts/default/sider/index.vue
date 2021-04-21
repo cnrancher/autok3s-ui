@@ -35,5 +35,8 @@ export default {
 .k-app-nav {
   background-color: var(--nav-bg);
 }
+.k-app-nav > a:first-child {
+  padding-left: 5px;
+}
 
 </style>

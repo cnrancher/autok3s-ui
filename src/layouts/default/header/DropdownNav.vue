@@ -103,7 +103,7 @@ export default {
   }
 }
 .k-dropdown-nav__title {
-  padding: 0 6px;
+  padding: 0 6px 0 20px;
   text-overflow: ellipsis;
 }
 </style>
