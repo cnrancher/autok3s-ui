@@ -11,6 +11,7 @@
       <input style="display: none" type="text" />
       <input style="display: none" type="password" />
       <k-alert v-if="currentProvider === 'native'" type="warning" title="Native provider only supports create and join."></k-alert>
+      <k-alert v-if="currentProvider === 'k3d'" type="warning" title="Highly recommended that K3d provider run in a Linux / Unix environment, do not run K3d provider in MacOS container environment."></k-alert>
       <div class="cluster-create-form__base-info">
         <k-select
           v-model="currentProvider"
@@ -57,6 +58,7 @@ import AwsClusterCreateForm from '@/views/components/providerForm/AwsClusterForm
 import AlibabaClusterCreateForm from '@/views/components/providerForm/AlibabaClusterForm.vue'
 import TencentClusterCreateForm from '@/views/components/providerForm/TencentClusterForm.vue'
 import NativeClusterCreateForm from '@/views/components/providerForm/NativeClusterForm.vue'
+import K3dClusterCreateForm from '@/views/components/providerForm/K3dClusterForm.vue'
 import useProviders from '@/composables/useProviders.js'
 import useCluster from '@/composables/useCluster.js'
 import { createCluster } from '@/api/cluster.js'
@@ -401,6 +403,7 @@ export default defineComponent({
     AlibabaClusterCreateForm,
     TencentClusterCreateForm,
     NativeClusterCreateForm,
+    K3dClusterCreateForm,
     TemplateFilter,
     CliCommand,
   }

@@ -1,13 +1,13 @@
 <template>
   <div class="array-list-form">
-    <h3 class="array-list-form__label">
+    <h4 class="array-list-form__label">
       {{label}}
       <sup v-if="required" class="k-form-item--required">*</sup>
       <tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
         <template #popover>{{desc}}</template>
       </tooltip>
-    </h3>
+    </h4>
     <template v-for="(item, index) in items" :key="index">
       <k-input :readonly="readonly" v-model.trim="item.value" @change="debounceUpdate" :placeholder="placeholder"></k-input>
       <k-icon v-if="!readonly" class="array-list-form__remove" type="ashbin" @click="remove(index)" :size="20"></k-icon>
@@ -112,6 +112,7 @@ export default defineComponent({
   column-gap: 10px;
   width: fit-content;
   align-items: center;
+  margin-bottom: 0;
 }
 .array-list-form__actions {
   grid-column: 1 / span 2;

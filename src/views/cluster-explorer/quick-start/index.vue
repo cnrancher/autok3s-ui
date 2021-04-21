@@ -59,6 +59,7 @@ import KButton from '@/components/Button'
 import AwsForm from './components/AwsForm.vue'
 import AlibabaForm from './components/AlibabaForm.vue'
 import TencentForm from './components/TencentForm.vue'
+import K3dForm from './components/K3dForm.vue'
 import Loading from '@/components/Loading'
 import clustcerIcon from '@/assets/images/cluster-single.svg'
 import useProviders from '@/composables/useProviders.js'
@@ -334,6 +335,7 @@ export default defineComponent({
     AwsForm,
     AlibabaForm,
     TencentForm,
+    K3dForm,
     KButton,
   }
 })

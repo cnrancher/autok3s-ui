@@ -22,11 +22,13 @@
         :value="clusterNodes.worker">
       </k-input>
       <k-input
+        v-if="clusterNodes?.provider !== 'k3d'"
         label="Region"
         readonly
         :value="clusterNodes.region">
       </k-input>
       <k-input
+        v-if="clusterNodes?.provider !== 'k3d'"
         label="Zone"
         readonly
         :value="clusterNodes.zone">
