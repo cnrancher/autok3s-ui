@@ -107,7 +107,7 @@ export default defineComponent({
           return ''
         }
         if (extraArgs.includes(k)) {
-          return v.replaceAll("'", "\\'")
+          return `'${v.replaceAll("'", "\\'")}'`
         }
         if (k === 'tags') {
           return `'${Object.entries(v).map(([k, v]) => {
