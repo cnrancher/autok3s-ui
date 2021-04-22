@@ -1,0 +1,46 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  image: node:lts
+  commands:
+  - npm run build
+  when:
+    branch:
+    - main
+    event:
+    - push
+    - pull_request
+    - tag
+
+- name: build-tag
+  image: node:lts
+  commands:
+  - scripts/build-static.sh
+  when:
+    event:
+    - tag
+
+- name: upload
+  image: plugins/s3
+  settings:
+    bucket: autok3s-ui
+    region: ap-northeast-1
+    acl: public-read
+    access_key:
+      from_secret: aws_access_id
+    secret_key:
+      from_secret: aws_access_secret
+    source: dist/static/${DRONE_TAG}.tar.gz
+    strip_prefix: dist/static/
+    target: /releases
+  when:
+    event:
+    - tag
