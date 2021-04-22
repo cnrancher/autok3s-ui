@@ -32,7 +32,7 @@ import {computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted,
 import KIcon from '@/components/Icon'
 import Tooltip from '@/components/Tooltip'
 import KButton from '@/components/Button'
-import CodeMirror from 'codeMirror'
+import CodeMirror from 'codemirror'
 import 'codemirror/lib/codemirror.css'
 
 import jsyaml from 'js-yaml';
