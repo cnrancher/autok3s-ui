@@ -149,3 +149,8 @@ export function param(obj) {
 export function addParams(url, params) {
   return `${url}${url.includes('?') ? '&' : '?'}${param(params)}`
 }
+
+export function getBasePath() {
+  const baseUrl =  document.querySelector("head > link[rel='icon']").href.slice(0, 0 - ('favicon.ico'.length + import.meta.env.BASE_URL.length))
+  return baseUrl.replace(window.location.origin, '')
+}
