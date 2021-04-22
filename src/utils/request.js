@@ -1,10 +1,11 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { getRootPath } from '@/utils/index.js'
 
 const csrfKey = 'CSRF'
 
 const service = axios.create({
-  baseURL: import.meta.env.VITE_APP_BASE_API,
+  baseURL: `${getRootPath()}${import.meta.env.VITE_APP_BASE_API}`,
   timeout: 30000
 })
 service.defaults.headers.common.Accept = 'application/json';

@@ -2,9 +2,10 @@ import { onBeforeUnmount } from 'vue'
 import useSocket from '@/composables/useSocket.js'
 import {CONNECTED} from '@/composables/useSocket.js'
 import useSocketRetry from '@/composables/useSocketRetry.js'
+import { getRootPath } from '@/utils/index.js'
 
 export default function useResourceChangeSocket(notify) {
-  const url = `${window.location.origin.replace(/^http/, 'ws') }${import.meta.env.VITE_APP_BASE_API}/subscribe`
+  const url = `${window.location.origin.replace(/^http/, 'ws') }${getRootPath()}${import.meta.env.VITE_APP_BASE_API}/subscribe`
   // cache: {
 	// 	resouceType: {
 	// 		subscribed: false,

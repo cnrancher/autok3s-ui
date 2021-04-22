@@ -3,6 +3,7 @@ import Layout from '@/layouts/default/index.vue'
 import NotFound from '@/views/error-page/NotFound.vue'
 import clusterExplorerRouter from './modules/clusterExplorer.js'
 import examplesRouter from './modules/examples.js'
+import { getBasePath } from '@/utils/index.js'
 
 export const constantRoutes = [
   {
@@ -11,13 +12,16 @@ export const constantRoutes = [
     redirect: '/cluster-explorer',
     hidden: true
   },
-  examplesRouter,
   clusterExplorerRouter,
   { path: '/:pathMatch(.*)*', name: 'not-found', hidden: true, component: NotFound },
 ]
 
+if (!import.meta.env.PROD) {
+  constantRoutes.splice(1, 0, examplesRouter)
+}
+
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(getBasePath()),
   routes: constantRoutes,
 })
 
