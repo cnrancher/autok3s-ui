@@ -45,3 +45,6 @@ steps:
   when:
     event:
     - tag
+
+node:
+  instance: agent-amd64
