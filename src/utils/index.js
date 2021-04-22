@@ -149,3 +149,17 @@ export function param(obj) {
 export function addParams(url, params) {
   return `${url}${url.includes('?') ? '&' : '?'}${param(params)}`
 }
+
+export function getBasePath() {
+  if (window.__basePath__) {
+    return window.__basePath__
+  }
+  const baseUrl =  document.querySelector("head > base").href
+  const basePath = `${baseUrl.replace(window.location.origin, '')}`
+  window.__basePath__ = basePath
+  return window.__basePath__
+}
+
+export function getRootPath() {
+  return getBasePath().slice(0, -import.meta.env.VITE_APP_BASE_PATH.length)
+}

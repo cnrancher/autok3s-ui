@@ -17,7 +17,8 @@ export default ({ command, mode }) => {
       html({
         inject: {
           injectData: {
-            title: env.VITE_APP_TITLE
+            title: env.VITE_APP_TITLE,
+            basePath: env.VITE_APP_BASE_PATH,
           },
         },
         minify: isBuild,
@@ -29,7 +30,7 @@ export default ({ command, mode }) => {
     define: {
       '__VERSION__': JSON.stringify(packageVersion)
     },
-    base: '/ui/',
+    base: './',
     server: {
       proxy: {
         '/v1': {
