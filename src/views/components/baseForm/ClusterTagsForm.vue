@@ -54,10 +54,7 @@ export default defineComponent({
       value,
     })))
     const update = () => {
-      emit('update:modelValue', tags.value.filter((t) => t.label).reduce((t, c) => {
-        t[c.label] = c.value
-        return t
-      }, {}))
+      emit('update:modelValue', getForm())
     }
 
     const debounceUpdate = debounce(update, 500)
@@ -69,11 +66,22 @@ export default defineComponent({
       tags.value.push({ label: '', value: '' })
       debounceUpdate()
     }
+    const getForm = () => {
+      const f = tags.value.filter((t) => t.label).reduce((t, c) => {
+        t[c.label] = c.value
+        return t
+      }, {})
+      if (Object.keys(f).length === 0) {
+        return null
+      }
+      return f
+    }
     return {
       tags,
       debounceUpdate,
       remove,
       add,
+      getForm,
     }
   },
   components: {

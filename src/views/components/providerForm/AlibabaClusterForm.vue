@@ -142,6 +142,7 @@
         <template #title>Advance</template>
         <template #default>
           <cluster-tags-form
+            ref="tags"
             v-model="form.options.tags"
             :desc="desc.options['tags']"
             :readonly="readonly"></cluster-tags-form>
@@ -225,14 +226,19 @@ export default defineComponent({
       acitiveTab.value = 'instance'
     }
     updateActiveTab()
+
+    const tags = ref(null)
     const getForm = () => {
-      return cloneDeep(form)
+      const f = cloneDeep(form)
+      f.options.tags = tags.value.getForm()
+      return f
     }
     return {
       form,
       desc,
       acitiveTab,
       getForm,
+      tags,
     }
   },
   components: {
