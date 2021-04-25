@@ -13,6 +13,9 @@ function parseSchemaDefaultValue(field) {
   if (field.type === 'map') {
     return {}
   }
+  if (field.type === 'slice') {
+    return []
+  }
   return ''
 }
 
