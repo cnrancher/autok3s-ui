@@ -157,11 +157,16 @@
       <form-group :closable="true">
         <template #title>Advance</template>
         <template #default>
-          <cluster-tags-form
-            ref="tags"
-            v-model="form.options.tags"
-            :desc="desc.options['tags']"
-            :readonly="readonly"></cluster-tags-form>
+          <div class="aws-cluster-create-form__content">
+            <cluster-tags-form
+              ref="tags"
+              v-model="form.options.tags"
+              :desc="desc.options['tags']"
+              :readonly="readonly"
+              label="Tags"
+              placeholder="e.g. foo=bar"
+              action-label="Add Tag"></cluster-tags-form>
+            </div>
         </template>
       </form-group>
     </tab-pane>
@@ -213,7 +218,7 @@ import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
 import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
-import ClusterTagsForm from '../baseForm/ClusterTagsForm.vue'
+import ClusterTagsForm from '../baseForm/ArrayListForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
 import { PasswordInput as PasswordForm} from '@/components/Input'
 import { Collapse, CollapseItem } from '@/components/Collapse'
@@ -244,7 +249,8 @@ export default defineComponent({
     const tags = ref(null)
     const getForm = () => {
       const f = cloneDeep(form)
-      f.options.tags = tags.value.getForm()
+      const values = tags.value.getForm()
+      f.options.tags = values ? values.filter((v) => v) : values
       return f
     }
     return {
