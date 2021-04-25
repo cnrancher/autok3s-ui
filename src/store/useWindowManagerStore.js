@@ -14,9 +14,12 @@ export function createStore() {
 // actions
 function addTab(state) {
   return (tab) => {
-    if (state.tabs.find((item) => item.id === tab.id)) {
+    const tabCached = state.tabs.find((item) => item.id === tab.id)
+    if (tabCached) {
+      tabCached.renewCount = (tabCached.renewCount ?? 0) + 1
       return
     }
+    tab.renewCount = 0
     state.tabs.push(tab)
     state.active = tab.id
     state.open = true

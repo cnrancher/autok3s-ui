@@ -11,7 +11,7 @@
 </template>
 <script>
 import Window from './Window.vue'
-import {defineComponent, ref, watchEffect, nextTick, inject} from 'vue'
+import {defineComponent, ref, watchEffect, nextTick, inject, watch} from 'vue'
 import KButton from '@/components/Button'
 import {CLOSED, CONNECTING, CONNECTED} from '@/composables/useSocket.js'
 import useSocket from '@/composables/useSocket.js'
@@ -48,6 +48,10 @@ export default defineComponent({
     show: {
       type: Boolean,
       required: true,
+    },
+    renewCount: {
+      type: [Number],
+      default: 0
     }
   },
   setup(props) {
@@ -131,6 +135,13 @@ export default defineComponent({
         fitTerminal()
       }
     })
+    watch(() => props.renewCount, () => {
+      if ( readyState.value === CLOSED) {
+        stop()
+        start()
+      }
+    })
+
     return {
       xterm,
       readyState,
