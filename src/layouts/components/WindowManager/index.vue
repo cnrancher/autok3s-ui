@@ -26,6 +26,7 @@
           <component 
             :is="t.component"
             v-bind="t.attrs"
+            :renew-count="t.renewCount"
             :show='t.id === activeTabId'
           >
           </component>

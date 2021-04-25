@@ -18,7 +18,7 @@
 </template>
 <script>
 import AnsiUp from 'ansi_up';
-import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import KButton from '@/components/Button'
 import Window from './Window.vue'
 import useEventSource from '@/composables/useEventSource.js'
@@ -44,6 +44,10 @@ export default defineComponent({
     show: {
       type: Boolean,
       required: true,
+    },
+    renewCount: {
+      type: [Number],
+      default: 0
     }
   },
   setup(props) {
@@ -75,6 +79,13 @@ export default defineComponent({
       const el = e.target;
       isFollowing.value = el.scrollTop + el.clientHeight + 2 >= el.scrollHeight
     }
+
+    watch(() => props.renewCount, () => {
+      if (readyState.value === CLOSED) {
+        logs.value = []
+        connect()
+      }
+    })
 
     onMounted(()=> {
       connect()
