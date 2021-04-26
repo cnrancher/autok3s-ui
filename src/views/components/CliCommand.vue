@@ -91,14 +91,15 @@ export default defineComponent({
         return []
       }
 
+      const arrayArgs = ['tags', 'labels', 'envs', 'volumes']
       const excludeKeys = ['registry-content', 'registry']
       const ignoreValues = [null, undefined, '', false]
       const extraArgs = ['master-extra-args', 'worker-extra-args']
       const provider = props.clusterForm.provider
 
       const filterArgs = (k, v) => {
-        if (k === 'tags') {
-          return Object.keys(v ?? {}).length > 0
+        if (arrayArgs.includes(k)) {
+          return v ? v.length > 0 : false
         }
         return !ignoreValues.includes(v) && !excludeKeys.includes(k)
       }
@@ -106,19 +107,27 @@ export default defineComponent({
         if (v === true) {
           return ''
         }
-        if (extraArgs.includes(k)) {
+        if (extraArgs.includes(k) || arrayArgs.includes(k)) {
           return `'${v.replaceAll("'", "\\'")}'`
         }
-        if (k === 'tags') {
-          return `'${Object.entries(v).map(([k, v]) => {
-            return `${k.replaceAll("'", "\\'")}=${v.replaceAll("'", "\\'")}`
-          }).join(',')}'`
-        }
+        // if (k === 'tags') {
+        //   return `'${Object.entries(v).map(([k, v]) => {
+        //     return `${k.replaceAll("'", "\\'")}=${v.replaceAll("'", "\\'")}`
+        //   }).join(',')}'`
+        // }
         return v
       }
       const options = [ ['--provider', provider], ...Object.entries(props.clusterForm.config), ...Object.entries(props.clusterForm.options)]
         .filter(([k, v]) => filterArgs(k, v))
         .reduce((t, [k, v]) => {
+          if (arrayArgs.includes(k)) {
+            const values = v.map((item) => ({
+              option: k.startsWith('-') ? k : `--${k}`,
+              value: parseValue(k, item)
+            }))
+            t.push(...values)
+            return t
+          }
           const o = {
             option: k.startsWith('-') ? k : `--${k}`,
             value: parseValue(k, v)
@@ -267,8 +276,8 @@ function downloadFile (content, fileName) {
 }
 .cli-command__actions {
   position:absolute;
-  top: 8px;
-  right: 8px;
+  top: 0px;
+  right: 0px;
   display: grid;
   grid-auto-flow: column;
   column-gap: 10px;
