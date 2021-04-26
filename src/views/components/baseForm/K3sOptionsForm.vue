@@ -114,6 +114,12 @@
           :desc="desc.config['token']"
           :readonly="readonly"
         />
+        <string-form
+          v-model.trim="form.config['manifests']"
+          label="Manifests"
+          :desc="desc.config['manifests']"
+          :readonly="readonly"
+        />
         <registry-config-form
           class="k3s-options-form__registry"
           v-model="form.config['registry-content']"
