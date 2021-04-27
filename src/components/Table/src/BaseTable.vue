@@ -70,9 +70,7 @@ export default defineComponent({
     const { groupField, dataGroup } = useDataGroup(data)
     
     watchEffect(() => {
-      if (props.groupBy) {
-        groupField.value = groupBy.value
-      }
+      groupField.value = groupBy.value
     })
     const currentStatusClass = computed(() => {
       return Object.keys(tableStatus).reduce((t, c) => {
@@ -148,5 +146,12 @@ export default defineComponent({
 .k-table__group-by {
   color: var(--sortable-table-group-label);
   text-transform: capitalize;
+}
+.k-table > tbody > tr {
+    border-bottom: 1px solid var(--sortable-table-top-divider);
+    background-color: var(--body-bg);
+}
+.k-table > tbody > tr.group-row:first-child, .k-table > tbody > tr.group-row:last-child {
+  border-bottom: 0;
 }
 </style>
