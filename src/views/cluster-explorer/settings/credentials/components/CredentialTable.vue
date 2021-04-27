@@ -18,12 +18,20 @@
       :credentials="selectedCredentials"
       @exec-command="handleCommand">
     </credential-bulk-actions>
+    <radio-group v-model="groupBy">
+      <radio-button label="">
+        <k-icon type="category" :color="groupBy === '' ? '#fff' : ''"></k-icon>
+      </radio-button>
+      <radio-button label="provider">
+        <k-icon type="folder" :color="groupBy === 'provider' ? '#fff' : ''"></k-icon>
+      </radio-button>
+    </radio-group>
     <input type="search" placeholder="Filter" class="input-sm credential-table__search k-input-search" v-model="searchQuery">
   </div>
   <k-table
     :data="dataMatchingSearchQuery"
     :state="state"
-    group-by="provider"
+    :group-by="groupBy"
     @selection-change="handleSelectionChange">
     <k-table-column type="selection"></k-table-column>
     <k-table-column sortable label="Provider" field="provider"></k-table-column>
@@ -82,6 +90,8 @@ import CredentialBulkActions from './CredentialBulkActions.vue'
 import KModal from "@/components/Modal"
 import PageHeader from '@/views/components/PageHeader.vue'
 import Tooltip from '@/components/Tooltip'
+import KIcon from '@/components/Icon'
+import {RadioGroup, RadioButton} from '@/components/Radio'
 
 function accessKeyFieldValue(data, keyMap) {
   const v = data.secrets[keyMap[data.provider]] ?? '';
@@ -110,6 +120,7 @@ export default defineComponent({
     })
     const {searchQuery, searchFields, dataMatchingSearchQuery} = useDataSearch(data)
     searchFields.value = ['provider']
+    const groupBy = ref('provider')
     const { state }= useTableState(loading, error, data, dataMatchingSearchQuery,)
     const reload = () => {
       fetchCredentials()
@@ -162,6 +173,7 @@ export default defineComponent({
       commandParams,
       deleteCredencials,
       credentials,
+      groupBy,
     }
   },
   components: {
@@ -173,15 +185,19 @@ export default defineComponent({
     CredentialBulkActions,
     PageHeader,
     Tooltip,
+    RadioGroup,
+    RadioButton,
+    KIcon,
   }
 })
 </script>
 <style>
 .credential-table__header {
   display: grid;
-  grid-template-areas: "actions search";
-  grid-template-columns: 1fr minmax(min-content, 200px);
+  grid-template-areas: "actions btn search";
+  grid-template-columns: 1fr auto minmax(min-content, 200px);
   padding: 0 0 20px;
+  column-gap: 10px;
 }
 .credential-table__actions {
   grid-area: actions;

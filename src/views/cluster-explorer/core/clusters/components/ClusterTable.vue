@@ -6,6 +6,14 @@
         :clusters="selectedClusters"
         @exec-command="handleCommand">
       </cluster-bulk-actions>
+      <radio-group v-model="groupBy">
+        <radio-button label="">
+          <k-icon type="category" :color="groupBy === '' ? '#fff' : ''"></k-icon>
+        </radio-button>
+        <radio-button label="provider">
+          <k-icon type="folder" :color="groupBy === 'provider' ? '#fff' : ''"></k-icon>
+        </radio-button>
+      </radio-group>
       <input type="search" placeholder="Filter" class="input-sm cluster-table__search k-input-search" v-model="searchQuery">
     </div>
     <k-table
@@ -99,6 +107,8 @@ import ClusterStateTag from './ClusterStateTag.vue'
 import KButton from '@/components/Button'
 import Alert from '@/components/Alert'
 import KInput from '@/components/Input'
+import {RadioGroup, RadioButton} from '@/components/Radio'
+import KIcon from '@/components/Icon'
 import CliCommand from '@/views/components/CliCommand.vue'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useCluster from '@/composables/useCluster.js'
@@ -286,6 +296,9 @@ export default defineComponent({
     KInput,
     Alert,
     CliCommand,
+    RadioGroup,
+    RadioButton,
+    KIcon,
   }
 })
 
@@ -376,9 +389,10 @@ function useJionNodeModal(clusterId) {
 <style>
 .cluster-table__header {
   display: grid;
-  grid-template-areas: "actions search";
-  grid-template-columns: 1fr minmax(min-content, 200px);
+  grid-template-areas: "actions btn search";
+  grid-template-columns: 1fr auto minmax(min-content, 200px);
   padding: 0 0 20px;
+  column-gap: 10px;
 }
 .cluster-table__actions {
   grid-area: actions;

@@ -37,7 +37,12 @@
   <div>
     <span class="k-icon k-icon-arrow-right"></span>
   </div>
-
+  <radio label="test">test</radio>
+  <radio label="test1">test1</radio>
+  <radio-group v-model="testRadio">
+    <radio-button label="1"></radio-button>
+    <radio-button label="2"></radio-button>
+  </radio-group>
   <k-loading>
     dfasfsafsdfs
     <button>ddddd</button><br>
@@ -51,6 +56,7 @@
 <script>
 import KInput from '@/components/Input'
 import KButton from '@/components/Button'
+import {Radio, RadioGroup, RadioButton} from '@/components/Radio'
 import { Select as KSelect, Option as KOption} from '@/components/Select'
 import KLoading from '@/components/Loading'
 import { DropdownMenu as KDropdownMenu, DropdownMenuItem as KDropdownMenuItem, Dropdown as KDropdown}  from '@/components/Dropdown'
@@ -59,8 +65,10 @@ export default {
   name: 'FormIndex',
   setup() {
     const selectedValue = ref('v1')
+    const testRadio=ref('')
     return {
-      selectedValue
+      selectedValue,
+      testRadio,
     }
   },
   components: {
@@ -71,7 +79,10 @@ export default {
     KDropdown,
     KDropdownMenu,
     KDropdownMenuItem,
-    KLoading
+    KLoading,
+    Radio,
+    RadioGroup,
+    RadioButton
   }
 }
 </script>

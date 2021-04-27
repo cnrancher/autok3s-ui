@@ -47,7 +47,10 @@ input[type='url'],
 select,
 textarea,
 .k-input,
-.k-select {
+.k-select,
+.k-radio,
+.k-radio-button,
+.k-radio-group {
   &.disabled, &.disabled .selected, &[disabled], &[disabled]:hover {
     color: var(--input-disabled-text);
     background-color: var(--input-disabled-bg);
