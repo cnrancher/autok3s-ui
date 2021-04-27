@@ -6,6 +6,14 @@
         :templates="selectedTemplates"
         @exec-command="handleCommand">
       </template-bulk-actions>
+      <radio-group v-model="groupBy">
+        <radio-button label="">
+          <k-icon type="category" :color="groupBy === '' ? '#fff' : ''"></k-icon>
+        </radio-button>
+        <radio-button label="provider">
+          <k-icon type="folder" :color="groupBy === 'provider' ? '#fff' : ''"></k-icon>
+        </radio-button>
+      </radio-group>
       <input type="search" placeholder="Filter" class="input-sm template-table__search k-input-search" v-model="searchQuery">
     </div>
     <k-table
@@ -75,6 +83,7 @@ import KButton from '@/components/Button'
 import Alert from '@/components/Alert'
 import KIcon from '@/components/Icon'
 import KInput from '@/components/Input'
+import {RadioGroup, RadioButton} from '@/components/Radio'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useTableState from '@/composables/useTableState.js'
 import {stringify} from '@/utils/error.js'
@@ -217,15 +226,18 @@ export default defineComponent({
     KInput,
     Alert,
     KIcon,
+    RadioGroup,
+    RadioButton,
   }
 })
 </script>
 <style>
 .template-table__header {
   display: grid;
-  grid-template-areas: "actions search";
-  grid-template-columns: 1fr minmax(min-content, 200px);
+  grid-template-areas: "actions btn search";
+  grid-template-columns: 1fr auto minmax(min-content, 200px);
   padding: 0 0 20px;
+  column-gap: 10px;
 }
 .template-table__actions {
   grid-area: actions;
