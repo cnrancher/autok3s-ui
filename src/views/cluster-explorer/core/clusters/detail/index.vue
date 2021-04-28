@@ -56,7 +56,7 @@
           <cluster-state-tag :status="row[column.field]"></cluster-state-tag>
         </template>
       </k-table-column>
-      <k-table-column sortable label="Region" field="region">{{clusterNodes.region}}</k-table-column>
+      <k-table-column v-if="clusterNodes?.provider !== 'k3d'" sortable label="Region" field="region">{{clusterNodes.region}}</k-table-column>
       <k-table-column sortable label="Roles" field="roles">
         <template #default="{row, column}">
           {{row[column.field] ?? ''}}
@@ -64,12 +64,12 @@
       </k-table-column>
       <k-table-column sortable label="Version" field="version"></k-table-column>
       <k-table-column sortable label="instance ID" field="instance-id"></k-table-column>
-      <k-table-column label="Public IP" field="external-ip">
+      <k-table-column v-if="clusterNodes?.provider !== 'k3d'" label="Public IP" field="external-ip">
         <template #default="{row, column}">
           {{row[column.field]?.join(', ')}}
         </template>
       </k-table-column>
-      <k-table-column label="Internal IP" field="internal-ip">
+      <k-table-column v-if="clusterNodes?.provider !== 'k3d'" label="Internal IP" field="internal-ip">
         <template #default="{row, column}">
           {{row[column.field]?.join(', ')}}
         </template>
@@ -126,7 +126,7 @@ export default defineComponent({
           wmStore.action.addTab({
             id: `node-shell_${node['instance-id']}`,
             component: 'NodeShell',
-            label: `shell: ${node['external-ip']?.[0]}`,
+            label: `shell: ${node['external-ip']?.[0] ?? node['instance-id']}`,
             icon: 'terminal',
             attrs: {
               clusterId: cluster.id,
