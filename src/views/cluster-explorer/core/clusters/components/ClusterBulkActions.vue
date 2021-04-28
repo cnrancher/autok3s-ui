@@ -22,7 +22,7 @@ export default {
   emits: ['exec-command'],
   setup(props, {emit}) {
     const deleteDisabled = computed(() => {
-      return props.clusters.length === 0 || props.clusters.some((c) => ['upgrading', 'creating'].includes(c.status?.toLowerCase()))
+      return props.clusters.length === 0
     })
     const handleBulkDelete = () => {
       emit('exec-command', {command: 'delete', data: cloneDeep(props.clusters)})

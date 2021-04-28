@@ -75,6 +75,11 @@ export default {
             command: 'saveAsTemplate',
           },
           {
+            label: 'Delete',
+            icon: 'ashbin',
+            command: 'delete'
+          },
+          {
             label: 'View Logs',
             icon: 'log',
             command: 'viewLog'
@@ -113,10 +118,10 @@ export default {
           command: 'viewLog'
         },
         {
-            label: 'Generate CLI Command',
-            icon: 'terminal',
-            command: 'generateCliCommand'
-          }
+          label: 'Generate CLI Command',
+          icon: 'terminal',
+          command: 'generateCliCommand'
+        }
       ]
     })
     const handleCommand = (command) => {
