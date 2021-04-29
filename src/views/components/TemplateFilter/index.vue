@@ -127,8 +127,8 @@ export default defineComponent({
       if (!t) {
         return ''
       }
-      if (t.provider === 'native') {
-        return `${t.provider} | ${t.name} | ${t.options.region} | ${t.options.zone}`
+      if (['native', 'k3d'].includes(t.provider)) {
+        return `${t.provider} | ${t.name}`
       }
       return `${t.provider} | ${t.name} | ${t.options.region} | ${t.options.zone}`
     })
