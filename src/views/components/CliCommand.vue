@@ -91,7 +91,7 @@ export default defineComponent({
         return []
       }
 
-      const arrayArgs = ['tags', 'labels', 'envs', 'volumes']
+      const arrayArgs = ['tags', 'labels', 'envs', 'volumes', 'ports']
       const excludeKeys = ['registry-content', 'registry']
       const ignoreValues = [null, undefined, '', false]
       const extraArgs = ['master-extra-args', 'worker-extra-args']
