@@ -7,7 +7,7 @@
       </template>
     </page-header>
     <loading :loading="loading || creating">
-      <k-alert v-if="currentProvider === 'native'" type="warning" title="Native provider only supports create and join."></k-alert>
+      <k-alert v-if="currentProvider === 'native'" type="warning" title="Native provider only supports create K3s cluster and join K3s nodes."></k-alert>
       <k-alert v-if="currentProvider === 'k3d'" type="warning" title="Highly recommended that K3d provider run in a Linux / Unix environment, do not run K3d provider in MacOS container environment."></k-alert>
       <div class="template-create-form__base-info">
         <k-select
