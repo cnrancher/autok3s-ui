@@ -10,7 +10,7 @@
     </h3>
     <template v-for="(ip, index) in ips" :key="index">
       <k-input :readonly="readonly" v-model.trim="ip.value" @change="debounceUpdate" placeholder="e.g. 192.168.1.22"></k-input>
-      <k-icon v-if="!readonly" class="ip-address-pool-form__remove" type="ashbin" @click="remove(index)" :size="28"></k-icon>
+      <k-icon v-if="!readonly" class="ip-address-pool-form__remove" type="ashbin" @click="remove(index)" :size="20"></k-icon>
       <div v-else></div>
     </template>
     <div class="ip-address-pool-form__actions">

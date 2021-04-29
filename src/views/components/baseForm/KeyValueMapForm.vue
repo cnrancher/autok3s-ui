@@ -22,7 +22,7 @@
       @change="debounceUpdate"
       placeholder="e.g. bar">
     </k-input>
-    <k-icon v-if="!readonly" class="key-value-map-form__remove" type="ashbin" @click="remove(index)" :size="22"></k-icon>
+    <k-icon v-if="!readonly" class="key-value-map-form__remove" type="ashbin" @click="remove(index)" :size="20"></k-icon>
     <div v-else></div>
   </template>
   <div class="key-value-map-form__actions">
