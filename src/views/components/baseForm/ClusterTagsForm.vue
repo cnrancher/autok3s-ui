@@ -13,7 +13,7 @@
   <template v-for=" (t, index) in tags" :key="index">
     <k-input :readonly="readonly" v-model.trim="t.label" @change="debounceUpdate" placeholder="e.g. foo"></k-input>
     <k-input :readonly="readonly" v-model.trim="t.value" @change="debounceUpdate" placeholder="e.g. bar"></k-input>
-    <k-icon v-if="!readonly" class="cluster-tags-form__remove" type="ashbin" @click="remove(index)" :size="28"></k-icon>
+    <k-icon v-if="!readonly" class="cluster-tags-form__remove" type="ashbin" @click="remove(index)" :size="20"></k-icon>
     <div v-else></div>
   </template>
   <div class="cluster-tags-form__actions">
