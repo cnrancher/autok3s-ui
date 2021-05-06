@@ -11,7 +11,7 @@ cd $(dirname $0)/..
 echo "Bootstrapping..."
 npm install
 
-source scripts/version.sh
+source scripts/version
 echo "BRANCH: ${COMMIT_BRANCH:-<none>}"
 echo "TAG: ${GIT_TAG:-<none>}"
 DIR="static"

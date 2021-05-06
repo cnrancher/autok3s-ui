@@ -24,7 +24,7 @@ steps:
 - name: build-tag
   image: node:lts
   commands:
-  - ./scripts/build-static.sh
+  - ./scripts/build-static
   when:
     event:
     - tag
