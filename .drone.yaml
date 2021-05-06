@@ -41,7 +41,7 @@ steps:
       from_secret: aws_access_secret
     source: dist/${DRONE_TAG}.tar.gz
     strip_prefix: dist/
-    target: /releases
+    target: /
   when:
     event:
     - tag
