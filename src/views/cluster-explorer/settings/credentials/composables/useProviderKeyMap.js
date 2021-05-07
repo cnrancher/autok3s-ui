@@ -1,9 +1,5 @@
 
 const PROVIDER_KEY_FIELD_MAP = {
-  native: {
-    key: 'access-key',
-    secret: 'access-secret',
-  },
   tencent: {
     key: 'secret-id',
     secret: 'secret-key'

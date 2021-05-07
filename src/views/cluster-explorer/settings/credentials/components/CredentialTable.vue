@@ -107,11 +107,12 @@ export default defineComponent({
     const confirmModalVisible = ref(false)
     const commandParams = ref([])
     const notificationStore = inject('notificationStore')
-    const {providerKeyMap, providerSecretMap} = useProviderKeyMap()
+    const {providerKeyMap, providerSecretMap, providerKeyFieldMap} = useProviderKeyMap()
     const {loading, error, credentials, fetchCredentials} = useCredentials()
     const data = computed(() => {
+      const providersWithCredential = Object.keys(providerKeyFieldMap)
       return credentials.value
-        .filter((c) => c.provider !== 'native')
+        .filter((c) => providersWithCredential.includes(c.provider))
         .map((c) => ({
           ...c,
           key: accessKeyFieldValue(c, providerKeyMap),

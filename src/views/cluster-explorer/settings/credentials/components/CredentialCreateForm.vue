@@ -86,14 +86,15 @@ export default defineComponent({
       return errors
     })
     const providerOptions = computed(() => {
+      const providersWithCredential = Object.keys(providerKeyFieldMap)
       const credencialProviders = credentials.value
         .reduce((t, c)=> {
-          if (!t.includes(c.provider)) {
+          if (!t.includes(c.provider) && providersWithCredential.includes(c.provider)) {
             t.push(c.provider)
           }
           return t
         }, [])
-      return providers.value.filter((p) => p.id !== 'native' && !credencialProviders.includes(p.id))
+      return providers.value.filter((p) => providersWithCredential.includes(p.id) && !credencialProviders.includes(p.id))
     })
     watchEffect(() => {
       if (providerOptions.value.length > 0 && !provider.value) {
