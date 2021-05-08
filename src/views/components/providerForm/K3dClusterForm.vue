@@ -14,7 +14,7 @@
               :readonly="readonly"
             />
             <string-form
-              v-model.trim="form.config['image']"
+              v-model.trim="form.options['image']"
               label="Image"
               :desc="desc.config['image']"
               :readonly="readonly"
@@ -59,21 +59,21 @@
         <template #default>
           <div class="k3d-options-form__content">
             <string-form
-              v-model.trim="form.config['masters-memory']"
+              v-model.trim="form.options['masters-memory']"
               label="Masters Memory"
-              :desc="desc.config['masters-memory']"
+              :desc="desc.options['masters-memory']"
               :readonly="readonly"
             />
             <string-form
-              v-model.trim="form.config['workers-memory']"
+              v-model.trim="form.options['workers-memory']"
               label="Workers Memory"
-              :desc="desc.config['workers-memory']"
+              :desc="desc.options['workers-memory']"
               :readonly="readonly"
             />
             <string-form
-              v-model.trim="form.config['token']"
+              v-model.trim="form.options['token']"
               label="Token"
-              :desc="desc.config['token']"
+              :desc="desc.options['token']"
               :readonly="readonly"
             />
             <string-form
@@ -137,6 +137,7 @@
             label="Registry"
             :desc="desc.config['registry']"
             :readonly="readonly"
+            type="textarea"
           />
           
         </template>
