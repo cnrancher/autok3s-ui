@@ -71,15 +71,15 @@
               :readonly="readonly"
             />
             <string-form
-              v-model.trim="form.options['token']"
+              v-model.trim="form.config['token']"
               label="Token"
-              :desc="desc.options['token']"
+              :desc="desc.config['token']"
               :readonly="readonly"
             />
             <string-form
-              v-model.trim="form.options['network']"
+              v-model.trim="form.config['network']"
               label="Network"
-              :desc="desc.options['network']"
+              :desc="desc.config['network']"
               :readonly="readonly"
             />
             <combo-box
