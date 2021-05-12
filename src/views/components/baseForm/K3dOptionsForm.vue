@@ -32,14 +32,13 @@
           :desc="desc.config['worker']"
           :readonly="readonly"
         />
-
-        <command-args
-          :args="workExtraArgs"
-          v-model="form.config['worker-extra-args']"
+        <string-form
+          v-model.trim="form.config['worker-extra-args']"
           label="Worker Extra Args"
           :desc="desc.config['worker-extra-args']"
           :readonly="readonly"
-          ></command-args>
+          placeholder="e.g. --node-taint key=value:NoExecute"
+        />
       </div>
     </template>
   </form-group>
@@ -78,13 +77,6 @@ export default defineComponent({
     const visible = toRef(props, 'visible')
     provide('parentVisible', visible)
     const masterExtraArgs = [{
-      long: '--docker',
-      alias: 'runtime',
-      flag: true,
-      values: ['docker', 'containerd'],
-      modelValue: true,
-      desc: '(agent/runtime) Automatic install docker on VM and use docker instead of containerd'
-    }, {
       long: '--no-deploy',
       alias: 'disable',
       multiple: true,
@@ -100,17 +92,8 @@ export default defineComponent({
       modelValue: 'vxlan',
       desc: `(networking) One of 'none', 'vxlan', 'ipsec', 'host-gw', or 'wireguard' (default: "vxlan")`
     }]
-    const workExtraArgs = [{
-      long: '--docker',
-      alias: 'runtime',
-      flag: true,
-      values: ['docker', 'containerd'],
-      modelValue: true,
-      desc: '(agent/runtime) Use docker instead of containerd'
-    }]
     return {
       masterExtraArgs,
-      workExtraArgs,
     }
   },
   components: {

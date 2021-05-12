@@ -104,7 +104,7 @@
               ref="envs"
               v-model="form.options['envs']"
               label="Environment Variables"
-              placeholder="e.g. HTTP_PROXY=my.proxy.com"
+              placeholder="e.g. HTTP_PROXY=my.proxy.com@server[0]"
               action-label="Add Variable"
               :desc="desc.options['envs']"
               :readonly="readonly"

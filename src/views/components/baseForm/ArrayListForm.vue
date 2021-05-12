@@ -65,7 +65,7 @@ export default defineComponent({
     const update = () => {
       emit('update:modelValue', items.value.map((item) => item.value))
     }
-    const debounceUpdate = debounce(update, 500)
+    const debounceUpdate = debounce(update, 300)
     const remove = (index) => {
       items.value.splice(index, 1)
       debounceUpdate()
