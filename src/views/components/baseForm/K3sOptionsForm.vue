@@ -127,6 +127,14 @@
           :desc="desc.config['registry-content']"
           :options="{readOnly: readonly}"
         />
+        <array-list-form
+          v-model="form.config['tls-sans']"
+          label="TLS Sans"
+          placeholder="e.g. 192.168.1.10"
+          action-label="Add IP/Hostname"
+          :desc="desc.config['tls-sans']"
+          :readonly="readonly"
+        />
       </div>
     </template>
   </form-group>
@@ -141,6 +149,7 @@ import KIcon from '@/components/Icon'
 import RegistryConfigForm from './RegistryConfigForm.vue'
 import FormGroup from './FormGroup.vue'
 import CommandArgs from './CommandArgs/index.vue'
+import ArrayListForm from '../baseForm/ArrayListForm.vue'
 
 export default defineComponent({
   props: {
@@ -224,6 +233,7 @@ export default defineComponent({
     CommandArgs,
     ComboBox,
     KIcon,
+    ArrayListForm,
   }
 })
 </script>
