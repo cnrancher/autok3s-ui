@@ -120,13 +120,6 @@
           :desc="desc.config['manifests']"
           :readonly="readonly"
         />
-        <registry-config-form
-          class="k3s-options-form__registry"
-          v-model="form.config['registry-content']"
-          label="Registry"
-          :desc="desc.config['registry-content']"
-          :options="{readOnly: readonly}"
-        />
         <array-list-form
           v-model="form.config['tls-sans']"
           label="TLS Sans"
@@ -134,6 +127,13 @@
           action-label="Add IP/Hostname"
           :desc="desc.config['tls-sans']"
           :readonly="readonly"
+        />
+        <registry-config-form
+          class="k3s-options-form__registry"
+          v-model="form.config['registry-content']"
+          label="Registry"
+          :desc="desc.config['registry-content']"
+          :options="{readOnly: readonly}"
         />
       </div>
     </template>
