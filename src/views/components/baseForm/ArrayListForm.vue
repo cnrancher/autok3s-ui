@@ -9,7 +9,7 @@
       </tooltip>
     </h4>
     <template v-for="(item, index) in items" :key="index">
-      <k-input :readonly="readonly" v-model.trim="item.value" @change="debounceUpdate" :placeholder="placeholder"></k-input>
+      <k-input :readonly="readonly" v-model.trim="item.value" @input="debounceUpdate" :placeholder="placeholder"></k-input>
       <k-icon v-if="!readonly" class="array-list-form__remove" type="ashbin" @click="remove(index)" :size="20"></k-icon>
       <div v-else></div>
     </template>
