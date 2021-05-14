@@ -29,6 +29,26 @@ steps:
     event:
     - tag
 
+- name: upload-latest
+  pull: default
+  image: plugins/s3
+  settings:
+    bucket: autok3s-ui
+    region: ap-southeast-2
+    acl: public-read
+    access_key:
+      from_secret: aws_access_id
+    secret_key:
+      from_secret: aws_access_secret
+    source: dist/static/**/*
+    strip_prefix: dist/static
+    target: /static
+  when:
+    branch:
+    - main
+    event:
+    - push
+
 - name: upload
   image: plugins/s3
   settings:
