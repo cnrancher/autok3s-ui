@@ -30,7 +30,8 @@ export default ({ command, mode }) => {
     define: {
       '__VERSION__': JSON.stringify(packageVersion)
     },
-    base: './',
+    // base: './',
+    base: process.env.UI_BASE_PATH ? process.env.UI_BASE_PATH : './',
     server: {
       proxy: {
         '/v1': {
