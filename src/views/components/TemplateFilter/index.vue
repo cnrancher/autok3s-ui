@@ -87,9 +87,9 @@ export default defineComponent({
     const { loading, templates, error } = toRefs(templateStore.state)
     const providerTemplates = computed(() => {
       if (props.provider) {
-        return templates.value.filter((t) => t.provider === props.provider)
+        return templates.value.filter((t) => t.provider === props.provider && !t.status)
       }
-      return templates.value
+      return templates.value.filter((t) => !t.status)
     })
     const {searchQuery, searchFields, dataMatchingSearchQuery} = useDataSearch(providerTemplates)
     const hoverIndex = ref(-1)

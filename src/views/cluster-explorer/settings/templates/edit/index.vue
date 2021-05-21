@@ -6,6 +6,7 @@
     <loading :loading="loading || updating">
       <k-alert v-if="currentProvider === 'native'" type="warning" title="Native provider only supports create K3s cluster and join K3s nodes."></k-alert>
       <k-alert v-if="currentProvider === 'k3d'" type="warning" title="Highly recommended that K3d provider run in a Linux / Unix environment, do not run K3d provider in MacOS container environment."></k-alert>
+      <k-alert v-if="warning" type="warning" :title="warning"></k-alert>
       <div class="template-create-form__base-info">
         <k-select
           v-model="currentProvider"
@@ -79,6 +80,7 @@ export default defineComponent({
     const name = ref('')
     const currentProvider = ref('')
     const isDefault = ref(false)
+    const warning = ref('')
 
     const updating = ref(false)
     const formErrors = ref([])
@@ -129,6 +131,7 @@ export default defineComponent({
       
       const template = cloneDeep(t)
       isDefault.value = template['is-default']
+      warning.value = template.status ?? ''
       const defaultVal = {
         config: Object.keys(template)
           .filter((k) => k != 'options')
@@ -234,6 +237,7 @@ export default defineComponent({
       goBack,
       save,
       isDefault,
+      warning,
     }
   },
   components: {

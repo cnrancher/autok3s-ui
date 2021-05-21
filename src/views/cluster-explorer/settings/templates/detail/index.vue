@@ -3,13 +3,14 @@
     <page-header>
       <template #title><router-link :to="{ name: 'ClusterExplorerSettingsTemplates' }">Template: </router-link>Detail {{name}}</template>
       <template #actions>
-        <router-link :to="{name: 'ClusterExplorerCoreClustersCreate', query: {templateId}}" class="btn role-secondary">Create Cluster</router-link>
+        <router-link :to="{name: 'ClusterExplorerCoreClustersCreate', query: {templateId}}" class="btn role-secondary" v-if="!warning">Create Cluster</router-link>
         <router-link :to="{name: 'ClusterExplorerSettingsTemplatesEdit', params: {templateId}}" class="btn role-secondary">Edit</router-link>
       </template>
     </page-header>
     <loading :loading="loading">
       <k-alert v-if="currentProvider === 'native'" type="warning" title="Native provider only supports create K3s cluster and join K3s nodes."></k-alert>
       <k-alert v-if="currentProvider === 'k3d'" type="warning" title="Highly recommended that K3d provider run in a Linux / Unix environment, do not run K3d provider in MacOS container environment."></k-alert>
+      <k-alert v-if="warning" type="warning" :title="warning"></k-alert>
       <form autocomplete="off">
         <div class="template-edit-form__base-info">
           <k-select
@@ -83,6 +84,7 @@ export default defineComponent({
     const name = ref('')
     const currentProvider = ref('')
     const isDefault = ref(false)
+    const warning = ref('')
 
     const formErrors = ref([])
     const providerSchema = reactive({
@@ -94,7 +96,6 @@ export default defineComponent({
 
     const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
     const {loading: templateLoading, error: loadTemplateError, templates} = toRefs(templateStore.state)
-
 
     const loading = computed(() => {
       return providersLoading.value || templateLoading.value
@@ -129,6 +130,7 @@ export default defineComponent({
       }
       const template = cloneDeep(t)
       isDefault.value = template['is-default']
+      warning.value = template.status ?? ''
       const defaultVal = {
         config: Object.keys(template)
           .filter((k) => k != 'options')
@@ -169,6 +171,7 @@ export default defineComponent({
       goBack,
       isDefault,
       formErrors,
+      warning,
     }
   },
   components: {
