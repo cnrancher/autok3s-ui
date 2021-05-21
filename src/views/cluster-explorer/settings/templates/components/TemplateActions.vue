@@ -50,6 +50,9 @@ export default {
           command: 'edit'
         },
       ]
+      if (props.template['status']) {
+        actions.splice(1, 1)
+      }
       if (props.template['is-default']) {
         actions.push({
           label: 'UnSet Default',

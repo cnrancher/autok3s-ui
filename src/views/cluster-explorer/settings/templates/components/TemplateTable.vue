@@ -23,7 +23,20 @@
       @selection-change="handleSelectionChange"
       >
       <k-table-column type="selection"></k-table-column>
-      <k-table-column sortable label="ID" field="id"></k-table-column>
+      <k-table-column sortable label="ID" field="id">
+        <template #default="{row, column}">
+          <div class="template-table__warning" v-if="row.status">
+            {{row[column.field]}}
+            <tooltip >
+              <k-icon type="warning" color="var(--error)"></k-icon>
+              <template #popover>{{row.status}}</template>
+            </tooltip>
+          </div>
+          <template v-else>
+            {{row[column.field]}}
+          </template>
+        </template>
+      </k-table-column>
       <k-table-column sortable label="Provider" field="provider"></k-table-column>
       <k-table-column sortable label="Default" field="is-default">
         <template #default="{row}">
@@ -83,6 +96,7 @@ import KButton from '@/components/Button'
 import Alert from '@/components/Alert'
 import KIcon from '@/components/Icon'
 import KInput from '@/components/Input'
+import Tooltip from '@/components/Tooltip'
 import {RadioGroup, RadioButton} from '@/components/Radio'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useTableState from '@/composables/useTableState.js'
@@ -228,6 +242,7 @@ export default defineComponent({
     KIcon,
     RadioGroup,
     RadioButton,
+    Tooltip,
   }
 })
 </script>
@@ -258,5 +273,9 @@ export default defineComponent({
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px 10px;
+}
+.template-table__warning {
+  display: flex;
+  align-items: center;
 }
 </style>
