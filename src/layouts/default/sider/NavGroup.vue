@@ -69,7 +69,6 @@ export default {
   padding: 5px 0;
   background: transparent;
   cursor: pointer;
-  color: var(--input-label);
   & > h6 {
     font-size: 14px;
     text-transform: none;
