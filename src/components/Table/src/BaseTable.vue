@@ -36,7 +36,7 @@ import useColumnStore from './store/useColumnStore.js'
 import useDataStore from './store/useDataStore.js'
 import {computed, watchEffect, toRefs, defineComponent, toRef, provide, h} from 'vue'
 
-const tableStatus = {loading: 'Loading', loaded: '', error: 'Load Data Failed', noResults: 'No Result', noData: 'No Data'}
+const tableStatus = {loading: 'Loading', loaded: '', error: 'Load Data Failed', noResults: 'No Result', noData: 'There are no rows to show.'}
 const defaultRenderGroup = (props) => [h('span', { class: 'k-table__group-by' }, `${props.groupColumn?.field}: `), h('span', {}, `${props.group}`)]
 export default defineComponent({
   name: 'BaseTable',
@@ -135,13 +135,13 @@ export default defineComponent({
   border-collapse: collapse;
   min-width: 400px;
   overflow: hidden;
-  box-shadow: 0 0 20px var(--shadow);
   background: var(--sortable-table-accent-bg);
   border-radius: 4px;
+  outline: 1px solid var(--border);
 }
 .k-table__status {
   text-align: center;
-  padding: 10px 10px;
+  padding: 30px 0px;
 }
 .k-table__group-by {
   color: var(--sortable-table-group-label);
@@ -151,7 +151,9 @@ export default defineComponent({
     border-bottom: 1px solid var(--sortable-table-top-divider);
     background-color: var(--body-bg);
 }
-.k-table > tbody > tr.group-row:first-child, .k-table > tbody > tr.group-row:last-child {
+.k-table > tbody > tr.group-row:first-child,
+.k-table > tbody > tr.group-row:last-child,
+.k-table > tbody.k-table-status--noData > tr {
   border-bottom: 0;
 }
 </style>

@@ -12,10 +12,13 @@ export function createStore() {
 
 function updateColumnOrder(state) {
   return (id, order) => {
-    const c = state.columns.find((c) => c.id === id)
-    if (c) {
-      c.order = order
-    }
+    state.columns.forEach(c => {
+      if (c.id === id) {
+        c.order = order
+        return
+      }
+      c.order = ''
+    });
   }
 }
 function addColumn(state) {

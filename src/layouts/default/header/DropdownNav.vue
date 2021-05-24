@@ -1,9 +1,9 @@
 <template>
   <k-dropdown>
     <div class="k-dropdown-nav__selected">
-      <img class="k-dropdown-nav__logo" :src="halfLogo">
+      <img class="k-dropdown-nav__logo" :src="k3sLogo">
       <div class="k-dropdown-nav__title">{{currentGroup.title}}</div>
-      <k-icon :size="20" type="arrow-right-blod" direction="down" color="#fff" :blod="true"></k-icon>
+      <k-icon :size="20" type="arrow-right-blod" direction="down" :blod="true"></k-icon>
     </div>
     <template #content>
       <ul class="k-dropdown-nav__options">
@@ -27,7 +27,7 @@
 <script>
 import KDropdown from '@/components/Dropdown'
 import KIcon from '@/components/Icon'
-import halfLogo from '@/assets/half-logo.svg'
+import k3sLogo from '@/assets/k3s.svg'
 export default {
   props: {
     routeGroups: {
@@ -44,7 +44,7 @@ export default {
   setup() {
 
     return {
-      halfLogo,
+      k3sLogo,
     }
   },
   components: {
@@ -56,15 +56,16 @@ export default {
 <style>
 .k-dropdown-nav__selected {
   display: grid;
-  grid-template-columns: auto 1fr 30px;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   height: 50px;
-  color: #fff;
   cursor: pointer;
-  background-color: var(--header-btn-bg);
+  background-color: var(--header-bg);
+  column-gap: 10px;
+  padding: 0 5px;
 }
 .k-dropdown-nav__logo {
-  height: 30px;
+  height: 32px;
   object-fit: contain;
 }
 .k-dropdown-nav__options {
@@ -103,7 +104,6 @@ export default {
   }
 }
 .k-dropdown-nav__title {
-  padding: 0 6px 0 20px;
   text-overflow: ellipsis;
 }
 </style>

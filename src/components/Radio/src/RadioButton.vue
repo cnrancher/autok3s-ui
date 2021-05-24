@@ -1,7 +1,7 @@
 <template>
   <label
-    class="k-radio-button"
-    :class="{'k-radio-button--active': model === label, disabled: isDisabled}">
+    class="k-radio-button btn"
+    :class="{'bg-primary': model === label, disabled: isDisabled, 'bg-disabled': model !== label}">
     <input
       ref="radioRef"
       type="radio"
@@ -68,14 +68,12 @@ export default defineComponent({
 </script>
 <style>
 .k-radio-button {
-  display: inline-grid;
+  display: grid;
   grid-template-areas: 'a';
   align-items: center;
   justify-items: center;
-  background-color: var(--disabled-bg);
-  color: var(--disabled-text);
-  padding: 10px 10px;
 }
+
 .k-radio-button:not(.disabled) {
   cursor: pointer;
 }
@@ -85,9 +83,5 @@ export default defineComponent({
 .k-radio-button__origin-radio, .k-radio-button__label {
   grid-area: a;
   /* pointer-events: none; */
-}
-.k-radio-button--active {
-  background-color: var(--primary);
-  color: var(--primary-text)
 }
 </style>

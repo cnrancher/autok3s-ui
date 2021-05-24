@@ -33,7 +33,7 @@
       <footer-actions>
         <router-link :to="{name: 'ClusterExplorerCoreClusters'}" class="btn role-secondary">Cancel</router-link>
         <k-button class="role-secondary" type="button" :loading="loading || creating" @click="showCliModal">Generate CLI Command</k-button>
-        <k-button class="bg-primary" type="button" :loading="loading || creating" @click="create">Create</k-button>
+        <k-button class="role-primary" type="button" :loading="loading || creating" @click="create">Create</k-button>
       </footer-actions>
       <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
       <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>

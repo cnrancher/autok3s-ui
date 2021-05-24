@@ -34,7 +34,7 @@
       <component v-if="providerSchema.config && providerSchema.options" ref="formRef" :schema="providerSchema" :is="clusterFormComponent"></component>
       <footer-actions>
         <router-link :to="{name: 'ClusterExplorerSettingsTemplates'}" class="btn role-secondary">Cancel</router-link>
-        <k-button class="bg-primary" type="button" :loading="loading || updating" @click="save">Save</k-button>
+        <k-button class="role-primary" type="button" :loading="loading || updating" @click="save">Save</k-button>
       </footer-actions>
       <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
       <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>

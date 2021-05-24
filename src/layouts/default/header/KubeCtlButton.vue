@@ -1,6 +1,6 @@
 <template>
-  <k-button class="k-kubectl-btn" @click="modalVisible=true">
-    <k-icon type="terminal" color="#fff"></k-icon>
+  <k-button class="k-kubectl-btn role-tertiary" @click="modalVisible=true">
+    <k-icon type="terminal"></k-icon>
     &nbsp; Launch Kubectl
   </k-button>
   <k-modal v-model="modalVisible">
@@ -20,7 +20,7 @@
       </template>
       <template #footer>
         <k-button class="role-secondary" @click="modalVisible = false">Cancel</k-button>
-        <k-button class="bg-primary" @click="showShell">Confirm</k-button>
+        <k-button class="role-primary" @click="showShell">Confirm</k-button>
       </template>
     </k-modal>
 </template>
@@ -94,13 +94,18 @@ export default defineComponent({
 </script>
 <style scoped>
 .k-kubectl-btn {
-  border: 1px solid var(--header-btn-bg);
-  background: rgba(0,0,0,.05);
+  border: none;
+  background: var(--header-btn-bg);
   color: var(--header-btn-text);
-  padding: 8px 13px;
-  line-height: 1.15em;
-  &:focus {
-    background: rgba(0,0,0,.05);
+  padding: 0 10px;
+  line-height: 32px;
+  min-height: 32px;
+  &:hover {
+    background: var(--primary);
+    color: #fff;
+  }
+  &.btn:focus {
+    box-shadow: none;
   }
 }
 </style>

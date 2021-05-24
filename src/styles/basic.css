@@ -83,7 +83,7 @@ hr.vertical {
   top: 0;
 }
 a {
-  color: var(--link-text);
+  color: var(--link);
   text-decoration: none;
 }
 a:hover, a:active {
@@ -94,47 +94,4 @@ a:hover, a:active {
 .section-divider {
   margin-bottom: 20px;
   margin-top: 20px;
-}
-
-.bg-primary {
-  background-color: var(--primary);
-  color: var(--primary-text)
-}
-.bg-info {
-  background-color: var(--info);
-  color: var(--info-text)
-}
-
-.bg-error {
-  background-color: var(--error);
-  color: var(--error-text)
-}
-
-.bg-warning {
-  background-color: var(--warning);
-  color: var(--warning-text)
-}
-
-.bg-success {
-  background-color: var(--success);
-  color: var(--success-text)
-}
-
-.text-primary {
-  color: var(--primary-text)
-}
-.text-info {
-  color: var(--info-text)
-}
-
-.text-error {
-  color: var(--error)
-}
-
-.text-warning {
-  color: var(--warning)
-}
-
-.text-success {
-  color: var(--success)
 }

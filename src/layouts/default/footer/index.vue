@@ -36,10 +36,12 @@ export default defineComponent({
   grid-template-columns: auto auto 1fr;
   align-items: center;
   border-top: thin solid var(--border);
-  padding: 10px 20px;
   column-gap: 40px;
+  height: 36px;
+  padding: 0 20px;
 }
 .k-footer__lang {
   justify-self: end;
+  cursor: pointer;
 }
 </style>

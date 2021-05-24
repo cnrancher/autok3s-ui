@@ -30,5 +30,6 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding-right: 20px;
+  border-bottom: var(--header-border-size) solid var(--header-border);
 }
 </style>

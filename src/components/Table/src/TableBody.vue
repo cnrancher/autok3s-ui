@@ -163,8 +163,11 @@ export default defineComponent({
   & > tr:last-of-type {
     border-bottom: 0;
   }
+  & > tr:not(.k-table__row-selected):hover {
+    background-color: var(--sortable-table-hover-bg);
+  }
   & td {
-    padding: 12px 5px;
+    padding: 8px 5px;
     border: 0;
   }
   & > tr.k-table__row-group {

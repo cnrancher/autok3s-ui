@@ -2,7 +2,7 @@
   <div class="cluster-bulk-action">
     <k-button
       :disabled="deleteDisabled"
-      class="bg-primary btn-sm"
+      class="role-primary"
       @click="handleBulkDelete">
       Delete
     </k-button>
