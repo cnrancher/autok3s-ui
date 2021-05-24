@@ -37,7 +37,7 @@
           <component v-if="providerSchema.config && providerSchema.options" ref="formRef" :has-error="hasError" :schema="providerSchema" :is="clusterFormComponent"></component>
           <footer-actions>
             <k-button class="btn role-secondary" @click="goToCreatePage">Advance</k-button>
-            <k-button class="bg-primary" type="button" :loading="loading || creating" @click="create">Create</k-button>
+            <k-button class="role-primary" type="button" :loading="loading || creating" @click="create">Create</k-button>
           </footer-actions>
           <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
           <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>

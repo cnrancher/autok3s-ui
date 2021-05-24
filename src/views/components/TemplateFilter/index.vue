@@ -14,7 +14,7 @@
       @keydown.tab="handleKeyESC"
       @keydown.enter.stop.prevent="handleKeyEnter">
       <div class="template-filter__display-value" v-show="!show">{{templateDisplayValue}}</div>
-      <button class="btn bg-primary btn-sm template-filter__btn"
+      <button class="btn role-primary btn-sm template-filter__btn"
         :disabled="!currentTemplate || loading || disabled"
         @click="handleApplyTemplate">Fill Form</button>
       <teleport to="body">
@@ -134,6 +134,7 @@ export default defineComponent({
     })
     watchEffect(() => {
       currentTemplate.value = props.modelValue
+      console.log(props.modelValue)
     })
 
     const handleFocus = () => {

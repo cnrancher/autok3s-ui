@@ -16,7 +16,7 @@ export default defineComponent({
     },
     size: {
       type: Number,
-      default: 14,
+      default: -1,
     },
     direction: {
       type: String,
@@ -38,7 +38,7 @@ export default defineComponent({
       if (props.color) {
         s['background-color'] = props.color
       }
-      if (props.size) {
+      if (props.size > 0) {
         s['font-size'] = `${props.size}px`
       }
       return s

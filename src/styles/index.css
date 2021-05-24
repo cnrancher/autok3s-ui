@@ -2,6 +2,7 @@
 @import './variables.css';
 @import './icons.css';
 @import './basic.css';
+@import "./themes/light.css";
 @import './typography.css';
 @import './form.css';
 @import "./fonts/fira.css";

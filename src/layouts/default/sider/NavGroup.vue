@@ -66,7 +66,7 @@ export default {
   display: grid;
   grid-template-columns: 1fr 22px;
   align-items: center;
-  padding: 5px 0;
+  padding: 8px 0;
   background: transparent;
   cursor: pointer;
   & > h6 {
@@ -83,32 +83,33 @@ export default {
   display: grid;
   grid-template-columns: 1fr;
   align-items: center;
-  border-left: 5px solid transparent;
-  height: 40px;
   padding: 7.5px 7px 7.5px 10px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--link-text);
+  color: var(--body-text);
   text-decoration: none;
+  border-left: 5px solid transparent;
+  line-height: 16px;
+  font-size: 13px;
   &:hover {
-    background: var(--dropdown-hover-bg);
+    background: var(--nav-hover);
     text-decoration: none;
     color: var(--body-text);
-    & > .k-nav-group-link__icon {
-      background-color: var(--body-text) !important;
+    
+    & i {
+      background-color: var(--body-text);
     }
   }
   &.router-link-active {
     background-color: var(--nav-active);
-    border-left-color: var(--primary);
     color: var(--body-text);
     & > .k-nav-group-link__icon {
       background-color: var(--body-text) !important;
     }
   }
   & > .k-nav-group-link__icon {
-    background-color: var(--muted) !important;
+    background-color: var(--muted);
   }
   &:focus {
     outline: none;
@@ -118,10 +119,13 @@ export default {
   grid-template-columns: 20px 1fr;
 }
 .k-nav-group__children {
-  margin: 0 0 5px 0;
+  margin: 0;
   padding: 0;
   list-style-type: none;
   display: none;
+  & > li {
+    margin: 0;
+  }
 }
 .k-nav-group--expanded {
   display: block;

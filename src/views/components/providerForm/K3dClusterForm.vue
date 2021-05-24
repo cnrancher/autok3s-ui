@@ -138,8 +138,8 @@
             :desc="desc.config['registry']"
             :readonly="readonly"
             type="textarea"
+            :style="{resize: 'vertical'}"
           />
-          
         </template>
       </form-group>
     </tab-pane>

@@ -77,7 +77,7 @@ export default defineComponent({
   justify-content: center;
 }
 .k-table__header {
-  padding: 12px 5px;
+  padding: 8px 5px;
   font-weight: 400;
   border: 0;
 }
@@ -88,5 +88,7 @@ export default defineComponent({
 }
 .k-table__header-row {
   background-color: var(--sortable-table-header-bg);
+  border-bottom: 1px solid var(--sortable-table-top-divider);
+  text-align: left;
 }
 </style>

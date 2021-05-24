@@ -2,7 +2,7 @@
   <div class="credential-bulk-action">
     <k-button
       :disabled="deleteDisabled"
-      class="bg-primary btn-sm"
+      class="role-primary"
       @click="handleBulkDelete">
       Delete
     </k-button>

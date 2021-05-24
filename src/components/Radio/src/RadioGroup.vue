@@ -1,6 +1,6 @@
 <template>
   <div
-    class="k-radio-group"
+    class="k-radio-group btn-group"
     :class="{disabled: disabled}">
     <slot></slot>
   </div>

@@ -48,9 +48,8 @@ select,
 textarea,
 .k-input,
 .k-select,
-.k-radio,
-.k-radio-button,
-.k-radio-group {
+.k-combo-box,
+.k-radio {
   &.disabled, &.disabled .selected, &[disabled], &[disabled]:hover {
     color: var(--input-disabled-text);
     background-color: var(--input-disabled-bg);
@@ -65,5 +64,8 @@ textarea,
     &::placeholder {
         color: var(--input-disabled-placeholder);
     }
+  }
+  &:not(.disabled,[disabled]):hover {
+    background: var(--input-hover-bg);
   }
 }

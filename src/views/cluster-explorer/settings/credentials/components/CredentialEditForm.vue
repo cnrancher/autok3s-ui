@@ -34,7 +34,7 @@
   </div>
   <footer-actions>
     <router-link :to="{name: 'ClusterExplorerSettingsCredentials'}" class="btn role-secondary">Cancel</router-link>
-    <k-button class="bg-primary" :loading="loading" @click="save">Save</k-button>
+    <k-button class="role-primary" :loading="loading" @click="save">Save</k-button>
   </footer-actions>
   <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>
 </div>

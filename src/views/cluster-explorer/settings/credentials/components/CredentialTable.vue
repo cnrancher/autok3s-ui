@@ -5,7 +5,7 @@
       Credentials
     </template>
     <template #actions>
-        <router-link v-if="credentials.length < 3" :to="{name: 'ClusterExplorerSettingsCreate'}" class="btn bg-primary">Create</router-link>
+        <router-link v-if="credentials.length < 3" :to="{name: 'ClusterExplorerSettingsCreate'}" class="btn role-primary">Create</router-link>
         <tooltip v-else>
           <k-button class="btn bg-primary" disabled>Create</k-button>
           <template #popover>当前版本每个provider仅支持保存一个credential信息</template>
@@ -70,7 +70,7 @@
       </template>
       <template #footer>
         <k-button class="role-secondary" @click="confirmModalVisible = false">Cancel</k-button>
-        <k-button class="bg-error" @click="deleteCredencials(commandParams)">Delete</k-button>
+        <k-button class="bg-error role-primary" @click="deleteCredencials(commandParams)">Delete</k-button>
       </template>
     </k-modal>
 </div>

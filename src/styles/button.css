@@ -5,20 +5,34 @@
   --btn-sm-height: 30px;
 }
 
+/*
+-----------------------------------------------------------------------------
+ This file contains all styles related to the button component.
+-----------------------------------------------------------------------------
+*/
+
 .btn,
 button,
 [class^='btn-'] {
+  display: inline-block;
+  text-align: center;
   white-space: nowrap;
+  vertical-align: middle;
   cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
-  border: 1px solid transparent;
+  border: 0;
   padding: var(--btn-padding);
   border-radius: var(--border-radius);
-  color: white;
-  padding: 15px 40px;
+  color: var(--lightest);
+  line-height: var(--btn-height);
+  min-height: var(--btn-height);
 
   &:hover {
     text-decoration: none;
+    color: var(--lightest);
   }
 
   &.bg-transparent {
@@ -26,6 +40,7 @@ button,
   }
 }
 
+/* icon button */
 .icon-btn {
   padding: 0;
   line-height: initial;
@@ -34,7 +49,7 @@ button,
     padding: 0;
   }
 
-  & span {
+  span {
     padding: 0 10px 0 5px;
     vertical-align: middle;
   }
@@ -44,12 +59,24 @@ button,
 .btn-group-sm > .btn,
 .btn-sm .btn-label {
   padding: var(--btn-sm-padding);
-  height: var(--btn-sm-height);
-  line-height: 14px;
+  min-height: var(--btn-sm-height);
+  line-height: 28px;
 }
 
+/* btn roles */
 .role-primary {
-  background: var(--link-text);
+  background: var(--primary);
+  color: var(--primary-text);
+  border: solid thin var(--primary);
+  &:hover {
+    background-color: var(--primary-hover-bg);
+    color: var(--primary-text);
+  }
+
+  &:focus {
+    background-color: var(--primary-hover-bg);
+    color: var(--primary-text);
+  }
 }
 
 .role-secondary {
@@ -60,22 +87,19 @@ button,
 
 .role-tertiary {
   background: var(--accent-btn);
-  border: solid thin var(--link-text);
-  color: var(--link-text);
+  border: solid thin var(--primary);
+  color: var(--primary);
 }
 
 .role-link {
   background: transparent;
-  color: var(--link-text) !important;
-  padding: var(--btn-padding);
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  color: var(--link) !important;
 }
 
 .role-multi-action {
   background: var(--accent-btn);
-  border: solid thin var(--link-text);
-  color: var(--link-text);
+  border: solid thin var(--primary);
+  color: var(--primary);
   border-radius: 2px;
 }
 
@@ -83,14 +107,17 @@ button,
   font-size: 1.5em;
 }
 
+/* disabled */
 .btn-disabled,
 .btn.disabled,
 .btn[disabled],
 fieldset[disabled] .btn {
-  background-color: var(--disabled-bg) !important;
-  color: var(--disabled-text) !important;
   cursor: not-allowed;
-  border: solid thin var(--input-disabled-border);
+  color: var(--disabled-text) !important;
+  &:not(.role-link){
+    border: solid thin var(--input-disabled-border);
+    background-color: var(--disabled-bg) !important;
+  }
 }
 
 .btn-group {
@@ -99,12 +126,31 @@ fieldset[disabled] .btn {
   vertical-align: middle;
   padding: 0;
   border-radius: var(--border-radius);
-
   & .btn {
     position: relative;
-    display: inline-block;
+    /* display: inline-block; */
     border-radius: 0;
     text-align: center;
+    &:focus {
+      /* Move the focused one to the top so that the focus ring is all visible */
+      z-index: 1;
+    }
+
+    &.active {
+      background-color: var(--primary);
+      color: var(--primary-text);
+
+      &.btn:hover {
+        color: var(--primary-hover-text);
+        background: var(--primary-hover-bg);
+        transition: all 0.3s ease;
+      }
+
+      &.btn:active {
+        color: var(--primary-active-text);
+        background: var(--primary-active-bg);
+      }
+    }
 
     &:first-child {
       border-top-left-radius: var(--border-radius);
@@ -115,5 +161,10 @@ fieldset[disabled] .btn {
       border-top-right-radius: var(--border-radius);
       border-bottom-right-radius: var(--border-radius);
     }
+  }
+
+  & .btn[disabled] {
+    /* Ensure disabled button's border remains as-is, otherwise button appears vertically shorter than others in group */
+    border: inherit;
   }
 }

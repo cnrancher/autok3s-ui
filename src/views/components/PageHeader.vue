@@ -11,13 +11,15 @@
 .page-header {
   display: grid;
   grid-template-areas: "title actions"
-                       "subtitle actions";
+                       "subtitle subtitle";
   grid-template-columns: 1fr auto;
   margin-bottom: 20px;
   align-items: center;
+  min-height: 48px;
 }
 .page-head__title {
   grid-area: title;
+  margin: 0 0;
   & a {
     color: var(--link-text);
   }
@@ -31,9 +33,5 @@
   display: grid;
   grid-auto-flow: column;
   column-gap: 10px;
-  & button.btn{
-    color: var(--link-text);
-    background: var(--tooltip-bg);
-  }
 }
 </style>

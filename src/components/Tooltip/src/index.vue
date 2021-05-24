@@ -109,12 +109,11 @@ export default defineComponent({
   align-items: center;
 }
 .k-tooltip {
-  background: #333;
-  color: white;
-  font-weight: bold;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 4px;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
+  border-radius: var(--border-radius);
+  padding: 8px;
+  /* font-size: 12px; */
   position: absolute;
   display: none;
   max-width: 80vw;
