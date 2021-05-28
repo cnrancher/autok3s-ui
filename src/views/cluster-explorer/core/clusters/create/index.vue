@@ -368,6 +368,9 @@ export default defineComponent({
     const showCliModal = () => {
       cliModalVisible.value = true
       clusterForm.value = formRef.value?.getForm()
+      if (clusterForm.value.config) {
+        clusterForm.value.config.name = name.value
+      }
     }
 
     return {
