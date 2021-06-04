@@ -134,7 +134,6 @@ export default defineComponent({
     })
     watchEffect(() => {
       currentTemplate.value = props.modelValue
-      console.log(props.modelValue)
     })
 
     const handleFocus = () => {
