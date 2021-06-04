@@ -7,6 +7,7 @@ export function createStore() {
   const state = {
     options: [],
     value: null,
+    values: null,
     loading: false,
     errors: [],
   }
@@ -42,11 +43,33 @@ function setValue(state) {
     return false
   }
 }
+function setValues(state) {
+  return (values = []) => {
+    if (values.length === 0) {
+      state.values = []
+      return true
+    }
+    const option = values.every((item) => state.options.find((o) => o.value === item))
+    if (option) {
+      values.forEach((v) => {
+        const i = state.values?.indexOf(v)
+        if (i > -1) {
+          state.values.splice(i, 1)
+        } else {
+          state.values.push(v)
+        }
+      })
+      return true
+    }
+    return false
+  }
+}
 
 function clear(state) {
   return () => {
-    state.options = null
+    state.options = []
     state.value = null
+    state.values = []
     state.errors = []
   }
 }
@@ -56,9 +79,15 @@ function activeOption(state) {
     return state.options.find((item) => item.value === state.value)
   })
 }
+function activeOptions(state) {
+  return computed(() => {
+    return state.values?.map((v) => state.options.find((o) => o.value === v)) ?? []
+  })
+}
 export function createGetter(state) {
   return {
-    activeOption: activeOption(state)
+    activeOption: activeOption(state),
+    activeOptions: activeOptions(state)
   }
 }
 export function createAction(state) {
@@ -66,6 +95,7 @@ export function createAction(state) {
     addOption: addOption(state),
     removeOption: removeOption(state),
     setValue: setValue(state),
+    setValues: setValues(state),
     clear: clear(state)
   }
 }

@@ -171,12 +171,23 @@
     </tab-pane>
     <tab-pane label="Additional Options" name="additional">
       <div class="tencent-cluster-create-form__content">
-        <boolean-form
+        <!-- <boolean-form
           v-model="form.config['ui']"
           label="UI"
           :desc="desc.config['ui']"
           :readonly="readonly"
-        />
+        /> -->
+        <k-select
+          v-model="uiOptions"
+          :desc="desc.config['enable']"
+          label="UI"
+          :disabled="readonly"
+          placeholder="Disable"
+          multiple
+        >
+          <k-option value="explorer" label="explorer"></k-option>
+          <k-option value="dashboard" label="dashboard"></k-option>
+        </k-select>
         <boolean-form
           v-model="form.options['cloud-controller-manager']"
           label="Cloud Controller Manager"
@@ -196,7 +207,7 @@
 </template>
 <script>
 import { cloneDeep } from '@/utils'
-import {defineComponent, ref} from 'vue'
+import {defineComponent, ref, computed} from 'vue'
 import {Tabs, TabPane} from '@/components/Tabs'
 import KInput from '@/components/Input'
 import BooleanForm from '../baseForm/BooleanForm.vue'
@@ -205,6 +216,7 @@ import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
 import ClusterTagsForm from '../baseForm/ArrayListForm.vue'
 import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
+import {Select as KSelect, Option as KOption} from '@/components/Select'
 import { PasswordInput as PasswordForm} from '@/components/Input'
 import { Collapse, CollapseItem } from '@/components/Collapse'
 import useFormFromSchema from '../../composables/useFormFromSchema.js'
@@ -229,6 +241,20 @@ export default defineComponent({
       }
       acitiveTab.value = 'instance'
     }
+    const uiOptions = computed({
+      get() {
+        if (form.config.enable) {
+          return form.config.enable
+        }
+        if (form.config.ui) {
+          return ['dashboard']
+        }
+        return []
+      },
+      set(v) {
+        form.config.enable = v
+      }
+    })
     updateActiveTab()
 
     const tags = ref(null)
@@ -244,6 +270,7 @@ export default defineComponent({
       acitiveTab,
       getForm,
       tags,
+      uiOptions,
     }
   },
   components: {
@@ -260,6 +287,8 @@ export default defineComponent({
     ClusterTagsForm,
     SshPrivateForm,
     FormGroup,
+    KSelect,
+    KOption,
   }
 })
 </script>

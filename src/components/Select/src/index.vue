@@ -11,7 +11,16 @@
       <slot name="prefix">{{prefix}}</slot>
     </div>
     <dropdown class="k-select__trigger" :option="popperOption" :append-to-body="false" :disabled="disabled" :lazy="false">
+      <div v-if="multiple" class="k-select__tags">
+        <span class="k-select__placeholder" v-if="selectdOptions.length === 0">{{placeholder}}</span>
+        <template v-else>
+          <k-tag class="k-select__tag" type="info" v-for="o in selectdOptions" :key="o.value">
+            {{o.label}}
+            <k-icon type="close" class="k-select__tag-close" @click.stop="removeOption(o.value)"></k-icon></k-tag>
+        </template>
+      </div>
       <input
+        v-else
         autocomplete="off"
         readonly
         :disabled="disabled || loading"
@@ -37,6 +46,7 @@ import {computed, defineComponent, nextTick, onMounted, provide, watch, watchEff
 import {useIdGenerator} from '@/utils/idGenerator.js'
 import { Dropdown }from '@/components/Dropdown'
 import KIcon from '@/components/Icon'
+import KTag from '@/components/Tag'
 import Tooltip from '@/components/Tooltip'
 import useStore from './store/useStore.js'
 const getId = useIdGenerator(0, 'labeled-select_');
@@ -67,8 +77,12 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    multiple: {
+      type: Boolean,
+      default: false,
+    },
     modelValue: {
-      type: [String, Number, Boolean]
+      type: [String, Number, Boolean, Array]
     },
     disabled: {
       type: Boolean,
@@ -90,19 +104,25 @@ export default defineComponent({
   setup(props, {emit, slots}) {
     const selectStore = useStore()
     provide('selectStore', selectStore)
+    provide('multiple', props.multiple)
     const inputId = getId()
     const selectedLabel = computed(() => {
       return selectStore.getter.activeOption?.label
     })
-    watchEffect(() => {
+    const selectdOptions = computed(() => {
+      return selectStore.getter.activeOptions
+    })
+    watch(() => props.loading, () => {
       if (props.modelValue !== undefined && !props.loading ) {
         nextTick(() => {
-          const result = selectStore.action.setValue(props.modelValue)
+          const result = props.multiple ? selectStore.action.setValues(props.modelValue) : selectStore.action.setValue(props.modelValue)
           if (!result) {
             emit('update:modelValue', null)
           }
         })
       }
+    }, {
+      immediate: true
     })
 
     watch(() => selectStore.state.value, () => {
@@ -111,6 +131,16 @@ export default defineComponent({
       }
       emit('change', selectStore.state.value)
       emit('update:modelValue', selectStore.state.value)
+    })
+    watch(() => selectStore.state.values, () => {
+      const values = selectStore.state.values
+      if (values?.length === props.modelValue?.length && values?.every((v) => props.modelValue?.includes(v))) {
+        return
+      }
+      emit('change', selectStore.state.values)
+      emit('update:modelValue', selectStore.state.values)
+    }, {
+      deep: true
     })
     const minWithModifier = useMinWithModifier()
     const popperOption = {
@@ -125,16 +155,22 @@ export default defineComponent({
       ],
       placement: 'bottom-start'
     }
+    const removeOption = (v) => {
+      selectStore.action.setValues([v])
+    }
     return {
       inputId,
       selectedLabel,
+      selectdOptions,
       popperOption,
+      removeOption,
     }
   },
   components: {
     Dropdown,
     KIcon,
     Tooltip,
+    KTag,
   }
 })
 </script>
@@ -195,5 +231,19 @@ export default defineComponent({
 }
 .k-select--no-label {
   padding: 9px 0;
+}
+.k-select__tags {
+  display: flex;
+}
+.k-select__tag {
+  display: flex;
+  align-items: center;
+  margin-right: 2px;
+}
+.k-select__tag-close {
+  cursor: pointer;
+}
+.k-select__placeholder {
+  color: #777;
 }
 </style>
