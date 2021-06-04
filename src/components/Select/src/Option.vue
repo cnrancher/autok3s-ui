@@ -1,7 +1,7 @@
 <template>
   <dropdown-menu-item
     class="k-option"
-    :class="{'k-option--selected': currentValue === value}"
+    :class="{'k-option--selected': currentValue.includes(value)}"
     @click="setValue">
     {{label ?? value}}
   </dropdown-menu-item>
@@ -23,6 +23,7 @@ export default defineComponent({
   },
   setup() {
     const selectStore = inject('selectStore')
+    const multiple = inject('multiple')
     if (!selectStore) {
       console.warn('selectStore not provide')
       return
@@ -33,10 +34,19 @@ export default defineComponent({
       selectStore.action.removeOption(currentOption)
     })
     const currentValue = computed(() => {
-      return selectStore.state.value
+      if (multiple) {
+        return selectStore.state.values ?? []
+      }
+      return [selectStore.state.value]
     })
-    const setValue = () => {
-      selectStore.action.setValue(currentOption.value)
+    const setValue = (e) => {
+      if (multiple) {
+        e.stopPropagation()
+        selectStore.action.setValues([currentOption.value])
+      } else {
+        selectStore.action.setValue(currentOption.value)
+      }
+      
     }
     return {
       currentValue,

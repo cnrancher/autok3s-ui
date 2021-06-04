@@ -92,18 +92,29 @@
     </tab-pane>
     <tab-pane label="Additional Options" name="additional">
       <div class="native-cluster-create-form__content">
-        <boolean-form
+        <!-- <boolean-form
           v-model="form.config['ui']"
           label="UI"
           :desc="desc.config['ui']"
           :readonly="readonly"
-        />
+        /> -->
+        <k-select
+          v-model="uiOptions"
+          :desc="desc.config['enable']"
+          label="UI"
+          :disabled="readonly"
+          placeholder="Disable"
+          multiple
+        >
+          <k-option value="explorer" label="explorer"></k-option>
+          <k-option value="dashboard" label="dashboard"></k-option>
+        </k-select>
       </div>
     </tab-pane>
   </tabs>
 </template>
 <script>
-import {defineComponent, ref} from 'vue'
+import {defineComponent, ref, computed} from 'vue'
 import {Tabs, TabPane} from '@/components/Tabs'
 import KInput from '@/components/Input'
 import BooleanForm from '../baseForm/BooleanForm.vue'
@@ -112,6 +123,7 @@ import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
 import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
+import {Select as KSelect, Option as KOption} from '@/components/Select'
 import KIcon from '@/components/Icon'
 import { PasswordInput as PasswordForm} from '@/components/Input'
 import { Collapse, CollapseItem } from '@/components/Collapse'
@@ -132,6 +144,20 @@ export default defineComponent({
     const masterIps = ref(null)
     const workerIps = ref(null)
     const { form, desc }= useFormFromSchema(props.schema)
+    const uiOptions = computed({
+      get() {
+        if (form.config.enable) {
+          return form.config.enable
+        }
+        if (form.config.ui) {
+          return ['dashboard']
+        }
+        return []
+      },
+      set(v) {
+        form.config.enable = v
+      }
+    })
     const getForm = () => {
       const f = cloneDeep(form)
       f.options['master-ips'] = masterIps.value.getForm().filter((v) => v).join(',')
@@ -152,6 +178,7 @@ export default defineComponent({
       masterIps,
       workerIps,
       acitiveTab,
+      uiOptions,
     }
   },
   components: {
@@ -169,6 +196,8 @@ export default defineComponent({
     SshPrivateForm,
     FormGroup,
     KIcon,
+    KSelect,
+    KOption,
   }
 })
 </script>
