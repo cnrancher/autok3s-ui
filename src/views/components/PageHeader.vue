@@ -20,9 +20,6 @@
 .page-head__title {
   grid-area: title;
   margin: 0 0;
-  & a {
-    color: var(--link-text);
-  }
 }
 .page-header__subtitle {
   grid-area: subtitle;
