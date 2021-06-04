@@ -102,6 +102,11 @@ button,
   color: var(--primary);
   border-radius: 2px;
 }
+.actions.role-multi-action {
+  background-color: transparent;
+  border: none;
+  font-size: 18px;
+}
 
 .icon-group i {
   font-size: 1.5em;
