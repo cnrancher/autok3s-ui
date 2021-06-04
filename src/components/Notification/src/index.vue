@@ -137,5 +137,6 @@ export default defineComponent({
 .k-notification--info {
   background-color: var(--info);
   color: var(--info-text);
+  border-left-color: #297db4;
 }
 </style>
