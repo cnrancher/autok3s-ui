@@ -7,7 +7,7 @@
   --primary-hover-text: #fff;
   --primary-active-bg: #1b5276;
   --primary-active-text: #fff;
-  --primary-border: #($primary);
+  --primary-border: var(--primary);
   --primary-banner-bg: rgba(61,152,211,0.15);
   --primary-light-bg: rgba(61,152,211,0.05);
 
@@ -39,7 +39,7 @@
   --success-hover-text: #fff;
   --success-active-bg: #2d4a2d;
   --success-active-text: #fff;
-  --success-border: #($success);
+  --success-border: var(--success);
   --success-banner-bg: rgba(93,153,93,0.15);
   --success-light-bg: rgba(93,153,93,0.05);
 
@@ -204,7 +204,7 @@
   --diff-linenum-bg: var(--nav-bg);
   --diff-linenum: var(--muted);
   --diff-linenum-border: var(--border);
-  --diff-line-ins-bg: $success;
+  --diff-line-ins-bg: var(--success);
   --diff-line-del-bg: rgba(246,71,71,0.75);
   --diff-del-bg: rgba(246,71,71,0.3);
   --diff-del-border: #f64747;
