@@ -1,5 +1,5 @@
 <template>
-  <k-button class="k-kubectl-btn role-tertiary" @click="modalVisible=true">
+  <k-button class="k-kubectl-btn role-primary" @click="modalVisible=true">
     <k-icon type="terminal"></k-icon>
     &nbsp; Launch Kubectl
   </k-button>
@@ -95,17 +95,8 @@ export default defineComponent({
 <style scoped>
 .k-kubectl-btn {
   border: none;
-  background: var(--header-btn-bg);
-  color: var(--header-btn-text);
   padding: 0 10px;
   line-height: 32px;
   min-height: 32px;
-  &:hover {
-    background: var(--primary);
-    color: #fff;
-  }
-  &.btn:focus {
-    box-shadow: none;
-  }
 }
 </style>
