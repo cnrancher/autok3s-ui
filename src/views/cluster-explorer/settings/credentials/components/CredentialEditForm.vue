@@ -19,14 +19,14 @@
       :key="p"
       >
       <password-input
-        v-model.trim="form[p][v.key]"
-        :label="startCase(v.key)"
+        v-model.trim="form[p].key"
+        :label="form[p].keyLabel"
         required
         v-show="p === provider"
       />
       <password-input
-        v-model.trim="form[p][v.secret]"
-        :label="startCase(v.secret)"
+        v-model.trim="form[p].secret"
+        :label="form[p].secretLabel"
         required
         v-show="p === provider"
       />
@@ -72,8 +72,10 @@ export default defineComponent({
     const form = reactive(Object.entries(providerKeyFieldMap)
       .reduce((t, [k, v]) => {
         t[k] = {
-            [v.key]: '',
-            [v.secret]: '',
+          keyLabel: startCase(v.key),
+          secretLabel: startCase(v.secret),
+          key: '',
+          secret: '',
           }
         return t
       }, {}))
@@ -104,17 +106,23 @@ export default defineComponent({
         return
       }
       if (credential.value) {
-        form[credential.value.provider] = {...credential.value.secrets}
+        form[credential.value.provider] = {
+          ...form[credential.value.provider],
+          key: credential.value.secrets[providerKeyFieldMap[credential.value.provider].key],
+          secret: credential.value.secrets[providerKeyFieldMap[credential.value.provider].secret]
+        }
         provider.value = credential.value.provider
       }
     })
     const validate = () => {
-      const errors = Object.entries(form[credential.value.provider] ?? {}).reduce((t, [k, v]) => {
-        if (!v) {
-          t.push(`"${startCase(k)}" is required`)
-        }
-        return t
-      }, [])
+      const errors = []
+      const {key, secret, keyLabel, secretLabel} = form[credential.value.provider]
+      if (!key) {
+        errors.push(`"${keyLabel}" is required`)
+      }
+      if (!secret) {
+        errors.push(`"${secretLabel}" is required`)
+      }
       formErrors.value = errors
       return errors.length === 0
     }
@@ -123,9 +131,14 @@ export default defineComponent({
         return
       }
       saving.value = true
+      const { key, secret } = form[credential.value.provider]
+
       const postData = {
         provider: credential.value.provider,
-        secrets: { ...form[credential.value.provider] }
+        secrets: {
+          [providerKeyFieldMap[provider.value].key]: key,
+          [providerKeyFieldMap[provider.value].secret]: secret
+        }
       }
       try {
         await updateCredential(credential.value.id, postData)
