@@ -117,7 +117,12 @@ export default defineComponent({
         // }
         return v
       }
-      const options = [ ['--provider', provider], ...Object.entries(props.clusterForm.config), ...Object.entries(props.clusterForm.options)]
+      let configEntries = Object.entries(props.clusterForm.config)
+      if (props.clusterForm.provider === 'native') {
+        const excludeConfigKeys = ['worker', 'master']
+        configEntries = configEntries.filter(([k]) => !excludeConfigKeys.includes(k))
+      }
+      const options = [ ['--provider', provider], ...configEntries, ...Object.entries(props.clusterForm.options)]
         .filter(([k, v]) => filterArgs(k, v))
         .reduce((t, [k, v]) => {
           if (arrayArgs.includes(k)) {
