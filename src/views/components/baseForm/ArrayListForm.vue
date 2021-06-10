@@ -3,10 +3,10 @@
     <h4 class="array-list-form__label">
       {{label}}
       <sup v-if="required" class="k-form-item--required">*</sup>
-      <tooltip v-if="desc">
+      <k-tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
         <template #popover>{{desc}}</template>
-      </tooltip>
+      </k-tooltip>
     </h4>
     <template v-for="(item, index) in items" :key="index">
       <k-input :readonly="readonly" v-model.trim="item.value" @input="debounceUpdate" :placeholder="placeholder"></k-input>
@@ -21,12 +21,9 @@
 </template>
 <script>
 import {defineComponent, ref} from 'vue'
-import KInput from '@/components/Input'
-import KButton from '@/components/Button'
-import KIcon from '@/components/Icon'
-import Tooltip from '@/components/Tooltip'
 import { debounce } from 'lodash-es'
 export default defineComponent({
+  name: 'ArrayListForm',
   props: {
     modelValue: {
       type: Array,
@@ -88,12 +85,6 @@ export default defineComponent({
       getForm,
     }
   },
-  components: {
-    KInput,
-    KIcon,
-    KButton,
-    Tooltip
-  }
 })
 </script>
 <style>

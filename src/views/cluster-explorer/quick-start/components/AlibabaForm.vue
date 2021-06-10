@@ -10,14 +10,14 @@
       label="Worker"
       :desc="desc.config['worker']"
     />
-    <password-form
+    <k-password-input
       v-show="showKeyForm"
       v-model.trim="form.options['access-key']"
       label="Access Key"
       :desc="desc.options['access-key']"
       required
     />
-    <password-form
+    <k-password-input
       v-show="showKeyForm"
       v-model.trim="form.options['access-secret']"
       label="Access Secret"
@@ -41,7 +41,6 @@
 <script>
 import {computed, defineComponent} from 'vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
-import { PasswordInput as PasswordForm} from '@/components/Input'
 import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
 
@@ -72,7 +71,6 @@ export default defineComponent({
     }
   },
   components: {
-    PasswordForm,
     StringForm,
   }
 })

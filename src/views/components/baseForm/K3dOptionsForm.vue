@@ -47,14 +47,12 @@
 import {defineComponent, provide, toRef, ref, watch} from 'vue'
 import StringForm from './StringForm.vue'
 import BooleanForm from './BooleanForm.vue'
-import {Select as KSelect, Option as KOption} from '@/components/Select'
-import {ComboBox} from '@/components/ComboBox'
-import KIcon from '@/components/Icon'
 import FormGroup from './FormGroup.vue'
 import CommandArgs from './CommandArgs/index.vue'
 import ArrayListForm from './ArrayListForm.vue'
 
 export default defineComponent({
+  name: 'K3dOptionsForm',
   props: {
     form: {
       type: Object,
@@ -100,11 +98,7 @@ export default defineComponent({
     StringForm,
     BooleanForm,
     FormGroup,
-    KSelect,
-    KOption,
     CommandArgs,
-    ComboBox,
-    KIcon,
     ArrayListForm,
   }
 })

@@ -7,7 +7,7 @@
         <router-link :to="{name: 'ClusterExplorerSettingsTemplatesEdit', params: {templateId}}" class="btn role-secondary">Edit</router-link>
       </template>
     </page-header>
-    <loading :loading="loading">
+    <k-loading :loading="loading">
       <k-alert v-if="currentProvider === 'native'" type="warning" title="Native provider only supports create K3s cluster and join K3s nodes."></k-alert>
       <k-alert v-if="currentProvider === 'k3d'" type="warning" title="Highly recommended that K3d provider run in a Linux / Unix environment, do not run K3d provider in MacOS container environment."></k-alert>
       <k-alert v-if="warning" type="warning" :title="warning"></k-alert>
@@ -44,18 +44,13 @@
         <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
         <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>
       </form>
-    </loading>
+    </k-loading>
   </div>
 </template>
 <script>
 import {computed, defineComponent, inject, reactive, ref, toRef, toRefs, watch} from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/views/components/PageHeader.vue'
-import KInput from '@/components/Input'
-import KButton from '@/components/Button'
-import {Select as KSelect, Option as KOption} from '@/components/Select'
-import KAlert from '@/components/Alert'
-import Loading from '@/components/Loading'
 import FooterActions from '@/views/components/FooterActions.vue'
 import AwsClusterCreateForm from '@/views/components/providerForm/AwsClusterForm.vue'
 import AlibabaClusterCreateForm from '@/views/components/providerForm/AlibabaClusterForm.vue'
@@ -176,13 +171,7 @@ export default defineComponent({
   },
   components: {
     PageHeader,
-    KInput,
-    KButton,
-    KSelect,
-    KOption,
-    KAlert,
     FooterActions,
-    Loading,
     AwsClusterCreateForm,
     AlibabaClusterCreateForm,
     TencentClusterCreateForm,

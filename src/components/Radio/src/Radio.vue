@@ -15,6 +15,7 @@
 <script>
 import {computed, defineComponent, inject, ref} from 'vue'
 export default defineComponent({
+  name: 'KRadio',
   props: {
     modelValue: {
       type: [String, Number, Boolean],

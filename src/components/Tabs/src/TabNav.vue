@@ -10,8 +10,9 @@
 </template>
 <script>
 import KIcon from '@/components/Icon'
-import { computed, inject } from 'vue'
-export default {
+import { computed, inject, defineComponent } from 'vue'
+export default defineComponent({
+  name: 'KTabNav',
   props: {
     tabPosition: {
       type: String,
@@ -47,7 +48,7 @@ export default {
   components: {
     KIcon,
   }
-}
+})
 </script>
 <style>
 .k-tabs__nav {

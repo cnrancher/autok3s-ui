@@ -16,7 +16,7 @@ const defaultRenderHeaderCell = (props) => {
 }
 
 export default defineComponent({
-  name: 'TableColumn',
+  name: 'KTableColumn',
   props: {
     label: {
       type: String,

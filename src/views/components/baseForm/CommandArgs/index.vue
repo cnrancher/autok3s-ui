@@ -2,10 +2,10 @@
 <div class="command-args"  ref="commandArgsRef" @click="togglePopper">
   <div class="command-args__label">
     <label v-if="label">{{label}} <sup v-if="required" class="k-form-item--required">*</sup></label>
-    <tooltip v-if="desc">
+    <k-tooltip v-if="desc">
       <k-icon type="prompt"></k-icon>
       <template #popover>{{desc}}</template>
-    </tooltip>
+    </k-tooltip>
   </div>
   <div class="command-args__trigger">
     {{modelValue}}
@@ -77,9 +77,6 @@
 import {computed, defineComponent, watchEffect, ref, watch, nextTick} from 'vue'
 import CommandOption from './CommandOption.vue'
 import CustomOption from './CustomOption.vue'
-import KIcon from '@/components/Icon'
-import KInput from '@/components/Input'
-import Tooltip from '@/components/Tooltip'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useDataGroup from '@/composables/useDataGroup.js'
 import usePopper from '@/composables/usePopper.js'
@@ -98,6 +95,7 @@ const useMinWithModifier = (minWith = '200px') => {
 }
 
 export default defineComponent({
+  name: 'CommandArgs',
   props: {
     readonly: {
       type: Boolean,
@@ -348,9 +346,6 @@ export default defineComponent({
   components: {
     CommandOption,
     CustomOption,
-    KIcon,
-    Tooltip,
-    KInput,
   }
 })
 </script>

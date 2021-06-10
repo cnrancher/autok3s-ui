@@ -11,6 +11,7 @@ import {computed, defineComponent, onBeforeUnmount, ref} from 'vue'
 import KInput from './index.vue'
 import KIcon from '@/components/Icon'
 export default defineComponent({
+  name: 'KPasswordInput',
   props: {
     autocomplete: {
       type: String,

@@ -37,13 +37,13 @@
           :desc="desc.config['datastore']"
           :readonly="readonly"
         />
-        <combo-box
+        <k-combo-box
           v-model="form.config['k3s-install-script']"
           label="K3s Install Script"
           :desc="desc.config['k3s-install-script']"
           :disabled="readonly"
           :options="installScriptOptions"
-        ></combo-box>
+        ></k-combo-box>
       </div>
     </template>
   </form-group>
@@ -143,15 +143,13 @@
 import {defineComponent, provide, toRef, ref, watch} from 'vue'
 import StringForm from './StringForm.vue'
 import BooleanForm from './BooleanForm.vue'
-import {Select as KSelect, Option as KOption} from '@/components/Select'
-import {ComboBox} from '@/components/ComboBox'
-import KIcon from '@/components/Icon'
 import RegistryConfigForm from './RegistryConfigForm.vue'
 import FormGroup from './FormGroup.vue'
 import CommandArgs from './CommandArgs/index.vue'
 import ArrayListForm from '../baseForm/ArrayListForm.vue'
 
 export default defineComponent({
+  name: 'K3sOptionsForm',
   props: {
     form: {
       type: Object,
@@ -228,11 +226,7 @@ export default defineComponent({
     BooleanForm,
     RegistryConfigForm,
     FormGroup,
-    KSelect,
-    KOption,
     CommandArgs,
-    ComboBox,
-    KIcon,
     ArrayListForm,
   }
 })

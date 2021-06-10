@@ -20,6 +20,7 @@
 <script>
 import {computed, defineComponent, inject, ref} from 'vue'
 export default defineComponent({
+  name: 'KRadioButton',
   props: {
     modelValue: {
       type: [String, Number, Boolean],
@@ -68,7 +69,7 @@ export default defineComponent({
 </script>
 <style>
 .k-radio-button {
-  display: grid;
+  display: grid !important;
   grid-template-areas: 'a';
   align-items: center;
   justify-items: center;

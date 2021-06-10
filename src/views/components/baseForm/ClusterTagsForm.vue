@@ -2,10 +2,10 @@
 <div class="cluster-tags-form">
   <div class="cluster-tags-form__title">
     Tags
-    <tooltip v-if="desc">
+    <k-tooltip v-if="desc">
       <k-icon type="prompt"></k-icon>
       <template #popover>{{desc}}</template>
-    </tooltip>
+    </k-tooltip>
   </div>
   <label class="cluster-tags-form__kv-label">Key</label>
   <label class="cluster-tags-form__kv-label">Value</label>
@@ -24,12 +24,9 @@
 </template>
 <script>
 import {defineComponent, ref} from 'vue'
-import KInput from '@/components/Input'
-import KButton from '@/components/Button'
-import KIcon from '@/components/Icon'
-import Tooltip from '@/components/Tooltip'
 import { debounce } from 'lodash-es'
 export default defineComponent({
+  name: 'ClusterTagsForm',
   props: {
     modelValue: {
       type: Object,
@@ -84,12 +81,6 @@ export default defineComponent({
       getForm,
     }
   },
-  components: {
-    KInput,
-    KIcon,
-    KButton,
-    Tooltip
-  }
 })
 </script>
 <style>

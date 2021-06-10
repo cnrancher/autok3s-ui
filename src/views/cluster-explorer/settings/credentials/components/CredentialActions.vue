@@ -1,22 +1,20 @@
 <template>
-  <dropdown>
+  <k-dropdown>
     <button class="btn-sm actions role-multi-action"><k-icon type="ellipsis" direction="down"></k-icon></button>
     <template #content>
       <div v-if="actions.length === 0"> No Actions </div>
-      <dropdown-menu v-else class="credencial-actions__command">
-          <dropdown-menu-item v-for="a in actions" :key="a.command" @click="handleCommand(a.command)">
+      <k-dropdown-menu v-else class="credencial-actions__command">
+          <k-dropdown-menu-item v-for="a in actions" :key="a.command" @click="handleCommand(a.command)">
             <!-- <k-icon :type="a.icon" color="var(--dropdown-text)"></k-icon> -->
             {{a.label}}
-          </dropdown-menu-item>
-        </dropdown-menu>
+          </k-dropdown-menu-item>
+        </k-dropdown-menu>
     </template>
-  </dropdown>
+  </k-dropdown>
 </template>
 <script>
 import {computed, defineComponent} from 'vue'
 import { cloneDeep } from '@/utils'
-import {Dropdown, DropdownMenu, DropdownMenuItem} from '@/components/Dropdown'
-import KIcon from '@/components/Icon'
 export default defineComponent({
   props: {
     credential: {
@@ -48,12 +46,6 @@ export default defineComponent({
       handleCommand
     }
   },
-  components: {
-    Dropdown,
-    DropdownMenu,
-    DropdownMenuItem,
-    KIcon,
-  }
 })
 </script>
 <style>

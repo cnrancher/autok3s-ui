@@ -6,14 +6,14 @@
         :templates="selectedTemplates"
         @exec-command="handleCommand">
       </template-bulk-actions>
-      <radio-group v-model="groupBy">
-        <radio-button label="">
+      <k-radio-group v-model="groupBy">
+        <k-radio-button label="">
           <k-icon type="category" :color="groupBy === '' ? '#fff' : ''"></k-icon>
-        </radio-button>
-        <radio-button label="provider">
+        </k-radio-button>
+        <k-radio-button label="provider">
           <k-icon type="folder" :color="groupBy === 'provider' ? '#fff' : ''"></k-icon>
-        </radio-button>
-      </radio-group>
+        </k-radio-button>
+      </k-radio-group>
       <input type="search" placeholder="Filter" class="input-sm template-table__search k-input-search" v-model="searchQuery">
     </div>
     <k-table
@@ -27,10 +27,10 @@
         <template #default="{row, column}">
           <div class="template-table__warning" v-if="row.status">
             {{row[column.field]}}
-            <tooltip >
+            <k-tooltip >
               <k-icon type="warning" color="var(--error)"></k-icon>
               <template #popover>{{row.status}}</template>
-            </tooltip>
+            </k-tooltip>
           </div>
           <template v-else>
             {{row[column.field]}}
@@ -88,16 +88,8 @@
 import {defineComponent, toRefs} from 'vue'
 import { useRouter } from 'vue-router'
 import { remove, update } from '@/api/template.js';
-import {TableColumn as KTableColumn, Table as KTable} from '@/components/Table'
-import KModal from "@/components/Modal"
 import TemplateActions from './TemplateActions.vue'
 import TemplateBulkActions from './TemplateBulkActions.vue'
-import KButton from '@/components/Button'
-import Alert from '@/components/Alert'
-import KIcon from '@/components/Icon'
-import KInput from '@/components/Input'
-import Tooltip from '@/components/Tooltip'
-import {RadioGroup, RadioButton} from '@/components/Radio'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useTableState from '@/composables/useTableState.js'
 import {stringify} from '@/utils/error.js'
@@ -231,18 +223,8 @@ export default defineComponent({
     }
   },
   components: {
-    KModal,
-    KTable,
-    KTableColumn,
     TemplateActions,
     TemplateBulkActions,
-    KButton,
-    KInput,
-    Alert,
-    KIcon,
-    RadioGroup,
-    RadioButton,
-    Tooltip,
   }
 })
 </script>

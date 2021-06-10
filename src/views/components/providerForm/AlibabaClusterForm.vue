@@ -1,29 +1,29 @@
 <template>
   <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
   <input style="display: none" autocomplete="new-password" type="password" />
-  <tabs tab-position="left" v-model="acitiveTab">
-    <tab-pane label="Credential Options" name="credential">
+  <k-tabs tab-position="left" v-model="acitiveTab">
+    <k-tab-pane label="Credential Options" name="credential">
       <form-group>
         <template #title>Credential Options</template>
         <template #default>
           <div class="alibaba-cluster-create-form__content">
-            <password-form
+            <k-password-input
               v-model="form.options['access-key']"
               label="Access Key"
               :desc="desc.options['access-key']"
               :readonly="readonly">
-            </password-form>
-            <password-form
+            </k-password-input>
+            <k-password-input
               v-model="form.options['access-secret']"
               label="Access Secret"
               :desc="desc.options['access-secret']"
               :readonly="readonly">
-            </password-form>
+            </k-password-input>
           </div>
         </template>
       </form-group>
-    </tab-pane>
-    <tab-pane label="Instance Options" name="instance">
+    </k-tab-pane>
+    <k-tab-pane label="Instance Options" name="instance">
       <form-group>
         <template #title>Basic</template>
         <template #default>
@@ -153,15 +153,15 @@
             </div>
         </template>
       </form-group>
-    </tab-pane>
-    <tab-pane label="K3s Options" name="k3s">
+    </k-tab-pane>
+    <k-tab-pane label="K3s Options" name="k3s">
       <k3s-options-form
         :visible="acitiveTab === 'k3s'"
         :form="form"
         :desc="desc">
       </k3s-options-form>
-    </tab-pane>
-    <tab-pane label="Additional Options" name="additional">
+    </k-tab-pane>
+    <k-tab-pane label="Additional Options" name="additional">
       <div class="alibaba-cluster-create-form__content">
         <!-- <boolean-form
           v-model="form.config['ui']"
@@ -202,23 +202,19 @@
           :readonly="readonly">
         </string-form>
       </div>
-    </tab-pane>
+    </k-tab-pane>
 
-  </tabs>
+  </k-tabs>
 </template>
 <script>
 import { cloneDeep } from '@/utils'
 import {defineComponent, ref, computed} from 'vue'
-import {Tabs, TabPane} from '@/components/Tabs'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
 import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import ClusterTagsForm from '../baseForm/ArrayListForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
-import {Select as KSelect, Option as KOption} from '@/components/Select'
-import { PasswordInput as PasswordForm} from '@/components/Input'
-import { Collapse, CollapseItem } from '@/components/Collapse'
 
 import useFormFromSchema from '../../composables/useFormFromSchema.js'
 export default defineComponent({
@@ -275,20 +271,12 @@ export default defineComponent({
     }
   },
   components: {
-    Tabs,
-    TabPane,
     BooleanForm,
     StringForm,
-    PasswordForm,
-    TabPane,
-    Collapse,
-    CollapseItem,
     K3sOptionsForm,
     SshPrivateForm,
     ClusterTagsForm,
     FormGroup,
-    KSelect,
-    KOption,
   }
 })
 </script>

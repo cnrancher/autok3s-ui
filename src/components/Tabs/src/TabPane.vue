@@ -4,10 +4,11 @@
   </div>
 </template>
 <script>
-import { computed, inject, toRef, watchEffect, ref } from 'vue'
+import { computed, inject, toRef, watchEffect, ref, defineComponent } from 'vue'
 import useIdGenrator from '@/composables/useIdGenerator.js'
 const {next: nextId, reset: resetId } = useIdGenrator()
-export default {
+export default defineComponent({
+  name: 'KTabPane',
   props: {
     disabled: {
       type: Boolean,
@@ -54,7 +55,7 @@ export default {
       shouldBeRender,
     }
   }
-}
+})
 </script>
 <style>
 .k-tabs__pane {

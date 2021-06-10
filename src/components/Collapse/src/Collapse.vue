@@ -6,6 +6,7 @@
 <script>
 import {defineComponent, provide, readonly, watchEffect, ref} from 'vue'
 export default defineComponent({
+  name: 'KCollapse',
   props: {
     accordion: {
       type: Boolean,

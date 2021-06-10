@@ -18,6 +18,7 @@
 import { computed, inject, defineComponent } from 'vue'
 import KIcon from '@/components/Icon'
 export default defineComponent({
+  name: 'KNotification',
   props: {
     position: {
       type: [String, Array],

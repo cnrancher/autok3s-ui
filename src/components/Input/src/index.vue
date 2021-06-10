@@ -43,6 +43,7 @@ import KIcon from '@/components/Icon'
 import {useIdGenerator} from '@/utils/idGenerator.js'
 const getId = useIdGenerator(0, 'labeled-input_');
 export default {
+  name: 'KInput',
   inheritAttrs: false,
   props: {
     label: {

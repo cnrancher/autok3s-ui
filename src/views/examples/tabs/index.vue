@@ -19,14 +19,9 @@
   </div>
 </template>
 <script>
-import { Tabs as KTabs, TabPane as KTabPane } from '@/components/Tabs'
 export default {
   setup() {
 
   },
-  components: {
-    KTabs,
-    KTabPane,
-  }
 }
 </script>

@@ -62,7 +62,7 @@ const useMinWithModifier = (minWith = '200px') => {
   }
 }
 export default defineComponent({
-  name: 'Select',
+  name: 'KSelect',
   inheritAttrs: false,
   props: {
     placeholder: {

@@ -16,7 +16,7 @@
         <img :src="clustcerIcon" />
       </div>
       <div class="quick-start__form">
-        <loading :loading="loading || creating">
+        <k-loading :loading="loading || creating">
           <div class="quick-start__base-info">
             <k-select
               v-model="currentProvider"
@@ -41,7 +41,7 @@
           </footer-actions>
           <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
           <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>
-        </loading>
+        </k-loading>
       </div>
     </div>
   </div>
@@ -52,15 +52,10 @@ import { useRouter } from 'vue-router'
 import PageHeader from '@/views/components/PageHeader.vue'
 import TemplateFilter from '@/views/components/TemplateFilter/index.vue'
 import FooterActions from '@/views/components/FooterActions.vue'
-import {Select as KSelect, Option as KOption} from '@/components/Select'
-import KInput from '@/components/Input'
-import KAlert from '@/components/Alert'
-import KButton from '@/components/Button'
 import AwsForm from './components/AwsForm.vue'
 import AlibabaForm from './components/AlibabaForm.vue'
 import TencentForm from './components/TencentForm.vue'
 import K3dForm from './components/K3dForm.vue'
-import Loading from '@/components/Loading'
 import clustcerIcon from '@/assets/images/cluster-single.svg'
 import useProviders from '@/composables/useProviders.js'
 import { createCluster } from '@/api/cluster.js'
@@ -325,18 +320,12 @@ export default defineComponent({
   },
   components: {
     PageHeader,
-    Loading,
     TemplateFilter,
     FooterActions,
-    KAlert,
-    KSelect,
-    KOption,
-    KInput,
     AwsForm,
     AlibabaForm,
     TencentForm,
     K3dForm,
-    KButton,
   }
 })
 </script>

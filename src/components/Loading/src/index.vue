@@ -12,7 +12,7 @@
 import {defineComponent} from 'vue'
 import KIcon from '@/components/Icon'
 export default defineComponent({
-  name: 'Loading',
+  name: 'KLoading',
   props: {
     loading: {
       type: Boolean,

@@ -39,7 +39,7 @@ import {computed, watchEffect, toRefs, defineComponent, toRef, provide, h} from 
 const tableStatus = {loading: 'Loading', loaded: '', error: 'Load Data Failed', noResults: 'No Result', noData: 'There are no rows to show.'}
 const defaultRenderGroup = (props) => [h('span', { class: 'k-table__group-by' }, `${props.groupColumn?.field}: `), h('span', {}, `${props.group}`)]
 export default defineComponent({
-  name: 'BaseTable',
+  name: 'KBaseTable',
   props: {
     caption: {
       type: String,

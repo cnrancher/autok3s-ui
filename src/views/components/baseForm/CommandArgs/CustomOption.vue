@@ -5,6 +5,7 @@
 import {computed, defineComponent} from 'vue'
 
 export default defineComponent({
+  name: 'CustomOption',
   props: {
     modelValue: {
       type: String,

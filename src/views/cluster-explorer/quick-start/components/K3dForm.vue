@@ -15,7 +15,6 @@
 <script>
 import {computed,defineComponent} from 'vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
-import { PasswordInput as PasswordForm} from '@/components/Input'
 import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
 
@@ -46,7 +45,6 @@ export default defineComponent({
     }
   },
   components: {
-    PasswordForm,
     StringForm,
   }
 })
