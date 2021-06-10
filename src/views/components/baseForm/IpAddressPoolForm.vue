@@ -3,10 +3,10 @@
     <h3 class="ip-address-pool-form__label">
       {{label}}
       <sup v-if="required" class="k-form-item--required">*</sup>
-      <tooltip v-if="desc">
+      <k-tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
         <template #popover>{{desc}}</template>
-      </tooltip>
+      </k-tooltip>
     </h3>
     <template v-for="(ip, index) in ips" :key="index">
       <k-input :readonly="readonly" v-model.trim="ip.value" @change="debounceUpdate" placeholder="e.g. 192.168.1.22"></k-input>
@@ -21,12 +21,9 @@
 </template>
 <script>
 import {defineComponent, ref} from 'vue'
-import KInput from '@/components/Input'
-import KButton from '@/components/Button'
-import KIcon from '@/components/Icon'
-import Tooltip from '@/components/Tooltip'
 import { debounce } from 'lodash-es'
 export default defineComponent({
+  name: 'IpAddressPoolForm',
   props: {
     modelValue: {
       type: String,
@@ -75,12 +72,6 @@ export default defineComponent({
       getForm,
     }
   },
-  components: {
-    KInput,
-    KIcon,
-    KButton,
-    Tooltip
-  }
 })
 </script>
 <style>

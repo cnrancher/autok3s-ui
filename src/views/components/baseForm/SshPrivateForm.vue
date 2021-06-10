@@ -12,13 +12,13 @@
       <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
     </div>
     <div class="ssh-provate-form__advance" v-show="visible">
-      <password-form
+      <k-password-input
         v-model.trim="form.config['ssh-key-passphrase']"
         label="SSH Key Passphrase"
         :desc="desc.config['ssh-key-passphrase']"
         :readonly="readonly"
       />
-      <password-form
+      <k-password-input
         v-model.trim="form.config['ssh-password']"
         label="SSH Password"
         :desc="desc.config['ssh-password']"
@@ -41,11 +41,10 @@
 </template>
 <script>
 import {defineComponent, ref} from 'vue'
-import { PasswordInput as PasswordForm} from '@/components/Input'
 import BooleanForm from './BooleanForm.vue'
 import StringForm from './StringForm.vue'
-import KIcon from '@/components/Icon'
 export default defineComponent({
+  name: 'SSHPrivateForm',
   props: {
     form: {
       type: Object,
@@ -73,8 +72,6 @@ export default defineComponent({
   components: {
     BooleanForm,
     StringForm,
-    PasswordForm,
-    KIcon,
   }
 })
 </script>

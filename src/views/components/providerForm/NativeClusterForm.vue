@@ -1,8 +1,8 @@
 <template>
   <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
   <input style="display: none" autocomplete="new-password" type="password" />
-  <tabs tab-position="left" v-model="acitiveTab">
-    <tab-pane label="Instance Options" name="instance">
+  <k-tabs tab-position="left" v-model="acitiveTab">
+    <k-tab-pane label="Instance Options" name="instance">
       <form-group>
         <template #title>Basic</template>
         <template #default>
@@ -53,7 +53,7 @@
               <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
             </div>
             <div class="native-cluster-create-form__advance" v-show="visible">
-              <password-form
+              <k-password-input
                 v-model.trim="form.config['ssh-key-passphrase']"
                 label="SSH Key Passphrase"
                 :desc="desc.config['ssh-key-passphrase']"
@@ -65,7 +65,7 @@
                 :desc="desc.config['ssh-cert-path']"
                 :readonly="readonly"
               />
-              <password-form
+              <k-password-input
                 v-model.trim="form.config['ssh-password']"
                 label="SSH Password"
                 :desc="desc.config['ssh-password']"
@@ -81,16 +81,16 @@
           </div>
         </template>
       </form-group>
-    </tab-pane>
-    <tab-pane label="K3s Options" name="k3s">
+    </k-tab-pane>
+    <k-tab-pane label="K3s Options" name="k3s">
       <k3s-options-form
         :visible="acitiveTab === 'k3s'"
         :form="form"
         :desc="desc"
         :readonly="readonly">
       </k3s-options-form>
-    </tab-pane>
-    <tab-pane label="Additional Options" name="additional">
+    </k-tab-pane>
+    <k-tab-pane label="Additional Options" name="additional">
       <div class="native-cluster-create-form__content">
         <!-- <boolean-form
           v-model="form.config['ui']"
@@ -110,23 +110,17 @@
           <k-option value="dashboard" label="dashboard"></k-option>
         </k-select>
       </div>
-    </tab-pane>
-  </tabs>
+    </k-tab-pane>
+  </k-tabs>
 </template>
 <script>
 import {defineComponent, ref, computed} from 'vue'
-import {Tabs, TabPane} from '@/components/Tabs'
-import KInput from '@/components/Input'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import IpAddressPoolForm from '../baseForm/IpAddressPoolForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
 import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
-import {Select as KSelect, Option as KOption} from '@/components/Select'
-import KIcon from '@/components/Icon'
-import { PasswordInput as PasswordForm} from '@/components/Input'
-import { Collapse, CollapseItem } from '@/components/Collapse'
 import useFormFromSchema from '../../composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
 export default defineComponent({
@@ -182,22 +176,12 @@ export default defineComponent({
     }
   },
   components: {
-    Tabs,
-    TabPane,
-    KInput,
     BooleanForm,
     StringForm,
-    PasswordForm,
-    TabPane,
     IpAddressPoolForm,
-    Collapse,
-    CollapseItem,
     K3sOptionsForm,
     SshPrivateForm,
     FormGroup,
-    KIcon,
-    KSelect,
-    KOption,
   }
 })
 </script>

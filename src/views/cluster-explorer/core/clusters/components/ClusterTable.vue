@@ -84,7 +84,7 @@
             required />
         </div>
         <div>
-          <alert v-for="(e, index) in joinNodeErrors" :key="index" type="error" :title="e"></alert>
+          <k-alert v-for="(e, index) in joinNodeErrors" :key="index" type="error" :title="e"></k-alert>
         </div>
       </template>
       <template #footer>
@@ -99,16 +99,10 @@
 import {defineComponent, watch} from 'vue'
 import { useRouter } from 'vue-router'
 import { remove, joinNode, fetchById } from '@/api/cluster.js'
-import {TableColumn as KTableColumn, Table as KTable} from '@/components/Table'
-import KModal from "@/components/Modal"
 import ClusterActions from './ClusterActions.vue'
 import ClusterBulkActions from './ClusterBulkActions.vue'
 import ClusterStateTag from './ClusterStateTag.vue'
-import KButton from '@/components/Button'
-import Alert from '@/components/Alert'
-import KInput from '@/components/Input'
 import {RadioGroup, RadioButton} from '@/components/Radio'
-import KIcon from '@/components/Icon'
 import CliCommand from '@/views/components/CliCommand.vue'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useCluster from '@/composables/useCluster.js'
@@ -286,19 +280,12 @@ export default defineComponent({
     }
   },
   components: {
-    KModal,
-    KTable,
-    KTableColumn,
     ClusterActions,
     ClusterBulkActions,
     ClusterStateTag,
-    KButton,
-    KInput,
-    Alert,
     CliCommand,
     RadioGroup,
     RadioButton,
-    KIcon,
   }
 })
 

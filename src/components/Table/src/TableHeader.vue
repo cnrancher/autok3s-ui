@@ -3,7 +3,7 @@ import {defineComponent, h, inject, computed} from 'vue'
 import FieldOrder from './FieldOrder.vue'
 
 export default defineComponent({
-  name: 'TableHeader',
+  name: 'KTableHeader',
   props: {
     groupBy: {
       type: String,

@@ -18,6 +18,7 @@
 import {defineComponent, nextTick, onBeforeUnmount, ref, watch} from 'vue'
 import usePopper from '@/composables/usePopper.js'
 export default defineComponent({
+  name: 'KTooltip',
   props: {
     option: {
       type: Object,

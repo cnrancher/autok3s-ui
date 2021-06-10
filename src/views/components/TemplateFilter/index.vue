@@ -48,7 +48,6 @@
 <script>
 
 import {computed, defineComponent, inject, nextTick, ref, toRefs, watch, watchEffect} from 'vue'
-import KIcon from '@/components/Icon'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useDataGroup from '@/composables/useDataGroup.js'
 import usePopper from '@/composables/usePopper.js'
@@ -57,6 +56,7 @@ const popperOption = {
   placement: 'bottom-start'
 }
 export default defineComponent({
+  name: 'TemplateFilter',
   props: {
     modelValue: {
       type: String,
@@ -230,9 +230,6 @@ export default defineComponent({
       hoverTemplate,
     }
   },
-  components: {
-    KIcon
-  }
 })
 </script>
 <style>

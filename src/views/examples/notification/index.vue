@@ -9,7 +9,6 @@
   </div>
 </template>
 <script>
-import KNotification from '@/components/Notification'
 import { inject } from 'vue'
 export default {
   setup() {
@@ -36,8 +35,5 @@ export default {
       addNotify2,
     }
   },
-  components: {
-    KNotification
-  }
 }
 </script>

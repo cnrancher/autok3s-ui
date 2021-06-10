@@ -1,7 +1,7 @@
 <script>
 import {computed, h, toRef, defineComponent, inject} from 'vue'
 export default defineComponent({
-  name: 'TableBody',
+  name: 'KTableBody',
   props: {
     // columns: {
     //   type: Array,

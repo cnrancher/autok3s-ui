@@ -13,10 +13,11 @@
 import KTabNav from './TabNav.vue'
 import KTabPane from './TabPane.vue'
 
-import { computed, provide, watch, watchEffect } from 'vue'
+import { computed, provide, watch, watchEffect, defineComponent } from 'vue'
 import useTabsStore from './store/useTabsStore.js'
 
-export default {
+export default defineComponent({
+  name: 'KTabs',
   props: {
     closable: {
       type: Boolean,
@@ -71,7 +72,7 @@ export default {
     KTabNav,
     KTabPane
   }
-}
+})
 </script>
 <style>
 .k-tabs {

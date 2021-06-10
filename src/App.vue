@@ -7,7 +7,6 @@
 
 <script>
 import { provide, watchEffect, defineComponent } from 'vue'
-import KNotification from '@/components/Notification'
 import useThemeStore from '@/store/useThemeStore.js'
 import useNotificationStore from '@/store/useNotificationStore.js'
 import useClusterStore from '@/store/useClusterStore.js'
@@ -61,9 +60,6 @@ export default defineComponent({
     }, templateStore.action.syncTemplates)
     connect()
   },
-  components: {
-    KNotification,
-  }
 })
 
 function handleWebsocketMessage(messageHandler) {

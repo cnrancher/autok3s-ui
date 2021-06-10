@@ -18,13 +18,13 @@
     <template v-for="[p, v] in Object.entries(providerKeyFieldMap)"
       :key="p"
       >
-      <password-input
+      <k-password-input
         v-model.trim="form[p].key"
         :label="form[p].keyLabel"
         required
         v-show="p === provider"
       />
-      <password-input
+      <k-password-input
         v-model.trim="form[p].secret"
         :label="form[p].secretLabel"
         required
@@ -47,11 +47,6 @@ import useProviderKeyMap from '../composables/useProviderKeyMap.js'
 import useProviders from '@/composables/useProviders.js'
 import useCredencial from '@/composables/useCredencial.js'
 import { updateCredential } from '@/api/credential';
-import KInput from '@/components/Input'
-import { PasswordInput} from '@/components/Input'
-import { Select as KSelect, Option as KOption} from '@/components/Select'
-import KAlert from '@/components/Alert'
-import KButton from '@/components/Button'
 import FooterActions from '@/views/components/FooterActions.vue'
 import {stringify} from '@/utils/error.js'
 
@@ -162,12 +157,6 @@ export default defineComponent({
     }
   },
   components: {
-    KAlert,
-    KInput,
-    PasswordInput,
-    KButton,
-    KSelect,
-    KOption,
     FooterActions,
   }
 })

@@ -8,6 +8,7 @@
 <script>
 import {defineComponent, inject, nextTick, provide, reactive, toRefs} from 'vue'
 export default defineComponent({
+  name: 'KRadioGroup',
   props: {
     modelValue: {
       type: [String, Number, Boolean],

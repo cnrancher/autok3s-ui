@@ -14,7 +14,6 @@
 </template>
 <script>
 import {ref} from 'vue'
-import KModal from "@/components/Modal"
 export default {
   setup() {
     const visible = ref(false)
@@ -26,8 +25,5 @@ export default {
       showModal,
     }
   },
-  components: {
-    KModal
-  }
 }
 </script>

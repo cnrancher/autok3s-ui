@@ -21,7 +21,7 @@ import { computed, defineComponent } from 'vue'
 import KIcon from '@/components/Icon'
 
 export default defineComponent({
-  name: 'Pager',
+  name: 'KPager',
   props: {
     currentPage: {
       type: Number,

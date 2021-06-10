@@ -1,5 +1,5 @@
 <template>
-  <loading :loading="loading">
+  <k-loading :loading="loading">
     <page-header>
       <template #title>
         <router-link :to="{ name: 'ClusterExplorerCoreClusters' }">Cluster: </router-link>
@@ -88,7 +88,7 @@
         </div>
       </template>
     </k-table>
-  </loading>
+  </k-loading>
 </template>
 <script>
 import {computed, defineComponent, inject, toRef} from 'vue'
@@ -96,11 +96,8 @@ import useDataSearch from '@/composables/useDataSearch.js'
 import useTableState from '@/composables/useTableState.js'
 import useNodes from '@/composables/useNodes.js'
 import PageHeader from '@/views/components/PageHeader.vue'
-import Loading from '@/components/Loading'
-import KInput from '@/components/Input'
 import ClusterStateTag from '../components/ClusterStateTag.vue'
 import NodeActions from './components/NodeActions.vue'
-import {TableColumn as KTableColumn, Table as KTable} from '@/components/Table'
 export default defineComponent({
   props: {
     clusterId: {
@@ -154,11 +151,7 @@ export default defineComponent({
   components: {
     PageHeader,
     ClusterStateTag,
-    KTableColumn,
-    KTable,
     NodeActions,
-    Loading,
-    KInput,
   }
 })
 </script>

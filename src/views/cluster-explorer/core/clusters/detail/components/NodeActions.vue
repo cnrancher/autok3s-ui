@@ -1,21 +1,19 @@
 <template>
-  <dropdown>
+  <k-dropdown>
     <button class="btn-sm actions role-multi-action"><k-icon type="ellipsis" direction="down"></k-icon></button>
     <template #content>
       <div v-if="actions.length === 0"> No Actions </div>
-      <dropdown-menu v-else>
-          <dropdown-menu-item v-for="a in actions" :key="a.command" @click="handleCommand(a.command)">
-            <!-- <k-icon :type="a.icon" color="var(--dropdown-text)"></k-icon> -->
+      <k-dropdown-menu v-else>
+          <k-dropdown-menu-item v-for="a in actions" :key="a.command" @click="handleCommand(a.command)">
+            <!-- <k-icon :type="a.icon" color="var(--k-dropdown-text)"></k-icon> -->
             {{a.label}}
-          </dropdown-menu-item>
-        </dropdown-menu>
+          </k-dropdown-menu-item>
+        </k-dropdown-menu>
     </template>
-  </dropdown>
+  </k-dropdown>
 </template>
 <script>
 import { cloneDeep } from '@/utils'
-import {Dropdown, DropdownMenu, DropdownMenuItem} from '@/components/Dropdown'
-import KIcon from '@/components/Icon'
 
 import { computed } from 'vue'
 export default {
@@ -51,12 +49,6 @@ export default {
       handleCommand,
     }
   },
-  components: {
-    Dropdown,
-    DropdownMenu,
-    DropdownMenuItem,
-    KIcon,
-  }
 }
 </script>
 <style>

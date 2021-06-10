@@ -4,7 +4,6 @@
   </k-tag>
 </template>
 <script>
-import KTag from '@/components/Tag'
 import { computed } from 'vue'
 
 const states = {
@@ -34,9 +33,6 @@ export default {
       type
     }
   },
-  components: {
-    KTag
-  }
 }
 </script>
 <style>

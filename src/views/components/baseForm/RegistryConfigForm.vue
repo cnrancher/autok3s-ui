@@ -2,10 +2,10 @@
   <div class="registry-config-form">
     <label>{{label}} <sup v-if="required" class="k-form-item--required">*</sup></label>
     <div class="registry-config-form__desc">
-      <tooltip v-if="desc">
+      <k-tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
         <template #popover>{{desc}}</template>
-      </tooltip>
+      </k-tooltip>
     </div>
     <div v-if="!options.readOnly" class="registry-config-form__upload">
       <k-button type="input" class="btn-sm bg-primary registry-config-form__clear" @click="clearContent">Clear</k-button>
@@ -29,9 +29,6 @@
 </template>
 <script>
 import {computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect} from 'vue'
-import KIcon from '@/components/Icon'
-import Tooltip from '@/components/Tooltip'
-import KButton from '@/components/Button'
 import CodeMirror from 'codemirror'
 import 'codemirror/lib/codemirror.css'
 
@@ -67,6 +64,7 @@ const USTCMirror = `mirrors:
 `
 
 export default defineComponent({
+  name: 'RegistryConfigForm',
   props: {
     label: {
       type: String,
@@ -257,11 +255,6 @@ export default defineComponent({
       clearContent,
     }
   },
-  components: {
-    KIcon,
-    KButton,
-    Tooltip,
-  }
 })
 </script>
 <style>

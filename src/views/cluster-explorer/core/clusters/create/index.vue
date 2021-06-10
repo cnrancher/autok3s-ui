@@ -6,7 +6,7 @@
         <template-filter :provider="currentProvider" @apply-template="handleApplyTemplate"></template-filter>
       </template>
     </page-header>
-    <loading :loading="loading || creating">
+    <k-loading :loading="loading || creating">
       <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
       <input style="display: none" type="text" />
       <input style="display: none" type="password" />
@@ -37,7 +37,7 @@
       </footer-actions>
       <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
       <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>
-    </loading>
+    </k-loading>
     <cli-command v-model:visible="cliModalVisible" :cluster-form="clusterForm"></cli-command>
   </div>
 </template>
@@ -46,11 +46,6 @@ import {computed, defineComponent, inject, reactive, ref, toRef, toRefs, watch} 
 import { useRouter } from 'vue-router'
 import jsyaml from 'js-yaml'
 import PageHeader from '@/views/components/PageHeader.vue'
-import KInput from '@/components/Input'
-import KButton from '@/components/Button'
-import {Select as KSelect, Option as KOption} from '@/components/Select'
-import KAlert from '@/components/Alert'
-import Loading from '@/components/Loading'
 import TemplateFilter from '@/views/components/TemplateFilter/index.vue'
 import FooterActions from '@/views/components/FooterActions.vue'
 import CliCommand from '@/views/components/CliCommand.vue'
@@ -395,13 +390,7 @@ export default defineComponent({
   },
   components: {
     PageHeader,
-    KInput,
-    KButton,
-    KSelect,
-    KOption,
-    KAlert,
     FooterActions,
-    Loading,
     AwsClusterCreateForm,
     AlibabaClusterCreateForm,
     TencentClusterCreateForm,

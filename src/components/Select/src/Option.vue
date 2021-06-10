@@ -10,7 +10,7 @@
 import {defineComponent, inject, getCurrentInstance, onBeforeUnmount, computed, onMounted} from 'vue'
 import { DropdownMenuItem }from '@/components/Dropdown'
 export default defineComponent({
-  name: 'Option',
+  name: 'KOption',
   props: {
     label: {
       type: String,

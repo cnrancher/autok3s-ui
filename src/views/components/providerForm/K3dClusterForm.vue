@@ -1,8 +1,8 @@
 <template>
   <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
   <input style="display: none" autocomplete="new-password" type="password" />
-  <tabs tab-position="left" v-model="acitiveTab">
-    <tab-pane label="K3d Options" name="instance">
+  <k-tabs tab-position="left" v-model="acitiveTab">
+    <k-tab-pane label="K3d Options" name="instance">
       <form-group>
         <template #title>Basic</template>
         <template #default>
@@ -82,14 +82,14 @@
               :desc="desc.config['network']"
               :readonly="readonly"
             />
-            <combo-box
+            <k-combo-box
               v-model="form.options['gpus']"
               label="GPUs"
               :desc="desc.options['gpus']"
               :disabled="readonly"
               placeholder="Please Select or Input..."
               :options="['all']"
-            ></combo-box>
+            ></k-combo-box>
             <div></div>
             <array-list-form
               ref="labels"
@@ -142,23 +142,16 @@
           />
         </template>
       </form-group>
-    </tab-pane>
-  </tabs>
+    </k-tab-pane>
+  </k-tabs>
 </template>
 <script>
 import {defineComponent, ref, provide} from 'vue'
-import {Tabs, TabPane} from '@/components/Tabs'
-import KInput from '@/components/Input'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3dOptionsForm from '../baseForm/K3dOptionsForm.vue'
 import ArrayListForm from '../baseForm/ArrayListForm.vue'
-import KAlert from '@/components/Alert'
 import FormGroup from '../baseForm/FormGroup.vue'
-import KIcon from '@/components/Icon'
-import {ComboBox} from '@/components/ComboBox'
-import { PasswordInput as PasswordForm} from '@/components/Input'
-import { Collapse, CollapseItem } from '@/components/Collapse'
 import useFormFromSchema from '../../composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
 export default defineComponent({
@@ -209,21 +202,11 @@ export default defineComponent({
     }
   },
   components: {
-    Tabs,
-    TabPane,
-    KInput,
     BooleanForm,
     StringForm,
-    PasswordForm,
-    TabPane,
-    Collapse,
-    CollapseItem,
     K3dOptionsForm,
     ArrayListForm,
     FormGroup,
-    ComboBox,
-    KIcon,
-    KAlert,
   }
 })
 </script>

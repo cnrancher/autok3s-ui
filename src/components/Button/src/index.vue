@@ -8,6 +8,7 @@
 import {computed, defineComponent} from 'vue'
 import KIcon from '@/components/Icon'
 export default defineComponent({
+  name: 'KButton',
   props: {
     loading: {
       type: Boolean,
@@ -27,7 +28,6 @@ export default defineComponent({
       btnDisabled
     }
   },
-  name: 'Button',
   components: {
     KIcon,
   }

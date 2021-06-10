@@ -16,7 +16,7 @@ function nextOrder(order) {
   return orders[(index + 1)%3]
 }
 export default defineComponent({
-  name: 'FieldOrder',
+  name: 'KFieldOrder',
   props: {
     column: {
       type: Object,

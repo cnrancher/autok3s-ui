@@ -62,6 +62,7 @@ const useMinWithModifier = (minWith = '200px') => {
   }
 }
 export default defineComponent({
+  name: 'KComboBox',
   inheritAttrs: false,
   props: {
     placeholder: {

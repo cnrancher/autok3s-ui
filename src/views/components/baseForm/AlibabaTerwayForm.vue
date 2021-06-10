@@ -19,10 +19,9 @@
 </template>
 <script>
 import {defineComponent, reactive} from 'vue'
-import {Select as KSelect, Option as KOption} from '@/components/Select'
-import KInput from '@/components/Input'
 import { debounce } from 'lodash-es'
 export default defineComponent({
+  name: 'AlibabaTerwayForm',
   props: {
     modelValue: {
       type: Object,
@@ -49,10 +48,5 @@ export default defineComponent({
       debounceUpdate,
     }
   },
-  components: {
-    KSelect,
-    KOption,
-    KInput,
-  }
 })
 </script>

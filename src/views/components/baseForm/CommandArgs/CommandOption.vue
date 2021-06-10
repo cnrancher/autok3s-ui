@@ -24,18 +24,17 @@
         <input v-model="value">
       </template>
     </div>
-    <tooltip v-if="desc">
+    <k-tooltip v-if="desc">
       <k-icon type="prompt"></k-icon>
       <template #popover>{{desc}}</template>
-    </tooltip>
+    </k-tooltip>
   </div>
 </template>
 <script>
 import {computed, defineComponent, ref, watch} from 'vue'
-import KIcon from '@/components/Icon'
-import Tooltip from '@/components/Tooltip'
 
 export default defineComponent({
+  name: 'CommandOption',
   props: {
     desc: {
       type: String,
@@ -119,10 +118,6 @@ export default defineComponent({
 
     return { value, option, choices, multipleValue, handleClick }
   },
-  components: {
-    Tooltip,
-    KIcon,
-  }
 })
 </script>
 <style>

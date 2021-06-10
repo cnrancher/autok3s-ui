@@ -10,7 +10,6 @@
 </template>
 <script>
 import { cloneDeep } from '@/utils'
-import KButton from '@/components/Button'
 import { computed } from 'vue'
 export default {
   props: {
@@ -32,8 +31,5 @@ export default {
       handleBulkDelete
     }
   },
-  components: {
-    KButton
-  }
 }
 </script>

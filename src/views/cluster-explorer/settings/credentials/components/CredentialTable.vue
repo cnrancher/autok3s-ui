@@ -6,10 +6,10 @@
     </template>
     <template #actions>
         <router-link v-if="credentials.length < 3" :to="{name: 'ClusterExplorerSettingsCreate'}" class="btn role-primary">Create</router-link>
-        <tooltip v-else>
+        <k-tooltip v-else>
           <k-button class="btn bg-primary" disabled>Create</k-button>
           <template #popover>当前版本每个provider仅支持保存一个credential信息</template>
-        </tooltip>
+        </k-tooltip>
       </template>
   </page-header>
   <div class="credential-table__header">
@@ -18,14 +18,14 @@
       :credentials="selectedCredentials"
       @exec-command="handleCommand">
     </credential-bulk-actions>
-    <radio-group v-model="groupBy">
-      <radio-button label="">
+    <k-radio-group v-model="groupBy">
+      <k-radio-button label="">
         <k-icon type="category" :color="groupBy === '' ? '#fff' : ''"></k-icon>
-      </radio-button>
-      <radio-button label="provider">
+      </k-radio-button>
+      <k-radio-button label="provider">
         <k-icon type="folder" :color="groupBy === 'provider' ? '#fff' : ''"></k-icon>
-      </radio-button>
-    </radio-group>
+      </k-radio-button>
+    </k-radio-group>
     <input type="search" placeholder="Filter" class="input-sm credential-table__search k-input-search" v-model="searchQuery">
   </div>
   <k-table
@@ -78,8 +78,6 @@
 <script>
 import {computed, defineComponent, inject, ref, watchEffect} from 'vue'
 import { useRouter } from 'vue-router'
-import {TableColumn as KTableColumn, Table as KTable} from '@/components/Table'
-import KButton from '@/components/Button'
 import useCredentials from '@/composables/useCredentials.js'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useTableState from '@/composables/useTableState.js'
@@ -87,11 +85,7 @@ import useProviderKeyMap from '../composables/useProviderKeyMap.js'
 import { remove } from '@/api/credential.js';
 import CredentialActions from './CredentialActions.vue'
 import CredentialBulkActions from './CredentialBulkActions.vue'
-import KModal from "@/components/Modal"
 import PageHeader from '@/views/components/PageHeader.vue'
-import Tooltip from '@/components/Tooltip'
-import KIcon from '@/components/Icon'
-import {RadioGroup, RadioButton} from '@/components/Radio'
 
 function accessKeyFieldValue(data, keyMap) {
   const v = data.secrets[keyMap[data.provider]] ?? '';
@@ -178,17 +172,9 @@ export default defineComponent({
     }
   },
   components: {
-    KModal,
-    KTable,
-    KTableColumn,
     CredentialActions,
-    KButton,
     CredentialBulkActions,
     PageHeader,
-    Tooltip,
-    RadioGroup,
-    RadioButton,
-    KIcon,
   }
 })
 </script>

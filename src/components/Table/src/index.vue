@@ -34,7 +34,7 @@ import usePagination from '@/composables/usePagination.js'
 import { toRefs, defineComponent} from 'vue'
 
 export default defineComponent({
-  name: 'Table',
+  name: 'KTable',
   props: {
     caption: {
       type: String,

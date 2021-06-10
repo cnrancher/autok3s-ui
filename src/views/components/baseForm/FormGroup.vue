@@ -16,8 +16,8 @@
 </template>
 <script>
 import {computed, defineComponent, ref} from 'vue'
-import KIcon from '@/components/Icon'
 export default defineComponent({
+  name: 'FormGroup',
   props: {
     closable: {
       type: Boolean,
@@ -47,9 +47,6 @@ export default defineComponent({
       toggleVisible,
     }
   },
-  components: {
-    KIcon
-  }
 })
 </script>
 <style>

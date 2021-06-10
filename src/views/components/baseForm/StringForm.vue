@@ -3,10 +3,7 @@
 </template>
 <script>
 import {defineComponent} from 'vue'
-import KInput from '@/components/Input'
 export default defineComponent({
-  components: {
-    KInput
-  }
+  name: 'StringForm',
 })
 </script>

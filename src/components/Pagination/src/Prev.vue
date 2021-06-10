@@ -9,7 +9,7 @@
 import KIcon from '@/components/Icon'
 import { computed, defineComponent } from 'vue'
 export default defineComponent({
-  name: 'Prev',
+  name: 'KPrev',
   props: {
     currentPage: {
       type: Number,

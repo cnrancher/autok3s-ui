@@ -2,10 +2,10 @@
 <div class="key-value-map-form">
   <div class="key-value-map-form__title">
     {{label}}
-    <tooltip v-if="desc">
+    <k-tooltip v-if="desc">
       <k-icon type="prompt"></k-icon>
       <template #popover>{{desc}}</template>
-    </tooltip>
+    </k-tooltip>
   </div>
   <template v-for=" (t, index) in tags" :key="index">
     <k-input
@@ -33,12 +33,9 @@
 </template>
 <script>
 import {defineComponent, ref} from 'vue'
-import KInput from '@/components/Input'
-import KButton from '@/components/Button'
-import KIcon from '@/components/Icon'
-import Tooltip from '@/components/Tooltip'
 import { debounce } from 'lodash-es'
 export default defineComponent({
+  name: 'KeyValueMapForm',
   props: {
     modelValue: {
       type: Object,
@@ -109,12 +106,6 @@ export default defineComponent({
       getForm,
     }
   },
-  components: {
-    KInput,
-    KIcon,
-    KButton,
-    Tooltip
-  }
 })
 </script>
 <style>

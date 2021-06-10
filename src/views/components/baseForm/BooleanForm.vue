@@ -11,9 +11,9 @@
 </template>
 <script>
 import {defineComponent} from 'vue'
-import { Select as KSelect, Option as KOption} from '@/components/Select'
 import { computed } from 'vue'
 export default defineComponent({
+  name: 'BooleanForm',
   props: {
     trueLabel: {
       type: String,
@@ -50,9 +50,5 @@ export default defineComponent({
       options
     }
   },
-  components: {
-    KSelect,
-    KOption
-  }
 })
 </script>

@@ -14,14 +14,10 @@
 .btn,
 button,
 [class^='btn-'] {
-  display: inline-block;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
   cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   border: 0;
   padding: var(--btn-padding);

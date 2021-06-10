@@ -18,6 +18,7 @@ const {next: nextId} = useIdGenerator()
 const prefix = 'collapse_item_'
 
 export default defineComponent({
+  name: 'KCollapseItem',
   props: {
     title: {
       type: String,

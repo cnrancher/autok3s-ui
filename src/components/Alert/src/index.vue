@@ -9,7 +9,7 @@
 import {computed, defineComponent, ref} from 'vue'
 import KIcon from '@/components/Icon'
 export default defineComponent({
-  name: 'Alert',
+  name: 'KAlert',
   props: {
     title: {
       type: String,

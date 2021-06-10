@@ -5,7 +5,7 @@ import Prev from './Prev.vue'
 import { computed, defineComponent, ref, h, watchEffect, withDirectives, vShow } from 'vue'
 
 export default defineComponent({
-  name: 'Pagination',
+  name: 'KPagination',
   props: {
     layout: {
       type: String,

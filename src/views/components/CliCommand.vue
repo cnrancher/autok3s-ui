@@ -10,14 +10,14 @@
             <pre>
 {{registryContent}}
 <div class="cli-command__actions">
-  <tooltip append-to-body :delay="0">
+  <k-tooltip append-to-body :delay="0">
     <k-icon type="download" @click="downloadRegistryContent"></k-icon>
     <template #popover>Download Regisrty Content</template>
-  </tooltip>
-  <tooltip append-to-body :delay="0">
+  </k-tooltip>
+  <k-tooltip append-to-body :delay="0">
     <k-icon type="clone" @click="copyRegistryContent"></k-icon>
     <template #popover>Copy Regisrty Content</template>
-  </tooltip>
+  </k-tooltip>
 </div></pre>
           </div>
         </div>
@@ -27,10 +27,10 @@
           </div>
           <code>
             <div class="cli-command__actions">
-              <tooltip append-to-body :delay="0">
+              <k-tooltip append-to-body :delay="0">
                 <k-icon type="clone" class="cli-command__action" @click="copyCmd"></k-icon>
                 <template #popover>Copy CLI Command</template>
-              </tooltip>
+              </k-tooltip>
             </div>
             <span class="cli-command__cmd">autok3s</span>&nbsp;<span class="cli-command__sub-cmd">create</span>
             <template v-for="(o, index) in cmdOptions" :key="index">
@@ -53,13 +53,10 @@
 </template>
 <script>
 import {computed, defineComponent, inject} from 'vue'
-import KButton from '@/components/Button'
-import KIcon from '@/components/Icon'
-import Tooltip from '@/components/Tooltip'
-import KModal from "@/components/Modal"
 import Clipboard from 'clipboard'
 
 export default defineComponent({
+  name: 'CliCommand',
   props: {
     clusterForm: {
       type: Object,
@@ -213,12 +210,6 @@ export default defineComponent({
       optionValueClass,
     }
   },
-  components: {
-    KButton,
-    KModal,
-    KIcon,
-    Tooltip
-  }
 })
 
 function toClipboard(text, action = 'copy', appendToBody = false) {

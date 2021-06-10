@@ -25,7 +25,7 @@
 import { ref, watchEffect, defineComponent } from 'vue'
 import KIcon from '@/components/Icon'
 export default defineComponent({
-  name: 'Modal',
+  name: 'KModal',
   props: {
     modelValue: {
       type: Boolean,
