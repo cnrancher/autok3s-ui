@@ -69,7 +69,7 @@ export default defineComponent({
 </script>
 <style>
 .k-radio-button {
-  display: grid !important;
+  display: grid;
   grid-template-areas: 'a';
   align-items: center;
   justify-items: center;
@@ -84,5 +84,9 @@ export default defineComponent({
 .k-radio-button__origin-radio, .k-radio-button__label {
   grid-area: a;
   /* pointer-events: none; */
+}
+.k-radio-button__label {
+  display: flex;
+  align-items: center;
 }
 </style>
