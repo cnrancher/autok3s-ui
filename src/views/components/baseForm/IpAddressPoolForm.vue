@@ -20,7 +20,7 @@
   </div>
 </template>
 <script>
-import {defineComponent, ref} from 'vue'
+import {defineComponent, ref, watch} from 'vue'
 import { debounce } from 'lodash-es'
 export default defineComponent({
   name: 'IpAddressPoolForm',
@@ -52,6 +52,12 @@ export default defineComponent({
     const update = () => {
       emit('update:modelValue', ips.value.filter((ip) => ip.value).map((ip) => ip.value).join(','))
     }
+
+    watch(() => props.modelValue, (v) => {
+      if (v !== ips.value.map((ip) => ip.value).join(',')) {
+        ips.value = props.modelValue.split(',').map((ip) => ({ value: ip }))
+      }
+    })
     const debounceUpdate = debounce(update, 500)
     const remove = (index) => {
       ips.value.splice(index, 1)
