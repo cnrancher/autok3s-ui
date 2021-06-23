@@ -93,6 +93,8 @@ button,
 }
 
 .role-multi-action {
+  display: inline-flex;
+  align-items: center;
   background: var(--accent-btn);
   border: solid thin var(--primary);
   color: var(--primary);
