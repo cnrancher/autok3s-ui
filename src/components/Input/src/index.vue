@@ -20,6 +20,7 @@
       :autocomplete="autocomplete"
       :rows="rows"
       v-bind="$attrs"
+      ref="inputRef"
     ></textarea>
     <input
       v-else
@@ -31,18 +32,20 @@
       :disabled="disabled"
       :autocomplete="autocomplete"
       :type="type"
-      v-bind="$attrs">
+      v-bind="$attrs"
+      ref="inputRef">
     <div class="k-input__suffix" v-if="$slots.suffix">
       <slot name="suffix"></slot>
     </div>
   </div>
 </template>
 <script>
+import {ref, defineComponent} from 'vue'
 import Tooltip from '@/components/Tooltip'
 import KIcon from '@/components/Icon'
 import {useIdGenerator} from '@/utils/idGenerator.js'
 const getId = useIdGenerator(0, 'labeled-input_');
-export default {
+export default defineComponent({
   name: 'KInput',
   inheritAttrs: false,
   props: {
@@ -81,15 +84,21 @@ export default {
   emits: ['update:modelValue'],
   setup() {
     const inputId = getId()
+    const inputRef = ref(null)
+    const focus = () => {
+      inputRef.value?.focus();
+    }
     return {
       inputId,
+      inputRef,
+      focus,
     }
   },
   components: {
     Tooltip,
     KIcon,
   }
-}
+})
 </script>
 <style>
 
