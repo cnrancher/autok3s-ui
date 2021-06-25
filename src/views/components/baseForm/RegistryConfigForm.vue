@@ -8,8 +8,8 @@
       </k-tooltip>
     </div>
     <div v-if="!options.readOnly" class="registry-config-form__upload">
-      <k-button type="input" class="btn-sm bg-primary registry-config-form__clear" @click="clearContent">Clear</k-button>
-      <k-button type="input" class="btn-sm bg-primary" @click.stop.prevent="triggerSelectFile"><k-icon type="upload" color="white"></k-icon> &nbsp; Read from a file</k-button>
+      <k-button type="input" class="btn-sm role-primary registry-config-form__clear" @click="clearContent">Clear</k-button>
+      <k-button type="input" class="btn-sm role-primary" @click.stop.prevent="triggerSelectFile"><k-icon type="upload"></k-icon> &nbsp; Read from a file</k-button>
       <input
         ref="file"
         class="registry-config-form__file"
@@ -132,6 +132,9 @@ export default defineComponent({
       reader.onload = (e) => {
         emit('update:modelValue', e.target.result)
         reader.onload = null
+        nextTick(() => {
+          codemirror?.focus()
+        })
       }
       reader.readAsText(f)
     }
@@ -202,13 +205,22 @@ export default defineComponent({
     }
     const setAliyunMirror = () => {
       emit('update:modelValue', aliyunMirror)
+      nextTick(() => {
+        codemirror?.focus()
+      })
     }
     const setUSTCMirror = () => {
       emit('update:modelValue', USTCMirror)
+      nextTick(() => {
+        codemirror?.focus()
+      })
     }
 
     const clearContent = () => {
       emit('update:modelValue', '')
+      nextTick(() => {
+        codemirror?.focus()
+      })
     }
 
     watch(() => props.options, () => {
