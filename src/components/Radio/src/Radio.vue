@@ -3,6 +3,7 @@
     class="k-radio"
     :class="{disabled: isDisabled}">
     <input
+      ref="radioRef"
       v-model="model"
       type="radio"
       :value="label"
