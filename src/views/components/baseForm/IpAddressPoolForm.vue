@@ -9,7 +9,7 @@
       </k-tooltip>
     </h3>
     <template v-for="(ip, index) in ips" :key="index">
-      <k-input :readonly="readonly" v-model.trim="ip.value" @change="debounceUpdate" placeholder="e.g. 192.168.1.22"></k-input>
+      <k-input :readonly="readonly" v-model.trim="ip.value" @change="debounceUpdate" placeholder="e.g. 192.168.1.22" :ref="el => { if (el) { inputs[index] = el } }"></k-input>
       <k-icon v-if="!readonly" class="ip-address-pool-form__remove" type="ashbin" @click="remove(index)" :size="20"></k-icon>
       <div v-else></div>
     </template>
@@ -20,7 +20,7 @@
   </div>
 </template>
 <script>
-import {defineComponent, ref, watch} from 'vue'
+import {defineComponent, ref, watch, onBeforeUpdate, nextTick} from 'vue'
 import { debounce } from 'lodash-es'
 export default defineComponent({
   name: 'IpAddressPoolForm',
@@ -48,6 +48,10 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, {emit}) {
+    const inputs = ref([])
+    onBeforeUpdate(() => {
+      inputs.value = []
+    })
     const ips = ref(props.modelValue.split(',').map((ip) => ({ value: ip })))
     const update = () => {
       emit('update:modelValue', ips.value.filter((ip) => ip.value).map((ip) => ip.value).join(','))
@@ -66,11 +70,15 @@ export default defineComponent({
     const add = () => {
       ips.value.push({ value: '' })
       debounceUpdate()
+      nextTick(() => {
+        inputs.value[inputs.value.length - 1]?.focus()
+      })
     }
     const getForm = () => {
       return ips.value.map((ip) => ip.value)
     }
     return {
+      inputs,
       ips,
       debounceUpdate,
       remove,

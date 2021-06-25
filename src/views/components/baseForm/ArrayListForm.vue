@@ -9,7 +9,7 @@
       </k-tooltip>
     </h4>
     <template v-for="(item, index) in items" :key="index">
-      <k-input :readonly="readonly" v-model.trim="item.value" @input="debounceUpdate" :placeholder="placeholder"></k-input>
+      <k-input :readonly="readonly" v-model.trim="item.value" @input="debounceUpdate" :placeholder="placeholder" :ref="el => { if (el) { inputs[index] = el } }"></k-input>
       <k-icon v-if="!readonly" class="array-list-form__remove" type="ashbin" @click="remove(index)" :size="20"></k-icon>
       <div v-else></div>
     </template>
@@ -20,7 +20,7 @@
   </div>
 </template>
 <script>
-import {defineComponent, ref} from 'vue'
+import {defineComponent, ref, onBeforeUpdate, nextTick} from 'vue'
 import { debounce } from 'lodash-es'
 export default defineComponent({
   name: 'ArrayListForm',
@@ -59,6 +59,10 @@ export default defineComponent({
   emits: ['update:modelValue'],
   setup(props, {emit}) {
     const items = ref((props.modelValue ?? []).map((v) => ({ value: v })))
+    const inputs = ref([])
+    onBeforeUpdate(() => {
+      inputs.value = []
+    })
     const update = () => {
       emit('update:modelValue', items.value.map((item) => item.value))
     }
@@ -70,6 +74,9 @@ export default defineComponent({
     const add = () => {
       items.value.push({ value: '' })
       debounceUpdate()
+      nextTick(() => {
+        inputs.value[inputs.value.length - 1]?.focus()
+      })
     }
     const getForm = () => {
       if (items.value.length === 0) {
@@ -79,6 +86,7 @@ export default defineComponent({
     }
     return {
       items,
+      inputs,
       debounceUpdate,
       remove,
       add,
