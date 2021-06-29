@@ -246,7 +246,7 @@ export default defineComponent({
       }
     })
     const updateActiveTab = () => {
-      if (!form.options['access-key'] || !form.options['secret-key']) {
+      if (!form.options['access-key'] || !form.options['access-secret']) {
         acitiveTab.value = 'credential'
         return
       }

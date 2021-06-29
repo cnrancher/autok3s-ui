@@ -230,7 +230,7 @@ export default defineComponent({
     const { form, desc }= useFormFromSchema(props.schema)
     const acitiveTab = ref('instance')
     const updateActiveTab = () => {
-      if (!form.options['access-key'] || !form.options['secret-key']) {
+      if (!form.options['secret-id'] || !form.options['secret-key']) {
         acitiveTab.value = 'credential'
         return
       }
