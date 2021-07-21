@@ -37,9 +37,12 @@
       <k-table-column sortable label="Region" field="region"></k-table-column>
       <k-table-column sortable label="Master" field="master"></k-table-column>
       <k-table-column sortable label="Worker" field="worker"></k-table-column>
-      <k-table-column type="action" field="action" width="30">
+      <k-table-column type="action" field="action" width="60">
         <template #default="{row}">
-          <cluster-actions :cluster="row" @exec-command="handleCommand"></cluster-actions>
+          <div class="cluster-table__row-actions">
+            <explorer-link :cluster-id="row.id"></explorer-link>
+            <cluster-actions :cluster="row" @exec-command="handleCommand"></cluster-actions>
+          </div>
         </template>
       </k-table-column>
       <template #error>
@@ -98,10 +101,11 @@
 <script>
 import {defineComponent, watch} from 'vue'
 import { useRouter } from 'vue-router'
-import { remove, joinNode, fetchById } from '@/api/cluster.js'
+import { remove, joinNode, fetchById, disableExplorer, enableExplorer } from '@/api/cluster.js'
 import ClusterActions from './ClusterActions.vue'
 import ClusterBulkActions from './ClusterBulkActions.vue'
 import ClusterStateTag from './ClusterStateTag.vue'
+import ExplorerLink from './ExplorerLink.vue'
 import {RadioGroup, RadioButton} from '@/components/Radio'
 import CliCommand from '@/views/components/CliCommand.vue'
 import useDataSearch from '@/composables/useDataSearch.js'
@@ -230,6 +234,35 @@ export default defineComponent({
               })
             }
           })
+          break;
+        case 'disableExplorer':
+          disableExplorer(cluster).catch((err) => {
+            if (err) {
+              notificationStore.action.notify({
+                type: 'error',
+                title: 'Disable explorer Error',
+                content: stringify(err)
+              })
+            }
+          })
+          break;
+        case 'enableExplorer':
+          enableExplorer(cluster).then(({data}) => {
+            notificationStore.action.notify({
+              type: 'success',
+              title: 'Enable kube-explorer success',
+              content: stringify(data)
+            })
+          }).catch((err) => {
+            if (err) {
+              notificationStore.action.notify({
+                type: 'error',
+                title: 'Enable explorer Error',
+                content: stringify(err)
+              })
+            }
+          })
+          break;
       }
     }
     const deleteClusters = async (clusters) => {
@@ -286,6 +319,7 @@ export default defineComponent({
     CliCommand,
     RadioGroup,
     RadioButton,
+    ExplorerLink,
   }
 })
 
@@ -400,5 +434,10 @@ function useJionNodeModal(clusterId) {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px 10px;
+}
+.cluster-table__row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 </style>

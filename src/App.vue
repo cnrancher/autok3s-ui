@@ -12,6 +12,7 @@ import useNotificationStore from '@/store/useNotificationStore.js'
 import useClusterStore from '@/store/useClusterStore.js'
 import useTemplateStore from '@/store/useTemplateStore.js'
 import useWindownManagerStore from '@/store/useWindowManagerStore.js'
+import useExplorerStore from '@/store/useExplorerStore.js'
 import useResourceChangeSocket from '@/composables/useResourceChangeSocket.js'
 export default defineComponent({
   name: 'App',
@@ -31,6 +32,8 @@ export default defineComponent({
     provide('clusterStore', clusterStore)
     const templateStore = useTemplateStore()
     provide('templateStore', templateStore)
+    const explorerStore = useExplorerStore()
+    provide('explorerStore', explorerStore)
 
     const {subscribe, connect} = useResourceChangeSocket()
     const clusterMessageHandler = useDebounceMessage(handleWebsocketMessage({
@@ -50,7 +53,13 @@ export default defineComponent({
       'resource.create': templateStore.action.addTemplate,
       'resource.remove': templateStore.action.removeTemplate,
     }))
-    
+
+    const explorerMessageHandler = useDebounceMessage(handleWebsocketMessage({
+      'resource.change': explorerStore.action.updateExplorer,
+      'resource.create': explorerStore.action.addExplorer,
+      'resource.remove': explorerStore.action.removeExplorer,
+    }))
+
     subscribe('clusterTemplate', (msg) => {
       if (msg.resourceType === 'clusterTemplate'
         && msg.name 
@@ -58,6 +67,13 @@ export default defineComponent({
           templateMessageHandler(msg)
       }
     }, templateStore.action.syncTemplates)
+    subscribe('explorer', (msg) => {
+      if (msg.resourceType === 'explorer'
+        && msg.name
+        && ['resource.change', 'resource.create', 'resource.remove'].includes(msg.name)) {
+          explorerMessageHandler(msg)
+      }
+    }, explorerStore.action.syncExplorers)
     connect()
   },
 })

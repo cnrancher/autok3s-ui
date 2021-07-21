@@ -15,7 +15,7 @@
 <script>
 import { cloneDeep } from '@/utils'
 
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 export default {
   props: {
     cluster: {
@@ -25,9 +25,10 @@ export default {
   },
   emits: ['exec-command'],
   setup(props, {emit}) {
+    const explorerStore = inject('explorerStore')
     const actions = computed(() => {
       if (props.cluster.status?.toLowerCase() === 'running') {
-        return [
+        const actions = [
           {
             label: 'Join Node',
             icon: 'editor',
@@ -59,6 +60,24 @@ export default {
             command: 'generateCliCommand'
           }
         ]
+
+        const explorer = explorerStore.getter.clusterExplorerMap[props.cluster.id]
+        if (explorer?.links?.explorer) {
+          actions.push({
+            label: 'Disabe Explorer',
+            icon: 'terminal',
+            command: 'disableExplorer'
+          })
+        } else {
+          actions.push({
+            label: 'Enable Explorer',
+            icon: 'terminal',
+            command: 'enableExplorer'
+          })
+        }
+
+        return actions
+
       }
       if (['upgrading', 'creating'].includes(props.cluster.status?.toLowerCase())) {
         return [
