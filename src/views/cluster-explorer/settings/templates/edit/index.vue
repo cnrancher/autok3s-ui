@@ -29,6 +29,7 @@
           label="Default Template"
           trueLabel="True"
           falseLabel="False"
+          :loading="loading"
         ></boolean-form>
       </div>
       <component v-if="providerSchema.config && providerSchema.options" ref="formRef" :schema="providerSchema" :is="clusterFormComponent"></component>
@@ -188,7 +189,7 @@ export default defineComponent({
         return
       }
       const formData = {
-        'is-defalut': isDefault.value,
+        'is-default': isDefault.value,
         ...form.config,
         name: name.value,
         provider: currentProvider.value,
