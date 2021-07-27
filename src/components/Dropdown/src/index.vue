@@ -80,6 +80,7 @@ export default defineComponent({
 <style>
 .k-dropdown {
   display: inline-block;
+  position: relative;
 }
 .k-dropdown__content {
   display: none;
