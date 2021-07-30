@@ -40,7 +40,7 @@
       <k-table-column type="action" field="action" width="60">
         <template #default="{row}">
           <div class="cluster-table__row-actions">
-            <explorer-link :cluster-id="row.id"></explorer-link>
+            <explorer-link :cluster-id="row.id" :cluster-name="row.name"></explorer-link>
             <cluster-actions :cluster="row" @exec-command="handleCommand"></cluster-actions>
           </div>
         </template>
