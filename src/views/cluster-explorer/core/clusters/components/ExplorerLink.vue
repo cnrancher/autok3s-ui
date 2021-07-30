@@ -1,5 +1,5 @@
 <template>
-  <a class="explorer-link" v-if="explorer?.links?.explorer" target="_blank" :href="explorer?.links?.explorer">
+  <a class="explorer-link" v-if="explorer?.links?.explorer" target="_blank" :href="`${explorer?.links?.explorer}?title=${encodeURIComponent(clusterName)}`">
     <tooltip >
       <k-icon :size="16" type="dashboard"></k-icon>
       <template #popover>Go to kube-explorer page</template>
@@ -14,7 +14,11 @@ export default defineComponent({
   props: {
     clusterId: {
       type: String,
-      default: ''
+      default: '',
+    },
+    clusterName: {
+      type: String,
+      default: '',
     }
   },
   setup(props) {
