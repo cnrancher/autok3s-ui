@@ -34,7 +34,7 @@
               required
             />
           </div>
-          <component v-if="providerSchema.config && providerSchema.options" ref="formRef" :has-error="hasError" :schema="providerSchema" :is="clusterFormComponent"></component>
+          <component v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider" ref="formRef" :has-error="hasError" :schema="providerSchema" :is="clusterFormComponent"></component>
           <footer-actions>
             <k-button class="btn role-secondary" @click="goToCreatePage">Advance</k-button>
             <k-button class="role-primary" type="button" :loading="loading || creating" @click="create">Create</k-button>
@@ -82,7 +82,6 @@ export default defineComponent({
     const formRef = ref(null)
     const name = ref('')
     const currentProvider = ref('aws')
-    const showKeyForm = ref(true)
 
     const creating = ref(false)
     const formErrors = ref([])
@@ -118,11 +117,6 @@ export default defineComponent({
       providerSchema.options = schema.options
       if (schema.config.master.default === '0') {
         providerSchema.config.master.default = '1'
-      }
-      if (!schema.options['access-key']?.default || !schema.options['secret-key']?.default) {
-        showKeyForm.value = true
-      } else {
-         showKeyForm.value = false
       }
     }
     const clusterFormComponent = computed(() => {
@@ -241,9 +235,6 @@ export default defineComponent({
         }
       }
       formErrors.value= errors;
-      if (errors.length > 0) {
-        showKeyForm.value = true
-      }
       return errors.length === 0
     }
     const goBack = () => {
@@ -306,7 +297,6 @@ export default defineComponent({
       hasError,
       loading,
       creating,
-      showKeyForm,
       formRef,
       providerOptions,
       currentProvider,

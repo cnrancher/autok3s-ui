@@ -67,6 +67,7 @@ export default defineComponent({
       form,
       desc,
       showKeyForm,
+      getForm,
     }
   },
   components: {
