@@ -37,7 +37,7 @@
             readonly
           ></boolean-form>
         </div>
-        <component readonly v-if="providerSchema.config && providerSchema.options" ref="formRef" :schema="providerSchema" :is="clusterFormComponent"></component>
+        <component readonly v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider" ref="formRef" :schema="providerSchema" :is="clusterFormComponent"></component>
         <footer-actions>
           <router-link :to="{name: 'ClusterExplorerSettingsTemplates'}" class="btn role-secondary">Go Back</router-link>
         </footer-actions>

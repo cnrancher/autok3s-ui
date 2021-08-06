@@ -32,7 +32,7 @@
           :loading="loading"
         ></boolean-form>
       </div>
-      <component v-if="providerSchema.config && providerSchema.options" ref="formRef" :schema="providerSchema" :is="clusterFormComponent"></component>
+      <component v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider" ref="formRef" :schema="providerSchema" :is="clusterFormComponent"></component>
       <footer-actions>
         <router-link :to="{name: 'ClusterExplorerSettingsTemplates'}" class="btn role-secondary">Cancel</router-link>
         <k-button class="role-primary" type="button" :loading="loading || updating" @click="save">Save</k-button>
