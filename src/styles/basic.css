@@ -5,11 +5,10 @@ html {
 
 body {
   height: 100%;
-  -moz-osx-font-smoothing: grayscale;
+  /* -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  text-rendering: optimizeLegibility; */
   color: var(--body-text);
-  font-family: 'Fira Sans';
   direction: ltr;
   margin: 0;
   scrollbar-width: thin;
@@ -18,7 +17,6 @@ body {
 
 .dashboard-body {
   background: var(--body-bg);
-  background: var(--body-gradient);
 }
 
 ::-webkit-scrollbar {
