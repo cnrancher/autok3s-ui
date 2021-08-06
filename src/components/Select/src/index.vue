@@ -16,7 +16,7 @@
         <template v-else>
           <k-tag class="k-select__tag" type="info" v-for="o in selectdOptions" :key="o.value">
             {{o.label}}
-            <k-icon type="close" class="k-select__tag-close" @click.stop="removeOption(o.value)"></k-icon></k-tag>
+            <k-icon type="close" class="k-select__tag-close" v-if="!disabled" @click.stop="removeOption(o.value)"></k-icon></k-tag>
         </template>
       </div>
       <input
@@ -112,10 +112,10 @@ export default defineComponent({
     const selectdOptions = computed(() => {
       return selectStore.getter.activeOptions
     })
-    watch(() => props.loading, () => {
-      if (props.modelValue !== undefined && !props.loading ) {
+    watch(() => props.loading, (loading) => {
+      if (props.modelValue !== undefined && !loading ) {
         nextTick(() => {
-          const result = props.multiple ? selectStore.action.setValues(props.modelValue) : selectStore.action.setValue(props.modelValue)
+          const result = props.multiple ? selectStore.action.setValues([...props.modelValue]) : selectStore.action.setValue(props.modelValue)
           if (!result) {
             emit('update:modelValue', null)
           }
@@ -125,22 +125,37 @@ export default defineComponent({
       immediate: true
     })
 
-    watch(() => selectStore.state.value, () => {
-      if (selectStore.state.value === props.modelValue) {
+    watch(() => selectStore.state.value, (value) => {
+      if (value === props.modelValue) {
         return
       }
-      emit('change', selectStore.state.value)
-      emit('update:modelValue', selectStore.state.value)
+      emit('change', value)
+      emit('update:modelValue', value)
     })
-    watch(() => selectStore.state.values, () => {
-      const values = selectStore.state.values
+    watch(() => selectStore.state.values, (values) => {
       if (values?.length === props.modelValue?.length && values?.every((v) => props.modelValue?.includes(v))) {
         return
       }
-      emit('change', selectStore.state.values)
-      emit('update:modelValue', selectStore.state.values)
+      emit('change', [...values])
+      emit('update:modelValue', [...values])
     }, {
       deep: true
+    })
+    watch(() => props.modelValue, (modelValue) => {
+      if (props.loading) {
+        return
+      }
+      if (props.multiple) {
+        const values = selectStore.state.values
+        if (values?.length !== modelValue?.length || values?.some((v) => !modelValue?.includes(v))) {
+          selectStore.action.setValues([...modelValue])
+        }
+        return
+      }
+      if (modelValue !== selectStore.state.value) {
+        selectStore.action.setValue(modelValue)
+        return
+      }
     })
     const minWithModifier = useMinWithModifier()
     const popperOption = {
