@@ -45,6 +45,9 @@ function setValue(state) {
 }
 function setValues(state) {
   return (values = []) => {
+    if (!state.values) {
+      state.values = []
+    }
     if (values.length === 0) {
       state.values = []
       return true
