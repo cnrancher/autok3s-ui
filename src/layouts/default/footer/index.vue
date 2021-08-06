@@ -37,7 +37,7 @@ export default defineComponent({
   align-items: center;
   border-top: thin solid var(--border);
   column-gap: 40px;
-  height: 36px;
+  height: var(--footer-height);
   padding: 0 20px;
 }
 .k-footer__lang {
