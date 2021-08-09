@@ -1,5 +1,5 @@
 <template>
-  <a class="explorer-link" v-if="explorer?.links?.explorer" target="_blank" :href="`${explorer?.links?.explorer}?title=${encodeURIComponent(clusterName)}`">
+  <a class="explorer-link" v-if="explorer?.links?.explorer" target="_blank" :href="`${explorer?.links?.explorer}/dashboard/?title=${encodeURIComponent(clusterName)}`">
     <tooltip >
       <k-icon :size="16" type="dashboard"></k-icon>
       <template #popover>Go to kube-explorer page</template>
