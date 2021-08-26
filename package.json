@@ -22,7 +22,7 @@
     "js-yaml": "^4.1.0",
     "lodash-es": "^4.17.21",
     "normalize.css": "^8.0.1",
-    "vue": "^3.2.2",
+    "vue": "^3.2.6",
     "vue-router": "^4.0.11",
     "xterm": "^4.13.0",
     "xterm-addon-fit": "^0.5.0",
@@ -31,11 +31,11 @@
     "xterm-addon-webgl": "^0.11.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^1.4.0",
-    "@vue/compiler-sfc": "^3.2.2",
+    "@vitejs/plugin-vue": "^1.6.0",
+    "@vue/compiler-sfc": "^3.2.6",
     "autoprefixer": "^10.2.5",
     "postcss-nesting": "^8.0.1",
-    "vite": "^v2.4.4",
+    "vite": "^v2.5.1",
     "vite-plugin-html": "^2.0.7"
   }
 }
