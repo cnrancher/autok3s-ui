@@ -1,5 +1,5 @@
 <template>
-  <header class="k-app-header">
+  <header class="grid grid-cols-[var(--nav-width),max-content] items-center justify-between pr-20px border-b bg-white">
     <k-dropdown-nav :route-groups="routeGroups" :current-group="currentGroup"></k-dropdown-nav>
     <kube-ctl-button></kube-ctl-button>
   </header>
@@ -22,14 +22,4 @@ export default {
   }
 }
 </script>
-<style>
-.k-app-header {
-  background-color: var(--header-bg);
-  display: grid;
-  grid-template-columns: var(--nav-width) max-content;
-  align-items: center;
-  justify-content: space-between;
-  padding-right: 20px;
-  border-bottom: var(--header-border-size) solid var(--header-border);
-}
-</style>
+

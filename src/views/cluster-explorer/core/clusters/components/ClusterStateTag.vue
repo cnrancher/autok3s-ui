@@ -1,5 +1,5 @@
 <template>
-  <k-tag :type="type" class="cluster-state-tag">
+  <k-tag :type="type" class="capitalize text-sm">
     {{status}}
   </k-tag>
 </template>
@@ -35,9 +35,3 @@ export default {
   },
 }
 </script>
-<style>
-.cluster-state-tag {
-  font-size: 0.85em;
-  text-transform: capitalize;
-}
-</style>

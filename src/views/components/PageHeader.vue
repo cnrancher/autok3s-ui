@@ -1,6 +1,6 @@
 <template>
   <header class="page-header">
-    <h1 class="page-head__title"><slot name="title"></slot></h1>
+    <h1 class="page-head__title text-size-24px"><slot name="title"></slot></h1>
     <div class="page-header__subtitle"><slot name="subtitle"></slot></div>
     <div class="page-header__actions">
       <slot name="actions"></slot>
@@ -19,7 +19,9 @@
 }
 .page-head__title {
   grid-area: title;
-  margin: 0 0;
+  & a {
+    @apply text-$link;
+  }
 }
 .page-header__subtitle {
   grid-area: subtitle;

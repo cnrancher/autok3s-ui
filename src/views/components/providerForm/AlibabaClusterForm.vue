@@ -6,7 +6,7 @@
       <form-group>
         <template #title>Credential Options</template>
         <template #default>
-          <div class="alibaba-cluster-create-form__content">
+          <div class="grid grid-cols-2 gap-10px">
             <k-password-input
               v-model="form.options['access-key']"
               label="Access Key"
@@ -27,7 +27,7 @@
       <form-group>
         <template #title>Basic</template>
         <template #default>
-          <div class="alibaba-cluster-create-form__content">
+          <div class="grid grid-cols-2 gap-10px">
             <string-form
               v-model.trim="form.options.region"
               label="Region"
@@ -71,7 +71,7 @@
       <form-group :closable="true">
         <template #title>Network</template>
         <template #default>
-          <div class="alibaba-cluster-create-form__content">
+          <div class="grid grid-cols-2 gap-10px">
             <string-form
               v-model.trim="form.options['v-switch']"
               label="V-Switch"
@@ -105,7 +105,7 @@
           Params used to login to instance via ssh, e.g. key-pair, ssh user, ssh port
         </template>
         <template #default>
-          <div class="alibaba-cluster-create-form__content">
+          <div class="grid grid-cols-2 gap-10px">
             <string-form
               v-model.trim="form.options['key-pair']"
               label="Key Pair"
@@ -141,7 +141,7 @@
       <form-group :closable="true">
         <template #title>Advance</template>
         <template #default>
-          <div class="alibaba-cluster-create-form__content">
+          <div class="grid grid-cols-2 gap-10px">
             <cluster-tags-form
               ref="tags"
               v-model="form.options.tags"
@@ -162,7 +162,7 @@
       </k3s-options-form>
     </k-tab-pane>
     <k-tab-pane label="Additional Options" name="additional">
-      <div class="alibaba-cluster-create-form__content">
+      <div class="grid grid-cols-2 gap-10px">
         <!-- <boolean-form
           v-model="form.config['ui']"
           label="UI"
@@ -280,11 +280,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.alibaba-cluster-create-form__content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  row-gap: 10px;
-  column-gap: 10px;
-}
-</style>

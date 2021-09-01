@@ -6,7 +6,7 @@
       <form-group>
         <template #title>Basic</template>
         <template #default>
-          <div class="k3d-cluster-create-form__content">
+          <div class="grid grid-cols-2 gap-10px">
             <string-form
               v-model.trim="form.options['api-port']"
               label="API Port"
@@ -57,7 +57,7 @@
       <form-group :closable="true" v-model="visible">
         <template #title>Advance</template>
         <template #default>
-          <div class="k3d-options-form__content">
+          <div class="grid grid-cols-2 gap-10px">
             <string-form
               v-model.trim="form.options['masters-memory']"
               label="Masters Memory"
@@ -210,25 +210,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.k3d-cluster-create-form__content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  row-gap: 10px;
-  column-gap: 10px;
-  align-items: start;
-}
-
-.k3d-cluster-create-form__toggle {
-  cursor: pointer;
-  display: grid;
-  grid-template-columns: auto auto 1fr;
-  column-gap: 10px;
-  height: 100%;
-  align-items: end;
-  justify-items: end;
-}
-.k3d-cluster-create-form__advance {
-  display: contents;
-}
-</style>

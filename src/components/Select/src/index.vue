@@ -1,7 +1,7 @@
 <template>
   <div class="k-select" :class="{ disabled: disabled }">
     <div class="k-select__label">
-      <label v-if="label" :for="inputId">{{label}} <sup v-if="required" class="k-form-item--required">*</sup></label>
+      <label v-if="label" :for="inputId">{{label}} <sup v-if="required" class="text-red-500 top-0">*</sup></label>
       <tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
         <template #popover>{{desc}}</template>
@@ -10,13 +10,13 @@
     <div class="k-select__prefix" v-if="$slots.prefix">
       <slot name="prefix">{{prefix}}</slot>
     </div>
-    <dropdown class="k-select__trigger" :option="popperOption" :append-to-body="false" :disabled="disabled" :lazy="false">
-      <div v-if="multiple" class="k-select__tags">
-        <span class="k-select__placeholder" v-if="selectdOptions.length === 0">{{placeholder}}</span>
+    <dropdown class="k-select__trigger" :option="popperOption" :append-to-body="false" :disabled="disabled" :lazy="false" @visible-change="handleVisibleChange">
+      <div v-if="multiple" class="flex">
+        <span class="text-warm-gray-400" v-if="selectdOptions.length === 0">{{placeholder}}</span>
         <template v-else>
-          <k-tag class="k-select__tag" type="info" v-for="o in selectdOptions" :key="o.value">
+          <k-tag class="flex items-center m-r-2px" type="info" v-for="o in selectdOptions" :key="o.value">
             {{o.label}}
-            <k-icon type="close" class="k-select__tag-close" v-if="!disabled" @click.stop="removeOption(o.value)"></k-icon></k-tag>
+            <k-icon type="close" class="cursor-pointer" v-if="!disabled" @click.stop="removeOption(o.value)"></k-icon></k-tag>
         </template>
       </div>
       <input
@@ -24,8 +24,8 @@
         autocomplete="off"
         readonly
         :disabled="disabled || loading"
-        class="k-select__input"
-        :class="{'k-select--no-label': !label}"
+        class="cursor-pointer overflow-ellipsis focus-visible:outline-none bg-transparent"
+        :class="[!label ? 'py-10.5px px-0' : '', visible ? 'text-warm-gray-400' : '']"
         :id="inputId" v-bind="$attrs"
         :value="selectedLabel"
         :placeholder="placeholder"
@@ -42,7 +42,7 @@
   </div>
 </template>
 <script>
-import {computed, defineComponent, nextTick, onMounted, provide, watch, watchEffect} from 'vue'
+import {computed, defineComponent, nextTick, provide, watch, ref} from 'vue'
 import {useIdGenerator} from '@/utils/idGenerator.js'
 import { Dropdown }from '@/components/Dropdown'
 import KIcon from '@/components/Icon'
@@ -173,12 +173,19 @@ export default defineComponent({
     const removeOption = (v) => {
       selectStore.action.setValues([v])
     }
+
+    const visible = ref(false)
+    const handleVisibleChange = (v) => {
+      visible.value = v
+    }
     return {
       inputId,
       selectedLabel,
       selectdOptions,
       popperOption,
       removeOption,
+      visible,
+      handleVisibleChange
     }
   },
   components: {
@@ -197,68 +204,28 @@ export default defineComponent({
                        "prefix select suffix";
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
-  padding: 8px 8px;
-  background-color: var(--input-bg); 
-  border-radius: var(--border-radius);
-  border: solid var(--outline-width) var(--input-border);
-  color: var(--input-text);
-  &:not(.disabled):hover {
-    background: var(--input-hover-bg);
-  }
+  @apply p-8px rounded border;
+  
 }
+.k-select:not(.disabled):hover {
+  @apply bg-gray-100;
+}
+
 .k-select__label {
   grid-area: label;
-  color: var(--input-label);
-  display: grid;
-  column-gap: 10px;
-  align-items: center;
-  grid-template-columns: max-content auto;
+  @apply text-warm-gray-500 grid gap-y-10px items-center grid-cols-[max-content,auto];
   width: fit-content;
 }
 .k-select__prefix {
   grid-area: prefix;
-  color: #6c6c76;
-  align-self: center;
+  @apply text-warm-gray-500 self-center;
 }
 .k-select__suffix {
   grid-area: suffix;
-  font-weight: 400;
-  line-height: 1;
-  border-left: thin solid #6c6c76;
-  padding-left: 8px;
-  display: flex;
-  align-items: center;
-  color: #6c6c76;
+  @apply flex items-center text-warm-gray-500 pl-8px border-l border-warm-gray-600 leading-1 font-400;
 }
 .k-select__trigger {
   grid-area: select;
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: center;
-}
-.k-select__input {
-  cursor: pointer;
-  border: none;
-  background-color: transparent;
-  outline: 0;
-  color: var(--input-text);
-  text-overflow: ellipsis;
-}
-.k-select--no-label {
-  padding: 9px 0;
-}
-.k-select__tags {
-  display: flex;
-}
-.k-select__tag {
-  display: flex;
-  align-items: center;
-  margin-right: 2px;
-}
-.k-select__tag-close {
-  cursor: pointer;
-}
-.k-select__placeholder {
-  color: #777;
+  @apply grid grid-cols-[1fr,auto,auto] items-center;
 }
 </style>

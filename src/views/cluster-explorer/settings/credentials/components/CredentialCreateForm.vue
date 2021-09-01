@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="credential-form">
+  <div class="grid grid-cols-2 gap-10px">
     <k-select
       v-model="provider"
       label="Provider"
@@ -147,14 +147,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.credential-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  row-gap: 10px;
-  column-gap: 10px;
-}
-.credential-form__provider {
-  grid-column: 1 / span 2;
-}
-</style>

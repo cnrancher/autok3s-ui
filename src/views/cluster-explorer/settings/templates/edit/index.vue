@@ -7,7 +7,7 @@
       <k-alert v-if="currentProvider === 'native'" type="warning" title="Native provider only supports create K3s cluster and join K3s nodes."></k-alert>
       <k-alert v-if="currentProvider === 'k3d'" type="warning" title="Highly recommended that K3d provider run in a Linux / Unix environment, do not run K3d provider in MacOS container environment."></k-alert>
       <k-alert v-if="warning" type="warning" :title="warning"></k-alert>
-      <div class="template-create-form__base-info">
+      <div class="grid grid-cols-3 gap-10px pb-20px">
         <k-select
           v-model="currentProvider"
           label="Provider"
@@ -249,11 +249,4 @@ export default defineComponent({
   }
 })
 </script>
- <style>
-.template-create-form__base-info {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px 10px;
-  padding-bottom: 20px;
-}
-</style>
+ 

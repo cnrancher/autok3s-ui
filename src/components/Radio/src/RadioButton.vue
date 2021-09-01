@@ -1,7 +1,7 @@
 <template>
   <label
-    class="k-radio-button btn"
-    :class="{'bg-primary': model === label, disabled: isDisabled, 'bg-disabled': model !== label}">
+    class="k-radio-button"
+    :class="[model === label ? 'bg-light-blue-600' : 'bg-gray-200', isDisabled ? 'disabled' : '']">
     <input
       ref="radioRef"
       type="radio"
@@ -11,7 +11,7 @@
       :disabled="isDisabled"
       class="k-radio-button__origin-radio">
     <span
-      class="k-radio-button__label"
+      class="k-radio-button__label flex items-center"
     >
       <slot>{{label}}</slot>
     </span>
@@ -73,6 +73,7 @@ export default defineComponent({
   grid-template-areas: 'a';
   align-items: center;
   justify-items: center;
+  @apply px-21px leading-40px;
 }
 
 .k-radio-button:not(.disabled) {
@@ -83,10 +84,6 @@ export default defineComponent({
 }
 .k-radio-button__origin-radio, .k-radio-button__label {
   grid-area: a;
-  /* pointer-events: none; */
 }
-.k-radio-button__label {
-  display: flex;
-  align-items: center;
-}
+
 </style>

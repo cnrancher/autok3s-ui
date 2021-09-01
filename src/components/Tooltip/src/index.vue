@@ -1,10 +1,10 @@
 <template>
-  <div class="k-tooltip__trigger" ref="trigger" @mouseenter="showTooltip" @focus="showTooltip" @mouseleave="hideTooltip" @blur="hideTooltip">
+  <div class="inline-flex items-center" ref="trigger" @mouseenter="showTooltip" @focus="showTooltip" @mouseleave="hideTooltip" @blur="hideTooltip">
     <slot></slot>
     <teleport to="body" :disabled="!appendToBody">
        <div ref="popover"
-        class="k-tooltip"
-        :class="{'k-tooltip--active': show}"
+        class="k-tooltip bg-gray-200 text-gray-800 rounded p-8px absolute max-w-80vw z-$tooltip-z-index"
+        :class="[show ? 'block':'hidden']"
         @mouseenter="showTooltip" @focus="showTooltip"
         @mouseleave="hideTooltip" @blur="hideTooltip"
         v-if="!lazy || show">
@@ -105,24 +105,6 @@ export default defineComponent({
 })
 </script>
 <style>
-.k-tooltip__trigger {
-  display: inline-flex;
-  align-items: center;
-}
-.k-tooltip {
-  background: var(--tooltip-bg);
-  color: var(--tooltip-text);
-  border-radius: var(--border-radius);
-  padding: 8px;
-  /* font-size: 12px; */
-  position: absolute;
-  display: none;
-  max-width: 80vw;
-  z-index: var(--tooltip-z-index);
-}
-.k-tooltip--active {
-  display: block;
-}
 .k-tooltip__arrow,
 .k-tooltip__arrow::before {
   position: absolute;

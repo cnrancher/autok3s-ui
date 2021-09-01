@@ -1,7 +1,7 @@
 <template>
   <div class="k-input" :class="{ disabled: disabled }">
     <div class="k-input__label">
-      <label v-if="label" :for="inputId">{{label}} <sup v-if="required" class="k-form-item--required">*</sup></label>
+      <label v-if="label" :for="inputId">{{label}} <sup v-if="required" class="text-red-500 top-0">*</sup></label>
       <tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
         <template #popover>{{desc}}</template>
@@ -12,7 +12,7 @@
     </div>
     <textarea v-if="type==='textarea'"
       class="k-input__textarea"
-      :class="{'k-input--no-label': !label}"
+      :class="[!label ? 'py-10.5px px-0' : '']"
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
       :id="inputId"
@@ -25,7 +25,7 @@
     <input
       v-else
       class="k-input__input"
-      :class="{'k-input--no-label': !label}"
+      :class="[!label ? 'py-10.5px px-0' : '']"
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
       :id="inputId"
@@ -101,60 +101,34 @@ export default defineComponent({
 })
 </script>
 <style>
-
 .k-input {
   display: grid;
   grid-template-areas: "label label suffix"
                        "prefix input suffix";
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
-  padding: 8px 8px;
-  background-color: var(--input-bg); 
-  border-radius: var(--border-radius);
-  border: solid var(--outline-width) var(--input-border);
-  color: var(--input-text);
-  height: fit-content;
-  &:not(.disabled)hover {
-    background: var(--input-hover-bg);
-  }
-  
+  @apply p-8px rounded border border-gray-300;
+}
+.k-input:not(.disabled):hover {
+  @apply bg-gray-100;
 }
 .k-input__label {
   grid-area: label;
-  color: var(--input-label);
-  display: grid;
-  column-gap: 10px;
-  align-items: center;
-  grid-template-columns: max-content auto;
+  @apply grid gap-x-10px items-center grid-cols-[max-content,auto] text-warm-gray-500 grid gap-y-10px items-center grid-cols-[max-content,auto];
   width: fit-content;
 }
 .k-input__prefix {
   grid-area: prefix;
-  color: #6c6c76;
-  align-self: center;
+  @apply text-warm-gray-500 self-center;
 }
 .k-input__suffix {
   grid-area: suffix;
-  font-weight: 400;
-  line-height: 1;
-  border-left: thin solid #6c6c76;
-  padding-left: 8px;
-  display: flex;
-  align-items: center;
-  color: #6c6c76;
+  @apply flex items-center text-warm-gray-500 pl-8px border-l border-warm-gray-600 font-400;
 }
 input.k-input__input, .k-input__textarea,
 input.k-input__input:hover, .k-input__textarea:hover,
 input.k-input__input:focus, .k-input__textarea:focus {
   grid-area: input;
-  border: none;
-  background-color: transparent;
-  outline: 0;
-  color: var(--input-text);
-  padding: 1px 2px;
-}
-
-.k-input--no-label {
-  padding: 9px 0;
+  @apply bg-transparent focus-visible:outline-none;
 }
 </style>

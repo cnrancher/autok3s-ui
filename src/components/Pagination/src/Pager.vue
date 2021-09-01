@@ -1,19 +1,19 @@
 <template>
-  <div v-if="pageCount > 0" class="k-pagination__page"
-    :class="{'k-pagination__current-page': 1 === currentPage}"
+  <div v-if="pageCount > 0" class="py-5px px-10px"
+    :class="[1 === currentPage ? 'text-light-blue-500 cursor-default' : 'cursor-pointer']"
     @click="handlePageChange(1)">1</div>
   <div v-if="showPrevMore"
-    class="k-pagination__page"
+    class="py-5px px-10px"
     @click="handlePrevMore"><k-icon type="ellipsis"></k-icon></div>
   <div v-for="pager in pagers" :key="pager"
-    class="k-pagination__page"
-    :class="{'k-pagination__current-page': pager === currentPage}"
+    class="py-5px px-10px"
+    :class="[pager === currentPage ? 'text-light-blue-500 cursor-default' : 'cursor-pointer']"
     @click="handlePageChange(pager)">{{pager}}</div>
   <div v-if="showNextMore"
-    class="k-pagination__page"
+    class="py-5px px-10px"
     @click="handleNextMore"><k-icon type="ellipsis"></k-icon></div>
-  <div v-if="pageCount > 1" class="k-pagination__page"
-     :class="{'k-pagination__current-page': pageCount === currentPage}"
+  <div v-if="pageCount > 1" class="py-5px px-10px"
+     :class="[pageCount === currentPage ? 'text-light-blue-500 cursor-default' : 'cursor-pointer']"
      @click="handlePageChange(pageCount)">{{pageCount}}</div>
 </template>
 <script>
@@ -116,11 +116,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.k-pagination__current-page {
-  color: var(--primary);
-}
-.k-pagination__page, .k-pagination__next, .k-pagination__prev {
-  padding: 5px 10px;
-}
-</style>

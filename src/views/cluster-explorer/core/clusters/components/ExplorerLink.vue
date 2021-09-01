@@ -1,5 +1,5 @@
 <template>
-  <a class="explorer-link" v-if="explorer?.links?.explorer" target="_blank" :href="`${explorer?.links?.explorer}`">
+  <a class="pt-2px inline-flex items-center text-$link" v-if="explorer?.links?.explorer" target="_blank" :href="`${explorer?.links?.explorer}`">
     <tooltip >
       <k-icon :size="16" type="dashboard"></k-icon>
       <template #popover>Go to kube-explorer page</template>
@@ -37,10 +37,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.explorer-link {
-  padding-top: 2px;
-  display: inline-flex;
-  align-items: center;
-}
-</style>

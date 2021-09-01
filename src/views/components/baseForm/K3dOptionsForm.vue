@@ -2,7 +2,7 @@
   <form-group>
     <template #title>Master</template>
     <template #default>
-      <div class="k3d-options-form__content">
+      <div class="grid grid-cols-2 gap-10px">
         <string-form
           v-if="form.provider !== 'native'"
           v-model.trim="form.config['master']"
@@ -24,7 +24,7 @@
   <form-group>
     <template #title>Worker</template>
     <template #default>
-      <div class="k3d-options-form__content">
+      <div class="grid grid-cols-2 gap-10px">
         <string-form
           v-if="form.provider !== 'native'"
           v-model.trim="form.config['worker']"
@@ -103,14 +103,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.k3d-options-form__content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  row-gap: 10px;
-  column-gap: 10px;
-}
-.k3d-options-form__registry {
-  grid-column: 1 / span 2;
-}
-</style>

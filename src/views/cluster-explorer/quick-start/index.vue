@@ -11,13 +11,13 @@
         <template-filter :disabled="loading || creating" :provider="currentProvider" @apply-template="handleApplyTemplate"></template-filter>
       </template>
     </page-header>
-    <div class="quick-start__content">
-      <div class="quick-start__icon">
-        <img :src="clustcerIcon" />
+    <div class="grid grid-cols-[auto,1fr]">
+      <div>
+        <img :src="clustcerIcon" class="w-160px h-100px object-contain"/>
       </div>
       <div class="quick-start__form">
         <k-loading :loading="loading || creating">
-          <div class="quick-start__base-info">
+          <div class="grid grid-cols-2 gap-20px pb-20px">
             <k-select
               v-model="currentProvider"
               label="Provider"
@@ -319,20 +319,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.quick-start__content {
-  display: grid;
-  grid-template-columns: auto 1fr;
-}
-.quick-start__icon > img {
-  width: 160px;
-  height: 100px;
-  object-fit: contain;
-}
-.quick-start__base-info {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px 20px;
-  padding-bottom: 20px;
-}
-</style>

@@ -3,7 +3,6 @@
   --header-height: 50px;
   /* nav */
   --nav-width: 250px;
-  --nav-bg: transparent;
   /* footer */
   --footer-height: 36px;
   --tooltip-z-index: 500;
@@ -11,4 +10,33 @@
   --modal-z-index: 300;
   --popper-z-index: 100;
   --loading-z-index: 200;
+  /* window */
+  --wm-tab-height : 29px;
+  /* terminal */
+  --terminal-bg: #fff;
+  --terminal-cursor: #dac342;
+  --terminal-selection: rgba(61,152,211,0.5);
+  --terminal-text: #141419;
+
+  /* color */
+  --link: #3d98d3;
+  --link-hover-bg: #297db4;
+  --primary: #3d98d3;
+  --primary-hover-bg: #297db4;
+  --primary-active-bg: #1b5276;
+  --primary-banner-bg: rgba(61,152,211,0.15);
+  --success: #5d995d;
+  --success-hover-bg: #4a794a;
+  --success-banner-bg: rgba(93,153,93,0.15);
+  --info: #3d98d3;
+  --info-hover-bg: #297db4;
+  --info-banner-bg: rgba(61,152,211,0.15);
+  --warning: #dac342;
+  --warning-hover-bg: #c3ab26;
+  --warning-banner-bg: rgba(218,195,66,0.15);
+  --error: #f64747;
+  --error-hover-bg: #f41616;
+  --error-banner-bg: rgba(246,71,71,0.15);
+  --disabled-bg: #dcdee7;
+  --disabled-text: #6c6c76;
 }

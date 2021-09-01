@@ -14,8 +14,8 @@
       <input
         autocomplete="off"
         :disabled="disabled"
-        class="k-combo-box__input"
-        :class="{'k-combo-box--no-label': !label}"
+        class="cursor-pointer bg-transparent focus-visible:outline-none overflow-ellipsis"
+        :class="[!label ? 'py-9px' : '']"
         :id="inputId"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
@@ -31,7 +31,7 @@
           <dropdown-menu-item v-for="(v, index) in options"
             :key="index"
             class="k-combo-box__option"
-            :class="{'k-combo-box--selected': modelValue === v}"
+            :class="[modelValue === v ? 'text-white bg-warm-gray-400': '']"
             @click="setValue(v)">
             {{v}}
         </dropdown-menu-item>
@@ -149,58 +149,27 @@ export default defineComponent({
                        "prefix select suffix";
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
-  padding: 8px 8px;
-  background-color: var(--input-bg); 
-  border-radius: var(--border-radius);
-  border: solid var(--outline-width) var(--input-border);
-  color: var(--input-text);
-  &:not(.disabled):hover {
-    background: var(--input-hover-bg);
-  }
+  @apply p-8px rounded border;
+}
+.k-combo-box:not(.disabled):hover {
+  @apply bg-gray-100;
 }
 .k-combo-box__label {
   grid-area: label;
-  color: var(--input-label);
-  display: grid;
-  column-gap: 10px;
-  align-items: center;
-  grid-template-columns: max-content auto;
+  @apply grid gap-x-10px items-center grid-cols-[max-content,auto] text-warm-gray-500 grid gap-y-10px items-center grid-cols-[max-content,auto];
   width: fit-content;
 }
 .k-combo-box__prefix {
   grid-area: prefix;
-  color: #6c6c76;
-  align-self: center;
+  @apply text-warm-gray-500 self-center;
 }
 .k-combo-box__suffix {
   grid-area: suffix;
-  font-weight: 400;
-  line-height: 1;
-  border-left: thin solid #6c6c76;
-  padding-left: 8px;
-  display: flex;
-  align-items: center;
-  color: #6c6c76;
+  @apply flex items-center text-warm-gray-500 pl-8px border-l border-warm-gray-600 font-400;
 }
 .k-combo-box__trigger {
   grid-area: select;
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: center;
+  @apply grid grid-cols-[1fr,auto,auto] items-center;
 }
-.k-combo-box__input {
-  cursor: pointer;
-  border: none;
-  background-color: transparent;
-  outline: 0;
-  color: var(--input-text);
-  text-overflow: ellipsis;
-}
-.k-combo-box--no-label {
-  padding: 9px 0;
-}
-.k-combo-box--selected {
-  background-color: var(--dropdown-active-bg);
-  color: var(--dropdown-active-text);
-}
+
 </style>

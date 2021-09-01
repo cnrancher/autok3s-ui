@@ -55,10 +55,7 @@ export default defineComponent({
                        "desc desc";
   grid-template-columns: 1fr 28px;
   align-items: center;
-  padding: 10px;
-  margin: 15px 0;
-  border-radius: var(--border-radius);
-
+  @apply p-10px my-15px;
 }
 .k-alert__title {
   grid-area: title;
@@ -71,26 +68,18 @@ export default defineComponent({
 }
 
 .k-alert--success {
-  background: var(--success-banner-bg);
-  border: solid 1px var(--success);
-  color: var(--body-text);
+  @apply bg-$success-banner-bg border-l-4px border-$success;
 }
 
 .k-alert--info {
-  background: var(--info-banner-bg);
-  border: solid 1px var(--info);
-  color: var(--body-text);
+  @apply bg-$info-banner-bg border-l-4px border-$info;
 }
 
 .k-alert--warning {
-  background: var(--warning-banner-bg);
-  border: solid 1px var(--warning);
-  color: var(--body-text);
+  @apply bg-$warning-banner-bg border-l-4px border-$warning;
 }
 
 .k-alert--error {
-  background: var(--error-banner-bg);
-  border: solid 1px var(--error);
-  color: var(--error);
+  @apply bg-$error-banner-bg border-l-4px border-$error;
 }
 </style>

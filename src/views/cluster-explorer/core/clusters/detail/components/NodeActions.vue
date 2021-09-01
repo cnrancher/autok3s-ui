@@ -1,6 +1,6 @@
 <template>
   <k-dropdown>
-    <button class="btn-sm actions role-multi-action"><k-icon type="ellipsis" direction="down"></k-icon></button>
+    <button class="btn btn-xs role-tertiary"><k-icon type="ellipsis" direction="down"></k-icon></button>
     <template #content>
       <div v-if="actions.length === 0"> No Actions </div>
       <k-dropdown-menu v-else>
@@ -51,6 +51,3 @@ export default {
   },
 }
 </script>
-<style>
-
-</style>

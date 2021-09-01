@@ -1,8 +1,8 @@
 <template>
-  <div ref="toggleRef" class="k-dropdown" :class="{'k-dropdown--disabled': disabled}" v-on:[trigger]="toggleDropDown">
+  <div ref="toggleRef" class="inline-block relative" :class="{'cursor-not-allowed': disabled}" v-on:[trigger]="toggleDropDown">
     <slot></slot>
     <teleport to="body" :disabled="!appendToBody">
-      <div ref="contentRef" class="k-dropdown__content" :class="{'k-dropdown--active': show}" v-if="!lazy || show">
+      <div ref="contentRef" class="absolute z-$popper-z-index border rounded bg-white shadow min-w-160px" :class="{'block': show, 'hidden': !show}" v-if="!lazy || show">
         <slot name="content"></slot>
       </div>
     </teleport>
@@ -40,7 +40,8 @@ export default defineComponent({
       default: true
     }
   },
-  setup(props) {
+  emits: ['visible-change'],
+  setup(props, {emit}) {
     const toggleRef = ref(null)
     const contentRef = ref(null)
     const show = ref(false)
@@ -63,9 +64,11 @@ export default defineComponent({
         nextTick(() => {
           createPopper()
         })
+        emit('visible-change', true)
         return
       }
       remove()
+      emit('visible-change', false)
     })
 
     return {
@@ -77,28 +80,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.k-dropdown {
-  display: inline-block;
-  position: relative;
-}
-.k-dropdown__content {
-  display: none;
-  position: absolute;
-  background-color: var(--dropdown-bg);
-  z-index: var(--popper-z-index);
-  border: 1px solid var(--dropdown-border);
-  border-radius: var(--border-radius);
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  box-shadow: 0 5px 20px var(--shadow);
-  min-width: 160px;
-}
-.k-dropdown--active {
-  display: block;
-}
-.k-dropdown--disabled {
-  cursor: not-allowed;
-}
-
-</style>

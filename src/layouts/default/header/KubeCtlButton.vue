@@ -1,5 +1,5 @@
 <template>
-  <k-button class="k-kubectl-btn role-primary" @click="modalVisible=true">
+  <k-button class="btn-sm role-primary" @click="modalVisible=true">
     <k-icon type="terminal"></k-icon>
     &nbsp; Launch Kubectl
   </k-button>
@@ -92,11 +92,3 @@ export default defineComponent({
   }
 })
 </script>
-<style scoped>
-.k-kubectl-btn {
-  border: none;
-  padding: 0 10px;
-  line-height: 32px;
-  min-height: 32px;
-}
-</style>

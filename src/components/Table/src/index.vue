@@ -105,6 +105,6 @@ export default defineComponent({
 </script>
 <style>
 .k-table__group-label {
-  color: var(--sortable-table-group-label);
+  @apply text-gray-400 capitalize;
 }
 </style>

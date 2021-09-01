@@ -1,11 +1,11 @@
 <template>
-  <div class="command-option">
+  <div class="flex items-center">
     <div class="command-option__flag">
-      <code>{{option}}</code>
+      <code class="bg-gray-100 border">{{option}}</code>
     </div>
-    <div v-if="!flag || choices" class="command-option__value">
+    <div v-if="!flag || choices" class="flex items-center flex-wrap max-w-300px">
       <template v-if="choices">
-        <select v-model="value" v-if="!multiple">
+        <select v-model="value" v-if="!multiple" class="focus-visible:outline-none border rounded">
           <option
             v-for="v in choices"
             :key="v.value"
@@ -14,7 +14,7 @@
             </option>
         </select>
         <template v-else>
-          <label v-for="(v, index) in values" :key="index" @click.stop="handleClick">
+          <label v-for="(v, index) in values" :key="index" @click.stop="handleClick" class="grid items-center grid-cols-[max-content,max-content] gap-x-10px mr-10px">
             <input type="checkbox" :value="v"  v-model="multipleValue">
             <span>{{v}}</span>
           </label>
@@ -120,22 +120,3 @@ export default defineComponent({
   },
 })
 </script>
-<style>
-.command-option {
-  display: flex;
-  align-items: center;
-}
-.command-option__value {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  max-width: 300px;
-  & > label {
-    display: grid;
-    align-items: center;
-    grid-template-columns: max-content max-content;
-    column-gap: 10px;
-    margin-right: 10px;
-  }
-}
-</style>

@@ -2,7 +2,7 @@
   <footer class="k-footer">
     <div>{{version}}</div>
     <a href="https://github.com/cnrancher/autok3s" target="_blank">Docs</a>
-    <dropdown class="k-footer__lang">
+    <dropdown class="justify-self-end cursor-pointer">
       English
       <template #content>
         <dropdown-menu>
@@ -35,13 +35,8 @@ export default defineComponent({
   grid-template-areas: "version docs lang";
   grid-template-columns: auto auto 1fr;
   align-items: center;
-  border-top: thin solid var(--border);
   column-gap: 40px;
   height: var(--footer-height);
-  padding: 0 20px;
-}
-.k-footer__lang {
-  justify-self: end;
-  cursor: pointer;
+  @apply border-t py-0 px-20px;
 }
 </style>

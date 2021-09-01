@@ -1,5 +1,5 @@
 <template>
-  <nav class="k-app-nav">
+  <nav class="k-app-nav border-r overflow-y-auto">
     <nav-group v-for="g in routeGroups" :key="g.name"
       :routeGroup="g"
       :expanded-state-map="stateMap"
@@ -31,14 +31,3 @@ export default {
   }  
 }
 </script>
-<style>
-.k-app-nav {
-  background-color: var(--nav-bg);
-  border-right: var(--nav-border-size) solid var(--nav-border);
-  overflow-y: auto;
-}
-.k-app-nav > a:first-child {
-  padding-left: 5px;
-}
-
-</style>

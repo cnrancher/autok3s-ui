@@ -1,11 +1,11 @@
 <template>
   <window>
     <template #default>
-      <div ref="xterm" class="kubectl-shell__body"></div>
+      <div ref="xterm" class="h-full overflow-hidden"></div>
     </template>
     <template #footer>
-      <k-button class="btn-sm bg-primary" @click="clear">Clear</k-button>
-      <div class="kubectl__connect-state" :class="stateToClassMap[readyState]">{{readyState}}</div>
+      <k-button class="btn-sm role-primary" @click="clear">Clear</k-button>
+      <div class="capitalize" :class="stateToClassMap[readyState]">{{readyState}}</div>
     </template>
   </window>
 </template>
@@ -151,12 +151,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.kubectl__connect-state {
-  text-transform:capitalize;
-}
-.kubectl-shell__body {
-  height: 100%;
-  overflow: hidden;
-}
-</style>
