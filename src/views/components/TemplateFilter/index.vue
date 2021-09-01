@@ -2,7 +2,7 @@
   <div class="template-filter">
     <input
       ref="inputRef"
-      class="k-input-search template-filter__search"
+      class="template-filter__search p-8px rounded border border-gray-300 focus-visible:outline-none hover:bg-gray-100"
       type="search"
       :placeholder="placeholder"
       :disabled="loading || disabled"
@@ -13,12 +13,12 @@
       @keydown.esc.stop.prevent="handleKeyESC"
       @keydown.tab="handleKeyESC"
       @keydown.enter.stop.prevent="handleKeyEnter">
-      <div class="template-filter__display-value" v-show="!show">{{templateDisplayValue}}</div>
+      <div class="template-filter__display-value pointer-events-none overflow-hidden truncate p-10px" v-show="!show">{{templateDisplayValue}}</div>
       <button class="btn role-primary btn-sm template-filter__btn"
         :disabled="!currentTemplate || loading || disabled"
         @click="handleApplyTemplate">Fill Form</button>
       <teleport to="body">
-        <div ref="resultRef" class="template-filter__content" :class="{'template-filter--active': show}" @click.prevent.stop="handlePopperClick">
+        <div ref="resultRef" class="absolute bg-white z-$popper-z-index border rounded shadow max-h-90vh overflow-auto min-w-324px" :class="[show ? 'block' : 'hidden']" @click.prevent.stop="handlePopperClick">
           <div v-if="loading"><k-icon type="loading"></k-icon>Loading...</div>
             <div v-else-if="error">{{error}}</div>
             <div v-else-if="noResult">
@@ -29,8 +29,8 @@
             </div>
             <div v-else class="template-filter__result">
               <template v-for="d in dataGroup" :key="d.group">
-                <div class="template-filter__title"><span class="template-filter__group-name">Provider:</span> <span>{{d.group}}</span></div>
-                <div class="template-filter__row-wrap"
+                <div class="col-span-3 text-size-12px pt-10px pb-0 px-20px"><span class="template-filter__group-name">Provider:</span> <span>{{d.group}}</span></div>
+                <div class="template-filter__row-wrap relative contents"
                   :class="{'template-filter--selected': c.id === currentTemplate?.id, 'template-filter--hover': c.id === hoverTemplate?.id}"
                   v-for="c in d.children"
                   :key="c.id"
@@ -238,24 +238,12 @@ export default defineComponent({
   grid-template-columns: "name region zone";
   row-gap: 6px;
 }
-.template-filter__title {
-  grid-column: 1 / span 3;
-  font-size: 12px;
-  padding: 10px 20px 0 20px;
-  &:not(:first-child) {
-    border-top: 1px solid var(--border);;
-  }
-}
 .template-filter__row-wrap {
-  position: relative;
-  display: contents;
   &:hover > div, &.template-filter--selected > div, &.template-filter--hover > div {
-    cursor: pointer;
-    color: var(--dropdown-hover-text);
-    background: var(--dropdown-hover-bg);
+    @apply cursor-pointer text-white bg-light-blue-500 ;
   }
   & > div {
-    padding: 4px 6px;
+    padding: 2px 6px;
   }
   & > div:first-child {
     padding-left: 20px;
@@ -264,23 +252,7 @@ export default defineComponent({
     padding-right: 20px;
   }
 }
-.template-filter__content {
-  display: none;
-  position: absolute;
-  background-color: var(--dropdown-bg);
-  z-index: var(--popper-z-index);
-  border: 1px solid var(--dropdown-border);
-  border-radius: var(--border-radius);
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  box-shadow: 0 5px 20px var(--shadow);
-  max-height: 90vh;
-  overflow: auto;
-  min-width: 324px;
-}
-.template-filter--active {
-  display: block;
-}
+
 .template-filter {
   width: 400px;
   display: grid;
@@ -294,18 +266,12 @@ export default defineComponent({
 }
 .template-filter__display-value {
   grid-area: search;
-  pointer-events: none;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding: 10px;
 }
 .template-filter__btn {
   grid-area: btn;
   height: 40px;
 }
 .template-filter__group-name {
-  color: var(--sortable-table-group-label);
-  text-transform: capitalize;
+  @apply text-gray-500 capitalize;
 }
 </style>

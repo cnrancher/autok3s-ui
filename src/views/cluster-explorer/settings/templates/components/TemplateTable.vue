@@ -14,7 +14,7 @@
           <k-icon type="folder" :color="groupBy === 'provider' ? '#fff' : ''"></k-icon>
         </k-radio-button>
       </k-radio-group>
-      <input type="search" placeholder="Filter" class="input-sm template-table__search k-input-search" v-model="searchQuery">
+      <input type="search" placeholder="Filter" class="template-table__search focus-visible:outline-none px-12px rounded border hover:bg-gray-100" v-model="searchQuery">
     </div>
     <k-table
       :data="data"
@@ -25,7 +25,7 @@
       <k-table-column type="selection"></k-table-column>
       <k-table-column sortable label="ID" field="id">
         <template #default="{row, column}">
-          <div class="template-table__warning" v-if="row.status">
+          <div class="flex items-center" v-if="row.status">
             {{row[column.field]}}
             <k-tooltip >
               <k-icon type="warning" color="var(--error)"></k-icon>
@@ -46,7 +46,7 @@
       </k-table-column>
       <k-table-column sortable label="Name" field="name">
         <template #default="{row, column}">
-          <router-link :to="{name: 'ClusterExplorerSettingsTemplatesDetail', params: { templateId: row.id}}">{{row[column.field]}}</router-link>
+          <router-link class="text-$link" :to="{name: 'ClusterExplorerSettingsTemplatesDetail', params: { templateId: row.id}}">{{row[column.field]}}</router-link>
         </template>
       </k-table-column>
       <k-table-column sortable label="Region" field="options.region"></k-table-column>
@@ -57,7 +57,7 @@
         </template>
       </k-table-column>
       <template #error>
-        <div class="template-table__error">
+        <div class="flex justify-center flex-col items-center">
           <div>Load templates failed: {{error}}</div>
           <div>Please click <button class="btn btn-sm role-secondary" @click="reload">refresh</button> button to reload template data</div>
         </div>
@@ -67,9 +67,9 @@
     <k-modal v-model="confirmModalVisible">
       <template #title>Are you sure?</template>
       <template #default>
-        <div class="template-table__command-confirm">
+        <div>
           <p>You are attemping to remove the {{commandParams.length === 1 ? 'Template' : 'Templates'}}:</p>
-          <p>
+          <p class="text-light-blue-500">
             <template v-for="(p, index) in commandParams" :key="p.id">
               <router-link :to="{name: 'ClusterExplorerSettingsTemplatesDetail', params: { templateId: p.id}}">{{p.name}}</router-link>
               {{index === commandParams.length - 1 ? '': ','}}
@@ -79,7 +79,7 @@
       </template>
       <template #footer>
         <k-button class="role-secondary" @click="confirmModalVisible = false">Cancel</k-button>
-        <k-button class="bg-error" @click="deleteTemplates(commandParams)">Delete</k-button>
+        <k-button class="role-danger" @click="deleteTemplates(commandParams)">Delete</k-button>
       </template>
     </k-modal>
   </div>
@@ -241,23 +241,5 @@ export default defineComponent({
 }
 .template-table__search {
   grid-area: search;
-}
-.template-table__error {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-}
-.template-table__command-confirm {
-  color: var(--input-label);
-}
-.template-table__join-Node {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px 10px;
-}
-.template-table__warning {
-  display: flex;
-  align-items: center;
 }
 </style>

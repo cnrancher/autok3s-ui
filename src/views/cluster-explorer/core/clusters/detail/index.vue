@@ -10,7 +10,7 @@
         Provider: {{clusterNodes?.provider}}
       </template>
     </page-header>
-    <div class="cluster-node__base-info">
+    <div class="grid grid-cols-2 gap-10px">
       <k-input
         label="Master"
         readonly
@@ -156,12 +156,6 @@ export default defineComponent({
 })
 </script>
 <style>
-.cluster-node__base-info {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 10px;
-  row-gap: 10px;
-}
 .cluster-node__table-header {
   display: grid;
   grid-template-areas: "title search";

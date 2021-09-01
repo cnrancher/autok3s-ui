@@ -1,27 +1,27 @@
 <template>
-  <div class="registry-config-form">
-    <label>{{label}} <sup v-if="required" class="k-form-item--required">*</sup></label>
-    <div class="registry-config-form__desc">
+  <div class="grid grid-cols-[max-content,auto,1fr] gap-10px p-8px items-center">
+    <label class="text-gray-500">{{label}} <sup v-if="required" class="text-red-500">*</sup></label>
+    <div>
       <k-tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
         <template #popover>{{desc}}</template>
       </k-tooltip>
     </div>
-    <div v-if="!options.readOnly" class="registry-config-form__upload">
-      <k-button type="input" class="btn-sm role-primary registry-config-form__clear" @click="clearContent">Clear</k-button>
+    <div v-if="!options.readOnly" class="grid justify-self-end grid-flow-col gap-x-10px">
+      <k-button type="input" class="btn-sm role-primary justify-self-end" @click="clearContent">Clear</k-button>
       <k-button type="input" class="btn-sm role-primary" @click.stop.prevent="triggerSelectFile"><k-icon type="upload"></k-icon> &nbsp; Read from a file</k-button>
       <input
         ref="file"
-        class="registry-config-form__file"
+        class="hidden"
         type="file"
         accept=".yaml,.yml"
         @change="handleFileChange">
     </div>
     <div v-else></div>
-    <div class="registry-config-form__content" @dragenter="handleDrag" @dragover="handleDrag" @drop="handleDrop">
+    <div class="registry-config-form__content relative max-h-400px overflow-auto col-span-3" @dragenter="handleDrag" @dragover="handleDrag" @drop="handleDrop">
       <textarea ref="textarea" :name="name" :placeholder="placeholder"></textarea>
     </div>
-    <div class="registry-config-form__actions" v-if="!options.readOnly">
+    <div class="grid col-span-3 grid-flow-col gap-x-10px justify-start" v-if="!options.readOnly">
       <k-button type="input" class="btn-sm role-secondary" @click="setAliyunMirror">aliyun mirror example</k-button>
       <k-button type="input" class="btn-sm role-secondary" @click="setUSTCMirror">USTC mirror example</k-button>
     </div>
@@ -270,47 +270,12 @@ export default defineComponent({
 })
 </script>
 <style>
-.registry-config-form {
-  display: grid;
-  grid-template-columns: max-content 1fr 1fr;
-  padding: 8px 8px;
-  background-color: var(--input-bg); 
-  row-gap: 10px;
-  column-gap: 10px;
-  align-items: center;
-  & > label {
-    color: var(--input-label);
-  }
-}
-.registry-config-form__upload {
-  justify-self: end;
-  display: grid;
-  grid-auto-flow: column;
-  column-gap: 10px;
-}
-.registry-config-form__file {
-  display: none;
-}
 .registry-config-form__content {
-  position: relative;
-  max-height: 400px;
-  overflow: auto;
-  grid-column: 1 / span 3;
   & .CodeMirror {
     height: auto;
   }
   & .CodeMirror-scroll {
     min-height: 60px;
   }
-}
-.registry-config-form__actions {
-  grid-column: 1 / span 3;
-  display: grid;
-  grid-auto-flow: column;
-  column-gap: 10px;
-  justify-content: left;
-}
-.registry-config-form__clear {
-  justify-self: end;
 }
 </style>

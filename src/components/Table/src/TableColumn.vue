@@ -73,8 +73,7 @@ export default defineComponent({
 </script>
 <style>
 .k-table-header {
-  display: flex;
-  align-items: center;
+  @apply flex items-center;
 }
 
 </style>

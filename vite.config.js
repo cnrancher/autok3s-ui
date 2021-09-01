@@ -1,5 +1,6 @@
 import vue from '@vitejs/plugin-vue'
 import html from 'vite-plugin-html'
+import WindiCSS from 'vite-plugin-windicss'
 import { loadEnv } from 'vite'
 import { resolve } from 'path'
 
@@ -14,6 +15,7 @@ export default ({ command, mode }) => {
   return {
     plugins: [
       vue(),
+      WindiCSS(),
       html({
         inject: {
           injectData: {

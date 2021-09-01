@@ -1,14 +1,5 @@
 <template>
-  <div class="footer-actions">
+  <div class="grid gap-x-20px grid-flow-col justify-end mt-20px">
     <slot></slot>
   </div>
 </template>
-<style>
-.footer-actions {
-  display: grid;
-  column-gap: 20px;
-  margin-top: 20px;
-  grid-auto-flow: column;
-  justify-content: end;
-}
-</style>

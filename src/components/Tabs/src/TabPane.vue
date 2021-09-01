@@ -57,7 +57,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.k-tabs__pane {
-}
-</style>

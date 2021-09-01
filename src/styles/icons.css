@@ -17,8 +17,11 @@
     width: 1em;
     height: 1em;
     mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
     mask-size: cover;
+    -webkit-mask-size: cover;
     mask-position: center;
+    -webkit-mask-position: center;
     /* background-color: var(--body-text); */
     background-color: currentColor;
     display: inline-block;
@@ -34,84 +37,111 @@
 }
 .k-icon-ellipsis {
   mask-image: url(./icons/ellipsis.svg);
+  -webkit-mask-image: url(./icons/ellipsis.svg);
 }
 
 .k-icon-arrow-right {
   mask-image: url(./icons/arrow-right.svg);
+  -webkit-mask-image: url(./icons/arrow-right.svg);
 }
 .k-icon-arrow-right-fill {
   mask-image: url(./icons/arrow-right-fill.svg);
+  -webkit-mask-image: url(./icons/arrow-right-fill.svg);
 }
 .k-icon-arrow-right-blod {
   mask-image: url(./icons/arrow-right-blod.svg);
+  -webkit-mask-image: url(./icons/arrow-right-blod.svg);
 }
 .k-icon-editor {
   mask-image: url(./icons/editor.svg);
+  -webkit-mask-image: url(./icons/editor.svg);
 }
 .k-icon-close {
   mask-image: url(./icons/close.svg);
+  -webkit-mask-image: url(./icons/close.svg);
 }
 .k-icon-ashbin {
   mask-image: url(./icons/ashbin.svg);
+  -webkit-mask-image: url(./icons/ashbin.svg);
 }
 .k-icon-category {
   mask-image: url(./icons/category.svg);
+  -webkit-mask-image: url(./icons/category.svg);
 }
 .k-icon-set {
   mask-image: url(./icons/set.svg);
+  -webkit-mask-image: url(./icons/set.svg);
 }
 .k-icon-warning {
   mask-image: url(./icons/warning.svg);
+  -webkit-mask-image: url(./icons/warning.svg);
 }
 .k-icon-folder {
   mask-image: url(./icons/folder.svg);
+  -webkit-mask-image: url(./icons/folder.svg);
 }
 .k-icon-search {
   mask-image: url(./icons/search.svg);
+  -webkit-mask-image: url(./icons/search.svg);
 }
 .k-icon-cluster {
   mask-image: url(./icons/cluster.svg);
+  -webkit-mask-image: url(./icons/cluster.svg);
 }
 .k-icon-sort {
   mask-image: url(./icons/sort.svg);
+  -webkit-mask-image: url(./icons/sort.svg);
 }
 .k-icon-terminal {
   mask-image: url(./icons/terminal.svg);
+  -webkit-mask-image: url(./icons/terminal.svg);
 }
 .k-icon-clone {
   mask-image: url(./icons/clone.svg);
+  -webkit-mask-image: url(./icons/clone.svg);
 }
 .k-icon-log {
   mask-image: url(./icons/log.svg);
+  -webkit-mask-image: url(./icons/log.svg);
 }
 .k-icon-loading {
   mask-image: url(./icons/loading.svg);
+  -webkit-mask-image: url(./icons/loading.svg);
   animation: rotating 2s linear infinite;
 }
 .k-icon-arrows-resize-v {
   mask-image: url(./icons/arrows-resize-v.svg);
+  -webkit-mask-image: url(./icons/arrows-resize-v.svg);
 }
 .k-icon-view {
   mask-image: url(./icons/view.svg);
+  -webkit-mask-image: url(./icons/view.svg);
 }
 .k-icon-view-off {
   mask-image: url(./icons/view-off.svg);
+  -webkit-mask-image: url(./icons/view-off.svg);
 }
 .k-icon-upload {
   mask-image: url(./icons/upload.svg);
+  -webkit-mask-image: url(./icons/upload.svg);
 }
 .k-icon-prompt {
   mask-image: url(./icons/prompt.svg);
+  -webkit-mask-image: url(./icons/prompt.svg);
 }
 .k-icon-favorites {
   mask-image: url(./icons/favorites.svg);
+  -webkit-mask-image: url(./icons/favorites.svg);
 }
 .k-icon-favorites-fill {
   mask-image: url(./icons/favorites-fill.svg);
+  -webkit-mask-image: url(./icons/favorites-fill.svg);
 }
 .k-icon-download {
   mask-image: url(./icons/download.svg);
+  -webkit-mask-image: url(./icons/download.svg);
 }
 .k-icon-dashboard {
   mask-image: url(./icons/dashboard.svg);
+  -webkit-mask-image: url(./icons/dashboard.svg);
 }

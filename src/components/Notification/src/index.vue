@@ -1,6 +1,6 @@
 <template>
 <teleport to="body">
-  <div class="k-notification" :class="positionClass">
+  <div class="fixed grid gap-10px z-$notification-z-index" :class="positionClass">
     <div v-for="item in events" :key="item.id">
       <slot name="body" :event="item">
         <div class="k-notification__content" :class="[`k-notification--${item.type}`]">
@@ -60,12 +60,6 @@ export default defineComponent({
 })
 </script>
 <style>
-.k-notification {
-  position: fixed;
-  display: grid;
-  row-gap: 10px;
-  z-index: var(--notification-z-index);
-}
 .k-notification--top-right {
   top: 0;
   right: 0;
@@ -121,23 +115,15 @@ export default defineComponent({
   grid-area: content;
 }
 .k-notification--warn, .k-notification--warning{
-  background: #ffb648;
-  color: #fff;
-  border-left-color: #f48a06;
+  @apply bg-$warning-banner-bg border-l-4px border-$warning;
 }
 .k-notification--success {
-  background-color: #68cd86;
-  color: #fff;
-  border-left-color: #42a85f;
+  @apply bg-$success-banner-bg border-l-4px border-$success;
 }
 .k-notification--error {
-  background: #e54d42;
-  color: #fff;
-  border-left-color: #b82e24;
+  @apply bg-$error-banner-bg border-l-4px border-$error;
 }
 .k-notification--info {
-  background-color: var(--info);
-  color: var(--info-text);
-  border-left-color: #297db4;
+  @apply bg-$info-banner-bg border-l-4px border-$info;
 }
 </style>

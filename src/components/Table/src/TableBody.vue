@@ -154,66 +154,47 @@ export default defineComponent({
 <style>
 .k-table__body {
   & > tr {
-    border-bottom: 1px solid var(--sortable-table-top-divider);
-    background-color: var(--body-bg);
+    @apply border-b border-gray-300 bg-white;
   }
   & > tr.k-table__row-selected {
-    background-color: var(--sortable-table-selected-bg) ;
+    @apply bg-gray-200;
   }
   & > tr:last-of-type {
-    border-bottom: 0;
+    @apply border-b-0;
   }
-  & > tr:not(.k-table__row-selected):hover {
-    background-color: var(--sortable-table-hover-bg);
+  & > tr:not(.k-table__row-selected,.k-table__row-group):hover {
+    @apply bg-gray-200;
   }
   & td {
-    padding: 8px 5px;
-    border: 0;
+    @apply py-8px px-5px;
   }
   & > tr.k-table__row-group {
     background-color: initial;
     border-bottom: 0;
     & > td:first-of-type {
-      border-left: 1px solid var(--sortable-table-accent-bg);
-      padding: 0px;
+      @apply p-0;
     }
   }
  
   & .k-table__group-tab {
-    height: 40px;
-    line-height: 40px;
-    padding: 0 10px;
-    border-radius: 4px 4px 0 0;
-    background-color: var(--body-bg);
-    position: relative;
-    display: inline-block;
-    min-width: 72px;
-    z-index: 0;
+    @apply h-40px leading-40px py-0 px-10px rounded-t bg-white relative inline-block min-w-72px z-0;
     &::after {
-      height: 40px;
-      width: 70px;
-      border-radius: 5px 5px 0 0;
-      background-color: var(--body-bg);
+      @apply h-40px w-70px rounded-t-5px bg-white absolute;
       content: "";
-      position: absolute;
       right: -15px;
       top: 0;
-      transform: skewX(40deg );
+      transform: skewX(40deg);
       z-index: -1;
     }
   }
 }
 .k-table__selection {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @apply flex items-center justify-center;
 }
 
 .k-table__group::before {
+  @apply block h-20px bg-transparent;
   content: "";
-  display: block;
-  height: 20px;
-  background-color: transparent;
 }
 
 </style>

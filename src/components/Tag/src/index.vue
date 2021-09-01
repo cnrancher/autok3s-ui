@@ -1,5 +1,5 @@
 <template>
-  <span class="k-tag"
+  <span class="bg-transparent inline-block px-10px rounded-20px border"
     :class="classes"
     :style="{ backgroundColor: color }">
     <slot></slot>
@@ -38,27 +38,16 @@ export default defineComponent({
 })
 </script>
 <style>
-.k-tag {
-  background: transparent;
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 20px;
-  border: 1px solid transparent;
-}
 .k-tag--success {
-  border-color: var(--success);
-  color: var(--success);
+  @apply border-emerald-500 text-emerald-500;
 }
 .k-tag--info {
-  border-color: var(--info);
-  color: var(--info);
+  @apply border-light-blue-500 text-light-blue-500;
 }
 .k-tag--warning {
-  border-color: var(--warning);
-  color: var(--warning);
+  @apply border-amber-500 text-amber-500;
 }
 .k-tag--error {
-  border-color: var(--error);
-  color: var(--error);
+  @apply border-red-500 text-red-500;
 }
 </style>

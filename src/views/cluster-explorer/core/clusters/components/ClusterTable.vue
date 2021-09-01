@@ -14,7 +14,7 @@
           <k-icon type="folder" :color="groupBy === 'provider' ? '#fff' : ''"></k-icon>
         </radio-button>
       </radio-group>
-      <input type="search" placeholder="Filter" class="input-sm cluster-table__search k-input-search" v-model="searchQuery">
+      <input type="search" placeholder="Filter" class="cluster-table__search focus-visible:outline-none px-12px rounded border hover:bg-gray-100" v-model="searchQuery">
     </div>
     <k-table
       :data="clusters"
@@ -30,7 +30,7 @@
       </k-table-column>
       <k-table-column sortable label="Name" field="name">
         <template #default="{row, column}">
-          <router-link :to="{name: 'ClusterExplorerCoreClustersDetail', params: { clusterId: row.id}}">{{row[column.field]}}</router-link>
+          <router-link class="text-$link" :to="{name: 'ClusterExplorerCoreClustersDetail', params: { clusterId: row.id}}">{{row[column.field]}}</router-link>
         </template>
       </k-table-column>
       <k-table-column sortable label="Provider" field="provider"></k-table-column>
@@ -39,14 +39,14 @@
       <k-table-column sortable label="Worker" field="worker"></k-table-column>
       <k-table-column type="action" field="action" width="60">
         <template #default="{row}">
-          <div class="cluster-table__row-actions">
+          <div class="flex items-center justify-end">
             <explorer-link :cluster-id="row.id"></explorer-link>
             <cluster-actions :cluster="row" @exec-command="handleCommand"></cluster-actions>
           </div>
         </template>
       </k-table-column>
       <template #error>
-        <div class="cluster-table__error">
+        <div class="justify-center flex-col items-center">
           <div>Load clusters failed: {{error}}</div>
           <div>Please click <button class="btn btn-sm role-secondary" @click="reload">refresh</button> button to reload cluster data</div>
         </div>
@@ -56,9 +56,9 @@
     <k-modal v-model="confirmModalVisible">
       <template #title>Are you sure?</template>
       <template #default>
-        <div class="cluster-table__command-confirm">
+        <div>
           <p>You are attemping to remove the {{commandParams.length === 1 ? 'Cluster' : 'Clusters'}}:</p>
-          <p>
+          <p class="text-light-blue-500">
             <template v-for="(p, index) in commandParams" :key="p.id">
               <router-link :to="{name: 'ClusterExplorerCoreClustersDetail', params: { clusterId: p.id}}">{{p.name}}</router-link>
               {{index === commandParams.length - 1 ? '': ','}}
@@ -68,13 +68,13 @@
       </template>
       <template #footer>
         <k-button class="role-secondary" @click="confirmModalVisible = false">Cancel</k-button>
-        <k-button class="bg-error" @click="deleteClusters(commandParams)">Delete</k-button>
+        <k-button class="role-danger" @click="deleteClusters(commandParams)">Delete</k-button>
       </template>
     </k-modal>
     <k-modal v-model="joinNodeModalVisible" v-if="joinNodeModalVisible">
       <template #title>Join Node</template>
       <template #default>
-        <div class="cluster-table__join-Node">
+        <div class="grid grid-cols-2 gap-10px">
           <div>Desired Master Nodes: {{desiredNodes.master}}</div>
           <div>Desired Worker Nodes: {{desiredNodes.worker}}</div>
           <k-input
@@ -92,7 +92,7 @@
       </template>
       <template #footer>
         <k-button class="role-secondary" @click="joinNodeModalVisible = false">Cancel</k-button>
-        <k-button class="bg-primary" :loading="joinNodeLoading" @click="saveNodes(commandParams)">Save</k-button>
+        <k-button class="role-danger" :loading="joinNodeLoading" @click="saveNodes(commandParams)">Save</k-button>
       </template>
     </k-modal>
     <cli-command v-if="clusterForm && cliModalVisible" v-model:visible="cliModalVisible" :cluster-form="clusterForm"></cli-command>
@@ -420,24 +420,5 @@ function useJionNodeModal(clusterId) {
 }
 .cluster-table__search {
   grid-area: search;
-}
-.cluster-table__error {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-}
-.cluster-table__command-confirm {
-  color: var(--input-label);
-}
-.cluster-table__join-Node {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px 10px;
-}
-.cluster-table__row-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
 }
 </style>

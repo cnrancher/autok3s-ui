@@ -72,23 +72,15 @@ export default defineComponent({
 </script>
 <style>
 .k-table__header-selection {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @apply flex items-center justify-center;
 }
 .k-table__header {
-  padding: 8px 5px;
-  font-weight: 400;
-  border: 0;
+  @apply py-8px px-5px border-0 bg-blue-gray-100 font-normal;
 }
 .k-table__header-cell {
-  display: flex;
-  height: 28px;
-  align-items: center;
+  @apply flex h-28px items-center;
 }
 .k-table__header-row {
-  background-color: var(--sortable-table-header-bg);
-  border-bottom: 1px solid var(--sortable-table-top-divider);
-  text-align: left;
+  @apply bg-transparent border-b text-left;
 }
 </style>

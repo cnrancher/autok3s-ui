@@ -1,5 +1,5 @@
 <template>
-  <ul class="k-dropdown-menu">
+  <ul class="m-0 p-0 list-none text-light-blue-500">
     <slot></slot>
   </ul>
 </template>
@@ -9,11 +9,3 @@ export default defineComponent({
   name: 'KDropdownMenu'
 })
 </script>
-<style>
-.k-dropdown-menu {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-  color: var(--dropdown-text);
-}
-</style>

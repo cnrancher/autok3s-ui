@@ -1,5 +1,5 @@
 <template>
-  <div class="quick-start__aws-form">
+  <div class="grid grid-cols-2 gap-20px">
     <string-form
       v-model.trim="form.config['master']"
       label="Master"
@@ -75,10 +75,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.quick-start__aws-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px 20px;
-}
-</style>

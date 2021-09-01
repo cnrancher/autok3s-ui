@@ -1,14 +1,14 @@
 <template>
-<div class="k-form-group">
-  <div class="k-form-group__title">
+<div class="grid grid-cols-[auto,1fr] gap-10px items-center">
+  <div class="text-size-18px">
     <slot name="title"></slot>
   </div>
-  <div class="k-form-group__closable" v-if="closable" @click="toggleVisible">
-    <a>{{visible ? 'Hide':'Show'}}</a>
+  <div class="grid grid-flow-col items-center justify-between cursor-pointer" v-if="closable" @click="toggleVisible">
+    <a class="text-light-blue-500">{{visible ? 'Hide':'Show'}}</a>
     <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
   </div>
-  <small class="k-form-group__subtitle" v-if="$slots.subtitle"><slot name="subtitle"></slot></small>
-  <div class="k-form-group__content" v-show="show">
+  <small class="col-span-2" v-if="$slots.subtitle"><slot name="subtitle"></slot></small>
+  <div class="col-span-2" v-show="show">
     <slot></slot>
   </div>
 </div>
@@ -49,31 +49,3 @@ export default defineComponent({
   },
 })
 </script>
-<style>
-.k-form-group {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 10px 10px;
-  align-items: center;
-}
-.k-form-group__title {
-  font-size: 18px;
-  color: var(--body-text);
-  font-weight: 400;
-  letter-spacing: 0em;
-
-}
-.k-form-group__closable {
-  cursor: pointer;
-  display: grid;
-  grid-auto-flow: column;
-  align-items: center;
-  justify-content: space-between;
-}
-.k-form-group__subtitle {
-  grid-column: 1 / span 2;
-}
-.k-form-group__content {
-  grid-column: 1 / span 2;
-}
-</style>

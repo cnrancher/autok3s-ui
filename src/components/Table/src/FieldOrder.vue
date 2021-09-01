@@ -1,6 +1,7 @@
 <template>
   <div class="k-table__filed-order" @click="changeOrder">
     <k-icon
+      :size="16"
       type="sort"
       class="k-table__filed-order-default"
       :class="{'k-table__filed-order--asc': order === 'asc', 'k-table__filed-order--desc': order === 'desc'}"
@@ -46,18 +47,15 @@ export default defineComponent({
 </script>
 <style>
 .k-table__filed-order {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
+  @apply flex justify-center items-center cursor-pointer;
 }
 .k-table__filed-order--asc {
-  background: linear-gradient(var(--table-order-active) 50%, var(--table-order-default) 50%)
+  background: linear-gradient(#27272a 50%, #a1a1aa 50%)
 }
 .k-table__filed-order--desc {
-  background: linear-gradient(var(--table-order-default) 50%, var(--table-order-active) 50%)
+  background: linear-gradient(#a1a1aa 50%, #27272a 50%)
 }
 .k-table__filed-order-default {
-  background-color: var(--table-order-default);
+  background-color: #a1a1aa;
 }
 </style>

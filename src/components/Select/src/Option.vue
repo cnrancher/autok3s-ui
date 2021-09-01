@@ -1,7 +1,6 @@
 <template>
   <dropdown-menu-item
-    class="k-option"
-    :class="{'k-option--selected': currentValue.includes(value)}"
+    :class="[currentValue.includes(value) ? 'text-white bg-warm-gray-400' : 'text-light-blue-500']"
     @click="setValue">
     {{label ?? value}}
   </dropdown-menu-item>
@@ -58,9 +57,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.k-option--selected {
-  background-color: var(--dropdown-active-bg);
-  color: var(--dropdown-active-text);
-}
-</style>

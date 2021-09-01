@@ -1,8 +1,7 @@
 <template>
-  <div class="k-pagination__prev"
-    :class="{'k-pagination__prev--disabled': prevDisabled}"
+  <div class="cursor-pointer flex justify-center items-center"
     @click="goToPrevPage">
-    <span v-if="prevText ">{{ prevText }}</span><k-icon type="arrow-right" direction="left"></k-icon>
+    <span v-if="prevText ">{{ prevText }}</span><k-icon type="arrow-right" direction="left" :class="[prevDisabled ? 'cursor-not-allowed text-gray-300' : '']"></k-icon>
   </div>
 </template>
 <script>
@@ -41,17 +40,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.k-pagination__prev {
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.k-pagination__prev--disabled {
-  cursor: not-allowed;
-  & i {
-    background-color: var(--disabled-text);
-  }
-}
-</style>

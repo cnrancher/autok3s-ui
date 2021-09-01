@@ -1,6 +1,6 @@
 <template>
   <div class="k-tabs" :class="tabsClass">
-    <div class="k-tabs__header">
+    <div class="bg-gray-100">
       <k-tab-nav :tab-position="tabPosition"></k-tab-nav>
     </div>
 
@@ -77,9 +77,7 @@ export default defineComponent({
 <style>
 .k-tabs {
   display: grid;
-  box-shadow: 0 0 20px var(--shadow);
-  border-radius: calc(var(--border-radius)*2);
-  background-color: var(--tabbed-sidebar-bg);
+  box-shadow: 0 0 20px #e4e4e7;
   &.k-tabs--top {
     grid-template-areas: "header"
                          "content";
@@ -100,7 +98,6 @@ export default defineComponent({
   }
 }
 .k-tabs__content {
-  background-color: var(--body-bg);
-  padding: 20px;
+  @apply bg-white p-20px;
 }
 </style>

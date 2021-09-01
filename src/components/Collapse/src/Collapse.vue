@@ -1,5 +1,5 @@
 <template>
-  <div class="k-collapse">
+  <div class="border-t border-b">
     <slot></slot>
   </div>
 </template>
@@ -48,9 +48,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.k-collapse {
-  border-top: 1px solid #ebeef5;
-  border-bottom: 1px solid #ebeef5
-}
-</style>

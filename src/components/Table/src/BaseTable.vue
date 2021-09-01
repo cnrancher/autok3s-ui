@@ -131,29 +131,19 @@ export default defineComponent({
 </script>
 <style>
 .k-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 400px;
-  overflow: hidden;
-  background: var(--sortable-table-accent-bg);
-  border-radius: 4px;
-  outline: 1px solid var(--border);
+  @apply bg-warm-gray-100 w-full border-collapse min-w-400px overflow-hidden;
+  outline: 1px solid #d4d4d8;
 }
 .k-table__status {
-  text-align: center;
-  padding: 30px 0px;
+  @apply text-center py-30px px-0;
 }
 .k-table__group-by {
-  color: var(--sortable-table-group-label);
-  text-transform: capitalize;
+  @apply capitalize text-gray-400;
 }
-.k-table > tbody > tr {
-    border-bottom: 1px solid var(--sortable-table-top-divider);
-    background-color: var(--body-bg);
-}
+
 .k-table > tbody > tr.group-row:first-child,
 .k-table > tbody > tr.group-row:last-child,
 .k-table > tbody.k-table-status--noData > tr {
-  border-bottom: 0;
+  @apply border-b-0;
 }
 </style>

@@ -6,7 +6,7 @@
       <form-group>
         <template #title>Basic</template>
         <template #default>
-          <div class="native-cluster-create-form__content">
+          <div class="grid grid-cols-2 gap-10px">
             <ip-address-pool-form
               ref="masterIps"
               v-model="form.options['master-ips']"
@@ -28,7 +28,7 @@
       <form-group>
         <template #title>SSH</template>
         <template #default>
-          <div class="native-cluster-create-form__content">
+          <div class="grid grid-cols-2 gap-10px">
             <string-form
               v-model.trim="form.config['ssh-user']"
               label="SSH User"
@@ -47,12 +47,12 @@
               :desc="desc.config['ssh-key-path']"
               :readonly="readonly"
             />
-            <div class="native-cluster-create-form__toggle" @click="toggleVisible">
+            <div class="cursor-pointer grid grid-cols-[auto,auto,1fr] gap-x-10px items-end justify-end" @click="toggleVisible">
               <div>Advance</div>
               <a>{{visible ? 'Hide':'Show'}}</a>
               <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
             </div>
-            <div class="native-cluster-create-form__advance" v-show="visible">
+            <div class="contents" v-show="visible">
               <k-password-input
                 v-model.trim="form.config['ssh-key-passphrase']"
                 label="SSH Key Passphrase"
@@ -91,7 +91,7 @@
       </k3s-options-form>
     </k-tab-pane>
     <k-tab-pane label="Additional Options" name="additional">
-      <div class="native-cluster-create-form__content">
+      <div class="grid grid-cols-2 gap-10px">
         <!-- <boolean-form
           v-model="form.config['ui']"
           label="UI"
@@ -185,24 +185,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.native-cluster-create-form__content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  row-gap: 10px;
-  column-gap: 10px;
-}
-
-.native-cluster-create-form__toggle {
-  cursor: pointer;
-  display: grid;
-  grid-template-columns: auto auto 1fr;
-  column-gap: 10px;
-  height: 100%;
-  align-items: end;
-  justify-items: end;
-}
-.native-cluster-create-form__advance {
-  display: contents;
-}
-</style>

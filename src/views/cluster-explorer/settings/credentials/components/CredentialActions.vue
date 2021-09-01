@@ -3,7 +3,7 @@
     <button class="btn-sm actions role-multi-action"><k-icon type="ellipsis" direction="down"></k-icon></button>
     <template #content>
       <div v-if="actions.length === 0"> No Actions </div>
-      <k-dropdown-menu v-else class="credencial-actions__command">
+      <k-dropdown-menu v-else class="min-w-150px">
           <k-dropdown-menu-item v-for="a in actions" :key="a.command" @click="handleCommand(a.command)">
             <!-- <k-icon :type="a.icon" color="var(--dropdown-text)"></k-icon> -->
             {{a.label}}
@@ -48,8 +48,3 @@ export default defineComponent({
   },
 })
 </script>
-<style>
-.credencial-actions__command {
-  min-width: 150px;
-}
-</style>

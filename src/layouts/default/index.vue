@@ -3,14 +3,12 @@
     <app-header class="autok3s-ui__header"></app-header>
     <app-sider class="autok3s-ui__nav"></app-sider>
     <main class="autok3s-ui__main">
-      <div class="autok3s-ui__content outlet">
+      <div class="p-20px outlet">
         <router-view></router-view>
       </div>
       <app-footer></app-footer>
     </main>
-    <div class="autok3s-ui__wm">
-      <window-manager></window-manager>
-    </div>
+    <window-manager class="autok3s-ui__wm"></window-manager>
   </div>
 </template>
 <script>
@@ -53,9 +51,6 @@ export default {
   overflow: auto;
   display: grid;
   grid-template-rows: 1fr var(--footer-height);
-}
-.autok3s-ui__content {
-  padding: 20px 20px 20px 20px;
 }
 
 </style>

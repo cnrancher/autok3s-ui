@@ -1,17 +1,17 @@
 <template>
-  <div class="ssh-provate-form">
+  <div class="grid grid-cols-2 gap-10px items-end">
     <string-form
       v-model.trim="form.config['ssh-key-path']"
       label="SSH Key Path"
       :desc="desc.config['ssh-key-path']"
       :readonly="readonly"
     />
-    <div class="ssh-provate-form__toggle" @click="toggleVisible">
+    <div class="cursor-pointer grid grid-cols-[auto,auto,1fr] items-center justify-items-end gap-x-10px h-full" @click="toggleVisible">
       <div>Advance</div>
-      <a>{{visible ? 'Hide':'Show'}}</a>
+      <a class="text-light-blue-500">{{visible ? 'Hide':'Show'}}</a>
       <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
     </div>
-    <div class="ssh-provate-form__advance" v-show="visible">
+    <div class="contents" v-show="visible">
       <k-password-input
         v-model.trim="form.config['ssh-key-passphrase']"
         label="SSH Key Passphrase"
@@ -75,24 +75,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.ssh-provate-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  row-gap: 10px;
-  column-gap: 10px;
-  align-items: end;
-}
-.ssh-provate-form__toggle {
-  cursor: pointer;
-  display: grid;
-  grid-template-columns: auto auto 1fr;
-  column-gap: 10px;
-  height: 100%;
-  align-items: end;
-  justify-items: end;
-}
-.ssh-provate-form__advance {
-  display: contents;
-}
-</style>

@@ -74,7 +74,7 @@ export default defineComponent({
         onChangeCurrentPage: handlePageChange,
         // onChange: handlePageChange
       }),
-      prev:() => h(Prev, {
+      prev: () => h(Prev, {
         currentPage: innerCurrentPage.value,
         prevText: props.prevText,
         onChangeCurrentPage: handlePageChange
@@ -103,11 +103,5 @@ export default defineComponent({
   grid-auto-flow: column;
   align-items: center;
   justify-content: end;
-}
-.k-pagination__page {
-  cursor: pointer;
-}
-.k-pagination__current-page {
-   cursor: default;
 }
 </style>

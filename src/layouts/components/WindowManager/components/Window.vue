@@ -1,9 +1,9 @@
 <template>
-  <div class="window">
-    <div class="window__body">
+  <div class="grid grid-rows-[1fr,auto] h-full">
+    <div class="p-2px overflow-auto">
        <slot></slot>
     </div>
-    <div class="window__footer">
+    <div class="grid grid-flow-col justify-between items-center py-2px px-5px bg-gray-300 border-t">
       <slot name="footer"></slot>
     </div>
   </div>
@@ -13,23 +13,3 @@ export default {
   
 }
 </script>
-<style>
-.window {
-  display: grid;
-  grid-template-rows: 1fr auto;
-  height: 100%;
-}
-.window__body {
-  padding: calc( 2 * var(--outline-width) );
-  overflow: auto;
-}
-.window__footer {
-  display: grid;
-  grid-auto-flow: column;
-  justify-content: space-between;
-  padding: 2px 5px;
-  align-items: center;
-  background-color: var(--wm-title-bg);
-  border-top: 1px solid var(--wm-title-border);
-}
-</style>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="k-radio-group btn-group"
+    class="k-radio-group flex flex-nowrap"
     :class="{disabled: disabled}">
     <slot></slot>
   </div>
@@ -39,16 +39,10 @@ export default defineComponent({
 })
 </script>
 <style>
-.k-radio-group {
-  display: flex;
-  flex-wrap: nowrap;
-}
 .k-radio-group > label:first-child, .k-radio-group > div:first-child{
-  border-top-left-radius: var(--border-radius);
-  border-bottom-left-radius: var(--border-radius);
+  @apply rounded-l;
 }
 .k-radio-group > label:last-child, .k-radio-group > div:last-child {
-  border-top-right-radius: var(--border-radius);
-  border-bottom-right-radius: var(--border-radius);
+  @apply rounded-r;
 }
 </style>

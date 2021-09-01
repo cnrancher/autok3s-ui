@@ -12,56 +12,56 @@
   </div>
   <k-icon type="arrow-right-blod" class="command-args__suffix" direction="down"></k-icon>
 <teleport to="body">
-  <div class="command-args__popper" v-if="!readonly || show"
+  <div class="absolute bg-white z-$popper-z-index shadow max-h90vh overflow-auto" v-if="!readonly || show"
     ref="commandOptionsRef"
-    :class="{'command-args__popper--active': show}"
+    :class="[show ? 'block' : 'hidden']"
     @click.stop="handlePopperClick">
-    <div class="command-args__panel">
-      <div class="command-args__options">
-        <div class="command-args__title">
+    <div class="grid grid-cols-[1fr,auto,1fr] gap-x-10px min-h-200px max-w-80vw">
+      <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border rounded">
+        <div class="grid grid-cols-[auto,1fr,auto] gap-x-10px items-center bg-gray-100 p-8px">
           <input type="checkbox" v-model="optionsAllSelected" :indeterminate="optionsIndeterminate">
           Available Options
           <div>{{selectedOptions.length}}/{{options.length}}</div>
         </div>
       <div class="command-args__search"></div>
-      <div class="command-args__content">
-        <label v-for="(o, index) in options" :key="index" class="command-args__item">
+      <div class="grid gap-y-10px p-8px content-start">
+        <label v-for="(o, index) in options" :key="index" class="grid grid-cols-[auto,1fr] gap-x-10px items-center select-none">
           <input type="checkbox" :value="o" v-model="selectedOptions">
           <command-option v-bind="o" v-model="o.modelValue"></command-option>
         </label>
       </div>
       <div class="command-args__footer"></div>
       </div>
-      <div class="command-args__move">
-        <button class="btn btn-sm bg-primary" :disabled="selectedOptions.length === 0" @click="addOptions">
+      <div class="grid self-center gap-y-10px content-start">
+        <button class="btn btn-sm role-primary" :disabled="selectedOptions.length === 0" @click="addOptions">
           <k-icon type="arrow-right-blod"></k-icon>
         </button>
-        <button class="btn btn-sm bg-primary" :disabled="selectedUsedOptions.length === 0" @click="removeOptions">
+        <button class="btn btn-sm role-primary" :disabled="selectedUsedOptions.length === 0" @click="removeOptions">
           <k-icon type="arrow-right-blod" direction="left"></k-icon>
         </button>
       </div>
-      <div class="command-args__used-options">
-        <div class="command-args__title">
+      <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border rounded">
+        <div class="grid grid-cols-[auto,1fr,auto] gap-x-10px items-center bg-gray-100 p-8px">
           <input type="checkbox" v-model="usedOptionsAllSelected" :indeterminate="usedOptionsIndeterminate">
             Used Options
             <div>{{selectedUsedOptions.length}}/{{usedOptions.length}}</div>
         </div>
         <div class="command-args__search"></div>
-        <div class="command-args__content">
-          <label v-for="(o, index) in usedOptions" :key="index" class="command-args__item">
+        <div class="grid gap-y-10px p-8px content-start">
+          <label v-for="(o, index) in usedOptions" :key="index" class="grid grid-cols-[auto,1fr] gap-x-10px items-center select-none">
             <input type="checkbox" :value="o" v-model="selectedUsedOptions">
             <command-option v-bind="o" @update:modelValue="handleOptionChange(o, $event)"></command-option>
           </label>
-          <div v-for="(o, index) in customValue" :key="index" class="command-args__custom">
+          <div v-for="(o, index) in customValue" :key="index" class="grid grid-cols-[1fr,auto] items-center">
             <custom-option v-model="customValue[index]"></custom-option>
-            <k-icon type="close" @click="removeCustomArg(index)" class="command-args__custom--remove"></k-icon>
+            <k-icon type="close" @click="removeCustomArg(index)" class="cursor-pointer"></k-icon>
           </div>
         </div>
-        <div class="command-args__footer">
+        <div class="command-args__footer mx-[-1px]">
           <k-input label="Add Custom Args(must start with '-' or '--')" @keyup.enter="addCustemArg" v-model.trim="customCommandArgs">
             <template #suffix>
               <button
-                class="btn bg-primary btn-sm"
+                class="btn btn-sm role-primary"
                 :disabled="addCustomArgDisabled"
                 @click="addCustemArg">Add</button>
             </template>
@@ -77,8 +77,6 @@
 import {computed, defineComponent, watchEffect, ref, watch, nextTick} from 'vue'
 import CommandOption from './CommandOption.vue'
 import CustomOption from './CustomOption.vue'
-import useDataSearch from '@/composables/useDataSearch.js'
-import useDataGroup from '@/composables/useDataGroup.js'
 import usePopper from '@/composables/usePopper.js'
 import useClickOutside from '@/composables/useClickOutside.js'
 
@@ -357,26 +355,9 @@ export default defineComponent({
   grid-template-columns: 1fr auto;
   column-gap: 10px;
   align-items: center;
-  background-color: var(--input-bg);
-  border-radius: var(--border-radius);
-  border: solid var(--outline-width) var(--input-border);
-  color: var(--input-text);
-  padding: 8px 8px;
+  @apply p-8px rounded border;
 }
-.command-args__title {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  column-gap: 10px;
-  align-items: center;
-  background: #f5f7fa;
-  padding: 8px 8px;
-}
-.command-args__move {
-  display: grid;
-  height: fit-content;
-  align-self: center;
-  row-gap: 10px;
-}
+
 .command-args__trigger {
   min-height: 18px;
   grid-area: select;
@@ -385,61 +366,11 @@ export default defineComponent({
 }
 .command-args__suffix {
   grid-area: suffix;
+  @apply flex items-center;
 }
 .command-args__label {
-  color: var(--input-label);
   grid-area: label;
-  display: grid;
-  grid-template-columns: auto auto;
-  align-items: center;
-  column-gap: 10px;
+  @apply grid gap-x-10px items-center grid-cols-[max-content,auto] text-warm-gray-500 grid gap-y-10px items-center grid-cols-[max-content,auto];
   width: fit-content;
-}
-.command-args__popper {
-  display: none;
-  position: absolute;
-  background-color: var(--dropdown-bg);
-  z-index: var(--popper-z-index);
-  box-shadow: 0 5px 20px var(--shadow);
-  max-height: 90vh;
-  overflow: auto;
-}
-.command-args__popper--active {
-  display: block;
-}
-.command-args__panel {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  min-height: 200px;
-  column-gap: 10px;
-  max-width: 80vw;
-}
-.command-args__options, .command-args__used-options {
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  row-gap: 10px;
-  border: 1px solid #ebeef5;
-  border-radius: 4px;
-}
-.command-args__item {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 10px;
-  align-items: center;
-  user-select: none;
-}
-.command-args__custom {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-}
-.command-args__custom--remove {
-  cursor: pointer;
-}
-.command-args__content {
-  display: grid;
-  row-gap: 10px;
-  height: fit-content;
-  padding: 8px 8px;
 }
 </style>

@@ -3,8 +3,8 @@
     <div class="wm__header"></div>
     <div class="wm__tabs-nav">
       <div v-for="t in tabs" :key="t.id"
-        class="wm__tabs-item"
-        :class="{'wm__tabs-item--active': t.id === activeTabId}"
+        class="flex items-center border-t border-r truncate cursor-pointer px-10px py-5px min-w-50px"
+        :class="[t.id === activeTabId ? 'bg-gray-200' : 'bg-gray-300']"
         @click="setActive(t.id)"
       >
         <k-icon v-if="t.icon" :type="t.icon"></k-icon>
@@ -17,25 +17,21 @@
       <div class="wm__resize-proxy" v-show="draging" :style="{top: `${resizerOffset}px`}"></div>
     </div>
     <div class="wm__tabs-content">
-      <div
+      <component
         v-for="t in tabs"
         :key="t.id"
-        class="wm__tab-pane"
-        :class="{'wm__tab-pane--active': t.id === activeTabId}"
+        :class="[t.id === activeTabId ? 'block' : 'hidden']"
+        :is="t.component"
+        v-bind="t.attrs"
+        :renew-count="t.renewCount"
+        :show='t.id === activeTabId'
       >
-          <component 
-            :is="t.component"
-            v-bind="t.attrs"
-            :renew-count="t.renewCount"
-            :show='t.id === activeTabId'
-          >
-          </component>
-      </div>
+      </component>
     </div>
   </div>
 </template>
 <script>
-import {computed, defineComponent, inject, onBeforeUnmount, onMounted, watchEffect, ref, reactive} from 'vue'
+import {computed, defineComponent, inject, onBeforeUnmount, onMounted, watchEffect, ref} from 'vue'
 import KIcon from '@/components/Icon'
 import ClusterLogs from './components/ClusterLogs.vue'
 import KubectlShell from './components/KubectlShell.vue'
@@ -187,8 +183,8 @@ function useEvent(targetRef) {
                        "tabsContent tabsContent";
   grid-template-rows: auto auto 1fr;
   grid-template-columns: 1fr auto;
-  background-color: var(--wm-body-bg);
   height: var(--wm-height);
+  @apply bg-gray-100;
 }
 .wm__header {
   grid-area: header;
@@ -197,11 +193,9 @@ function useEvent(targetRef) {
   grid-area: tabsNav;
   display: grid;
   grid-auto-flow: column;
-  background-color: var(--wm-tabs-bg);
-  /* border-top: 1px solid var(--wm-border); */
-  /* border-bottom: 1px solid var(--wm-border); */
   justify-content: start;
   min-height: var(--wm-tab-height);
+  @apply bg-gray-300;
 }
 .wm__resize {
   grid-area: resize;
@@ -210,9 +204,9 @@ function useEvent(targetRef) {
   column-gap: 2px;
   align-items: center;
   cursor: row-resize;
-  background-color: var(--wm-tabs-bg);
+  @apply bg-gray-300;
   &:hover {
-    background-color: var(--wm-closer-hover-bg);
+    @apply bg-gray-400;
   }
 }
 .wm__resize-proxy {
@@ -220,36 +214,13 @@ function useEvent(targetRef) {
   left: 0;
   right: 0;
   top: 0;
-  border-top: 2px solid #ebeef5;
   z-index: 10;
+  @apply border-t-2;
 }
 .wm__tabs-content {
   grid-area: tabsContent;
   overflow: hidden;
 }
-.wm__tabs-item {
-  display: flex;
-  align-items: center;
-  border-top: 1px solid var(--wm-border);
-  border-right: 1px solid var(--wm-border);
-  padding: 5px 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  min-width: 50px;
-  cursor: pointer;
-}
-.wm__tabs-item--active {
-  background-color: var(--wm-body-bg);
-  /* outline: 1px solid var(--wm-body-bg); */
-}
-.wm__tab-pane {
-  height: 100%;
-  display: none;
-  /* visibility: hidden; */
-}
-.wm__tab-pane--active {
-  display: block;
-  /* visibility: visible; */
-}
+
+
 </style>

@@ -1,8 +1,8 @@
 <template>
-  <div class="k-tabs__nav" :class="tabNavClass">
+  <div class="min-w-200px" :class="tabNavClass">
     <div v-for="t in tabs" :key="t.id"
       class="k-tabs__item"
-      :class="{'k-tabs__item--active': t.id === activeTabId, 'k-tabs__item--disabled': t.disabled}" @click="setActiveTab(t)">
+      :class="{'k-tabs__item--active': t.id === activeTabId, 'cursor-not-allowed': t.disabled}" @click="setActiveTab(t)">
       {{t.label}}&nbsp;
       <k-icon v-if="t.closable || tabsClosable" type="close" @click="removeTab(t)"></k-icon>
     </div>
@@ -51,42 +51,28 @@ export default defineComponent({
 })
 </script>
 <style>
-.k-tabs__nav {
-  min-width: 200px;
-}
 .k-tabs__nav--top,
 .k-tabs__nav--bottom {
-  display: flex;
-  align-items: center;
+  @apply flex items-center;
   & > .k-tabs__item {
-    padding: 5px 10px;
+    @apply py-5px px-10px;
   }
   & > .k-tabs__item--active {
-    background-color: var(--body-bg);
+    @apply bg-white;
   }
 }
 .k-tabs__nav--left,
 .k-tabs__nav--right{
-  display: flex;
-  flex-direction: column;
+  @apply flex flex-col;
   & > .k-tabs__item {
-    padding: 10px 15px;
-    border-left: 5px solid transparent;
+    @apply py-7.5px px-15px border-l-5px border-l-transparent;
   }
   & > .k-tabs__item--active {
-    background-color: var(--body-bg);
-    border-left: 5px solid var(--primary);
-    color: var(--input-label);
+    @apply bg-white border-l-5px border-l-light-blue-600 text-gray-500;
   }
 }
 .k-tabs__item {
-  display: flex;
-  align-items: center;
-  color: var(--primary);
-  cursor: pointer;
+  @apply flex items-center text-light-blue-500 cursor-pointer;
 }
 
-.k-tabs__item--disabled {
-  cursor: not-allowed;
-}
 </style>

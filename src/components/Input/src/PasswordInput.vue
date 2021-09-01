@@ -1,8 +1,8 @@
 <template>
   <k-input v-bind="$attrs" :type="inputType" :autocomplete="autocomplete">
     <template #suffix>
-      <k-icon class="k-password-input__toggle-view" type="view" v-if="show" :size="18" @click="toggleShow"></k-icon>
-      <k-icon class="k-password-input__toggle-view" type="view-off" v-else :size="18" @click="toggleShow"></k-icon>
+      <k-icon class="cursor-pointer" type="view" v-if="show" :size="18" @click="toggleShow"></k-icon>
+      <k-icon class="cursor-pointer" type="view-off" v-else :size="18" @click="toggleShow"></k-icon>
     </template>
   </k-input>
 </template>
@@ -43,8 +43,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.k-password-input__toggle-view {
-  cursor: pointer;
-}
-</style>

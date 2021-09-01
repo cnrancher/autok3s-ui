@@ -1,18 +1,18 @@
 <template>
   <window>
     <template #default>
-      <div ref="logsRef" class="cluster-logs__content">
-        <div v-for="(log, index) in logs" :key="index" v-html="log">
+      <div ref="logsRef" class="h-full overflow-auto">
+        <div v-for="(log, index) in logs" :key="index" v-html="log" class="whitespace-nowrap">
         </div>
       </div>
     </template>
     <template #footer>
       <div>
-        <k-button class="btn-sm bg-primary" :disabled="isFollowing" @click="follow">Follow</k-button>
+        <k-button class="btn-sm role-primary" :disabled="isFollowing" @click="follow">Follow</k-button>
         &nbsp;
-        <k-button class="btn-sm bg-primary" @click="clear">Clear</k-button>
+        <k-button class="btn-sm role-primary" @click="clear">Clear</k-button>
       </div>
-      <div class="cluster-logs__connect-state" :class="stateToClassMap[readyState]">{{readyState}}</div>
+      <div class="capitalize" :class="stateToClassMap[readyState]">{{readyState}}</div>
     </template>
   </window>
 </template>
@@ -111,15 +111,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.cluster-logs__content {
-  height: 100%;
-  overflow: auto;
-  & > div {
-    white-space: nowrap;
-  }
-}
-.cluster-logs__connect-state {
-  text-transform:capitalize;
-}
-</style>

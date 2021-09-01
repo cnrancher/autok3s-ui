@@ -1,5 +1,5 @@
 <template>
-  <button class="k-button btn" :disabled="btnDisabled">
+  <button :disabled="btnDisabled" class="btn">
     <k-icon v-if="loading" type="loading"></k-icon>
     <slot></slot>
   </button>
@@ -33,10 +33,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.k-button {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>

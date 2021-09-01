@@ -1,6 +1,6 @@
 <template>
-<div class="key-value-map-form">
-  <div class="key-value-map-form__title">
+<div class="grid grid-cols-[1fr,1fr,auto] gap-10px items-center">
+  <div class="grid col-span-2 grid-flow-col gap-x-10px items-center text-size-18px">
     {{label}}
     <k-tooltip v-if="desc">
       <k-icon type="prompt"></k-icon>
@@ -22,10 +22,10 @@
       @change="debounceUpdate"
       placeholder="e.g. bar">
     </k-input>
-    <k-icon v-if="!readonly" class="key-value-map-form__remove" type="ashbin" @click="remove(index)" :size="20"></k-icon>
+    <k-icon v-if="!readonly" class="cursor-pointer" type="ashbin" @click="remove(index)" :size="20"></k-icon>
     <div v-else></div>
   </template>
-  <div class="key-value-map-form__actions">
+  <div class="col-span-2">
     <k-button v-if="!readonly" type="button" class="btn-sm role-tertiary" @click="add">{{actionLabel}}</k-button>
     <div v-else></div>
   </div>
@@ -108,30 +108,4 @@ export default defineComponent({
   },
 })
 </script>
-<style>
-.key-value-map-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 10px 10px;
-  align-items: center;
-}
 
-.key-value-map-form__actions, .key-value-map-form__title {
-  grid-column: 1 / span 3;
-}
-.key-value-map-form__title {
-  display: grid;
-  grid-auto-flow: column;
-  column-gap: 10px;
-  align-items: center;
-  width: fit-content;
-  font-size: 18px;
-  color: var(--body-text);
-  font-weight: 400;
-  letter-spacing: 0em;
-}
-
-.key-value-map-form__remove {
-  cursor: pointer;
-}
-</style>

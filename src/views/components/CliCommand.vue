@@ -3,13 +3,13 @@
       <template #title>Create Cluster Command</template>
       <template #default>
         <div v-if="registryContent">
-          <div class="cli-command__registry-content">
+          <div class="grid grid-cols-1 gap-y-10px mb-10px">
             <div>
              1. You are using registry config, please save the following content as a file.
             </div>
-            <pre>
+            <pre class="relative bg-gray-100 p-10px">
 {{registryContent}}
-<div class="cli-command__actions">
+<div class="absolute top-0 right-0 grid grid-flow-col gap-x-10px items-center">
   <k-tooltip append-to-body :delay="0">
     <k-icon type="download" @click="downloadRegistryContent"></k-icon>
     <template #popover>Download Regisrty Content</template>
@@ -21,28 +21,28 @@
 </div></pre>
           </div>
         </div>
-        <div class="cli-command__content">
+        <div class="max-w-80vw grid grid-cols-1 gap-y-10px">
           <div v-if="registryContent">
-          2. Please replace the following <span class="cli-command__registry">{{registryPlaceholder}}</span> as a real file path that you have saved at first step.
+          2. Please replace the following <span class="text-red-500">{{registryPlaceholder}}</span> as a real file path that you have saved at first step.
           </div>
-          <code>
-            <div class="cli-command__actions">
+          <code class="p-10px rounded border bg-gray-100 m-5px relative">
+            <div class="absolute top-0 right-0 grid grid-flow-col gap-x-10px items-center">
               <k-tooltip append-to-body :delay="0">
-                <k-icon type="clone" class="cli-command__action" @click="copyCmd"></k-icon>
+                <k-icon type="clone" class="cursor-pointer" @click="copyCmd"></k-icon>
                 <template #popover>Copy CLI Command</template>
               </k-tooltip>
             </div>
-            <span class="cli-command__cmd">autok3s</span>&nbsp;<span class="cli-command__sub-cmd">create</span>
+            <span class="text-purple-700">autok3s</span>&nbsp;<span class="cli-command__sub-cmd">create</span>
             <template v-for="(o, index) in cmdOptions" :key="index">
-              <span class="cli-command__option">&nbsp;{{o.option}}</span>
+              <span class="text-blue-700">&nbsp;{{o.option}}</span>
               <span class="cli-command__value" :class="optionValueClass(o.value)" v-if="o.value">&nbsp;{{o.value}}</span>
             </template>
             <template v-if="registryContent">
-              <span class="cli-command__option">&nbsp;--registry </span>
-              <span class="cli-command__value cli-command__registry">{{registryPlaceholder}}</span>
+              <span class="text-blue-700">&nbsp;--registry </span>
+              <span class="cli-command__value text-red-500">{{registryPlaceholder}}</span>
             </template>
           </code>
-          <!-- <code>{{createCmd}} <span class="cli-command__registry" v-if="registryContent">--registry {{registryPlaceholder}}</span></code> -->
+          <!-- <code>{{createCmd}} <span class="text-red-500" v-if="registryContent">--registry {{registryPlaceholder}}</span></code> -->
         </div>
       </template>
       <template #footer>
@@ -249,54 +249,9 @@ function downloadFile (content, fileName) {
 }
 </script>
 <style>
-.cli-command__content {
-  max-width: 80vw;
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: 10px;
-  & > code {
-    padding: 10px 10px;
-    display: block;
-    border-radius: var(--border-radius);
-    background: var(--box-bg);
-    margin: 5px;
-    position: relative;
-  }
-}
-.cli-command__registry {
-  color: var(--error);
-}
-.cli-command__registry-content {
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: 10px;
-  margin-bottom: 10px;
-  & pre {
-    position: relative;
-  }
-}
-.cli-command__actions {
-  position:absolute;
-  top: 0px;
-  right: 0px;
-  display: grid;
-  grid-auto-flow: column;
-  column-gap: 10px;
-  align-items: center;
-}
-.cli-command__cmd {
-  color: #30a;
-}
-.cli-command__option {
-  color: #00c;
-}
 .cli-command__number {
   color: #164;
 }
-.cli-command__comment {
-  color: #a50;
-}
-.cli-command__action {
-  cursor: pointer;
-}
+
+
 </style>

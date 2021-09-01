@@ -1,11 +1,10 @@
 <template>
   <div v-if="routeGroup.children && routeGroup.children.length > 0" :key="routeGroup.name">
-    <div class="k-nav-group__header" @click="toggleOpen(routeGroup.name)">
-      <h6>{{routeGroup.title}}</h6>
-      <k-icon type="arrow-right" :direction="expandedStateMap[routeGroup.name] ? 'up':''"></k-icon>
+    <div class="grid grid-cols-[1fr,22px] items-center py-5px cursor-pointer hover:bg-gray-200" @click="toggleOpen(routeGroup.name)">
+      <h6 class="pl-8px">{{routeGroup.title}}</h6>
+      <k-icon type="arrow-right" :direction="expandedStateMap[routeGroup.name] ? 'up':''" class="justify-self-center"></k-icon>
     </div>
-    <ul class="k-nav-group__children"
-      :class="{'k-nav-group--expanded': expandedStateMap[routeGroup.name]}">
+    <ul :class="[expandedStateMap[routeGroup.name] ? 'block': 'hidden']">
       <li v-for="child in routeGroup.children" :key="child.name">
         <nav-group :route-group="child" :expanded-state-map="expandedStateMap"></nav-group>
       </li>
@@ -13,7 +12,7 @@
   </div>
   <!-- <router-link v-else
     class="k-nav-group-link"
-    :class="{'k-nav-group-link--has-icon': routeGroup.level > 1}"
+    :class="{'grid-cols-[20px,1fr]': routeGroup.level > 1}"
     :to="{name: routeGroup.name}">
     <k-icon v-if="routeGroup.level > 1" :type="routeGroup.icon || 'folder'" class="k-nav-group-link__icon"></k-icon>
     <span>{{routeGroup.title}}</span>
@@ -25,10 +24,10 @@
     <a
       :href="href"
       @click="navigate"
-      class="k-nav-group-link"
-      :class="{'router-link-active': isActive || $route.path.startsWith(route.path), 'router-link-exact-active': isExactActive, 'k-nav-group-link--has-icon': routeGroup.level > 1}">
-      <k-icon v-if="routeGroup.level > 1" :type="routeGroup.icon || 'folder'" class="k-nav-group-link__icon"></k-icon>
-      <span>{{routeGroup.title}}</span>
+      class="k-nav-group__link grid grid-cols-[auto,1fr] gap-2px items-center py-3px"
+      :class="[isActive || $route.path.startsWith(route.path) ? 'router-link-active bg-gray-100' : 'hover:bg-gray-200', isExactActive ? 'router-link-exact-active' : '', routeGroup.level > 1 ? 'grid-cols-[20px,1fr] pl-16px': 'pl-8px']">
+      <k-icon class="k-nav-group__icon" v-if="routeGroup.level > 1" :type="routeGroup.icon || 'folder'" :class="[isActive || $route.path.startsWith(route.path) ? 'k-nav-group__icon--active': '']"></k-icon>
+      <span class="overflow-hidden overflow-ellipsis whitespace-nowrap">{{routeGroup.title}}</span>
     </a>
   </router-link>
 </template>
@@ -62,73 +61,13 @@ export default {
 }
 </script>
 <style>
-.k-nav-group__header {
-  display: grid;
-  grid-template-columns: 1fr 22px;
-  align-items: center;
-  padding: 8px 0;
-  background: transparent;
-  cursor: pointer;
-  & > h6 {
-    font-size: 14px;
-    text-transform: none;
-    padding-left: 10px;
-    color: var(--body-text);
-    margin: 0;
-    letter-spacing: .1em;
-    line-height: normal;
-  }
+.k-nav-group__link:hover .k-nav-group__icon {
+  @apply text-gray-800;
 }
-.k-nav-group-link {
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-  padding: 7.5px 7px 7.5px 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--body-text);
-  text-decoration: none;
-  border-left: 5px solid transparent;
-  line-height: 16px;
-  font-size: 13px;
-  &:hover {
-    background: var(--nav-hover);
-    text-decoration: none;
-    color: var(--body-text);
-    
-    & i {
-      background-color: var(--body-text);
-    }
-  }
-  &.router-link-active {
-    background-color: var(--nav-active);
-    color: var(--body-text);
-    & > .k-nav-group-link__icon {
-      background-color: var(--body-text) !important;
-    }
-  }
-  & > .k-nav-group-link__icon {
-    background-color: var(--muted);
-  }
-  &:focus {
-    outline: none;
-  }
+.k-nav-group__icon {
+  @apply text-gray-400;
 }
-.k-nav-group-link--has-icon {
-  grid-template-columns: 20px 1fr;
+.k-nav-group__icon--active {
+  @apply text-gray-800;
 }
-.k-nav-group__children {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-  display: none;
-  & > li {
-    margin: 0;
-  }
-}
-.k-nav-group--expanded {
-  display: block;
-}
-
 </style>

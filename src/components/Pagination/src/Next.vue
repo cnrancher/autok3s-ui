@@ -1,8 +1,7 @@
 <template>
-  <div class="k-pagination__next"
-    :class="{'k-pagination__next--disabled': nextDisabled}"
+  <div class="cursor-pointer flex justify-center items-center"
     @click="goToNextPage">
-    <span v-if="nextText ">{{ nextText }}</span><k-icon type="arrow-right"></k-icon>
+    <span v-if="nextText ">{{ nextText }}</span><k-icon type="arrow-right" :class="[nextDisabled ? 'cursor-not-allowed text-gray-300' : '']"></k-icon>
   </div>
 </template>
 <script>
@@ -45,17 +44,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.k-pagination__next {
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.k-pagination__next--disabled {
-  cursor: not-allowed;
-  & i {
-    background-color: var(--disabled-text);
-  }
-}
-</style>

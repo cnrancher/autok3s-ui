@@ -1,22 +1,22 @@
 <template>
-<div class="cluster-tags-form">
-  <div class="cluster-tags-form__title">
-    Tags
+<div class="grid grid-cols-[1fr,1fr,auto] gap-10px items-center">
+  <div class="grid grid-flow-col gap-10px items-center justify-start col-span-3">
+    <span class="text-size-18px">Tags</span>
     <k-tooltip v-if="desc">
       <k-icon type="prompt"></k-icon>
       <template #popover>{{desc}}</template>
     </k-tooltip>
   </div>
-  <label class="cluster-tags-form__kv-label">Key</label>
-  <label class="cluster-tags-form__kv-label">Value</label>
+  <label class="text-gray-500">Key</label>
+  <label class="text-gray-500">Value</label>
   <div></div>
   <template v-for=" (t, index) in tags" :key="index">
     <k-input :readonly="readonly" v-model.trim="t.label" @change="debounceUpdate" placeholder="e.g. foo"></k-input>
     <k-input :readonly="readonly" v-model.trim="t.value" @change="debounceUpdate" placeholder="e.g. bar"></k-input>
-    <k-icon v-if="!readonly" class="cluster-tags-form__remove" type="ashbin" @click="remove(index)" :size="20"></k-icon>
+    <k-icon v-if="!readonly" class="cursor-pointer" type="ashbin" @click="remove(index)" :size="20"></k-icon>
     <div v-else></div>
   </template>
-  <div class="cluster-tags-form__actions">
+  <div class="col-span-3">
     <k-button v-if="!readonly" type="button" class="btn-sm role-tertiary" @click="add">Add Tag</k-button>
     <div v-else></div>
   </div>
@@ -83,32 +83,3 @@ export default defineComponent({
   },
 })
 </script>
-<style>
-.cluster-tags-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 10px 10px;
-  align-items: center;
-}
-
-.cluster-tags-form__actions, .cluster-tags-form__title {
-  grid-column: 1 / span 3;
-}
-.cluster-tags-form__title {
-  display: grid;
-  grid-auto-flow: column;
-  column-gap: 10px;
-  align-items: center;
-  width: fit-content;
-  font-size: 18px;
-  color: var(--body-text);
-  font-weight: 400;
-  letter-spacing: 0em;
-}
-.cluster-tags-form__kv-label {
-  color: var(--input-label);
-}
-.cluster-tags-form__remove {
-  cursor: pointer;
-}
-</style>

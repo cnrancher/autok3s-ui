@@ -26,7 +26,7 @@
         <k-icon type="folder" :color="groupBy === 'provider' ? '#fff' : ''"></k-icon>
       </k-radio-button>
     </k-radio-group>
-    <input type="search" placeholder="Filter" class="input-sm credential-table__search k-input-search" v-model="searchQuery">
+    <input type="search" placeholder="Filter" class="credential-table__search focus-visible:outline-none px-12px rounded border hover:bg-gray-100" v-model="searchQuery">
   </div>
   <k-table
     :data="dataMatchingSearchQuery"
@@ -70,7 +70,7 @@
       </template>
       <template #footer>
         <k-button class="role-secondary" @click="confirmModalVisible = false">Cancel</k-button>
-        <k-button class="bg-error role-primary" @click="deleteCredencials(commandParams)">Delete</k-button>
+        <k-button class="role-danger" @click="deleteCredencials(commandParams)">Delete</k-button>
       </template>
     </k-modal>
 </div>
