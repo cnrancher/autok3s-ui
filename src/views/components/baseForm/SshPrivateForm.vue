@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-2 gap-10px items-end">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-end">
     <string-form
       v-model.trim="form.config['ssh-key-path']"
       label="SSH Key Path"

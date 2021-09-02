@@ -6,7 +6,7 @@
       <form-group>
         <template #title>Basic</template>
         <template #default>
-          <div class="grid grid-cols-2 gap-10px">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <ip-address-pool-form
               ref="masterIps"
               v-model="form.options['master-ips']"
@@ -28,7 +28,7 @@
       <form-group>
         <template #title>SSH</template>
         <template #default>
-          <div class="grid grid-cols-2 gap-10px">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <string-form
               v-model.trim="form.config['ssh-user']"
               label="SSH User"
@@ -49,7 +49,7 @@
             />
             <div class="cursor-pointer grid grid-cols-[auto,auto,1fr] gap-x-10px items-end justify-end" @click="toggleVisible">
               <div>Advance</div>
-              <a>{{visible ? 'Hide':'Show'}}</a>
+              <a class="text-$link">{{visible ? 'Hide':'Show'}}</a>
               <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
             </div>
             <div class="contents" v-show="visible">
@@ -91,7 +91,7 @@
       </k3s-options-form>
     </k-tab-pane>
     <k-tab-pane label="Additional Options" name="additional">
-      <div class="grid grid-cols-2 gap-10px">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
         <!-- <boolean-form
           v-model="form.config['ui']"
           label="UI"

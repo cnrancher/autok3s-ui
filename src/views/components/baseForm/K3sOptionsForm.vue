@@ -2,7 +2,7 @@
   <form-group>
     <template #title>Basic</template>
     <template #default>
-      <div class="grid grid-cols-2 gap-10px">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
         <!-- <string-form
           v-model.trim="form.config['k3s-channel']"
           label="K3s Channel"
@@ -51,7 +51,7 @@
   <form-group>
     <template #title>Master</template>
     <template #default>
-      <div class="grid grid-cols-2 gap-10px">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
         <string-form
           v-if="form.provider !== 'native'"
           v-model.trim="form.config['master']"
@@ -79,7 +79,7 @@
   <form-group>
     <template #title>Worker</template>
     <template #default>
-      <div class="grid grid-cols-2 gap-10px">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
         <string-form
           v-if="form.provider !== 'native'"
           v-model.trim="form.config['worker']"
@@ -107,7 +107,7 @@
   <form-group>
     <template #title>Advance</template>
     <template #default>
-      <div class="grid grid-cols-2 gap-10px">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
         <string-form
           v-model.trim="form.config['token']"
           label="Token"
