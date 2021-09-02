@@ -10,6 +10,7 @@
   --modal-z-index: 300;
   --popper-z-index: 100;
   --loading-z-index: 200;
+  --nav-z-index: 600;
   /* window */
   --wm-tab-height : 29px;
   /* terminal */
