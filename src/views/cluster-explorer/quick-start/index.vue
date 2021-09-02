@@ -17,7 +17,7 @@
       </div>
       <div class="quick-start__form">
         <k-loading :loading="loading || creating">
-          <div class="grid grid-cols-2 gap-20px pb-20px">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-20px pb-20px">
             <k-select
               v-model="currentProvider"
               label="Provider"

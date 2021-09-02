@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-2 gap-20px">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-20px">
     <string-form
       v-model.trim="form.config['master']"
       label="Master"
