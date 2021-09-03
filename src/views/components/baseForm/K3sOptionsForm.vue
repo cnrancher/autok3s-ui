@@ -129,7 +129,7 @@
           :readonly="readonly"
         />
         <registry-config-form
-          class="col-span-2"
+          class="col-span-1 sm:col-span-2"
           v-model="form.config['registry-content']"
           label="Registry"
           :desc="desc.config['registry-content']"
