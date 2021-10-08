@@ -34,7 +34,7 @@
     @apply text-$error;
   }
   .text-info {
-    @apply text-$infor;
+    @apply text-$info;
   }
   .text-success {
     @apply text-$success;
