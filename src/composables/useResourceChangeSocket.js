@@ -1,8 +1,6 @@
 import { onBeforeUnmount } from 'vue'
-import useSocket from '@/composables/useSocket.js'
-import {CONNECTED} from '@/composables/useSocket.js'
-import useSocketRetry from '@/composables/useSocketRetry.js'
 import { getRootPath } from '@/utils/index.js'
+import { useWebSocket } from '@vueuse/core'
 
 export default function useResourceChangeSocket(notify) {
   const url = `${window.location.origin.replace(/^http/, 'ws') }${getRootPath()}${import.meta.env.VITE_APP_BASE_API}/subscribe`
@@ -14,8 +12,16 @@ export default function useResourceChangeSocket(notify) {
 	// }
   let cache = {} 
 
-  const {readyState, connect, send, disconnect} = useSocket(url, {
-    open: () => {
+  const {open, close, send, status} = useWebSocket(url, {
+    immediate: false,
+    autoReconnect: {
+      retries: 6,
+      delay: 10000,
+      onFailed() {
+        window.location.reload()
+      },
+    },
+    onConnected() {
       Object.entries(cache).forEach(([resourceType, item]) => {
         const promises = item.listeners.filter(({syncMethod}) => syncMethod && typeof syncMethod === 'function')
           .map(({syncMethod}) => syncMethod())
@@ -25,7 +31,12 @@ export default function useResourceChangeSocket(notify) {
           })
       })
     },
-    message: (e) => {
+    onDisconnected() {
+      Object.values(cache).filter((item) => item.subscribed).forEach((item) => {
+        item.subscribed = false
+      })
+    },
+    onMessage(_, e) {
       const data = e.data
       if (!data) {
         return
@@ -38,18 +49,8 @@ export default function useResourceChangeSocket(notify) {
       } catch (err) {
         console.error(error)
       }
-    },
-    close: () => {
-      Object.values(cache).filter((item) => item.subscribed).forEach((item) => {
-        item.subscribed = false
-      })
     }
   })
-  const {maxRetries, period, start, stop} = useSocketRetry(connect, disconnect, () => {
-    window.location.reload()
-  })
-  maxRetries.value = 6
-  period.value = 10000
 
   const checkArgs = (resourceType, callback) => {
     if (!resourceType || !callback || typeof callback !== 'function') {
@@ -68,12 +69,12 @@ export default function useResourceChangeSocket(notify) {
       return
     }
     cache[resourceType].listeners.push({callback, syncMethod})
-    if (readyState.value !== CONNECTED) {
+    if (status.value !== 'OPEN') {
       return
     }
     if (syncMethod && typeof syncMethod === 'function') {
       syncMethod().finally(() => {
-        if (readyState.value !== CONNECTED) {
+        if (status.value !== 'OPEN') {
           return
         }
         if (!cache[resourceType].subscribed) {
@@ -98,7 +99,7 @@ export default function useResourceChangeSocket(notify) {
   }
   const clear = () => {
     cache = {}
-    stop()
+    close()
   }
 
   onBeforeUnmount(clear)
@@ -106,8 +107,8 @@ export default function useResourceChangeSocket(notify) {
   return {
     subscribe,
     unsubscribe,
-    connect: start,
-    disconnect: stop,
-    readyState,
+    connect: open,
+    disconnect: close,
+    readyState: status,
   }
 }

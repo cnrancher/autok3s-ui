@@ -5,25 +5,29 @@
     </template>
     <template #footer>
       <k-button class="btn-sm role-primary" @click="clear">Clear</k-button>
-      <div class="capitalize" :class="stateToClassMap[readyState]">{{readyState}}</div>
+      <div class="capitalize" :class="stateToClassMap[status]">{{readyState}}</div>
     </template>
   </window>
 </template>
 <script>
 import Window from './Window.vue'
-import {defineComponent, ref, watchEffect, nextTick, inject, watch} from 'vue'
+import {defineComponent, computed, ref, watchEffect, nextTick, inject, watch} from 'vue'
 import KButton from '@/components/Button'
-import {CLOSED, CONNECTING, CONNECTED} from '@/composables/useSocket.js'
-import useSocket from '@/composables/useSocket.js'
-import useSocketRetry from '@/composables/useSocketRetry.js'
 import useTerminal from '@/composables/useTerminal.js'
 import useResizeObserver from '@/composables/useResizeObserver.js'
 import {DONE} from '@/composables/useTerminal.js'
+import { useWebSocket } from '@vueuse/core'
 
 const stateToClassMap = {
-  [CLOSED]: 'text-error',
-  [CONNECTING]: 'text-info',
-  [CONNECTED]: 'text-success',
+  CLOSED: 'text-error',
+  CONNECTING: 'text-info',
+  OPEN: 'text-success',
+}
+
+const stateMap = {
+  CLOSED: 'Close',
+  CONNECTING: 'Connecting',
+  OPEN: 'Connected',
 }
 
 const textEncoder = new TextEncoder()
@@ -69,32 +73,39 @@ export default defineComponent({
         fontSize:     12,
       })
 
-    const {readyState, connect, send, disconnect/*, setQuery*/} = useSocket(url, {
-      message: async (e) => {
-        const msg = await e.data.text()
-        write(msg)
-      },
-      open: () => {
-        fitTerminal()
-        focus()
-      },
-      close: (e) => {
-        if (e?.code === 1000) {
-          stop()
-          wmStore.action.removeTab(`node-shell_${props.nodeId}`)
+      const { status, send, open, close } = useWebSocket(url, {
+        immediate: false,
+        autoReconnect: {
+          retries: 3,
+          delay: 3000,
+          onFailed() {
+            notificationStore.action.notify({
+              type: 'error',
+              duration: 0,
+              title: 'Websocket Disconnect',
+              content: `Disconnect from the node(${props.nodeId}). Please confirm whether the related service is running normally`
+            })
+          }
+        },
+        onConnected() {
+          fitTerminal()
+          focus()
+        },
+        async onMessage(_, e) {
+          const msg = await e.data.text()
+          write(msg)
+        },
+        onDisconnected(_, e) {
+          if (e?.code === 1000) {
+            close()
+            wmStore.action.removeTab(`node-shell_${props.nodeId}`)
+          }
         }
-      }
-    })
-    const {maxRetries, period, start, stop} = useSocketRetry(connect, disconnect, () => {
-      notificationStore.action.notify({
-        type: 'error',
-        duration: 0,
-        title: 'Websocket Disconnect',
-        content: `Disconnect from the node(${props.nodeId}). Please confirm whether the related service is running normally`
       })
+    
+    const readyState = computed(() => {
+      return stateMap[status.value]
     })
-    maxRetries.value = 3
-    period.value = 3000
 
     const fitTerminal = () => {
       const dimensions = fit()
@@ -119,7 +130,7 @@ export default defineComponent({
       //   p.height = dimensions.rows
       // }
       // setQuery(p)
-      start()
+      open()
       stopWatch()
       stopWatch = null
     })
@@ -136,15 +147,16 @@ export default defineComponent({
       }
     })
     watch(() => props.renewCount, () => {
-      if ( readyState.value === CLOSED) {
-        stop()
-        start()
+      if ( status.value === 'CLOSED') {
+        close()
+        open()
       }
     })
 
     return {
       xterm,
       readyState,
+      status,
       clear,
       stateToClassMap,
     }
