@@ -82,7 +82,7 @@ export default defineComponent({
     
 
     const { create, remove, update } = usePopper(inputRef, resultRef, popperOption)
-    onClickOutside(inputRef, () => {
+    onClickOutside(resultRef, () => {
       show.value = false
     })
     const { loading, templates, error } = toRefs(templateStore.state)

@@ -144,7 +144,7 @@ export default defineComponent({
       placement: 'bottom-start'
     }
     const { create, remove, update } = usePopper(commandArgsRef, commandOptionsRef, popperOption)
-    onClickOutside(commandArgsRef, () => {
+    onClickOutside(commandOptionsRef, () => {
       show.value = false
     })
     const createPopper = () => {
