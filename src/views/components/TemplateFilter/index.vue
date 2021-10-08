@@ -51,7 +51,8 @@ import {computed, defineComponent, inject, nextTick, ref, toRefs, watch, watchEf
 import useDataSearch from '@/composables/useDataSearch.js'
 import useDataGroup from '@/composables/useDataGroup.js'
 import usePopper from '@/composables/usePopper.js'
-import useClickOutside from '@/composables/useClickOutside.js'
+import { onClickOutside } from '@vueuse/core'
+
 const popperOption = {
   placement: 'bottom-start'
 }
@@ -81,7 +82,7 @@ export default defineComponent({
     
 
     const { create, remove, update } = usePopper(inputRef, resultRef, popperOption)
-    useClickOutside(inputRef, () => {
+    onClickOutside(inputRef, () => {
       show.value = false
     })
     const { loading, templates, error } = toRefs(templateStore.state)
