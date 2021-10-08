@@ -10,7 +10,7 @@
 </template>
 <script>
 import usePopper from '@/composables/usePopper.js'
-import useClickOutside from '@/composables/useClickOutside.js'
+import { onClickOutside } from '@vueuse/core'
 import {ref, nextTick, watch, defineComponent} from 'vue'
 export default defineComponent({
   name: 'KDropdown',
@@ -56,7 +56,7 @@ export default defineComponent({
       create()
       update()
     }
-    useClickOutside(toggleRef, () => {
+    onClickOutside(toggleRef, () => {
       show.value = false
     })
     watch(show, () => {

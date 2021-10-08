@@ -78,7 +78,7 @@ import {computed, defineComponent, watchEffect, ref, watch, nextTick} from 'vue'
 import CommandOption from './CommandOption.vue'
 import CustomOption from './CustomOption.vue'
 import usePopper from '@/composables/usePopper.js'
-import useClickOutside from '@/composables/useClickOutside.js'
+import { onClickOutside } from '@vueuse/core'
 
 const useMinWithModifier = (minWith = '200px') => {
   return {
@@ -144,7 +144,7 @@ export default defineComponent({
       placement: 'bottom-start'
     }
     const { create, remove, update } = usePopper(commandArgsRef, commandOptionsRef, popperOption)
-    useClickOutside(commandArgsRef, () => {
+    onClickOutside(commandArgsRef, () => {
       show.value = false
     })
     const createPopper = () => {
