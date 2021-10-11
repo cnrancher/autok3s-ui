@@ -14,7 +14,7 @@ import Window from './Window.vue'
 import {defineComponent, computed, ref, watchEffect, nextTick, inject, watch} from 'vue'
 import KButton from '@/components/Button'
 import useTerminal from '@/composables/useTerminal.js'
-import useResizeObserver from '@/composables/useResizeObserver.js'
+import { useResizeObserver } from '@vueuse/core'
 import {DONE} from '@/composables/useTerminal.js'
 import { useWebSocket } from '@vueuse/core'
 
