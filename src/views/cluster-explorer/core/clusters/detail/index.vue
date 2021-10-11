@@ -10,7 +10,7 @@
         Provider: {{clusterNodes?.provider}}
       </template>
     </page-header>
-    <div class="grid grid-cols-2 gap-10px">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
       <k-input
         label="Master"
         readonly
@@ -39,10 +39,10 @@
         :value="clusterNodes.version">
       </k-input>
     </div>
-    <hr>
+    <hr class="section-divider">
     <div class="cluster-node__table-header">
-      <h3>Nodes</h3>
-      <input type="search" placeholder="Filter" class="input-sm k-input-search" v-model="searchQuery">
+      <h3 class="text-size-18px">Nodes</h3>
+      <input type="search" placeholder="Filter(State, Node Status, Version, Roles)" class="h-10 focus-visible:outline-none px-12px rounded border hover:bg-gray-100" v-model="searchQuery">
     </div>
     <k-table
       :data="nodes"
@@ -159,12 +159,11 @@ export default defineComponent({
 .cluster-node__table-header {
   display: grid;
   grid-template-areas: "title search";
-  grid-template-columns: 1fr minmax(min-content, 200px);
+  grid-template-columns: 1fr minmax(min-content, 300px);
   align-items: center;
-  padding: 0 0 20px 0;
+  padding: 0 0 10px 0;
   & > h3 {
     grid-area: title;
-    margin: 0;
   }
   & > input {
     grid-area: search;
