@@ -56,7 +56,7 @@ export default defineComponent({
       create()
       update()
     }
-    onClickOutside(toggleRef, () => {
+    onClickOutside(contentRef, () => {
       show.value = false
     })
     watch(show, () => {
