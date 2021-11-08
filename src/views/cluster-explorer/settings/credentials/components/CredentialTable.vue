@@ -5,7 +5,7 @@
       Credentials
     </template>
     <template #actions>
-        <router-link v-if="credentials.length < 3" :to="{name: 'ClusterExplorerSettingsCreate'}" class="btn role-primary">Create</router-link>
+        <router-link v-if="credentials.length < providerWithCredentialCount" :to="{name: 'ClusterExplorerSettingsCreate'}" class="btn role-primary">Create</router-link>
         <k-tooltip v-else>
           <k-button class="btn bg-primary" disabled>Create</k-button>
           <template #popover>当前版本每个provider仅支持保存一个credential信息</template>
@@ -103,6 +103,9 @@ export default defineComponent({
     const notificationStore = inject('notificationStore')
     const {providerKeyMap, providerSecretMap, providerKeyFieldMap} = useProviderKeyMap()
     const {loading, error, credentials, fetchCredentials} = useCredentials()
+    const providerWithCredentialCount = computed(() => {
+      return Object.keys(providerKeyFieldMap).length
+    })
     const data = computed(() => {
       const providersWithCredential = Object.keys(providerKeyFieldMap)
       return credentials.value
@@ -169,6 +172,7 @@ export default defineComponent({
       deleteCredencials,
       credentials,
       groupBy,
+      providerWithCredentialCount,
     }
   },
   components: {

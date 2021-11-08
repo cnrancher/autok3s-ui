@@ -15,7 +15,7 @@
         :key="p"></k-option>
     </k-select>
     <div></div>
-    <template v-for="[p, v] in Object.entries(providerKeyFieldMap)"
+    <template v-for="[p, v] in Object.entries(providerKeyFieldMap).filter((e) => e[0] !== 'google')"
       :key="p"
       >
       <k-password-input
@@ -31,6 +31,18 @@
         v-show="p === provider"
       />
     </template>
+    <string-form
+      v-model.trim="form.google.key"
+      :label="form.google.keyLabel"
+      required
+      v-show="'google' === provider"
+    />
+    <string-form
+      v-model.trim="form.google.secret"
+      :label="form.google.secretLabel"
+      required
+      v-show="'google' === provider"
+    />
   </div>
   <footer-actions>
     <router-link :to="{name: 'ClusterExplorerSettingsCredentials'}" class="btn role-secondary">Cancel</router-link>
@@ -49,6 +61,7 @@ import useCredencial from '@/composables/useCredencial.js'
 import { updateCredential } from '@/api/credential';
 import FooterActions from '@/views/components/FooterActions.vue'
 import {stringify} from '@/utils/error.js'
+import StringForm from '@/views/components/baseForm/StringForm.vue'
 
 export default defineComponent({
   props: {
@@ -158,6 +171,7 @@ export default defineComponent({
   },
   components: {
     FooterActions,
+    StringForm,
   }
 })
 </script>

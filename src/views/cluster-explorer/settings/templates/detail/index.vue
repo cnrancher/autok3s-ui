@@ -57,6 +57,7 @@ import AlibabaClusterCreateForm from '@/views/components/providerForm/AlibabaClu
 import TencentClusterCreateForm from '@/views/components/providerForm/TencentClusterForm.vue'
 import K3dClusterCreateForm from '@/views/components/providerForm/K3dClusterForm.vue'
 import NativeClusterCreateForm from '@/views/components/providerForm/NativeClusterForm.vue'
+import GoogleClusterCreateForm from '@/views/components/providerForm/GoogleClusterForm.vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
 import BooleanForm from '@/views/components/baseForm/BooleanForm.vue'
 import useProviders from '@/composables/useProviders.js'
@@ -177,6 +178,7 @@ export default defineComponent({
     TencentClusterCreateForm,
     K3dClusterCreateForm,
     NativeClusterCreateForm,
+    GoogleClusterCreateForm,
     StringForm,
     BooleanForm
   }

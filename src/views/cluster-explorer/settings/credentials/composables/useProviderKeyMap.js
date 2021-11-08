@@ -11,6 +11,10 @@ const PROVIDER_KEY_FIELD_MAP = {
   aws: {
     key: 'access-key',
     secret: 'secret-key'
+  },
+  google: {
+    key: 'service-account',
+    secret: 'service-account-file'
   }
 }
 
