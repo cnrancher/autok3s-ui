@@ -213,7 +213,7 @@ export default defineComponent({
 
 .k-select__label {
   grid-area: label;
-  @apply text-warm-gray-500 grid gap-y-10px items-center grid-cols-[max-content,auto];
+  @apply grid gap-x-10px items-center grid-cols-[max-content,auto] text-warm-gray-500;
   width: fit-content;
 }
 .k-select__prefix {

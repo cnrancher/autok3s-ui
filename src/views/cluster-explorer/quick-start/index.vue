@@ -56,6 +56,7 @@ import AwsForm from './components/AwsForm.vue'
 import AlibabaForm from './components/AlibabaForm.vue'
 import TencentForm from './components/TencentForm.vue'
 import K3dForm from './components/K3dForm.vue'
+import GoogleForm from './components/GoogleForm.vue'
 import clustcerIcon from '@/assets/images/cluster-single.svg'
 import useProviders from '@/composables/useProviders.js'
 import { createCluster } from '@/api/cluster.js'
@@ -207,7 +208,8 @@ export default defineComponent({
     })
     let form = null
     const validate = () => {
-      const allRequiredFields = Object.entries(providerSchema).filter(([k, v]) => v?.required).map(([k]) => k);
+      const allRequiredFields = Object.entries({ ...providerSchema.config, ...providerSchema.options })
+        .filter(([k, v]) => k!== 'name' && v?.required).map(([k]) => k);
       form = formRef.value?.getForm()
       if (!form) {
         return
@@ -316,6 +318,7 @@ export default defineComponent({
     AlibabaForm,
     TencentForm,
     K3dForm,
+    GoogleForm,
   }
 })
 </script>
