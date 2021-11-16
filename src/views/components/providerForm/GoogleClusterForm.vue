@@ -303,6 +303,7 @@ export default defineComponent({
       acitiveTab,
       getForm,
       tags,
+      ports,
       uiOptions,
     }
   },
