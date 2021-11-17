@@ -14,29 +14,29 @@
       <k-input
         label="Master"
         readonly
-        :value="clusterNodes.master">
+        :model-value="clusterNodes.master">
       </k-input>
       <k-input
         label="Worker"
         readonly
-        :value="clusterNodes.worker">
+        :model-value="clusterNodes.worker">
       </k-input>
       <k-input
         v-if="clusterNodes?.provider !== 'k3d'"
         label="Region"
         readonly
-        :value="clusterNodes.region">
+        :model-value="clusterNodes.region">
       </k-input>
       <k-input
         v-if="clusterNodes?.provider !== 'k3d'"
         label="Zone"
         readonly
-        :value="clusterNodes.zone">
+        :model-value="clusterNodes.zone">
       </k-input>
       <k-input
         label="Version"
         readonly
-        :value="clusterNodes.version">
+        :model-value="clusterNodes.version">
       </k-input>
     </div>
     <hr class="section-divider">
