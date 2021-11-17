@@ -56,9 +56,9 @@ export default defineComponent({
       create()
       update()
     }
-    onClickOutside(contentRef, () => {
+    onClickOutside(toggleRef, () => {
       show.value = false
-    })
+    }, { event: 'click' })
     watch(show, () => {
       if (show.value) {
         nextTick(() => {
