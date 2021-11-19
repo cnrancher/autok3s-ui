@@ -208,18 +208,28 @@ export default defineComponent({
     })
     let form = null
     const validate = () => {
-      const allRequiredFields = Object.entries({ ...providerSchema.config, ...providerSchema.options })
+      const configRequiredFields = Object.entries(providerSchema.config)
         .filter(([k, v]) => k!== 'name' && v?.required).map(([k]) => k);
+      const optionRequiredFields = Object.entries(providerSchema.options)
+        .filter(([k, v]) => v?.required).map(([k]) => k);
       form = formRef.value?.getForm()
       if (!form) {
         return
       }
-      const errors = allRequiredFields.reduce((t, c) => {
-        if (!form[c]) {
-          t.push(`"${ c }" is required`);
+      const configErrors = configRequiredFields.reduce((t, c) => {
+        if (!form.config?.[c]) {
+          t.push(`"${ c.split('-').map(o => capitalize(o)).join(' ') }" is required`);
         }
         return t;
       }, []);
+      const optionErrors = optionRequiredFields.reduce((t, c) => {
+        if (!form.options?.[c]) {
+          t.push(`"${ c.split('-').map(o => capitalize(o)).join(' ') }" is required`);
+        }
+        return t;
+      }, []);
+
+      const errors = [...configErrors, ...optionErrors]
 
       if (!name.value) {
         errors.unshift(`"Name" is required`)
