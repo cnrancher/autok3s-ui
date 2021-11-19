@@ -107,12 +107,14 @@
             :desc="desc.options['subnetwork']"
             :readonly="readonly"
           />
-          <boolean-form
-            v-model="form.options['use-internal-ip-only']"
-            label="Use Internal IP Only"
-            :desc="desc.options['use-internal-ip-only']"
-            :readonly="readonly"
-          />
+          <div>
+            <boolean-form
+              v-model="form.options['use-internal-ip-only']"
+              label="Use Internal IP Only"
+              :desc="desc.options['use-internal-ip-only']"
+              :readonly="readonly"
+            />
+          </div>
           <array-list-form
             ref="ports"
             v-model="form.options.tags"
@@ -121,7 +123,6 @@
             label="Open Ports"
             placeholder="e.g. 8080/tcp"
             action-label="Add Port"></array-list-form>
-          
         </div>
         </template>
       </form-group>
