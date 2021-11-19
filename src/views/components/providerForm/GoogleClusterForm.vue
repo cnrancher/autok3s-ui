@@ -107,17 +107,16 @@
             :desc="desc.options['subnetwork']"
             :readonly="readonly"
           />
-          <div>
-            <boolean-form
-              v-model="form.options['use-internal-ip-only']"
-              label="Use Internal IP Only"
-              :desc="desc.options['use-internal-ip-only']"
-              :readonly="readonly"
-            />
-          </div>
+          <boolean-form
+            v-model="form.options['use-internal-ip-only']"
+            label="Use Internal IP Only"
+            :desc="desc.options['use-internal-ip-only']"
+            :readonly="readonly"
+          />
+          <div></div>
           <array-list-form
             ref="ports"
-            v-model="form.options.tags"
+            v-model="form.options['open-ports']"
             :desc="desc.options['open-ports']"
             :readonly="readonly"
             label="Open Ports"
@@ -289,7 +288,7 @@ export default defineComponent({
       const tagValues = tags.value.getForm()
       const portValues = ports.value.getForm()
       f.options.tags = tagValues ? tagValues.filter((v) => v) : tagValues
-      f.options.ports = portValues ? portValues.filter((v) => v) : portValues
+      f.options['open-ports'] = portValues ? portValues.filter((v) => v) : portValues
       return f
     }
     return {
