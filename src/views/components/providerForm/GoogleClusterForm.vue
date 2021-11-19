@@ -273,7 +273,7 @@ export default defineComponent({
       }
     })
     const updateActiveTab = () => {
-      if (!form.options['access-key'] || !form.options['secret-key']) {
+      if (!form.options['service-account'] || !form.options['service-account-file']) {
         acitiveTab.value = 'credential'
         return
       }
