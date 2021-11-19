@@ -1,6 +1,6 @@
 <template>
 <teleport to="body">
-  <div class="fixed grid gap-10px z-$notification-z-index" :class="positionClass">
+  <div class="bg-white fixed grid gap-10px z-$notification-z-index" :class="positionClass">
     <div v-for="item in events" :key="item.id">
       <slot name="body" :event="item">
         <div class="k-notification__content" :class="[`k-notification--${item.type}`]">
