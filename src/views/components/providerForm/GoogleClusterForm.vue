@@ -108,12 +108,6 @@
             :readonly="readonly"
           />
           <boolean-form
-            v-model="form.options['use-internal-ip']"
-            label="Use Internal IP"
-            :desc="desc.options['use-internal-ip']"
-            :readonly="readonly"
-          />
-          <boolean-form
             v-model="form.options['use-internal-ip-only']"
             label="Use Internal IP Only"
             :desc="desc.options['use-internal-ip-only']"
