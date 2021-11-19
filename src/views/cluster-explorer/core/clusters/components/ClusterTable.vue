@@ -39,8 +39,9 @@
       <k-table-column sortable label="Worker" field="worker"></k-table-column>
       <k-table-column type="action" field="action" width="60">
         <template #default="{row}">
-          <div class="flex items-center justify-end">
+          <div class="flex items-center justify-between">
             <explorer-link :cluster-id="row.id"></explorer-link>
+            &nbsp;
             <cluster-actions :cluster="row" @exec-command="handleCommand"></cluster-actions>
           </div>
         </template>
