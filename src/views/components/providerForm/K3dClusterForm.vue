@@ -28,14 +28,6 @@
               :readonly="readonly"
             />
             <boolean-form
-              v-model="form.options['no-hostip']"
-              label="No Host IP"
-              true-label="True"
-              false-label="False"
-              :desc="desc.options['no-hostip']"
-              :readonly="readonly"
-            />
-            <boolean-form
               v-model="form.options['no-image-volume']"
               label="No Image Volume"
               true-label="True"
