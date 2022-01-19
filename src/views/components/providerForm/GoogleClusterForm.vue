@@ -210,13 +210,13 @@
           <k-option value="explorer" label="explorer"></k-option>
           <k-option value="dashboard" label="dashboard"></k-option>
         </k-select>
-        <!-- <boolean-form
+         <boolean-form
           v-model="form.options['cloud-controller-manager']"
           label="Cloud Controller Manager"
           :desc="desc.options['cloud-controller-manager']"
           :readonly="readonly"
         />
-         <string-form
+        <!-- <string-form
           v-show="form.options['cloud-controller-manager']"
           v-model.trim="form.options['iam-instance-profile-control']"
           label="IAM Instance Profile Control"
