@@ -51,7 +51,7 @@
   <form-group>
     <template #title>Master</template>
     <template #default>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-start">
         <string-form
           v-if="form.provider !== 'native'"
           v-model.trim="form.config['master']"
@@ -79,7 +79,7 @@
   <form-group>
     <template #title>Worker</template>
     <template #default>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-start">
         <string-form
           v-if="form.provider !== 'native'"
           v-model.trim="form.config['worker']"
