@@ -72,41 +72,19 @@
         <k-button class="role-danger" @click="deleteClusters(commandParams)">Delete</k-button>
       </template>
     </k-modal>
-    <k-modal v-model="joinNodeModalVisible" v-if="joinNodeModalVisible">
-      <template #title>Join Node</template>
-      <template #default>
-        <div class="grid grid-cols-2 gap-10px">
-          <div>Desired Master Nodes: {{desiredNodes.master}}</div>
-          <div>Desired Worker Nodes: {{desiredNodes.worker}}</div>
-          <k-input
-            label="Master"
-            v-model="joinNodeForm.master"
-            required />
-          <k-input
-            label="Worker"
-            v-model="joinNodeForm.worker"
-            required />
-        </div>
-        <div>
-          <k-alert v-for="(e, index) in joinNodeErrors" :key="index" type="error" :title="e"></k-alert>
-        </div>
-      </template>
-      <template #footer>
-        <k-button class="role-secondary" @click="joinNodeModalVisible = false">Cancel</k-button>
-        <k-button class="role-danger" :loading="joinNodeLoading" @click="saveNodes(commandParams)">Save</k-button>
-      </template>
-    </k-modal>
+    <join-node-modal v-model="joinNodeModalVisible" v-if="joinNodeModalVisible" :cluster-id="clusterId">
+    </join-node-modal>
     <cli-command v-if="clusterForm && cliModalVisible" v-model:visible="cliModalVisible" :cluster-form="clusterForm"></cli-command>
   </div>
 </template>
 <script>
-import {defineComponent, watch} from 'vue'
 import { useRouter } from 'vue-router'
 import { remove, joinNode, fetchById, disableExplorer, enableExplorer } from '@/api/cluster.js'
 import ClusterActions from './ClusterActions.vue'
 import ClusterBulkActions from './ClusterBulkActions.vue'
 import ClusterStateTag from './ClusterStateTag.vue'
 import ExplorerLink from './ExplorerLink.vue'
+import JoinNodeModal from './JoinNodeModal.vue'
 import {RadioGroup, RadioButton} from '@/components/Radio'
 import CliCommand from '@/views/components/CliCommand.vue'
 import useDataSearch from '@/composables/useDataSearch.js'
@@ -116,7 +94,7 @@ import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import {stringify} from '@/utils/error.js'
 import { removeCreatingCluster, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
 
-import { computed, inject, reactive, ref, toRef, watchEffect } from 'vue'
+import { defineComponent, computed, inject, reactive, ref, toRef, watchEffect } from 'vue'
 export default defineComponent({
   setup() {
     const router =  useRouter()
@@ -127,6 +105,7 @@ export default defineComponent({
     const {searchQuery, searchFields, dataMatchingSearchQuery: clusters} = useDataSearch(clustersInStore)
     searchFields.value=['status', 'name', 'region', 'master', 'worker']
 
+    const joinNodeModalVisible = ref(false)
     // generate cli command
     const cliModalVisible = ref(false)
     const clusterForm = ref(null)
@@ -167,7 +146,6 @@ export default defineComponent({
 
     // join node
     const clusterId = ref('')
-    const {errors: joinNodeErrors, loading: joinNodeLoading, visible: joinNodeModalVisible, desiredNodes, form: joinNodeForm, save: saveNodes } = useJionNodeModal(clusterId)
 
     // delete cluster
     const confirmModalVisible = ref(false)
@@ -290,6 +268,7 @@ export default defineComponent({
     }
 
     return {
+      clusterId,
       clusters,
       loadingStatus,
       handleSelectionChange,
@@ -304,11 +283,6 @@ export default defineComponent({
       confirmModalVisible,
       deleteClusters,
       joinNodeModalVisible,
-      joinNodeErrors,
-      saveNodes,
-      desiredNodes,
-      joinNodeLoading,
-      joinNodeForm,
       cliModalVisible,
       clusterForm,
     }
@@ -321,6 +295,7 @@ export default defineComponent({
     RadioGroup,
     RadioButton,
     ExplorerLink,
+    JoinNodeModal,
   }
 })
 
