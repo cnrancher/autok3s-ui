@@ -73,15 +73,15 @@
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <string-form
-              v-model.trim="form.options['vpc-id']"
-              label="VPC ID"
-              :desc="desc.options['vpc-id']"
+              v-model.trim="form.options['vpc']"
+              label="VPC"
+              :desc="desc.options['vpc']"
               :readonly="readonly"
             />
             <string-form
-              v-model.trim="form.options['subnet-id']"
-              label="Subnet ID"
-              :desc="desc.options['subnet-id']"
+              v-model.trim="form.options['subnet']"
+              label="Subnet"
+              :desc="desc.options['subnet']"
               :readonly="readonly"
             />
             <string-form
@@ -91,9 +91,9 @@
               :readonly="readonly"
             />
             <string-form
-              v-model.trim="form.options['security-group-ids']"
-              label="Security Group Ids"
-              :desc="desc.options['security-group-ids']"
+              v-model.trim="form.options['security-group']"
+              label="Security Group"
+              :desc="desc.options['security-group']"
               :readonly="readonly"
             />
             <boolean-form
@@ -196,9 +196,9 @@
         />
         <string-form
           v-show="form.options['cloud-controller-manager']"
-          v-model.trim="form.options['network-route-table-name']"
-          label="Network Route Table Name"
-          :desc="desc.options['network-route-table-name']"
+          v-model.trim="form.options['router']"
+          label="Router"
+          :desc="desc.options['router']"
           :readonly="readonly"
         />
       </div>
