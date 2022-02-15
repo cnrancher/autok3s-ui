@@ -1,7 +1,7 @@
 <template>
   <footer class="k-footer">
     <div>{{version}}</div>
-    <a href="https://github.com/cnrancher/autok3s" target="_blank">Docs</a>
+    <a href="https://github.com/cnrancher/autok3s" class="text-$link" target="_blank">Docs</a>
     <dropdown class="justify-self-end cursor-pointer">
       English
       <template #content>
