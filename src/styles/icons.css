@@ -25,6 +25,7 @@
     /* background-color: var(--body-text); */
     background-color: currentColor;
     display: inline-block;
+    vertical-align: middle;
 }
 .k-rotate-up {
   transform: rotate(-90deg);
