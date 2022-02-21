@@ -54,6 +54,7 @@ import TencentClusterCreateForm from '@/views/components/providerForm/TencentClu
 import NativeClusterCreateForm from '@/views/components/providerForm/NativeClusterForm.vue'
 import K3dClusterCreateForm from '@/views/components/providerForm/K3dClusterForm.vue'
 import GoogleClusterCreateForm from '@/views/components/providerForm/GoogleClusterForm.vue'
+import HarvesterClusterCreateForm from '@/views/components/providerForm/HarvesterClusterForm.vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
 import BooleanForm from '@/views/components/baseForm/BooleanForm.vue'
 import TemplateFilter from '@/views/components/TemplateFilter/index.vue'
@@ -63,6 +64,7 @@ import { create as createTemplate, update as updateTemplate } from '@/api/templa
 import {capitalize} from 'lodash-es'
 import {stringify} from '@/utils/error.js'
 import { cloneDeep, overwriteSchemaDefaultValue } from '@/utils'
+import { Base64 } from 'js-base64'
 
 export default defineComponent({
   name: 'CreateTemplate',
@@ -297,6 +299,15 @@ export default defineComponent({
           ...form.options
         }
       }
+       // encode kubeconfig-content, network-data, user-data to base64 for harvester provider
+      if (formData.provider === 'harvester') {
+        ['kubeconfig-content', 'network-data', 'user-data'].forEach((k) => {
+          const v = formData.options[k]
+          if (v) {
+            formData.options[k] = Base64.encode(v)
+          }
+        })
+      }
       creating.value=true
       const promises = [createTemplate(formData)]
       if (formData['is-default']) {
@@ -362,6 +373,7 @@ export default defineComponent({
     NativeClusterCreateForm,
     K3dClusterCreateForm,
     GoogleClusterCreateForm,
+    HarvesterClusterCreateForm,
     TemplateFilter,
     StringForm,
     BooleanForm,

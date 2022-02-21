@@ -54,6 +54,7 @@ import TencentClusterCreateForm from '@/views/components/providerForm/TencentClu
 import K3dClusterCreateForm from '@/views/components/providerForm/K3dClusterForm.vue'
 import NativeClusterCreateForm from '@/views/components/providerForm/NativeClusterForm.vue'
 import GoogleClusterCreateForm from '@/views/components/providerForm/GoogleClusterForm.vue'
+import HarvesterClusterCreateForm from '@/views/components/providerForm/HarvesterClusterForm.vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
 import BooleanForm from '@/views/components/baseForm/BooleanForm.vue'
 import useProviders from '@/composables/useProviders.js'
@@ -246,6 +247,7 @@ export default defineComponent({
     K3dClusterCreateForm,
     NativeClusterCreateForm,
     GoogleClusterCreateForm,
+    HarvesterClusterCreateForm,
     StringForm,
     BooleanForm,
   }

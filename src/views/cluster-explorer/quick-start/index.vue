@@ -64,6 +64,8 @@ import { cloneDeep, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/u
 import {capitalize} from 'lodash-es'
 import {stringify} from '@/utils/error.js'
 
+const excludeProviders = ['native', 'harvester'];
+
 export default defineComponent({
   name: 'QuickStart',
   props: {
@@ -126,7 +128,7 @@ export default defineComponent({
     })
 
     const providerOptions = computed(() => {
-      return providers.value.filter((item) => item.id !== 'native')
+      return providers.value.filter((item) => !excludeProviders.includes(item.id))
     })
 
     const hasError = computed(() => {
