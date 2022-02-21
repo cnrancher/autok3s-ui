@@ -55,12 +55,14 @@ import TencentClusterCreateForm from '@/views/components/providerForm/TencentClu
 import NativeClusterCreateForm from '@/views/components/providerForm/NativeClusterForm.vue'
 import K3dClusterCreateForm from '@/views/components/providerForm/K3dClusterForm.vue'
 import GoogleClusterCreateForm from '@/views/components/providerForm/GoogleClusterForm.vue'
+import HarvesterClusterCreateForm from '@/views/components/providerForm/HarvesterClusterForm.vue'
 import useProviders from '@/composables/useProviders.js'
 import useCluster from '@/composables/useCluster.js'
 import { createCluster } from '@/api/cluster.js'
 import {capitalize} from 'lodash-es'
 import {stringify} from '@/utils/error.js'
 import { cloneDeep, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
+import { Base64 } from 'js-base64'
 
 export default defineComponent({
   name: 'CreateCluster',
@@ -319,6 +321,15 @@ export default defineComponent({
           ...form.options
         }
       }
+      // encode kubeconfig-content, network-data, user-data to base64 for harvester provider
+      if (formData.provider === 'harvester') {
+        ['kubeconfig-content', 'network-data', 'user-data'].forEach((k) => {
+          const v = formData.options[k]
+          if (v) {
+            formData.options[k] = Base64.encode(v)
+          }
+        })
+      }
       creating.value=true
       try {
         const { id = '' } = await createCluster(formData)
@@ -398,6 +409,7 @@ export default defineComponent({
     NativeClusterCreateForm,
     K3dClusterCreateForm,
     GoogleClusterCreateForm,
+    HarvesterClusterCreateForm,
     TemplateFilter,
     CliCommand,
   }

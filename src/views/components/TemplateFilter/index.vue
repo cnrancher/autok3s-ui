@@ -128,7 +128,7 @@ export default defineComponent({
       if (!t) {
         return ''
       }
-      if (['native', 'k3d'].includes(t.provider)) {
+      if (['native', 'k3d', 'harvester'].includes(t.provider)) {
         return `${t.provider} | ${t.name}`
       }
       return `${t.provider} | ${t.name} | ${t.options.region} | ${t.options.zone}`
