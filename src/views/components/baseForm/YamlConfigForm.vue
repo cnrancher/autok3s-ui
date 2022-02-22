@@ -7,7 +7,7 @@
         <template #popover>{{desc}}</template>
       </k-tooltip>
     </div>
-    <div v-if="!options.readOnly" class="grid justify-self-end grid-flow-col gap-x-10px">
+    <div v-if="!options?.readOnly" class="grid justify-self-end grid-flow-col gap-x-10px">
       <k-button type="input" class="btn-sm role-primary justify-self-end" @click="clearContent">Clear</k-button>
       <k-button type="input" class="btn-sm role-primary" @click.stop.prevent="triggerSelectFile"><k-icon type="upload"></k-icon> &nbsp; Read from a file</k-button>
       <input
@@ -24,7 +24,7 @@
   </div>
 </template>
 <script>
-import {computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect} from 'vue'
+import {computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import CodeMirror from 'codemirror'
 import 'codemirror/lib/codemirror.css'
 
