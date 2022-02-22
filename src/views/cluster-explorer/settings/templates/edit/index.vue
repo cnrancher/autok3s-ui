@@ -62,6 +62,7 @@ import { update as updateTemplate } from '@/api/template.js';
 import {capitalize} from 'lodash-es'
 import {stringify} from '@/utils/error.js'
 import { cloneDeep, overwriteSchemaDefaultValue } from '@/utils'
+import { Base64 } from 'js-base64'
 
 export default defineComponent({
   name: 'EditTemplate',
@@ -198,6 +199,15 @@ export default defineComponent({
         options: {
           ...form.options
         }
+      }
+      // encode kubeconfig-content, network-data, user-data to base64 for harvester provider
+      if (formData.provider === 'harvester') {
+        ['kubeconfig-content', 'network-data', 'user-data'].forEach((k) => {
+          const v = formData.options[k]
+          if (v) {
+            formData.options[k] = Base64.encode(v)
+          }
+        })
       }
       updating.value=true
       const promises = [updateTemplate(props.templateId, formData)]

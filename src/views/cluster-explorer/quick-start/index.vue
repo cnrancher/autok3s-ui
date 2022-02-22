@@ -57,6 +57,7 @@ import AlibabaForm from './components/AlibabaForm.vue'
 import TencentForm from './components/TencentForm.vue'
 import K3dForm from './components/K3dForm.vue'
 import GoogleForm from './components/GoogleForm.vue'
+import HarvesterForm from './components/HarvesterForm.vue'
 import clustcerIcon from '@/assets/images/cluster-single.svg'
 import useProviders from '@/composables/useProviders.js'
 import { createCluster } from '@/api/cluster.js'
@@ -64,7 +65,7 @@ import { cloneDeep, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/u
 import {capitalize} from 'lodash-es'
 import {stringify} from '@/utils/error.js'
 
-const excludeProviders = ['native', 'harvester'];
+const excludeProviders = ['native'];
 
 export default defineComponent({
   name: 'QuickStart',
@@ -331,6 +332,7 @@ export default defineComponent({
     TencentForm,
     K3dForm,
     GoogleForm,
+    HarvesterForm,
   }
 })
 </script>
