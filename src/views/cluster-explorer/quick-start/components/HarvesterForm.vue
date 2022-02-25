@@ -54,6 +54,11 @@
       label="SSH User"
       :desc="desc.config['ssh-user']"
     />
+    <string-form
+      v-model.trim="form.config['ssh-key-path']"
+      label="SSH Key Path"
+      :desc="desc.config['ssh-key-path']"
+    />
     <yaml-config-form
       class="col-span-1 sm:col-span-2"
       v-model="form.options['kubeconfig-content']"
