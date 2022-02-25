@@ -58,6 +58,7 @@ import TencentForm from './components/TencentForm.vue'
 import K3dForm from './components/K3dForm.vue'
 import GoogleForm from './components/GoogleForm.vue'
 import HarvesterForm from './components/HarvesterForm.vue'
+import NativeForm from './components/NativeForm.vue'
 import clustcerIcon from '@/assets/images/cluster-single.svg'
 import useProviders from '@/composables/useProviders.js'
 import { createCluster } from '@/api/cluster.js'
@@ -65,7 +66,7 @@ import { cloneDeep, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/u
 import {capitalize} from 'lodash-es'
 import {stringify} from '@/utils/error.js'
 
-const excludeProviders = ['native'];
+const excludeProviders = [];
 
 export default defineComponent({
   name: 'QuickStart',
@@ -80,6 +81,7 @@ export default defineComponent({
 
   },
   setup(props) {
+    // const wmStore = inject('windowManagerStore')
     const router = useRouter()
     const clusterStore = inject('clusterStore')
     const templateStore = inject('templateStore')
@@ -282,18 +284,18 @@ export default defineComponent({
       try {
         const { id = '' } = await createCluster(formData)
         saveCreatingCluster(id)
-        if (formData.provider === 'native') {
-          wmStore.action.addTab({
-            id: `log_${id}`,
-            component: 'ClusterLogs',
-            label: `log: ${formData.name}`,
-            icon: 'log',
-            attrs: {
-              cluster: id,
-              provider: formData.provider,
-            }
-          })
-        }
+        // if (formData.provider === 'native') {
+        //   wmStore.action.addTab({
+        //     id: `log_${id}`,
+        //     component: 'ClusterLogs',
+        //     label: `log: ${formData.name}`,
+        //     icon: 'log',
+        //     attrs: {
+        //       cluster: id,
+        //       provider: formData.provider,
+        //     }
+        //   })
+        // }
         goBack()
       } catch (err) {
         formErrors.value = [stringify(err)]
@@ -333,6 +335,7 @@ export default defineComponent({
     K3dForm,
     GoogleForm,
     HarvesterForm,
+    NativeForm,
   }
 })
 </script>
