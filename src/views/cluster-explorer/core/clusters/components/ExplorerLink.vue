@@ -1,7 +1,7 @@
 <template>
-  <a class="pt-2px inline-flex items-center text-$link" v-if="explorer?.links?.explorer" target="_blank" :href="`${explorer?.links?.explorer}`">
+  <a class="py-5px inline-flex items-center btn btn-xs role-tertiary" v-if="explorer?.links?.explorer" target="_blank" :href="`${explorer?.links?.explorer}`">
     <tooltip >
-      <k-icon :size="16" type="dashboard"></k-icon>
+      Explorer
       <template #popover>Go to kube-explorer page</template>
     </tooltip>
   </a>
