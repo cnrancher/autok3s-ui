@@ -54,6 +54,7 @@
 <script>
 import {computed, defineComponent, inject} from 'vue'
 import Clipboard from 'clipboard'
+import { Base64 } from 'js-base64'
 
 export default defineComponent({
   name: 'CliCommand',
@@ -119,7 +120,18 @@ export default defineComponent({
         const excludeConfigKeys = ['worker', 'master']
         configEntries = configEntries.filter(([k]) => !excludeConfigKeys.includes(k))
       }
-      const options = [ ['--provider', provider], ...configEntries, ...Object.entries(props.clusterForm.options)]
+      let optionEntries = Object.entries(props.clusterForm.options)
+      // encode kubeconfig-content, network-data, user-data to base64 for harvester provider
+      if (props.clusterForm.provider === 'harvester') {
+        ['kubeconfig-content', 'network-data', 'user-data'].forEach((k) => {
+          const e = optionEntries.find(([key]) => key === k)
+          const value = e[1]
+          if (value) {
+            e[1] = Base64.encode(value)
+          }
+        })
+      }
+      const options = [ ['--provider', provider], ...configEntries, ...optionEntries]
         .filter(([k, v]) => filterArgs(k, v))
         .reduce((t, [k, v]) => {
           if (arrayArgs.includes(k)) {
