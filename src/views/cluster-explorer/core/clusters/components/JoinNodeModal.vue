@@ -34,26 +34,6 @@
           label="SSH Key Path"
           :desc="nativeProviderSchema?.config?.['ssh-key-path']?.description"
         />
-        <k-password-input
-          v-model.trim="nativeForm['ssh-key-passphrase']"
-          label="SSH Key Passphrase"
-          :desc="nativeProviderSchema?.config?.['ssh-key-passphrase']?.description"
-        />
-        <string-form
-          v-model.trim="nativeForm['ssh-cert-path']"
-          label="SSH Cert Path"
-          :desc="nativeProviderSchema?.config?.['ssh-cert-path']?.description"
-        />
-        <k-password-input
-          v-model.trim="nativeForm['ssh-password']"
-          label="SSH Password"
-          :desc="nativeProviderSchema?.config['ssh-password']?.description"
-        />
-        <boolean-form
-          v-model="nativeForm['ssh-agent-auth']"
-          label="SSH Agent Auth"
-          :desc="nativeProviderSchema?.config?.['ssh-agent-auth']?.description"
-        />
       </template>
       <template v-else>
         <k-input
@@ -100,10 +80,6 @@ const nativeFormDefaultValue = {
   'ssh-user': '',
   'ssh-port': '',
   'ssh-key-path': '',
-  'ssh-key-passphrase': '',
-  'ssh-cert-path': '',
-  'ssh-password': '',
-  'ssh-agent-auth': '',
 }
 
 export default defineComponent({
@@ -142,6 +118,15 @@ export default defineComponent({
       })
     }, {
       immediate: true
+    })
+    watch(clusterLoading, (l) => {
+      console.log(l)
+      if (!l && cluster.value?.provider === 'native') {
+        console.log(cluster.value)
+        nativeForm['ssh-user'] = cluster.value?.['ssh-user'] ?? ''
+        nativeForm['ssh-port'] = cluster.value?.['ssh-port'] ?? ''
+        nativeForm['ssh-key-path'] = cluster.value?.['ssh-key-path'] ?? ''
+      }
     })
     const visible = computed({
       get() {
