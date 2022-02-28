@@ -35,11 +35,11 @@
             <span class="text-purple-700">autok3s</span>&nbsp;<span class="cli-command__sub-cmd">create</span>
             <template v-for="(o, index) in cmdOptions" :key="index">
               <span class="text-blue-700">&nbsp;{{o.option}}</span>
-              <span class="cli-command__value" :class="optionValueClass(o.value)" v-if="o.value">&nbsp;{{o.value}}</span>
+              <span class="cli-command__value break-all" :class="optionValueClass(o.value)" v-if="o.value">&nbsp;{{o.value}}</span>
             </template>
             <template v-if="registryContent">
               <span class="text-blue-700">&nbsp;--registry </span>
-              <span class="cli-command__value text-red-500">{{registryPlaceholder}}</span>
+              <span class="cli-command__value break-all text-red-500">{{registryPlaceholder}}</span>
             </template>
           </code>
           <!-- <code>{{createCmd}} <span class="text-red-500" v-if="registryContent">--registry {{registryPlaceholder}}</span></code> -->
