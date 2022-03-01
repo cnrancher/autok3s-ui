@@ -89,7 +89,7 @@ export default defineComponent({
         return []
       }
 
-      const arrayArgs = ['tags', 'labels', 'envs', 'volumes', 'ports', 'tls-sans']
+      const arrayArgs = ['tags', 'labels', 'envs', 'volumes', 'ports', 'tls-sans', 'enable']
       const excludeKeys = ['registry-content', 'registry']
       const ignoreValues = [null, undefined, '', false]
       const extraArgs = ['master-extra-args', 'worker-extra-args']
@@ -106,6 +106,9 @@ export default defineComponent({
           return ''
         }
         if (extraArgs.includes(k) || arrayArgs.includes(k)) {
+          if (k === 'enable') {
+            return `${v.replaceAll("'", "\\'")}`
+          }
           return `'${v.replaceAll("'", "\\'")}'`
         }
         // if (k === 'tags') {
