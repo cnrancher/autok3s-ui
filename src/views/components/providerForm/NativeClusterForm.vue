@@ -47,7 +47,7 @@
               :desc="desc.config['ssh-key-path']"
               :readonly="readonly"
             />
-            <div class="cursor-pointer grid grid-cols-[auto,auto,1fr] gap-x-10px items-end justify-end" @click="toggleVisible">
+            <div class="cursor-pointer grid grid-cols-[auto,auto,1fr] gap-x-10px items-center justify-items-end" @click="toggleVisible">
               <div>Advance</div>
               <a class="text-$link">{{visible ? 'Hide':'Show'}}</a>
               <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>

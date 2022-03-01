@@ -9,13 +9,13 @@
       <template v-if="provider === 'native'">
         <ip-address-pool-form
           ref="masterIps"
-          v-model="nativeForm['master-ips']"
+          v-model="nativeForm.options['master-ips']"
           label="Master IPs"
           :desc="nativeProviderSchema?.options?.['master-ips']?.description"
         ></ip-address-pool-form>
         <ip-address-pool-form
           ref="workerIps"
-          v-model="nativeForm['worker-ips']"
+          v-model="nativeForm.options['worker-ips']"
           label="Worker IPs"
           :desc="nativeProviderSchema?.options?.['worker-ips']?.description"
         ></ip-address-pool-form>
@@ -34,6 +34,33 @@
           label="SSH Key Path"
           :desc="nativeProviderSchema?.config?.['ssh-key-path']?.description"
         />
+        <div class="cursor-pointer grid grid-cols-[auto,auto,1fr] gap-x-10px items-center justify-items-end" @click="sshAdvanceVisible= !sshAdvanceVisible">
+          <div>Advance</div>
+          <a class="text-$link">{{sshAdvanceVisible ? 'Hide':'Show'}}</a>
+          <k-icon type="arrow-right" :direction="sshAdvanceVisible ? 'down' : ''"></k-icon>
+        </div>
+        <div class="contents" v-show="sshAdvanceVisible">
+          <k-password-input
+            v-model.trim="nativeForm['ssh-key-passphrase']"
+            label="SSH Key Passphrase"
+            :desc="nativeProviderSchema?.config?.['ssh-key-passphrase']?.description"
+          />
+          <string-form
+            v-model.trim="nativeForm['ssh-cert-path']"
+            label="SSH Cert Path"
+            :desc="nativeProviderSchema?.config?.['ssh-cert-path']?.description"
+          />
+          <k-password-input
+            v-model.trim="nativeForm['ssh-password']"
+            label="SSH Password"
+            :desc="nativeProviderSchema?.config?.['ssh-password']?.description"
+          />
+          <boolean-form
+            v-model="nativeForm['ssh-agent-auth']"
+            label="SSH Agent Auth"
+            :desc="nativeProviderSchema?.config?.['ssh-agent-auth']?.description"
+          />
+        </div>
       </template>
       <template v-else>
         <k-input
@@ -53,7 +80,7 @@
   </template>
   <template #footer>
         <k-button class="role-secondary" @click="visible = false">Cancel</k-button>
-        <k-button class="role-danger" :loading="loading" @click="save">Save</k-button>
+        <k-button class="role-primary" :loading="loading" @click="save">Save</k-button>
       </template>
 </k-modal>
 </template>
@@ -80,6 +107,10 @@ const nativeFormDefaultValue = {
   'ssh-user': '',
   'ssh-port': '',
   'ssh-key-path': '',
+  'ssh-key-passphrase': '',
+  'ssh-cert-path': '',
+  'ssh-password': '',
+  'ssh-agent-auth': false,
 }
 
 export default defineComponent({
@@ -96,6 +127,7 @@ export default defineComponent({
   emits: ['update:modelValue'],
   setup(props, {emit}) {
     const notificationStore = inject('notificationStore')
+    const sshAdvanceVisible = ref(false)
     const masterIps = ref(null)
     const workerIps = ref(null)
 
@@ -105,27 +137,27 @@ export default defineComponent({
     const formErrors = ref([])
     const form = reactive({...formDefaultValue})
     const nativeForm = reactive({...nativeFormDefaultValue, options: { ...nativeFormDefaultValue.options }})
+    const loading = computed(() => {
+      return providersLoading.value || clusterLoading.value
+    })
+    const nativeProviderSchema = computed(() => {
+      return providers.value.find((p) => p.id === cluster.value?.provider)
+    })
     watch(id, () => {
       Object.entries(formDefaultValue).forEach((e) => {
         form[e[0]] = e[1]
       })
-      Object.entries(nativeFormDefaultValue).forEach((e) => {
-        if (e[0] === 'options') {
-           nativeForm[e[0]] = { ...nativeFormDefaultValue.options }
-        } else {
-          nativeForm[e[0]] = e[1]
-        }
-      })
+      nativeForm.options = { ...nativeFormDefaultValue.options }
     }, {
       immediate: true
     })
-    watch(clusterLoading, (l) => {
-      console.log(l)
+    watch(loading, (l) => {
       if (!l && cluster.value?.provider === 'native') {
-        console.log(cluster.value)
-        nativeForm['ssh-user'] = cluster.value?.['ssh-user'] ?? ''
-        nativeForm['ssh-port'] = cluster.value?.['ssh-port'] ?? ''
-        nativeForm['ssh-key-path'] = cluster.value?.['ssh-key-path'] ?? ''
+        Object.keys(nativeFormDefaultValue)
+          .filter((k) => k !== 'options')
+          .forEach((k) => {
+            nativeForm[k] = cluster.value?.[k] ?? nativeProviderSchema.value?.config?.[k]?.default ?? ''
+          })
       }
     })
     const visible = computed({
@@ -135,9 +167,6 @@ export default defineComponent({
       set(v) {
         emit('update:modelValue', v)
       }
-    })
-    const nativeProviderSchema = computed(() => {
-      return providers.value.find((p) => p.id === cluster.value?.provider)
     })
     const provider = computed(() => {
       return cluster.value?.provider
@@ -164,10 +193,6 @@ export default defineComponent({
       }
       errors.push(...formErrors.value)
       return errors
-    })
-
-    const loading = computed(() => {
-      return providersLoading.value || clusterLoading.value
     })
 
     const validate = () => {
@@ -254,6 +279,7 @@ export default defineComponent({
       desiredNodes,
       nativeProviderSchema,
       visible,
+      sshAdvanceVisible,
       masterIps,
       workerIps,
     }
