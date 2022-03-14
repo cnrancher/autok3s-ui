@@ -39,7 +39,10 @@ export default defineComponent({
     const clusterMessageHandler = useDebounceMessage(handleWebsocketMessage({
       'resource.change': clusterStore.action.updateCluster,
       'resource.create': clusterStore.action.addCluster,
-      'resource.remove': clusterStore.action.removeCluster,
+      'resource.remove': (data) => {
+        clusterStore.action.removeCluster(data);
+        explorerStore.action.removeExplorer(data);
+      },
     }))
     subscribe('cluster', (msg) => {
       if (msg.resourceType === 'cluster'
