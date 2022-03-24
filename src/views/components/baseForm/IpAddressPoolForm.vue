@@ -9,7 +9,7 @@
       </k-tooltip>
     </h3>
     <template v-for="(ip, index) in ips" :key="index">
-      <k-input :readonly="readonly" v-model.trim="ip.value" @change="debounceUpdate" placeholder="e.g. 192.168.1.22" :ref="el => { if (el) { inputs[index] = el } }"></k-input>
+      <k-input :readonly="readonly" v-model.trim="ip.value" placeholder="e.g. 192.168.1.22" :ref="el => { if (el) { inputs[index] = el } }"></k-input>
       <k-icon v-if="!readonly" class="cursor-pointer" type="ashbin" @click="remove(index)" :size="20"></k-icon>
       <div v-else></div>
     </template>
@@ -21,11 +21,11 @@
 </template>
 <script>
 import {defineComponent, ref, watch, onBeforeUpdate, nextTick} from 'vue'
-import { debounce } from 'lodash-es'
+
 export default defineComponent({
   name: 'IpAddressPoolForm',
   props: {
-    modelValue: {
+    initValue: {
       type: String,
       default: '',
     },
@@ -46,30 +46,24 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ['update:modelValue'],
-  setup(props, {emit}) {
+
+  setup(props) {
     const inputs = ref([])
     onBeforeUpdate(() => {
       inputs.value = []
     })
-    const ips = ref(props.modelValue.split(',').map((ip) => ({ value: ip })))
-    const update = () => {
-      emit('update:modelValue', ips.value.filter((ip) => ip.value).map((ip) => ip.value).join(','))
-    }
+    const ips = ref(props.initValue.split(',').map((ip) => ({ value: ip })))
 
-    watch(() => props.modelValue, (v) => {
+    watch(() => props.initValue, (v) => {
       if (v !== ips.value.map((ip) => ip.value).join(',')) {
-        ips.value = props.modelValue.split(',').map((ip) => ({ value: ip }))
+        ips.value = props.initValue.split(',').map((ip) => ({ value: ip }))
       }
     })
-    const debounceUpdate = debounce(update, 500)
     const remove = (index) => {
       ips.value.splice(index, 1)
-      debounceUpdate()
     }
     const add = () => {
       ips.value.push({ value: '' })
-      debounceUpdate()
       nextTick(() => {
         inputs.value[inputs.value.length - 1]?.focus()
       })
@@ -77,10 +71,10 @@ export default defineComponent({
     const getForm = () => {
       return ips.value.map((ip) => ip.value)
     }
+
     return {
       inputs,
       ips,
-      debounceUpdate,
       remove,
       add,
       getForm,

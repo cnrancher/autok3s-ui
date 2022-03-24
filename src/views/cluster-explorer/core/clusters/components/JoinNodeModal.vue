@@ -9,13 +9,13 @@
       <template v-if="provider === 'native'">
         <ip-address-pool-form
           ref="masterIps"
-          v-model="nativeForm.options['master-ips']"
+          :init-value="nativeForm.options['master-ips']"
           label="Master IPs"
           :desc="nativeProviderSchema?.options?.['master-ips']?.description"
         ></ip-address-pool-form>
         <ip-address-pool-form
           ref="workerIps"
-          v-model="nativeForm.options['worker-ips']"
+          :init-value="nativeForm.options['worker-ips']"
           label="Worker IPs"
           :desc="nativeProviderSchema?.options?.['worker-ips']?.description"
         ></ip-address-pool-form>

@@ -2,13 +2,13 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-20px">
     <ip-address-pool-form
       ref="masterIps"
-      v-model="form.options['master-ips']"
+      :init-value="form.options['master-ips']"
       label="Master IPs"
       :desc="desc.options['master-ips']"
     ></ip-address-pool-form>
     <ip-address-pool-form
       ref="workerIps"
-      v-model="form.options['worker-ips']"
+      :init-value="form.options['worker-ips']"
       label="Worker IPs"
       :desc="desc.options['worker-ips']"
     ></ip-address-pool-form>
