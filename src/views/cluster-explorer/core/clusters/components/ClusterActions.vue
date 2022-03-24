@@ -27,7 +27,9 @@ export default {
   setup(props, {emit}) {
     const explorerStore = inject('explorerStore')
     const actions = computed(() => {
-      if (props.cluster.status?.toLowerCase() === 'running') {
+      const status = props.cluster.status?.toLowerCase()
+
+      if ( status === 'running') {
         const actions = [
           {
             label: 'Join Node',
@@ -79,7 +81,7 @@ export default {
         return actions
 
       }
-      if (['upgrading', 'creating'].includes(props.cluster.status?.toLowerCase())) {
+      if (['upgrading', 'creating'].includes(status)) {
         return [
           {
             label: 'Clone',
@@ -108,6 +110,11 @@ export default {
           }
         ]
       }
+
+      if (['removing'].includes(status)) {
+        return []
+      }
+
       return [
         {
           label: 'Clone',
