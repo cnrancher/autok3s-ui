@@ -8,12 +8,13 @@ export default function useKubectlContext() {
     error: '',
     loading: true,
   })
+  const enCollator = new Intl.Collator('en')
   const fetchContexts = async () => {
     state.loading = true
     state.error = ''
     try {
       const { data } = await fetchContextList()
-      state.contexts = data
+      state.contexts = data.sort((a, b) => enCollator.compare(a.id, b.id))
     } catch (err) {
       state.error = stringify(err)
     }
