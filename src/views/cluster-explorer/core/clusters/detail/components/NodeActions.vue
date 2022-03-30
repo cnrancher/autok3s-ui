@@ -30,7 +30,7 @@ export default {
   emits: ['exec-command'],
   setup(props, {emit}) {
     const actions = computed(() => {
-      if (props.node['instance-status']?.toLowerCase() === 'running' || props.cluster.provider === 'native') {
+      if ((props.node['instance-status']?.toLowerCase() === 'running' || props.cluster.provider === 'native') && props.node.standalone !== true) {
         return [
           {
             label: 'Execute Shell',
