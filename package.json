@@ -13,8 +13,8 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@popperjs/core": "^2.9.2",
-    "@vueuse/core": "^6.5.3",
+    "@popperjs/core": "^2.11.4",
+    "@vueuse/core": "^8.2.0",
     "ansi_up": "^5.0.1",
     "axios": "^0.21.1",
     "clipboard": "^2.0.8",
@@ -23,8 +23,9 @@
     "js-cookie": "^2.2.1",
     "js-yaml": "^4.1.0",
     "lodash-es": "^4.17.21",
-    "vue": "^3.2.22",
-    "vue-router": "^4.0.11",
+    "pinia": "^2.0.12",
+    "vue": "^3.2.31",
+    "vue-router": "^4.0.14",
     "xterm": "^4.13.0",
     "xterm-addon-fit": "^0.5.0",
     "xterm-addon-search": "^0.8.0",
@@ -32,11 +33,11 @@
     "xterm-addon-webgl": "^0.11.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^1.9.4",
-    "@vue/compiler-sfc": "^3.2.22",
-    "vite": "^v2.6.14",
-    "vite-plugin-html": "^2.1.1",
-    "vite-plugin-windicss": "^1.4.9",
-    "windicss": "^3.1.9"
+    "@vitejs/plugin-vue": "^2.2.4",
+    "@vue/compiler-sfc": "^3.2.31",
+    "vite": "^v2.8.6",
+    "vite-plugin-html": "^3.2.0",
+    "vite-plugin-windicss": "^1.8.3",
+    "windicss": "^3.5.1"
   }
 }
