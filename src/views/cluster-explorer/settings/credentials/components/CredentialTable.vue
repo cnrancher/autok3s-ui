@@ -86,6 +86,7 @@ import { remove } from '@/api/credential.js';
 import CredentialActions from './CredentialActions.vue'
 import CredentialBulkActions from './CredentialBulkActions.vue'
 import PageHeader from '@/views/components/PageHeader.vue'
+import useNotificationStore from '@/store/useNotificationStore.js'
 
 function accessKeyFieldValue(data, keyMap) {
   const v = data.secrets[keyMap[data.provider]] ?? '';
@@ -100,7 +101,7 @@ export default defineComponent({
     const router = useRouter()
     const confirmModalVisible = ref(false)
     const commandParams = ref([])
-    const notificationStore = inject('notificationStore')
+    const notificationStore = useNotificationStore()
     const {providerKeyMap, providerSecretMap, providerKeyFieldMap} = useProviderKeyMap()
     const {loading, error, credentials, fetchCredentials} = useCredentials()
     const providerWithCredentialCount = computed(() => {
@@ -134,7 +135,7 @@ export default defineComponent({
         .filter((p) => p.status === 'rejected')
         .map((p) => p.reason)
       errors.forEach((e) => {
-         notificationStore.action.notify({
+         notificationStore.notify({
           type: 'error',
           title: 'Delete Credencial Failed',
           content: stringify(e)

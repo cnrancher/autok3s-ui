@@ -51,7 +51,6 @@ export default defineComponent({
     }
   },
   setup(props) {
-    // const wmStore = inject('windowManagerStore')
     const logsRef = ref(null)
     const logs = ref([])
     const isFollowing = ref(true)

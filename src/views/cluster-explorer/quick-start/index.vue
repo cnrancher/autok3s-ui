@@ -65,6 +65,9 @@ import { createCluster } from '@/api/cluster.js'
 import { cloneDeep, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
 import {capitalize} from 'lodash-es'
 import {stringify} from '@/utils/error.js'
+import useProviderClusterStores from '@/store/useProviderClusterStores.js'
+import useTemplateStore from '@/store/useTemplateStore.js'
+import { storeToRefs } from 'pinia'
 
 const excludeProviders = [];
 
@@ -81,10 +84,9 @@ export default defineComponent({
 
   },
   setup(props) {
-    // const wmStore = inject('windowManagerStore')
     const router = useRouter()
-    const clusterStore = inject('clusterStore')
-    const templateStore = inject('templateStore')
+    const providerClusterStores = useProviderClusterStores()
+    const templateStore = useTemplateStore()
     const formRef = ref(null)
     const name = ref('')
     const currentProvider = ref('aws')
@@ -99,7 +101,7 @@ export default defineComponent({
     const templateId = toRef(props, 'templateId')
     const defaultProvider = toRef(props, 'defaultProvider')
     const {loading: providerLoading, providers, error: loadProviderError} = useProviders()
-    const {loading: templateLoading, error: loadTemplateError, templates} = toRefs(templateStore.state)
+    const {loading: templateLoading, error: loadTemplateError, data: templates} = storeToRefs(templateStore)
     
     const loading = computed(() => {
       return templateLoading.value || providerLoading.value
@@ -264,7 +266,7 @@ export default defineComponent({
         return
       }
       form.config.name = name.value
-      clusterStore.action.saveQuickStartFormHistory(form)
+      providerClusterStores[form.provider]?.saveFormHistory(form)
       router.push({name: 'ClusterExplorerCoreClustersCreate', query: { quickStart: form.provider }})
     }
     const create = async (e) => {

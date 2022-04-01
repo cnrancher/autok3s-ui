@@ -63,6 +63,10 @@ import {capitalize} from 'lodash-es'
 import {stringify} from '@/utils/error.js'
 import { cloneDeep, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
 import { Base64 } from 'js-base64'
+import useProviderClusterStores from '@/store/useProviderClusterStores.js'
+import useTemplateStore from '@/store/useTemplateStore.js'
+import { storeToRefs } from 'pinia'
+import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 
 export default defineComponent({
   name: 'CreateCluster',
@@ -85,9 +89,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const clusterStore = inject('clusterStore')
-    const templateStore = inject('templateStore')
-    const wmStore = inject('windowManagerStore')
+    const providerClusterStores = useProviderClusterStores()
+    const templateStore = useTemplateStore()
+    const wmStore = useWindownManagerStore()
     const router = useRouter()
     const formRef = ref(null)
     const name = ref('')
@@ -108,7 +112,7 @@ export default defineComponent({
 
     const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
     const {loading: clusterLoading, error: loadClusterError, cluster} = useCluster(clusterId)
-    const {loading: templateLoading, error: loadTemplateError, templates} = toRefs(templateStore.state)
+    const {loading: templateLoading, error: loadTemplateError, data: templates} = storeToRefs(templateStore)
 
     const loading = computed(() => {
       return providersLoading.value || clusterLoading.value || templateLoading.value
@@ -207,26 +211,14 @@ export default defineComponent({
       }
       updateProviderSchema(provider)
     }
-    // const createFromHistory = (providerId) => {
-    //   const provider = providers.value.find((p) => p.id === providerId) ?? providers.value[0]
-    //   if (!provider) {
-    //     formErrors.value = [`Provider (${providerId}) not found`]
-    //     return
-    //   }
-    //   const historyForm = clusterStore.state.formHistory[provider.id]?.[0]
-    //   if (historyForm) {
-    //     updateProviderSchema(provider, cloneDeep(historyForm))
-    //     return
-    //   }
-    //   createFromProvider(providerId)
-    // }
+
     const createFromQuickStart = (providerId) => {
       const provider = providers.value.find((p) => p.id === providerId) ?? providers.value[0]
       if (!provider) {
         formErrors.value = [`Provider (${providerId}) not found`]
         return
       }
-      const quickStartForm = clusterStore.state.quickStartFormHistory[provider.id]?.[0]
+      const quickStartForm = providerClusterStores[provider.id]?.formHistory?.[0]
       if (quickStartForm) {
         updateProviderSchema(provider, quickStartForm)
         return
@@ -335,7 +327,7 @@ export default defineComponent({
         const { id = '' } = await createCluster(formData)
         saveCreatingCluster(id)
         if (formData.provider === 'native') {
-          wmStore.action.addTab({
+          wmStore.addTab({
             id: `log_${id}`,
             component: 'ClusterLogs',
             label: `log: ${formData.name}`,

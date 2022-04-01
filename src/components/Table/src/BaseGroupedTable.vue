@@ -11,38 +11,37 @@
         </template>
       </colgroup>
       <table-header v-show="showHeader" :groupBy="groupBy"></table-header>
-      <template v-if="state === 'loaded'">
-        <table-body v-for="g in dataGroup" :key="g" :data="g.children" :group="g.group" :group-by="groupBy">
+      <template v-for="g in data" :key="g">
+        <table-body v-if="g.group === '' || groupStatus[g.group]?.state === 'loaded'" :data="g.children" :group="g.group" :group-by="groupBy">
           <template v-if="$slots.group" #group="props">
             <slot name="group" v-bind="props"></slot>
           </template>
         </table-body>
+        <tbody v-else :class="getStatusClass(g.state)">
+          <tr>
+            <td :colspan="columns.length">
+              <slot v-if="groupStatus[g.group]?.state" :name="groupStatus[g.group]?.state" v-bind="groupStatus[g.group]">
+                <div class="k-table__status">{{tableStatus[state]}}</div>
+              </slot>
+              <div v-else>State Value Error: ({{groupStatus[g.group]?.state}})，Allow State Value:{{Object.keys(tableStatus).join(', ')}}</div>
+            </td>
+          </tr>
+        </tbody>
       </template>
-      <tbody v-else :class="currentStatusClass">
-        <tr>
-          <td :colspan="columns.length">
-            <slot v-if="tableStatus[state]" :name="`state-${state}`">
-              <div class="k-table__status">{{tableStatus[state]}}</div>
-            </slot>
-            <div v-else>State Value Error: ({{state}})，Allow State Value:{{Object.keys(tableStatus).join(', ')}}</div>
-          </td>
-        </tr>
-      </tbody>
       <tfoot></tfoot>
     </table>
   </div>
 </template>
 <script>
-import useDataGroup from '@/composables/useDataGroup.js'
 import TableHeader from './TableHeader.vue'
 import TableBody from './TableBody.vue'
 import useColumnStore from './store/useColumnStore.js'
 import useDataStore from './store/useDataStore.js'
-import {computed, watchEffect, toRefs, defineComponent, toRef, provide} from 'vue'
+import { computed, watchEffect, toRefs, defineComponent, provide } from 'vue'
 
 const tableStatus = {loading: 'Loading', loaded: '', error: 'Load Data Failed', noResults: 'No Result', noData: 'There are no rows to show.'}
 export default defineComponent({
-  name: 'KBaseTable',
+  name: 'KBaseGroupedTable',
   props: {
     caption: {
       type: String,
@@ -52,7 +51,7 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
-    data: {
+    data: { // [{group, children, state}]
       type: Array,
       required: true
     },
@@ -60,27 +59,24 @@ export default defineComponent({
       type: String,
       default: ''
     },
-    state: {
-      type: String,
-      default: 'loaded' // loading, loaded, noResults, noData, error
+    groupStatus: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   emits: ['selection-change', 'row-click', 'cell-click', 'select', 'select-all', 'order-change'],
   setup(props, context) {
     const {emit} = context
     const {data} = toRefs(props)
-    const groupBy = toRef(props, 'groupBy')
-    const { groupField, dataGroup } = useDataGroup(data)
     
-    watchEffect(() => {
-      groupField.value = groupBy.value
-    })
-    const currentStatusClass = computed(() => {
+    const getStatusClass = (state) => { // loading, loaded, noResults, noData, error
       return Object.keys(tableStatus).reduce((t, c) => {
-        t[`k-table-status--${c}`] = props.state === c
+        t[`k-table-status--${c}`] = state === c
         return t
       }, {})
-    })
+    }
     const columnStore = useColumnStore()
     const dataStore = useDataStore()
     const selectedRows = computed(() => {
@@ -88,7 +84,11 @@ export default defineComponent({
         .map((id) => dataStore.state.data.find((item) => item.id === id))
     })
     watchEffect(() => {
-      dataStore.action.initState(data.value)
+      dataStore.action.initState(data.value?.reduce((t, c) => {
+        t.push(...(c.children ?? []))
+
+        return t
+      }, []))
     })
     watchEffect(() => {
       emit('selection-change', selectedRows.value)
@@ -117,11 +117,10 @@ export default defineComponent({
       return {}
     }
     return {
-      dataGroup,
-      currentStatusClass,
       tableStatus,
       columns,
       hasSelection,
+      getStatusClass,
       getColStyle,
     }
   },

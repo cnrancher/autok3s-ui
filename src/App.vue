@@ -8,8 +8,7 @@
 <script>
 import { provide, watchEffect, defineComponent } from 'vue'
 import useThemeStore from '@/store/useThemeStore.js'
-import useNotificationStore from '@/store/useNotificationStore.js'
-import useClusterStore from '@/store/useClusterStore.js'
+import useProviderClusterStores from '@/store/useProviderClusterStores.js'
 import useTemplateStore from '@/store/useTemplateStore.js'
 import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 import useExplorerStore from '@/store/useExplorerStore.js'
@@ -17,31 +16,44 @@ import useResourceChangeSocket from '@/composables/useResourceChangeSocket.js'
 export default defineComponent({
   name: 'App',
   setup() {
-    const {state} = useThemeStore()
-    watchEffect(() => {
-      const removeThemes = state.themes.filter((t) => t !== state.theme);
-      document.body.classList.remove(...removeThemes);
-      document.body.classList.add(state.theme);
-    })
-    provide('theme', state)
-    const notificationStore = useNotificationStore()
-    provide('notificationStore', notificationStore)
-    const windowManagerStore = useWindownManagerStore()
-    provide('windowManagerStore', windowManagerStore)
-    const clusterStore = useClusterStore(windowManagerStore)
-    provide('clusterStore', clusterStore)
+    const providerClusterStores = useProviderClusterStores()
     const templateStore = useTemplateStore()
-    provide('templateStore', templateStore)
+    const themeStore = useThemeStore()
+
+    watchEffect(() => {
+      const removeThemes = themeStore.themes.filter((t) => t !== themeStore.theme);
+      document.body.classList.remove(...removeThemes);
+      document.body.classList.add(themeStore.theme);
+    })
+    
+    const wmStore = useWindownManagerStore()
+    
     const explorerStore = useExplorerStore()
-    provide('explorerStore', explorerStore)
 
     const {subscribe, connect} = useResourceChangeSocket()
     const clusterMessageHandler = useDebounceMessage(handleWebsocketMessage({
-      'resource.change': clusterStore.action.updateCluster,
-      'resource.create': clusterStore.action.addCluster,
-      'resource.remove': (data) => {
-        clusterStore.action.removeCluster(data);
-        explorerStore.action.removeExplorer(data);
+      'resource.change': (cluster) => {
+        const provider = cluster?.provider
+        providerClusterStores[provider]?.update(cluster)
+      },
+      'resource.create': (cluster) => {
+        const provider = cluster?.provider
+        providerClusterStores[provider]?.add(cluster)
+        // view create logs
+        wmStore.addTab({
+          id: `log_${cluster.id}`,
+          component: 'ClusterLogs',
+          label: `log: ${cluster.name}`,
+          icon: 'log',
+          attrs: {
+            cluster: cluster.id,
+          }
+        })
+      },
+      'resource.remove': (cluster) => {
+        const provider = cluster?.provider
+        providerClusterStores[provider]?.remove(cluster?.id)
+        explorerStore.remove(cluster?.id);
       },
     }))
     subscribe('cluster', (msg) => {
@@ -50,17 +62,23 @@ export default defineComponent({
         && ['resource.change', 'resource.create', 'resource.remove'].includes(msg.name)) {
           clusterMessageHandler(msg)
       }
-    }, clusterStore.action.syncClusters)
+    }, () => {
+      Object.values(providerClusterStores).forEach((store) => {
+        store.loadData()
+      })
+    })
     const templateMessageHandler = useDebounceMessage(handleWebsocketMessage({
-      'resource.change': templateStore.action.updateTemplate,
-      'resource.create': templateStore.action.addTemplate,
-      'resource.remove': templateStore.action.removeTemplate,
+      'resource.change': useTemplateStore.update,
+      'resource.create': templateStore.add,
+      'resource.remove': (t) => {
+        templateStore.remove(t?.id)
+      },
     }))
 
     const explorerMessageHandler = useDebounceMessage(handleWebsocketMessage({
-      'resource.change': explorerStore.action.updateExplorer,
-      'resource.create': explorerStore.action.addExplorer,
-      'resource.remove': explorerStore.action.removeExplorer,
+      'resource.change': explorerStore.update,
+      'resource.create': explorerStore.add,
+      'resource.remove': explorerStore.remove,
     }))
 
     subscribe('clusterTemplate', (msg) => {
@@ -69,14 +87,14 @@ export default defineComponent({
         && ['resource.change', 'resource.create', 'resource.remove'].includes(msg.name)) {
           templateMessageHandler(msg)
       }
-    }, templateStore.action.syncTemplates)
+    }, templateStore.loadData)
     subscribe('explorer', (msg) => {
       if (msg.resourceType === 'explorer'
         && msg.name
         && ['resource.change', 'resource.create', 'resource.remove'].includes(msg.name)) {
           explorerMessageHandler(msg)
       }
-    }, explorerStore.action.syncExplorers)
+    }, explorerStore.loadData)
     connect()
   },
 })

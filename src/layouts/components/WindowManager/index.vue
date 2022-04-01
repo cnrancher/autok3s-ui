@@ -36,16 +36,17 @@ import KIcon from '@/components/Icon'
 import ClusterLogs from './components/ClusterLogs.vue'
 import KubectlShell from './components/KubectlShell.vue'
 import NodeShell from './components/NodeShell.vue'
+import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 
 export default defineComponent({
   name: 'WindownManager',
   setup() {
-    const windowManagerStore = inject('windowManagerStore')
+    const windowManagerStore = useWindownManagerStore()
     const isOpen = computed(() => {
-      return windowManagerStore.state.open
+      return windowManagerStore.open
     })
     const minimize = ref(false)
-    const tabs = windowManagerStore.state.tabs
+    const tabs = windowManagerStore.tabs
     const height = computed(() => {
       if (!isOpen.value) {
         return 0
@@ -54,7 +55,7 @@ export default defineComponent({
         const docStyle = getComputedStyle(document.querySelector('body'))
         return parseInt(docStyle.getPropertyValue('--wm-tab-height').trim(), 10) + 2
       }
-      let h = windowManagerStore.state.userHeight
+      let h = windowManagerStore.userHeight
       if (!h) {
         h = window.innerHeight / 2
       }
@@ -65,13 +66,13 @@ export default defineComponent({
       document.documentElement.style.setProperty('--wm-height', `${ height.value }px`);
     })
     const activeTabId = computed(() => {
-      return windowManagerStore.state.active
+      return windowManagerStore.active
     })
     const remove = (id) => {
-      windowManagerStore.action.removeTab(id)
+      windowManagerStore.removeTab(id)
     }
     const setActive = (id) => {
-      windowManagerStore.action.setActiveTab(id)
+      windowManagerStore.setActiveTab(id)
     }
     const resizer = ref(null)
     const {draging, resizerOffset} = useEvent(resizer)
@@ -103,7 +104,7 @@ export default defineComponent({
 })
 
 function useEvent(targetRef) {
-  const windowManagerStore = inject('windowManagerStore')
+  const windowManagerStore = useWindownManagerStore()
   const draging = ref(false)
   const marginTopMin = 100
   const marginBottomMin = 60
@@ -119,7 +120,7 @@ function useEvent(targetRef) {
   }
   const updateWMHeight = () => {
     const h = height - resizerOffset.value + 14
-    windowManagerStore.action.setUserHeight(h)
+    windowManagerStore.setUserHeight(h)
     document.documentElement.style.setProperty('--wm-height', `${h}px`)
   }
   const handleMouseDown = (e) => {

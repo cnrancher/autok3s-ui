@@ -1,35 +1,20 @@
-import { reactive, readonly } from 'vue'
-// state
-const state = {
-  theme: 'theme-light',
-  themes: ['theme-light']
-}
-const createStore = () => {
-  return reactive(state)
-}
+import { defineStore } from 'pinia'
 
-// actions
-function changeTheme (state) {
-  return (theme) => {
-    if (state.themes.includes(theme)) {
-      state.theme = theme
+const useThemeStore = defineStore('themeStore', {
+  state: () => {
+    return {
+      theme: 'theme-light',
+      themes: ['theme-light']
+    }
+  },
+
+  actions: {
+    changeTheme(theme) {
+      if (this.themes.includes(theme)) {
+        this.theme = theme
+      }
     }
   }
-}
+})
 
-function createAction(state) {
-  return {
-    changeTheme: changeTheme(state)
-  }
-}
-
-// use store
-const themeState = createStore();
-const themeAction = createAction(themeState);
-
-export default function useThemeStore() {
-  return {
-    state: readonly(themeState),
-    action: readonly(themeAction),
-  }
-}
+export default useThemeStore

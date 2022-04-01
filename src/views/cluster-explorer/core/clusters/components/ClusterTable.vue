@@ -16,9 +16,8 @@
       </radio-group>
       <input type="search" placeholder="Filter" class="cluster-table__search focus-visible:outline-none px-12px rounded border hover:bg-gray-100" v-model="searchQuery">
     </div>
-    <k-table
-      :data="clusters"
-      :state="loadingStatus"
+    <k-grouped-table
+      :data="groupData"
       :group-by="groupBy"
       @selection-change="handleSelectionChange"
       >
@@ -46,14 +45,14 @@
           </div>
         </template>
       </k-table-column>
-      <template #error>
+      <template #error="error">
         <div class="justify-center flex-col items-center">
-          <div>Load clusters failed: {{error}}</div>
-          <div>Please click <button class="btn btn-sm role-secondary" @click="reload">refresh</button> button to reload cluster data</div>
+          <div>Load <span class="text-error">{{error.group}}</span> clusters  failed: {{error.error}}</div>
+          <div>Please click <button class="btn btn-sm role-secondary" @click="reload(error.group)" :disabled="error.state==='loading'">refresh</button> button to reload cluster data</div>
         </div>
         
       </template>
-    </k-table>
+    </k-grouped-table>
     <k-modal v-model="confirmModalVisible">
       <template #title>Are you sure?</template>
       <template #default>
@@ -79,7 +78,7 @@
 </template>
 <script>
 import { useRouter } from 'vue-router'
-import { remove, joinNode, fetchById, disableExplorer, enableExplorer } from '@/api/cluster.js'
+import { remove, fetchById, disableExplorer, enableExplorer } from '@/api/cluster.js'
 import ClusterActions from './ClusterActions.vue'
 import ClusterBulkActions from './ClusterBulkActions.vue'
 import ClusterStateTag from './ClusterStateTag.vue'
@@ -88,50 +87,147 @@ import JoinNodeModal from './JoinNodeModal.vue'
 import {RadioGroup, RadioButton} from '@/components/Radio'
 import CliCommand from '@/views/components/CliCommand.vue'
 import useDataSearch from '@/composables/useDataSearch.js'
-import useCluster from '@/composables/useCluster.js'
 import useProviders from '@/composables/useProviders.js'
 import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import {stringify} from '@/utils/error.js'
-import { removeCreatingCluster, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
-
+import { removeCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
+import useProviderClusterStores from '@/store/useProviderClusterStores.js'
 import { defineComponent, computed, inject, reactive, ref, toRef, watchEffect } from 'vue'
+import { GroupedTable as KGroupedTable } from '@/components/Table'
+import useNotificationStore from '@/store/useNotificationStore.js'
+import useWindownManagerStore from '@/store/useWindowManagerStore.js'
+
 export default defineComponent({
   setup() {
     const router =  useRouter()
-    const notificationStore = inject('notificationStore')
-    const wmStore = inject('windowManagerStore')
-    const clusterStore = inject('clusterStore')
-    const clustersInStore = toRef(clusterStore.state, 'clusters')
-    const {searchQuery, searchFields, dataMatchingSearchQuery: clusters} = useDataSearch(clustersInStore)
+    const providerClusterStores = useProviderClusterStores()
+    const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
+    const errorGroups = computed(() => {
+      return Object.entries(providerClusterStores)
+        .filter(([k, v]) => !v.loading && v.error)
+        .map(([k,v]) => ({
+          group: k,
+          state: 'error',
+          error: v.error,
+        }))
+    })
+
+    const loadedGroups = computed(() => {
+      return Object.entries(providerClusterStores)
+        .filter(([k, v]) => !v.loading && !v.error)
+        .map(([k,v]) => ({
+          group: k,
+          state: 'loaded',
+          children: v.data,
+        }))
+    })
+    const loadedData = computed(() => {
+      return loadedGroups.value.reduce((t, c) => {
+        t.push(...c.children)
+
+        return t
+      }, [])
+    })
+
+    const isAllLoading = computed(() => {
+      Object.values(providerClusterStores).every((item) => item.loading === true)
+    })
+
+    const isNoData = computed(() => {
+      return errorGroups.value.length === 0 && loadedData.value.length === 0
+    })
+
+    const {searchQuery, searchFields, dataMatchingSearchQuery: clusters} = useDataSearch(loadedData)
     searchFields.value=['status', 'name', 'region', 'master', 'worker']
+    const groupStatus = computed(() => {
+      const errorStatus = errorGroups.value.reduce((t, c)=> {
+        t[c.group] = {
+          state: 'error',
+          error: c.error,
+        }
+
+        return t
+      }, {})
+      const loadingStatus = {
+        'loading': {
+          state: 'loading'
+        }
+      }
+      if (clusters.value.length === 0) {
+        if (loadedData.value.length === 0) {
+          return {
+            'noData': {
+              state: 'noData'
+            },
+            ...loadingStatus,
+            ...errorStatus
+          }
+        }
+        
+        if (searchQuery.value) {
+          return {
+            'noResults' : {
+              state: 'noResults'
+            },
+            ...loadingStatus,
+            ...errorStatus
+          }
+        }
+      }
+
+      return {
+        ...loadedGroups.value.reduce((t, c) => {
+          t[c.group] = {
+            state: 'loaded'
+          }
+          return t
+        }, {}),
+        ...loadingStatus,
+        ...errorStatus
+      }
+    })
+
+    const groupData = computed(() => {
+      if (isAllLoading.value) {
+        return [{
+          group: 'loading',
+          state: 'noData'
+        }]
+      }
+      if (isNoData.value) {
+        return [{
+          group: 'noData',
+          state: 'noData'
+        }]
+      }
+      const statusMap = groupStatus.value
+      const groups = clusters.value.reduce((t, c) => {
+        const g = t[c.provider] ?? {group: c.provider, ...statusMap[c.provider], children: []}
+        g.children.push(c)
+        t[c.provider] = g
+
+        return t
+      }, [])
+      return [
+        ...Object.values(groups),
+        ...errorGroups.value
+      ]
+    })
+
+
+    const notificationStore = useNotificationStore()
+    const wmStore = useWindownManagerStore()
 
     const joinNodeModalVisible = ref(false)
     // generate cli command
     const cliModalVisible = ref(false)
     const clusterForm = ref(null)
-    const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
-
-    const loadingStatus = computed(() => {
-      if (clusterStore.state.loading || providersLoading.value) {
-        return 'loading'
-      }
-      if (clusterStore.state.error) {
-        return 'error'
-      }
-      if (searchQuery.value && clusters.value.length === 0) {
-        return 'noResults'
-      }
-      if (clusters.value.length === 0) {
-        return 'noData'
-      }
-      return 'loaded'
-    })
+    
     const selectedClusters = ref([])
     const handleSelectionChange = (rows) => {
       selectedClusters.value = rows
     }
 
-    const error = computed(() => clusterStore.state.error)
     const groupBy = ref('provider')
     const toggleGroupBy = () => {
       if (groupBy.value) {
@@ -158,7 +254,7 @@ export default defineComponent({
           break;
         case 'viewLog':
           removeCreatingCluster(cluster.id)
-          wmStore.action.addTab({
+          wmStore.addTab({
             id: `log_${cluster.id}`,
             component: 'ClusterLogs',
             label: `log: ${cluster.name}`,
@@ -181,7 +277,7 @@ export default defineComponent({
           break;
         case 'generateCliCommand':
           if (loadProviderError.value) {
-            notificationStore.action.notify({
+            notificationStore.notify({
               type: 'error',
               title: 'Load Provider Failed',
               content: stringify(loadProviderError.value)
@@ -206,7 +302,7 @@ export default defineComponent({
             cliModalVisible.value = true
           }).catch((err) => {
             if (err) {
-              notificationStore.action.notify({
+              notificationStore.notify({
                 type: 'error',
                 title: 'Load Cluster Failed',
                 content: stringify(err)
@@ -217,7 +313,7 @@ export default defineComponent({
         case 'disableExplorer':
           disableExplorer(cluster).catch((err) => {
             if (err) {
-              notificationStore.action.notify({
+              notificationStore.notify({
                 type: 'error',
                 title: 'Disable explorer Error',
                 content: stringify(err)
@@ -227,14 +323,14 @@ export default defineComponent({
           break;
         case 'enableExplorer':
           enableExplorer(cluster).then(({data}) => {
-            notificationStore.action.notify({
+            notificationStore.notify({
               type: 'success',
               title: 'Enable kube-explorer success',
               content: stringify(data)
             })
           }).catch((err) => {
             if (err) {
-              notificationStore.action.notify({
+              notificationStore.notify({
                 type: 'error',
                 title: 'Enable explorer Error',
                 content: stringify(err)
@@ -251,7 +347,7 @@ export default defineComponent({
         .filter((p) => p.status === 'rejected')
         .map((p) => p.reason)
       errors.forEach((e) => {
-         notificationStore.action.notify({
+         notificationStore.notify({
           type: 'error',
           title: 'Delete Cluster Failed',
           content: stringify(e)
@@ -263,20 +359,18 @@ export default defineComponent({
         commandParams.value=[]
       }
     })
-    const reload = () => {
-      clusterStore.action.syncClusters()
+    const reload = (provider) => {
+     providerClusterStores[provider]?.loadData()
     }
 
     return {
       clusterId,
-      clusters,
-      loadingStatus,
+      groupData,
       handleSelectionChange,
       searchQuery,
       selectedClusters,
       toggleGroupBy,
       groupBy,
-      error,
       reload,
       handleCommand,
       commandParams,
@@ -296,92 +390,9 @@ export default defineComponent({
     RadioButton,
     ExplorerLink,
     JoinNodeModal,
+    KGroupedTable,
   }
 })
-
-function useJionNodeModal(clusterId) {
-  const notificationStore = inject('notificationStore')
-  const {cluster, error: loadError, loading} = useCluster(clusterId)
-  const formErrors = ref([])
-  const visible = ref(false)
-  const form = reactive({
-    worker: '0',
-    master: '0',
-  })
-  const desiredNodes = computed(() => {
-    if (!cluster.value) {
-      return {
-          master: '0',
-          worker: '0',
-        }
-    }
-    return {
-        master: `${parseInt(cluster.value.master, 10) + (parseInt(form.master, 10) || 0)}`,
-        worker: `${parseInt(cluster.value.worker, 10) + (parseInt(form.worker, 10) || 0)}`,
-      }
-  })
-  const errors = computed(() => {
-    if (loadError.value) {
-      return [loadError.value, ...formErrors.value]
-    }
-    return formErrors.value
-  })
-  watchEffect(() => {
-    if (!visible.value) {
-      cluster.value = null
-      clusterId.value = null
-      form.worker = '0'
-      form.master = '0'
-      return
-    }
-  })
-
-  const validate = () => {
-      const numReg = /^[0-9]+$/
-      const errors = []
-      if (!numReg.test(form.worker)) {
-        errors.push('"Worker" must a number');
-      }
-      if (!numReg.test(form.master)) {
-        errors.push('"Master" must be a number');
-      }
-      if (errors.length > 0) {
-        formErrors.value = errors
-        return false
-      }
-      if (parseInt(form.worker, 10) <= 0 && parseInt(form.master, 10) <= 0) {
-        errors.push('One of "Master" and "Worker" must be greater than 0');
-      }
-      formErrors.value = errors
-      return errors.length === 0
-    }
-  const save = async () => {
-    if (!validate()) {
-      return
-    }
-    try {
-      const data = Object.assign({}, cluster.value, form)
-      await joinNode(data)
-      saveCreatingCluster(cluster.value.id)
-    } catch (err) {
-      notificationStore.action.notify({
-          type: 'error',
-          title: 'Join Nodes Failed',
-          content: stringify(err),
-        })
-    }
-    visible.value = false
-  }
-
-  return {
-    loading,
-    errors,
-    visible,
-    desiredNodes,
-    form,
-    save,
-  }
-}
 </script>
 <style>
 .cluster-table__header {

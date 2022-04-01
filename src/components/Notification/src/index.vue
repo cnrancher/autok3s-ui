@@ -15,8 +15,10 @@
 </teleport>
 </template>
 <script>
-import { computed, inject, defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 import KIcon from '@/components/Icon'
+import useNotificationStore from '@/store/useNotificationStore.js'
+
 export default defineComponent({
   name: 'KNotification',
   props: {
@@ -40,13 +42,13 @@ export default defineComponent({
       }
       return [`k-notification--${props.position.join('-')}`]
     })
-    const store = inject('notificationStore')
-    store.action.setGroup(props.group)
+    const store = useNotificationStore()
+    store.setGroup(props.group)
     const events = computed(() => {
-      return store.state.groupEvents[props.group]
+      return store.groupEvents[props.group]
     })
     const removeEvent = (id, group) => {
-      store.action.removeItem(id, group)
+      store.removeItem(id, group)
     }
     return {
       events,

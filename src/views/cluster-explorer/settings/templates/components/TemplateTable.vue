@@ -94,14 +94,17 @@ import useDataSearch from '@/composables/useDataSearch.js'
 import useTableState from '@/composables/useTableState.js'
 import {stringify} from '@/utils/error.js'
 import { cloneDeep } from '@/utils'
+import useTemplateStore from '@/store/useTemplateStore.js'
+import { storeToRefs } from 'pinia'
+import useNotificationStore from '@/store/useNotificationStore.js'
 
 import { inject,  ref, watchEffect } from 'vue'
 export default defineComponent({
   setup() {
     const router =  useRouter()
-    const notificationStore = inject('notificationStore')
-    const templateStore = inject('templateStore')
-    const {loading, error, templates,} = toRefs(templateStore.state)
+    const notificationStore = useNotificationStore()
+    const templateStore = useTemplateStore()
+    const {loading, error, data: templates,} = storeToRefs(templateStore)
     const {searchQuery, searchFields, dataMatchingSearchQuery: data} = useDataSearch(templates)
     searchFields.value = ['id', 'provider', 'name', 'options.region', 'options.zone']
     const { state }= useTableState(loading, error, templates, data)
@@ -121,7 +124,7 @@ export default defineComponent({
     // delete template
     const confirmModalVisible = ref(false)
     const reload = () => {
-      templateStore.action.syncTemplates()
+      templateStore.loadData()
     }
     const setDefault = async (template) => {
       const results = await Promise.allSettled([
@@ -142,7 +145,7 @@ export default defineComponent({
           .map((p) => p.reason)
 
         errors.forEach((e) => {
-          notificationStore.action.notify({
+          notificationStore.notify({
             type: 'error',
             title: 'Update Template Failed',
             content: stringify(e)
@@ -156,7 +159,7 @@ export default defineComponent({
           'is-default': false,
         })
       } catch (err) {
-        notificationStore.action.notify({
+        notificationStore.notify({
           type: 'error',
           title: 'Update Template Failed',
           content: stringify(e)
@@ -193,7 +196,7 @@ export default defineComponent({
         .filter((p) => p.status === 'rejected')
         .map((p) => p.reason)
       errors.forEach((e) => {
-         notificationStore.action.notify({
+         notificationStore.notify({
           type: 'error',
           title: 'Delete Template Failed',
           content: stringify(e)

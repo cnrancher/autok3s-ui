@@ -14,8 +14,8 @@
 </template>
 <script>
 import { cloneDeep } from '@/utils'
-
-import { computed, inject } from 'vue'
+import useExplorerStore from '@/store/useExplorerStore.js'
+import { computed } from 'vue'
 export default {
   props: {
     cluster: {
@@ -25,7 +25,7 @@ export default {
   },
   emits: ['exec-command'],
   setup(props, {emit}) {
-    const explorerStore = inject('explorerStore')
+    const explorerStore = useExplorerStore()
     const actions = computed(() => {
       const status = props.cluster.status?.toLowerCase()
 
@@ -63,7 +63,7 @@ export default {
           }
         ]
 
-        const explorer = explorerStore.getter.clusterExplorerMap[props.cluster.id]
+        const explorer = explorerStore.clusterExplorerMap[props.cluster.id]
         if (explorer?.links?.explorer) {
           actions.push({
             label: 'Disabe Explorer',

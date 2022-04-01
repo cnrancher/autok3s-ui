@@ -32,11 +32,12 @@ import { Select as KSelect, Option as KOption} from '@/components/Select'
 import KModal from "@/components/Modal"
 import Alert from "@/components/Alert"
 import useKubectlContext from '@/composables/useKubectlContext.js'
+import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 
 
 export default defineComponent({
   setup() {
-    const wmStore = inject('windowManagerStore')
+    const wmStore = useWindownManagerStore()
     const modalVisible = ref(false)
     const {contexts, error, loading, fetchContexts} = useKubectlContext()
     const kubectlContext = ref('')
@@ -62,7 +63,7 @@ export default defineComponent({
         return
       }
       modalVisible.value = false
-      wmStore.action.addTab({
+      wmStore.addTab({
         id: `kubectl_${selectedContext.value.id}`,
         component: 'KubectlShell',
         label: `kubectl: ${selectedContext.value.context}(${selectedContext.value.id})`,

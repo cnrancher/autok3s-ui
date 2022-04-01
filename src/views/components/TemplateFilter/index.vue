@@ -52,6 +52,8 @@ import useDataSearch from '@/composables/useDataSearch.js'
 import useDataGroup from '@/composables/useDataGroup.js'
 import usePopper from '@/composables/usePopper.js'
 import { onClickOutside } from '@vueuse/core'
+import useTemplateStore from '@/store/useTemplateStore.js'
+import { storeToRefs } from 'pinia'
 
 const popperOption = {
   placement: 'bottom-start'
@@ -74,7 +76,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'apply-template'],
   setup(props, {emit}) {
-    const templateStore = inject('templateStore')
+    const templateStore = useTemplateStore()
     const inputRef = ref(null)
     const resultRef = ref(null)
     const show = ref(false)
@@ -85,7 +87,7 @@ export default defineComponent({
     onClickOutside(resultRef, () => {
       show.value = false
     })
-    const { loading, templates, error } = toRefs(templateStore.state)
+    const { loading, data: templates, error } = storeToRefs(templateStore)
     const providerTemplates = computed(() => {
       if (props.provider) {
         return templates.value.filter((t) => t.provider === props.provider && !t.status)

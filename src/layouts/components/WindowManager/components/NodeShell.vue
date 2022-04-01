@@ -17,6 +17,8 @@ import useTerminal from '@/composables/useTerminal.js'
 import { useResizeObserver } from '@vueuse/core'
 import {DONE} from '@/composables/useTerminal.js'
 import { useWebSocket } from '@vueuse/core'
+import useNotificationStore from '@/store/useNotificationStore.js'
+import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 
 const stateToClassMap = {
   CLOSED: 'text-error',
@@ -59,8 +61,8 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const wmStore = inject('windowManagerStore')
-    const notificationStore = inject('notificationStore')
+    const wmStore = useWindownManagerStore()
+    const notificationStore = useNotificationStore()
     const xterm = ref(null)
     const url = `${location.protocol.replace('http', 'ws')}//${location.host}${import.meta.env.VITE_APP_BASE_API}/mutual?provider=${props.provider}&cluster=${props.clusterId}&node=${props.nodeId}`
 
@@ -79,7 +81,7 @@ export default defineComponent({
           retries: 3,
           delay: 3000,
           onFailed() {
-            notificationStore.action.notify({
+            notificationStore.notify({
               type: 'error',
               duration: 0,
               title: 'Websocket Disconnect',
@@ -98,7 +100,7 @@ export default defineComponent({
         onDisconnected(_, e) {
           if (e?.code === 1000) {
             close()
-            wmStore.action.removeTab(`node-shell_${props.nodeId}`)
+            wmStore.removeTab(`node-shell_${props.nodeId}`)
           }
         }
       })

@@ -1,9 +1,12 @@
 import request from '@/utils/request'
 
-export function fetchList() {
+export function fetchList(provider) {
   return request({
     url: '/clusters',
     method: 'get',
+    params: {
+      provider
+    }
   });
 }
 
