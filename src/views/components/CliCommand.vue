@@ -55,6 +55,7 @@
 import {computed, defineComponent, inject} from 'vue'
 import Clipboard from 'clipboard'
 import { Base64 } from 'js-base64'
+import useNotificationStore from '@/store/useNotificationStore.js'
 
 export default defineComponent({
   name: 'CliCommand',
@@ -70,7 +71,7 @@ export default defineComponent({
   },
   emits: ['update:visible'],
   setup(props, {emit}) {
-    const notificationStore = inject('notificationStore')
+    const notificationStore = useNotificationStore()
     const registryPlaceholder = '<registry-path>'
     const registryContent = computed(() => {
       if (!props.visible) {
@@ -181,12 +182,12 @@ export default defineComponent({
     const copyCmd = async () => {
       try {
         await toClipboard(`${createCmd.value}${registryContent.value ? ` --registry ${registryPlaceholder}`:''}`)
-        notificationStore.action.notify({
+        notificationStore.notify({
           type: 'success',
           title: 'CLI Command Copied',
         })
       } catch(e) {
-        notificationStore.action.notify({
+        notificationStore.notify({
           type: 'error',
           title: 'CLI Command Copy Failed',
           content: e?.toString()
@@ -197,12 +198,12 @@ export default defineComponent({
     const copyRegistryContent = async () => {
        try {
         await toClipboard(registryContent.value)
-         notificationStore.action.notify({
+         notificationStore.notify({
           type: 'success',
           title: 'Registry Content Copied',
         })
       } catch(e) {
-        notificationStore.action.notify({
+        notificationStore.notify({
           type: 'error',
           title: 'Registry Content Copy Failed',
           content: e?.toString()

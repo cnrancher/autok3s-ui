@@ -94,6 +94,7 @@ import StringForm from '@/views/components/baseForm/StringForm.vue'
 import { joinNode} from '@/api/cluster.js'
 import { saveCreatingCluster} from '@/utils'
 import {stringify} from '@/utils/error.js'
+import useNotificationStore from '@/store/useNotificationStore.js'
 
 const formDefaultValue = {
   worker: '0',
@@ -126,7 +127,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, {emit}) {
-    const notificationStore = inject('notificationStore')
+    const notificationStore = useNotificationStore()
     const sshAdvanceVisible = ref(false)
     const masterIps = ref(null)
     const workerIps = ref(null)
@@ -260,7 +261,7 @@ export default defineComponent({
       await joinNode(data)
       saveCreatingCluster(data.id)
     } catch (err) {
-      notificationStore.action.notify({
+      notificationStore.notify({
           type: 'error',
           title: 'Join Nodes Failed',
           content: stringify(err),

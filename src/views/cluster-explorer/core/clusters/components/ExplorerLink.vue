@@ -9,6 +9,8 @@
 <script>
 import { defineComponent, computed, inject } from 'vue'
 import Tooltip from '@/components/Tooltip'
+import useExplorerStore from '@/store/useExplorerStore.js'
+
 export default defineComponent({
   name: 'ExplorerLink',
   props: {
@@ -18,12 +20,12 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const explorerStore = inject('explorerStore')
+    const explorerStore = useExplorerStore()
 
-    const error = computed(() => explorerStore.state.error)
-    const loading = computed(() => explorerStore.state.loading)
+    const error = computed(() => explorerStore.error)
+    const loading = computed(() => explorerStore.loading)
     const explorer = computed(() => {
-      return explorerStore.state.explorers.find((e) => e.id === props.clusterId)
+      return explorerStore.data.find((e) => e.id === props.clusterId)
     })
 
     return {

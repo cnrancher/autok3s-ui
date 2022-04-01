@@ -98,6 +98,8 @@ import useNodes from '@/composables/useNodes.js'
 import PageHeader from '@/views/components/PageHeader.vue'
 import ClusterStateTag from '../components/ClusterStateTag.vue'
 import NodeActions from './components/NodeActions.vue'
+import useWindownManagerStore from '@/store/useWindowManagerStore.js'
+
 export default defineComponent({
   props: {
     clusterId: {
@@ -106,7 +108,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const wmStore = inject('windowManagerStore')
+    const wmStore = useWindownManagerStore()
     const clusterId = toRef(props, 'clusterId')
     const {clusterNodes, error, loading, fetchClusterNodes} = useNodes(clusterId)
     const rawNodes = computed(() => {
@@ -122,7 +124,7 @@ export default defineComponent({
     const handleCommand = ({command, node, cluster}) => {
       switch (command) {
         case 'exec-shell':
-          wmStore.action.addTab({
+          wmStore.addTab({
             id: `node-shell_${node['instance-id']}`,
             component: 'NodeShell',
             label: `shell: ${node['external-ip']?.[0] ?? node['instance-id']}`,

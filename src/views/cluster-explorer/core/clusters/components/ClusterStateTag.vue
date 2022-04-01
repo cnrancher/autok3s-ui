@@ -27,7 +27,8 @@ export default {
   },
   setup(props) {
     const type = computed(() => {
-      return states[props.status.toLowerCase()]?.color ?? 'warning'
+
+      return states[props.status?.toLowerCase()]?.color ?? 'warning'
     })
     return {
       type

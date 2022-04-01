@@ -25,6 +25,8 @@
 </template>
 <script>
 import {computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import useThemeStore from '@/store/useThemeStore.js'
+import useNotificationStore from '@/store/useNotificationStore.js'
 import CodeMirror from 'codemirror'
 import 'codemirror/lib/codemirror.css'
 
@@ -84,13 +86,13 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, {emit}) {
-    const themeState = inject('theme')
-    const notificationStore = inject('notificationStore')
+    const themeStore = useThemeStore()
+    const notificationStore = useNotificationStore()
     const textarea = ref(null)
     const file = ref(null)
     let codemirror = null
     const options = computed(() => {
-      const theme = themeState.theme.split('-')[1]
+      const theme = themeStore.theme.split('-')[1]
       const defaultOptions = {
         // codemirror default options
           tabSize:                 2,
@@ -138,7 +140,7 @@ export default defineComponent({
     }
     const validateFile = (file)=> {
       if (!file.type.endsWith('yaml')) {
-        notificationStore.action.notify({
+        notificationStore.notify({
           type: 'error',
           title: 'File Type Error',
           content: 'The selected file is not yaml type'
@@ -146,7 +148,7 @@ export default defineComponent({
         return false
       }
       if (file.size > 2 * 1024 * 1024) {
-        notificationStore.action.notify({
+        notificationStore.notify({
           type: 'error',
           title: 'File is too large',
           content: 'The file size cannot exceed 2M'

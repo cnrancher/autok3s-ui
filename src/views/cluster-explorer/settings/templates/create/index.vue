@@ -65,6 +65,8 @@ import {capitalize} from 'lodash-es'
 import {stringify} from '@/utils/error.js'
 import { cloneDeep, overwriteSchemaDefaultValue } from '@/utils'
 import { Base64 } from 'js-base64'
+import useTemplateStore from '@/store/useTemplateStore.js'
+import { storeToRefs } from 'pinia'
 
 export default defineComponent({
   name: 'CreateTemplate',
@@ -83,7 +85,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const templateStore = inject('templateStore')
+    const templateStore = useTemplateStore()
     const router = useRouter()
     const formRef = ref(null)
     const name = ref('')
@@ -104,7 +106,7 @@ export default defineComponent({
 
     const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
     const {loading: clusterLoading, error: loadClusterError, cluster} = useCluster(clusterId)
-    const {loading: templateLoading, error: loadTemplateError, templates} = toRefs(templateStore.state)
+    const {loading: templateLoading, error: loadTemplateError, data: templates} = storeToRefs(templateStore)
 
     const loading = computed(() => {
       return providersLoading.value || clusterLoading.value || templateLoading.value
@@ -203,19 +205,6 @@ export default defineComponent({
       }
       updateProviderSchema(provider)
     }
-    // const createFromHistory = (providerId) => {
-    //   const provider = providers.value.find((p) => p.id === providerId) ?? providers.value[0]
-    //   if (!provider) {
-    //     formErrors.value = [`Provider (${providerId}) not found`]
-    //     return
-    //   }
-    //   const historyForm = clusterStore.state.formHistory[provider.id]?.[0]
-    //   if (historyForm) {
-    //     updateProviderSchema(provider, cloneDeep(historyForm))
-    //     return
-    //   }
-    //   createFromProvider(providerId)
-    // }
 
     watch([clusterId, templateId, defaultProvider, providers, cluster, templates, loading], () => {
       if (loading.value) {

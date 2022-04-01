@@ -1,5 +1,5 @@
 import vue from '@vitejs/plugin-vue'
-import html from 'vite-plugin-html'
+import { createHtmlPlugin } from 'vite-plugin-html'
 import WindiCSS from 'vite-plugin-windicss'
 import { loadEnv } from 'vite'
 import { resolve } from 'path'
@@ -16,9 +16,9 @@ export default ({ command, mode }) => {
     plugins: [
       vue(),
       WindiCSS(),
-      html({
+      createHtmlPlugin({
         inject: {
-          injectData: {
+          data: {
             title: env.VITE_APP_TITLE,
             basePath: env.VITE_APP_BASE_PATH,
           },

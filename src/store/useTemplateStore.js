@@ -1,69 +1,51 @@
-import { reactive, readonly } from 'vue'
+import { defineStore } from 'pinia'
 import { fetchList } from '@/api/template.js'
+import {stringify} from '@/utils/error.js'
 
-// state
-export function createStore() {
-  const state = {
-    templates: [],
-    loading: false,
-    error: null,
-  }
-  return reactive(state)
-}
+const useTemplateStore = defineStore('templateStore', {
+  state: () => {
+    return {
+      loading: false,
+      error: null,
+      data: []
+    }
+  },
 
-// actions
-function addTemplate(state) {
-  return (...templates) => {
-    state.templates.push(...templates)
-  }
-}
-
-function removeTemplate(state) {
-  return (template) => {
-    const index = state.templates.findIndex((t) => t.id === template.id)
-    if (index > -1) {
-      return state.templates.splice(index, 1)
+  actions: {
+    async loadData() {
+      this.loading = true
+      try {
+        const {data} = await fetchList()
+        this.data = data
+        this.error = null
+      } catch (err) {
+        this.data = []
+        this.error = stringify(err)
+      }
+      this.loading = false
+    },
+    add(template) {
+      if (this.loading || this.error) {
+        return
+      }
+      this.data.push(template)
+    },
+    update(template) {
+      if (this.loading || this.error) {
+        return
+      }
+      const index = this.data.findIndex((t) => t.id === template.id)
+      if (index > -1) {
+        this.data.splice(index, 1, template)
+      }
+    },
+    remove(id) {
+      const index = this.data.findIndex((item) => item.id === id)
+      if (index > -1) {
+        this.data.splice(index, 1)
+      }
     }
   }
-}
-function updateTemplate(state) {
-  return (template) => {
-    const index = state.templates.findIndex((t) => t.id === template.id)
-    if (index > -1) {
-      return state.templates.splice(index, 1, template)
-    }
-  }
-}
+})
 
-function syncTemplates(state) {
-  return () => {
-    state.loading = true
-    return fetchList().then(({data}) => {
-      state.templates = data
-      state.error = null
-    }).catch((err) => {
-      state.templates = []
-      state.error = err
-    }).finally(() => {
-      state.loading = false
-    })
-  }
-}
-
-function createAction(state) {
-  return {
-    addTemplate: addTemplate(state),
-    removeTemplate: removeTemplate(state),
-    updateTemplate: updateTemplate(state),
-    syncTemplates: syncTemplates(state),
-  }
-}
-
-export default function useStore() {
-  const state = createStore()
-  const action = createAction(state)
-  return {
-    state: readonly(state),
-    action: readonly(action)
-  }
-}
+export default useTemplateStore

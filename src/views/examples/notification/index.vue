@@ -9,12 +9,12 @@
   </div>
 </template>
 <script>
-import { inject } from 'vue'
+import useNotificationStore from '@/store/useNotificationStore.js'
 export default {
   setup() {
-    const store = inject('notificationStore')
+    const store = useNotificationStore()
     const addNotify = () => {
-      store.action.notify({
+      store.notify({
         group: 'example',
         type: 'warn',
         title: 'test title',
@@ -22,7 +22,7 @@ export default {
       })
     }
     const addNotify2 = (type = 'info') => {
-      store.action.notify({
+      store.notify({
         group: 'example',
         type,
         title: 'test title',

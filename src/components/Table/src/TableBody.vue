@@ -19,19 +19,15 @@ export default defineComponent({
       type: Array,
       required: true
     },
-    groupSlot: {
-      type: Function,
-    }
   },
-  emits: ['rowClick', 'cellClick', 'select'],
-  setup(props, context) {
+  emits: ['row-click', 'cell-click', 'select'],
+  setup(props, { slots }) {
     const dataStore = inject('dataStore')
     const columnStore = inject('columnStore')
     const tableEmit = inject('tableEmit')
     const data = toRef(props, 'data')
     const group = toRef(props, 'group')
     const groupBy = toRef(props, 'groupBy')
-    const groupSlot = toRef(props, 'groupSlot')
     const columns = columnStore.state.columns
     const selection = dataStore.state.selection
     const {removeSelection, addSelection } = dataStore.action
@@ -119,8 +115,8 @@ export default defineComponent({
             h('div',
               {
                 class: 'k-table__group-tab'
-              },
-              groupSlot.value({groupColumn, group})
+              }, 
+              slots.group ? slots.group({groupColumn, group}) : [h('span', { class: 'k-table__group-by' }, `${groupColumn?.field}: `), h('span', {}, `${group}`)]
             )
           )
         ]
@@ -141,6 +137,7 @@ export default defineComponent({
       }
       return ['k-table__body']
     })
+
     return () => h(
       'tbody',
       {
