@@ -173,7 +173,7 @@ export default defineComponent({
     provide('parentVisible', visible)
     const installScriptOptions = [
       'https://get.k3s.io',
-      'http://rancher-mirror.cnrancher.com/k3s/k3s-install.sh',
+      'https://rancher-mirror.rancher.cn/k3s/k3s-install.sh',
     ]
     watch(() => props.form.config['k3s-install-script'],(installScript) => {
       if (installScript === installScriptOptions[1]) {
