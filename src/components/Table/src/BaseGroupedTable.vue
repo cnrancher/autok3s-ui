@@ -21,7 +21,7 @@
           <tr>
             <td :colspan="columns.length">
               <slot v-if="groupStatus[g.group]?.state" :name="groupStatus[g.group]?.state" v-bind="groupStatus[g.group]">
-                <div class="k-table__status">{{tableStatus[state]}}</div>
+                <div class="k-table__status">{{tableStatus[groupStatus[g.group]?.state]}}</div>
               </slot>
               <div v-else>State Value Error: ({{groupStatus[g.group]?.state}})，Allow State Value:{{Object.keys(tableStatus).join(', ')}}</div>
             </td>
