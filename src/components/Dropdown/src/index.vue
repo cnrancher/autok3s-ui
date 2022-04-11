@@ -9,74 +9,70 @@
   </div>
 </template>
 <script>
+export default {
+  name: 'KDropdown',
+}
+</script>
+<script setup>
 import usePopper from '@/composables/usePopper.js'
 import { onClickOutside } from '@vueuse/core'
-import {ref, nextTick, watch, defineComponent} from 'vue'
-export default defineComponent({
-  name: 'KDropdown',
-  props: {
-    option: {
-      type: Object,
-      default() {
-        return {
-          placement: 'bottom-start'
-        }
+import {ref, nextTick, watch, defineProps, defineEmits} from 'vue'
+
+const props = defineProps({
+  option: {
+    type: Object,
+    default() {
+      return {
+        placement: 'bottom-start'
       }
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    appendToBody: {
-      type: Boolean,
-      default: true
-    },
-    trigger: {
-      type: String,
-      default: 'click'
-    },
-    lazy: {
-      type: Boolean,
-      default: true
     }
   },
-  emits: ['visible-change'],
-  setup(props, {emit}) {
-    const toggleRef = ref(null)
-    const contentRef = ref(null)
-    const show = ref(false)
-    const { create, remove, update } = usePopper(toggleRef, contentRef, props.option)
-    const toggleDropDown = () => {
-      if (props.disabled) {
-        return
-      }
-      show.value = !show.value
-    }
-    const createPopper = () => {
-      create()
-      update()
-    }
-    onClickOutside(toggleRef, () => {
-      show.value = false
-    }, { event: 'click' })
-    watch(show, () => {
-      if (show.value) {
-        nextTick(() => {
-          createPopper()
-        })
-        emit('visible-change', true)
-        return
-      }
-      remove()
-      emit('visible-change', false)
-    })
-
-    return {
-      toggleRef,
-      contentRef,
-      show,
-      toggleDropDown,
-    }
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  appendToBody: {
+    type: Boolean,
+    default: true
+  },
+  trigger: {
+    type: String,
+    default: 'click'
+  },
+  lazy: {
+    type: Boolean,
+    default: true
   }
+})
+
+const emit = defineEmits(['visible-change'])
+
+const toggleRef = ref(null)
+const contentRef = ref(null)
+const show = ref(false)
+const { create, remove, update } = usePopper(toggleRef, contentRef, props.option)
+const toggleDropDown = () => {
+  if (props.disabled) {
+    return
+  }
+  show.value = !show.value
+}
+const createPopper = () => {
+  create()
+  update()
+}
+onClickOutside(toggleRef, () => {
+  show.value = false
+}, { event: 'click' })
+watch(show, () => {
+  if (show.value) {
+    nextTick(() => {
+      createPopper()
+    })
+    emit('visible-change', true)
+    return
+  }
+  remove()
+  emit('visible-change', false)
 })
 </script>

@@ -15,51 +15,43 @@
 </teleport>
 </template>
 <script>
-import { computed, defineComponent } from 'vue'
+export default {
+  name: 'KNotification'
+}
+</script>
+<script setup>
+import { computed, defineProps } from 'vue'
 import KIcon from '@/components/Icon'
 import useNotificationStore from '@/store/useNotificationStore.js'
 
-export default defineComponent({
-  name: 'KNotification',
-  props: {
-    position: {
-      type: [String, Array],
-      default: 'top right'
-    },
-    closeOnClick: {
-      type: Boolean,
-      default: true,
-    },
-    group: {
-      type: String,
-      default: 'default',
-    }
+const props = defineProps({
+  position: {
+    type: [String, Array],
+    default: 'top right'
   },
-  setup(props) {
-    const positionClass = computed(() => {
-      if (typeof props.position === 'string') {
-        return [`k-notification--${props.position.split(/\s+/gi).join('-')}`]
-      }
-      return [`k-notification--${props.position.join('-')}`]
-    })
-    const store = useNotificationStore()
-    store.setGroup(props.group)
-    const events = computed(() => {
-      return store.groupEvents[props.group]
-    })
-    const removeEvent = (id, group) => {
-      store.removeItem(id, group)
-    }
-    return {
-      events,
-      positionClass,
-      removeEvent,
-    }
+  closeOnClick: {
+    type: Boolean,
+    default: true,
   },
-  components: {
-    KIcon,
+  group: {
+    type: String,
+    default: 'default',
   }
 })
+const positionClass = computed(() => {
+  if (typeof props.position === 'string') {
+    return [`k-notification--${props.position.split(/\s+/gi).join('-')}`]
+  }
+  return [`k-notification--${props.position.join('-')}`]
+})
+const store = useNotificationStore()
+store.setGroup(props.group)
+const events = computed(() => {
+  return store.groupEvents[props.group]
+})
+const removeEvent = (id, group) => {
+  store.removeItem(id, group)
+}
 </script>
 <style>
 .k-notification--top-right {

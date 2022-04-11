@@ -9,41 +9,37 @@
   </div>
 </template>
 <script>
-import KIcon from '@/components/Icon'
-import { inject, defineComponent } from 'vue'
 const orders = ['', 'desc', 'asc']
 function nextOrder(order) {
   const index = orders.findIndex((item) => item === order)
   return orders[(index + 1)%3]
 }
-export default defineComponent({
+export default {
   name: 'KFieldOrder',
-  props: {
-    column: {
-      type: Object,
-      required: true
-    },
-    order: {
-      type: String,
-      default: ''
-    }
+}
+</script>
+<script setup>
+import KIcon from '@/components/Icon'
+import { inject, defineProps } from 'vue'
+
+const props = defineProps({
+  column: {
+    type: Object,
+    required: true
   },
-  setup(props) {
-    const tableEmit = inject('tableEmit');
-    const columnStore = inject('columnStore')
-    const changeOrder = () => {
-      const order = nextOrder(props.order)
-      columnStore.action.updateColumnOrder(props.column.id, order)
-      tableEmit('order-change', props.column, order)
-    }
-    return {
-      changeOrder
-    }
-  },
-  components: {
-    KIcon,
+  order: {
+    type: String,
+    default: ''
   }
 })
+
+const tableEmit = inject('tableEmit');
+const columnStore = inject('columnStore')
+const changeOrder = () => {
+  const order = nextOrder(props.order)
+  columnStore.action.updateColumnOrder(props.column.id, order)
+  tableEmit('order-change', props.column, order)
+}
 </script>
 <style>
 .k-table__filed-order {

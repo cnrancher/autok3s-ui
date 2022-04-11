@@ -39,16 +39,23 @@
     </div>
   </div>
 </template>
+
 <script>
-import {ref, defineComponent} from 'vue'
-import Tooltip from '@/components/Tooltip'
-import KIcon from '@/components/Icon'
-import {useIdGenerator} from '@/utils/idGenerator.js'
-const getId = useIdGenerator(0, 'labeled-input_');
-export default defineComponent({
+import { useIdGenerator } from '@/utils/idGenerator.js'
+const getId = useIdGenerator(0, 'labeled-input_')
+
+export default {
   name: 'KInput',
   inheritAttrs: false,
-  props: {
+}
+</script>
+
+<script setup>
+import { ref, defineProps } from 'vue'
+import Tooltip from '@/components/Tooltip'
+import KIcon from '@/components/Icon'
+
+defineProps({
     label: {
       type: String,
       default: ''
@@ -80,25 +87,18 @@ export default defineComponent({
       type: Number,
       default: 2
     }
-  },
-  emits: ['update:modelValue'],
-  setup() {
-    const inputId = getId()
-    const inputRef = ref(null)
-    const focus = () => {
-      inputRef.value?.focus();
-    }
-    return {
-      inputId,
-      inputRef,
-      focus,
-    }
-  },
-  components: {
-    Tooltip,
-    KIcon,
-  }
 })
+
+const inputId = getId()
+const inputRef = ref(null)
+const focus = () => {
+  inputRef.value?.focus();
+}
+
+defineExpose({
+  focus
+})
+
 </script>
 <style>
 .k-input {

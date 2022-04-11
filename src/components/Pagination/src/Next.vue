@@ -5,42 +5,38 @@
   </div>
 </template>
 <script>
-import KIcon from '@/components/Icon'
-import { computed, defineComponent } from 'vue'
-export default defineComponent({
+export default {
   name: 'KNext',
-  props: {
-    currentPage: {
-      type: Number,
-      default: 1,
-    },
-    pageCount: {
-      type: Number,
-      requird: true
-    },
-    nextText: {
-      type: String,
-      default: '',
-    },
+}
+</script>
+<script setup>
+import KIcon from '@/components/Icon'
+import { computed, defineProps, defineEmits } from 'vue'
+
+const props = defineProps({
+  currentPage: {
+    type: Number,
+    default: 1,
   },
-  emits: ['change-current-page'],
-  setup(props, {emit}) {
-    const nextDisabled = computed(() => {
-      return props.currentPage >= props.pageCount
-    })
-    const goToNextPage = () => {
-      if (nextDisabled.value) {
-        return
-      }
-      emit('change-current-page', props.currentPage + 1)
-    }
-    return {
-      nextDisabled,
-      goToNextPage
-    }
+  pageCount: {
+    type: Number,
+    requird: true
   },
-  components: {
-    KIcon
-  }
+  nextText: {
+    type: String,
+    default: '',
+  },
 })
+
+const emit = defineEmits(['change-current-page'])
+
+const nextDisabled = computed(() => {
+  return props.currentPage >= props.pageCount
+})
+const goToNextPage = () => {
+  if (nextDisabled.value) {
+    return
+  }
+  emit('change-current-page', props.currentPage + 1)
+}
 </script>

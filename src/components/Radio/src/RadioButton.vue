@@ -18,53 +18,51 @@
   </label>
 </template>
 <script>
-import {computed, defineComponent, inject, ref} from 'vue'
-export default defineComponent({
+export default {
   name: 'KRadioButton',
-  props: {
-    modelValue: {
-      type: [String, Number, Boolean],
-      default: '',
-    },
-    label: {
-      type: [String, Number, Boolean],
-      default: '',
-    },
-    name: {
-      type: String,
-      default: '',
-    },
-    disabled: {
-      type: Boolean,
-      default: false
-    }
+}
+</script>
+<script setup>
+import {computed, inject, ref, defineProps, defineEmits} from 'vue'
+
+const props = defineProps({
+  modelValue: {
+    type: [String, Number, Boolean],
+    default: '',
   },
-  emits: ['update:modelValue'],
-  setup(props, {emit}) {
-    const radioRef = ref(null)
-    const group = inject('radioGroup')
-    const model = computed({
-      get() {
-        return group?.modelValue ?? props.modelValue
-      },
-      set(v) {
-        if (group) {
-          group.changeEvent(v)
-        } else {
-          emit('update:modelValue', v)
-        }
-        radioRef.value.checked = props.modelValue === props.label
-      }
-    })
-    const isDisabled = computed(() => {
-      return group?.disabled || props.disabled
-    })
-    return {
-      model,
-      isDisabled,
-      radioRef,
-    }
+  label: {
+    type: [String, Number, Boolean],
+    default: '',
+  },
+  name: {
+    type: String,
+    default: '',
+  },
+  disabled: {
+    type: Boolean,
+    default: false
   }
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+const radioRef = ref(null)
+const group = inject('radioGroup')
+const model = computed({
+  get() {
+    return group?.modelValue ?? props.modelValue
+  },
+  set(v) {
+    if (group) {
+      group.changeEvent(v)
+    } else {
+      emit('update:modelValue', v)
+    }
+    radioRef.value.checked = props.modelValue === props.label
+  }
+})
+const isDisabled = computed(() => {
+  return group?.disabled || props.disabled
 })
 </script>
 <style>

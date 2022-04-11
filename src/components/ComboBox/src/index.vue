@@ -44,10 +44,6 @@
   </div>
 </template>
 <script>
-import {computed, defineComponent, ref} from 'vue'
-import { Dropdown, DropdownMenuItem }from '@/components/Dropdown'
-import Tooltip from '@/components/Tooltip'
-import KIcon from '@/components/Icon'
 import {useIdGenerator} from '@/utils/idGenerator.js'
 const getId = useIdGenerator(0, 'combo-box_');
 const useMinWithModifier = (minWith = '200px') => {
@@ -61,86 +57,76 @@ const useMinWithModifier = (minWith = '200px') => {
     }
   }
 }
-export default defineComponent({
+
+export default {
   name: 'KComboBox',
   inheritAttrs: false,
-  props: {
-    placeholder: {
-      type: String,
-      default: 'Please Select...'
-    },
-    label: {
-      type: String,
-      default: ''
-    },
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    modelValue: {
-      type: [String, Number, Boolean]
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-    class: {
-      type: [Array, String, Object]
-    },
-    desc: {
-      type: String,
-      default: ''
-    },
-    options: {
-      type: Array,
-      default() {
-        return []
-      }
-    }
+}
+</script>
+<script setup>
+import { defineProps, defineEmits, useSlots } from 'vue'
+import { Dropdown, DropdownMenuItem }from '@/components/Dropdown'
+import Tooltip from '@/components/Tooltip'
+import KIcon from '@/components/Icon'
+
+defineProps({
+  placeholder: {
+    type: String,
+    default: 'Please Select...'
   },
-  emits: ['update:modelValue'],
-  setup(props, {emit, slots}) {
-    // const filteredOptions = computed(() => {
-    //   if (!props.modelValue) {
-    //     return props.options
-    //   }
-    //   return props.options.filter((v) => props.modelValue.indexOf(v) > -1)
-    // })
-    const inputId = getId()
-    const setValue = (v) => {
-      emit('update:modelValue', v)
-    }
-    const minWithModifier = useMinWithModifier()
-    const popperOption = {
-      modifiers: [
-        {
-          name: 'offset',
-          options: {
-            offset: [slots.prefix ? 0 : -10, 8],
-          },
-        },
-        minWithModifier,
-      ],
-      placement: 'bottom-start'
-    }
-    return {
-      inputId,
-      setValue,
-      popperOption,
-      // filteredOptions,
-    }
+  label: {
+    type: String,
+    default: ''
   },
-  components: {
-    Dropdown,
-    DropdownMenuItem,
-    Tooltip,
-    KIcon,
+  required: {
+    type: Boolean,
+    default: false,
+  },
+  modelValue: {
+    type: [String, Number, Boolean]
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  class: {
+    type: [Array, String, Object]
+  },
+  desc: {
+    type: String,
+    default: ''
+  },
+  options: {
+    type: Array,
+    default() {
+      return []
+    }
   }
 })
+
+const emit = defineEmits(['update:modelValue'])
+const slots = useSlots()
+const inputId = getId()
+const setValue = (v) => {
+  emit('update:modelValue', v)
+}
+const minWithModifier = useMinWithModifier()
+const popperOption = {
+  modifiers: [
+    {
+      name: 'offset',
+      options: {
+        offset: [slots.prefix ? 0 : -10, 8],
+      },
+    },
+    minWithModifier,
+  ],
+  placement: 'bottom-start'
+}
 </script>
 <style>
 .k-combo-box {

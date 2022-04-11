@@ -27,7 +27,7 @@
         class="cursor-pointer overflow-ellipsis focus-visible:outline-none bg-transparent"
         :class="[!label ? 'py-10.5px px-0' : '', visible ? 'text-warm-gray-400' : '']"
         :id="inputId" v-bind="$attrs"
-        :value="selectedLabel"
+        :value="selectedOption?.label"
         :placeholder="placeholder"
         >
       <k-icon v-if="loading" type="loading"></k-icon>
@@ -42,13 +42,8 @@
   </div>
 </template>
 <script>
-import {computed, defineComponent, nextTick, provide, watch, ref} from 'vue'
 import {useIdGenerator} from '@/utils/idGenerator.js'
-import { Dropdown }from '@/components/Dropdown'
-import KIcon from '@/components/Icon'
-import KTag from '@/components/Tag'
-import Tooltip from '@/components/Tooltip'
-import useStore from './store/useStore.js'
+
 const getId = useIdGenerator(0, 'labeled-select_');
 const useMinWithModifier = (minWith = '200px') => {
   return {
@@ -61,140 +56,119 @@ const useMinWithModifier = (minWith = '200px') => {
     }
   }
 }
-export default defineComponent({
+
+export default {
   name: 'KSelect',
   inheritAttrs: false,
-  props: {
-    placeholder: {
-      type: String,
-      default: 'Please Select...'
-    },
-    label: {
-      type: String,
-      default: ''
-    },
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    multiple: {
-      type: Boolean,
-      default: false,
-    },
-    modelValue: {
-      type: [String, Number, Boolean, Array]
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-    class: {
-      type: [Array, String, Object]
-    },
-    desc: {
-      type: String,
-      default: ''
-    },
-  },
-  emits: ['update:modelValue', 'change'],
-  setup(props, {emit, slots}) {
-    const selectStore = useStore()
-    provide('selectStore', selectStore)
-    provide('multiple', props.multiple)
-    const inputId = getId()
-    const selectedLabel = computed(() => {
-      return selectStore.getter.activeOption?.label
-    })
-    const selectdOptions = computed(() => {
-      return selectStore.getter.activeOptions
-    })
-    watch(() => props.loading, (loading) => {
-      if (props.modelValue !== undefined && !loading ) {
-        nextTick(() => {
-          const result = props.multiple ? selectStore.action.setValues([...props.modelValue]) : selectStore.action.setValue(props.modelValue)
-          if (!result) {
-            emit('update:modelValue', null)
-          }
-        })
-      }
-    }, {
-      immediate: true
-    })
+}
+</script>
 
-    watch(() => selectStore.state.value, (value) => {
-      if (value === props.modelValue) {
-        return
-      }
-      emit('change', value)
-      emit('update:modelValue', value)
-    })
-    watch(() => selectStore.state.values, (values) => {
-      if (values?.length === props.modelValue?.length && values?.every((v) => props.modelValue?.includes(v))) {
-        return
-      }
-      emit('change', [...values])
-      emit('update:modelValue', [...values])
-    }, {
-      deep: true
-    })
-    watch(() => props.modelValue, (modelValue) => {
-      if (props.loading) {
-        return
-      }
-      if (props.multiple) {
-        const values = selectStore.state.values
-        if (values?.length !== modelValue?.length || values?.some((v) => !modelValue?.includes(v))) {
-          selectStore.action.setValues([...modelValue])
-        }
-        return
-      }
-      if (modelValue !== selectStore.state.value) {
-        selectStore.action.setValue(modelValue)
-        return
-      }
-    })
-    const minWithModifier = useMinWithModifier()
-    const popperOption = {
-      modifiers: [
-        {
-          name: 'offset',
-          options: {
-            offset: [slots.prefix ? 0 : -10, 8],
-          },
-        },
-        minWithModifier,
-      ],
-      placement: 'bottom-start'
-    }
-    const removeOption = (v) => {
-      selectStore.action.setValues([v])
-    }
+<script setup>
+import { computed, provide, watch, ref, defineProps, defineEmits, useSlots, nextTick } from 'vue'
 
-    const visible = ref(false)
-    const handleVisibleChange = (v) => {
-      visible.value = v
-    }
-    return {
-      inputId,
-      selectedLabel,
-      selectdOptions,
-      popperOption,
-      removeOption,
-      visible,
-      handleVisibleChange
-    }
+import { Dropdown }from '@/components/Dropdown'
+import KIcon from '@/components/Icon'
+import KTag from '@/components/Tag'
+import Tooltip from '@/components/Tooltip'
+import useStore from './store/useStore.js'
+
+const props = defineProps({
+  placeholder: {
+    type: String,
+    default: 'Please Select...'
   },
-  components: {
-    Dropdown,
-    KIcon,
-    Tooltip,
-    KTag,
-  }
+  label: {
+    type: String,
+    default: ''
+  },
+  required: {
+    type: Boolean,
+    default: false,
+  },
+  multiple: {
+    type: Boolean,
+    default: false,
+  },
+  modelValue: {
+    type: [String, Number, Boolean, Array]
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  class: {
+    type: [Array, String, Object]
+  },
+  desc: {
+    type: String,
+    default: ''
+  },
 })
+
+const emit = defineEmits(['update:modelValue', 'change'])
+const slots = useSlots()
+const selectStore = useStore()
+provide('selectStore', selectStore)
+provide('multiple', props.multiple)
+provide('selectEmit', emit)
+const inputId = getId()
+const selectdOptions = computed(() => {
+  return selectStore.getter.activeOptions
+})
+const selectedOption = computed(() => {
+  return selectStore.getter.activeOption
+})
+
+watch([() => props.modelValue, () => props.loading], ([modelValue, loading]) => {
+  if (loading)  {
+    return
+  }
+  nextTick(() => {
+    if (props.multiple) {
+      const values = selectStore.state.values
+      if (values?.length !== modelValue?.length || values?.some((v) => !modelValue?.includes(v))) {
+        selectStore.action.setValues([...modelValue])
+      }
+      return
+    }
+    if (modelValue !== selectStore.state.value) {
+      selectStore.action.setValue(modelValue)
+      return
+    }
+  })
+}, {
+  immediate: true
+})
+
+const minWithModifier = useMinWithModifier()
+const popperOption = {
+  modifiers: [
+    {
+      name: 'offset',
+      options: {
+        offset: [slots.prefix ? 0 : -10, 8],
+      },
+    },
+    minWithModifier,
+  ],
+  placement: 'bottom-start'
+}
+const removeOption = (v) => {
+  const values = [...props.modelValue]
+  const i = values.indexOf(v)
+  values.splice(i, 1)
+  emit('change', values)
+  emit('update:modelValue', values)
+}
+
+const visible = ref(false)
+const handleVisibleChange = (v) => {
+  visible.value = v
+}
 </script>
 <style>
 

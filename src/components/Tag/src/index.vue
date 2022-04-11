@@ -6,35 +6,33 @@
   </span>
 </template>
 <script>
-import { computed, defineComponent } from 'vue'
-export default defineComponent({
+export default {
   name: 'KTag',
-  props: {
-    size: {
-      type: String,
-      default: 'mini'
-    },
-    color: {
-      type: String,
-      default: ''
-    },
-    type: {
-      type: String,
-      default: 'info'
-    }
+}
+</script>
+<script setup>
+import { computed, defineProps } from 'vue'
+
+const props = defineProps({
+  size: {
+    type: String,
+    default: 'mini'
   },
-  setup(props) {
-    const classes = computed(() => {
-      const {type, size} = props
-      return [
-        `k-tag--${type}`,
-        size ? `k-tag--${size}`:''
-      ]
-    })
-    return {
-      classes
-    }
+  color: {
+    type: String,
+    default: ''
+  },
+  type: {
+    type: String,
+    default: 'info'
   }
+})
+const classes = computed(() => {
+  const {type, size} = props
+  return [
+    `k-tag--${type}`,
+    size ? `k-tag--${size}`:''
+  ]
 })
 </script>
 <style>

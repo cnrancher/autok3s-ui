@@ -6,54 +6,61 @@
   </dropdown-menu-item>
 </template>
 <script>
-import {defineComponent, inject, getCurrentInstance, onBeforeUnmount, computed, onMounted} from 'vue'
-import { DropdownMenuItem }from '@/components/Dropdown'
-export default defineComponent({
+export default {
   name: 'KOption',
-  props: {
-    label: {
-      type: String,
-      required: true
-    },
-    value: {
-      type: [String, Number, Boolean],
-      required: true
-    }
+}
+</script>
+<script setup>
+import { inject, getCurrentInstance, onBeforeUnmount, computed, defineProps } from 'vue'
+import { DropdownMenuItem }from '@/components/Dropdown'
+
+defineProps({
+  label: {
+    type: String,
+    required: true
   },
-  setup() {
-    const selectStore = inject('selectStore')
-    const multiple = inject('multiple')
-    if (!selectStore) {
-      console.warn('selectStore not provide')
-      return
-    }
-    const currentOption = getCurrentInstance().proxy
-    selectStore.action.addOption(currentOption)
-    onBeforeUnmount(() => {
-      selectStore.action.removeOption(currentOption)
-    })
-    const currentValue = computed(() => {
-      if (multiple) {
-        return selectStore.state.values ?? []
-      }
-      return [selectStore.state.value]
-    })
-    const setValue = (e) => {
-      if (multiple) {
-        e.stopPropagation()
-        selectStore.action.setValues([currentOption.value])
-      } else {
-        selectStore.action.setValue(currentOption.value)
-      }
-      
-    }
-    return {
-      currentValue,
-      setValue,
-    }
-  },
-  components: {
-    DropdownMenuItem,
+  value: {
+    type: [String, Number, Boolean],
+    required: true
   }
 })
+
+const selectStore = inject('selectStore')
+const multiple = inject('multiple')
+const selectEmit = inject('selectEmit')
+if (!selectStore) {
+  console.warn('selectStore not provide')
+}
+const currentOption = getCurrentInstance().proxy
+selectStore.action.addOption(currentOption)
+onBeforeUnmount(() => {
+  selectStore.action.removeOption(currentOption)
+})
+const currentValue = computed(() => {
+  if (multiple) {
+    return selectStore.state.values ?? []
+  }
+  return [selectStore.state.value]
+})
+const setValue = (e) => {
+  if (multiple) {
+    e.stopPropagation()
+    const i = currentValue.value.indexOf(currentOption.value)
+    const v = currentValue.value.slice()
+    if (i > -1) {
+      v.splice(i, 1)
+      selectEmit('change', v)
+      selectEmit('update:modelValue', v)
+    } else {
+      v.push(currentOption.value)
+      selectEmit('change', v)
+      selectEmit('update:modelValue', v)
+    }
+  } else {
+    selectEmit('change', currentOption.value)
+    selectEmit('update:modelValue', currentOption.value)
+  }
+  
+}
+
 </script>

@@ -1,52 +1,47 @@
 <template>
   <div class="k-alert" v-show="visible" :class="typeClass">
     <div class="k-alert__title"><slot>{{title}}</slot></div>
-    <div class="k-alert__close" v-if="closable"><k-icon type="close"></k-icon></div>
+    <div class="k-alert__close" v-if="closable"><k-icon type="close" @click="close"></k-icon></div>
     <div class="k-alert-desc" v-if="description">{{description}}</div>
   </div>
 </template>
 <script>
-import {computed, defineComponent, ref} from 'vue'
-import KIcon from '@/components/Icon'
-export default defineComponent({
+export default {
   name: 'KAlert',
-  props: {
-    title: {
-      type: String,
-      default: '',
-    },
-    closable: {
-      type: Boolean,
-      default: false
-    },
-    description: {
-      type: String,
-      default: ''
-    },
-    type: {
-      type: String,
-      default: 'success'
-    }
-  },
-  emits: ['close'],
-  setup(props, {emit}) {
-    const visible = ref(true)
+}
+</script>
+<script setup>
+import { computed, ref, defineProps, defineEmits } from 'vue'
+import KIcon from '@/components/Icon'
 
-    const close = (e) => {
-      visible.value = false
-      emit('close', e)
-    }
-    const typeClass = computed(() => `k-alert--${props.type}`)
-    return {
-      visible,
-      close,
-      typeClass,
-    }
+const props = defineProps({
+  title: {
+    type: String,
+    default: '',
   },
-  components: {
-    KIcon
+  closable: {
+    type: Boolean,
+    default: false
+  },
+  description: {
+    type: String,
+    default: ''
+  },
+  type: {
+    type: String,
+    default: 'success'
   }
 })
+
+const emit = defineEmits(['close'])
+
+const visible = ref(true)
+
+const close = (e) => {
+  visible.value = false
+  emit('close', e)
+}
+const typeClass = computed(() => `k-alert--${props.type}`)
 </script>
 <style>
 .k-alert {

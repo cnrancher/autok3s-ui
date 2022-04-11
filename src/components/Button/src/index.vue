@@ -5,31 +5,27 @@
   </button>
 </template>
 <script>
-import {computed, defineComponent} from 'vue'
-import KIcon from '@/components/Icon'
-export default defineComponent({
+export default {
   name: 'KButton',
-  props: {
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    }
-  },
-  setup(props) {
-    const btnDisabled = computed(() => {
-      return props.disabled || props.loading
-    })
+}
+</script>
+<script setup>
+import { computed, defineProps } from 'vue'
+import KIcon from '@/components/Icon'
 
-    return {
-      btnDisabled
-    }
+const props = defineProps({
+  loading: {
+    type: Boolean,
+    default: false,
   },
-  components: {
-    KIcon,
+  disabled: {
+    type: Boolean,
+    default: false,
   }
 })
+
+const btnDisabled = computed(() => {
+  return props.disabled || props.loading
+})
+
 </script>
