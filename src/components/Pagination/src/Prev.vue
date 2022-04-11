@@ -5,38 +5,33 @@
   </div>
 </template>
 <script>
-import KIcon from '@/components/Icon'
-import { computed, defineComponent } from 'vue'
-export default defineComponent({
+export default {
   name: 'KPrev',
-  props: {
-    currentPage: {
-      type: Number,
-      default: 1,
-    },
-    prevText: {
-      type: String,
-      default: '',
-    },
+}
+</script>
+<script setup>
+import KIcon from '@/components/Icon'
+import { computed, defineProps, defineEmits } from 'vue'
+
+const props = defineProps({
+  currentPage: {
+    type: Number,
+    default: 1,
   },
-  emits: ['change-current-page'],
-  setup(props, {emit}) {
-    const prevDisabled = computed(() => {
-      return props.currentPage <= 1
-    })
-    const goToPrevPage = () => {
-      if (prevDisabled.value) {
-        return
-      }
-      emit('change-current-page', props.currentPage - 1)
-    }
-    return {
-      prevDisabled,
-      goToPrevPage
-    }
+  prevText: {
+    type: String,
+    default: '',
   },
-  components: {
-    KIcon
-  }
 })
+
+const emit = defineEmits(['change-current-page'])
+const prevDisabled = computed(() => {
+  return props.currentPage <= 1
+})
+const goToPrevPage = () => {
+  if (prevDisabled.value) {
+    return
+  }
+  emit('change-current-page', props.currentPage - 1)
+}
 </script>

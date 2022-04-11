@@ -9,18 +9,18 @@
   </div>
 </template>
 <script>
-import {defineComponent} from 'vue'
-import KIcon from '@/components/Icon'
-export default defineComponent({
+export default {
   name: 'KLoading',
-  props: {
-    loading: {
-      type: Boolean,
-      default: true
-    }
-  },
-  components: {
-    KIcon,
+}
+</script>
+<script setup>
+import { defineProps } from 'vue'
+import KIcon from '@/components/Icon'
+
+defineProps({
+  loading: {
+    type: Boolean,
+    default: true
   }
 })
 </script>

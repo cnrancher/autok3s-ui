@@ -6,37 +6,40 @@
   </div>
 </template>
 <script>
-import {defineComponent, inject, nextTick, provide, reactive, toRefs} from 'vue'
-export default defineComponent({
+export default {
   name: 'KRadioGroup',
-  props: {
-    modelValue: {
-      type: [String, Number, Boolean],
-      default: '',
-    },
-    horizontal: {
-      type: Boolean,
-      default: true
-    },
-    disabled: {
-      type: Boolean,
-      default: false
-    },
+}
+</script>
+<script setup>
+import { nextTick, provide, reactive, toRefs, defineProps, defineEmits} from 'vue'
+
+const props = defineProps({
+  modelValue: {
+    type: [String, Number, Boolean],
+    default: '',
   },
-  emits: ['update:modelValue', 'change'],
-  setup(props, {emit}) {
-    const changeEvent = (v) => {
-      emit('update:modelValue', v)
-      nextTick(() => {
-        emit('change', v)
-      })
-    }
-    provide('radioGroup', reactive({
-      ...toRefs(props),
-      changeEvent
-    }))
-  }
+  horizontal: {
+    type: Boolean,
+    default: true
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
 })
+
+const emit = defineEmits(['update:modelValue', 'change'])
+
+const changeEvent = (v) => {
+    emit('update:modelValue', v)
+    nextTick(() => {
+      emit('change', v)
+    })
+  }
+  provide('radioGroup', reactive({
+    ...toRefs(props),
+    changeEvent
+  }))
 </script>
 <style>
 .k-radio-group > label:first-child, .k-radio-group > div:first-child{

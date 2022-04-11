@@ -1,6 +1,6 @@
 // state
 
-import { computed, onBeforeUnmount, reactive, readonly } from "vue"
+import { computed, reactive, readonly } from "vue"
 
 // state
 export function createStore() {
@@ -54,14 +54,7 @@ function setValues(state) {
     }
     const option = values.every((item) => state.options.find((o) => o.value === item))
     if (option) {
-      values.forEach((v) => {
-        const i = state.values?.indexOf(v)
-        if (i > -1) {
-          state.values.splice(i, 1)
-        } else {
-          state.values.push(v)
-        }
-      })
+      state.values = [...values]
       return true
     }
     return false

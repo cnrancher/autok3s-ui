@@ -10,42 +10,37 @@
   </div>
 </template>
 <script>
-import {computed, defineComponent, inject, ref} from 'vue'
-import KIcon from '@/components/Icon'
 import useIdGenerator from '@/composables/useIdGenerator.js'
 
 const {next: nextId} = useIdGenerator()
 const prefix = 'collapse_item_'
 
-export default defineComponent({
+export default {
   name: 'KCollapseItem',
-  props: {
-    title: {
-      type: String,
-      default: '',
-    },
-    name: {
-      type: [String, Number],
-      default() {
-        return `${prefix}${nextId()}`
-      },
+}
+</script>
+<script setup>
+import { computed, inject, defineProps } from 'vue'
+import KIcon from '@/components/Icon'
+
+const props = defineProps({
+  title: {
+    type: String,
+    default: '',
+  },
+  name: {
+    type: [String, Number],
+    default() {
+      return `${prefix}${nextId()}`
     },
   },
-  setup(props) {
-    const activeNames = inject('activeNames')
-    const active = computed(() => {
-      return activeNames.value.indexOf(props.name) > -1
-    })
-    const toggleActiveName = inject('toggleActiveName')
-    return {
-      active,
-      toggleActiveName,
-    }
-  },
-  components: {
-    KIcon,
-  }
 })
+
+const activeNames = inject('activeNames')
+const active = computed(() => {
+  return activeNames.value.indexOf(props.name) > -1
+})
+const toggleActiveName = inject('toggleActiveName')
 </script>
 <style>
 .k-collapse-item:last-child {

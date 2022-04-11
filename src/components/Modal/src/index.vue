@@ -22,37 +22,32 @@
   </teleport>
 </template>
 <script>
-import { ref, watchEffect, defineComponent } from 'vue'
-import KIcon from '@/components/Icon'
-export default defineComponent({
+export default {
   name: 'KModal',
-  props: {
-    modelValue: {
-      type: Boolean,
-      required: true,
-    },
-    showClose: {
-      type: Boolean,
-      default: false,
-    }
+}
+</script>
+<script setup>
+import { ref, watchEffect, defineProps, defineEmits } from 'vue'
+import KIcon from '@/components/Icon'
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
   },
-  emits: ['update:modelValue'],
-  setup(props, context) {
-    const {emit} = context
-    const visible = ref(false)
-    watchEffect(() => {
-      visible.value = props.modelValue
-    })
-    const close = () => {
-      emit('update:modelValue', false)
-    }
-    return {
-      visible,
-      close,
-    }
-  },
-  components: {
-    KIcon,
+  showClose: {
+    type: Boolean,
+    default: false,
   }
 })
+
+const emit = defineEmits(['update:modelValue'])
+
+const visible = ref(false)
+watchEffect(() => {
+  visible.value = props.modelValue
+})
+const close = () => {
+  emit('update:modelValue', false)
+}
 </script>

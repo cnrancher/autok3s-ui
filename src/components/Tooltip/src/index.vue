@@ -15,94 +15,89 @@
   </div>
 </template>
 <script>
-import {defineComponent, nextTick, onBeforeUnmount, ref, watch} from 'vue'
-import usePopper from '@/composables/usePopper.js'
-export default defineComponent({
+export default {
   name: 'KTooltip',
-  props: {
-    option: {
-      type: Object,
-      default() {
-        return {
-          placement: 'top',
-          modifiers: [
-            {
-              name: 'offset',
-              options: {
-                offset: [0, 8],
-              },
+}
+</script>
+<script setup>
+import {defineComponent, nextTick, onBeforeUnmount, ref, watch, defineProps} from 'vue'
+import usePopper from '@/composables/usePopper.js'
+
+const props = defineProps({
+  option: {
+    type: Object,
+    default() {
+      return {
+        placement: 'top',
+        modifiers: [
+          {
+            name: 'offset',
+            options: {
+              offset: [0, 8],
             },
-          ],
-        }
+          },
+        ],
       }
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    appendToBody: {
-      type: Boolean,
-      default: false
-    },
-    lazy: {
-      type: Boolean,
-      default: true
-    },
-    delay: {
-      type: Number,
-      default: 500
     }
   },
-  setup(props) {
-    const trigger = ref(null)
-    const popover = ref(null)
-    const show = ref(false)
-    let timer = null
-    const {create, remove, update} = usePopper(trigger, popover, props.option)
-
-    const removeTimer = () => {
-      if (timer) {
-       window.clearTimeout(timer)
-       timer = null
-      }
-    }
-    const createTooltip = () => {
-      create()
-      update()
-    }
- 
-    watch(show, () => {
-      if (show.value) {
-        nextTick(() => {
-          createTooltip()
-        })
-        return
-      }
-      remove()
-    })
-    const showTooltip = () => {
-      removeTimer()
-      show.value = true
-    }
-    const hideTooltip = () => {
-      removeTimer()
-      if (props.delay <= 0) {
-        show.value = false
-      } else {
-        timer = setTimeout(() => {
-          show.value = false
-        }, props.delay)
-      }
-    }
-    return {
-      trigger,
-      popover,
-      showTooltip,
-      hideTooltip,
-      show,
-    }
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  appendToBody: {
+    type: Boolean,
+    default: false
+  },
+  lazy: {
+    type: Boolean,
+    default: true
+  },
+  delay: {
+    type: Number,
+    default: 500
   }
 })
+
+const trigger = ref(null)
+const popover = ref(null)
+const show = ref(false)
+let timer = null
+const {create, remove, update} = usePopper(trigger, popover, props.option)
+
+const removeTimer = () => {
+  if (timer) {
+    window.clearTimeout(timer)
+    timer = null
+  }
+}
+const createTooltip = () => {
+  create()
+  update()
+}
+
+watch(show, () => {
+  if (show.value) {
+    nextTick(() => {
+      createTooltip()
+    })
+    return
+  }
+  remove()
+})
+const showTooltip = () => {
+  removeTimer()
+  show.value = true
+}
+const hideTooltip = () => {
+  removeTimer()
+  if (props.delay <= 0) {
+    show.value = false
+  } else {
+    timer = setTimeout(() => {
+      show.value = false
+    }, props.delay)
+  }
+}
 </script>
 <style>
 .k-tooltip__arrow,

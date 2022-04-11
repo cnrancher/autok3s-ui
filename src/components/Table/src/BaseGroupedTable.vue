@@ -33,103 +33,93 @@
   </div>
 </template>
 <script>
+export default {
+  name: 'KBaseGroupedTable',
+}
+</script>
+<script setup>
 import TableHeader from './TableHeader.vue'
 import TableBody from './TableBody.vue'
 import useColumnStore from './store/useColumnStore.js'
 import useDataStore from './store/useDataStore.js'
-import { computed, watchEffect, toRefs, defineComponent, provide } from 'vue'
-
+import { computed, watchEffect, toRefs, provide, defineProps, defineEmits } from 'vue'
 const tableStatus = {loading: 'Loading', loaded: '', error: 'Load Data Failed', noResults: 'No Result', noData: 'There are no rows to show.'}
-export default defineComponent({
-  name: 'KBaseGroupedTable',
-  props: {
-    caption: {
-      type: String,
-      default: '',
-    },
-    showHeader: {
-      type: Boolean,
-      default: true,
-    },
-    data: { // [{group, children, state}]
-      type: Array,
-      required: true
-    },
-    groupBy: {
-      type: String,
-      default: ''
-    },
-    groupStatus: {
-      type: Object,
-      default() {
-        return {}
-      }
-    }
-  },
-  emits: ['selection-change', 'row-click', 'cell-click', 'select', 'select-all', 'order-change'],
-  setup(props, context) {
-    const {emit} = context
-    const {data} = toRefs(props)
-    
-    const getStatusClass = (state) => { // loading, loaded, noResults, noData, error
-      return Object.keys(tableStatus).reduce((t, c) => {
-        t[`k-table-status--${c}`] = state === c
-        return t
-      }, {})
-    }
-    const columnStore = useColumnStore()
-    const dataStore = useDataStore()
-    const selectedRows = computed(() => {
-      return [...dataStore.state.selection]
-        .map((id) => dataStore.state.data.find((item) => item.id === id))
-    })
-    watchEffect(() => {
-      dataStore.action.initState(data.value?.reduce((t, c) => {
-        t.push(...(c.children ?? []))
 
-        return t
-      }, []))
-    })
-    watchEffect(() => {
-      emit('selection-change', selectedRows.value)
-    })
-    provide('dataStore', dataStore)
-    provide('columnStore', columnStore)
-    provide('tableEmit', emit)
-    const columns = computed(() => {
-      return props.groupBy ? columnStore.state.columns.filter((c) => c.field !== props.groupBy) : columnStore.state.columns
-    })
-    const hasSelection = computed(() => {
-      return columns.some((c) => c.type === 'selection')
-    })
-    const getColStyle = (col) => {
-      if (col.type === 'selection') {
-        return {
-          width: '30px'
-        }
-      }
-      if (col.width) {
-        const w = `${parseFloat(col.width, 10)}px`
-        return {
-          width: w
-        }
-      }
+const props = defineProps({
+  caption: {
+    type: String,
+    default: '',
+  },
+  showHeader: {
+    type: Boolean,
+    default: true,
+  },
+  data: { // [{group, children, state}]
+    type: Array,
+    required: true
+  },
+  groupBy: {
+    type: String,
+    default: ''
+  },
+  groupStatus: {
+    type: Object,
+    default() {
       return {}
     }
-    return {
-      tableStatus,
-      columns,
-      hasSelection,
-      getStatusClass,
-      getColStyle,
-    }
-  },
-  components: {
-    TableHeader,
-    TableBody
   }
 })
+
+const emit = defineEmits(['selection-change', 'row-click', 'cell-click', 'select', 'select-all', 'order-change'])
+const {data} = toRefs(props)
+    
+const getStatusClass = (state) => { // loading, loaded, noResults, noData, error
+  return Object.keys(tableStatus).reduce((t, c) => {
+    t[`k-table-status--${c}`] = state === c
+    return t
+  }, {})
+}
+const columnStore = useColumnStore()
+const dataStore = useDataStore()
+const selectedRows = computed(() => {
+  return [...dataStore.state.selection]
+    .map((id) => dataStore.state.data.find((item) => item.id === id))
+})
+watchEffect(() => {
+  dataStore.action.initState(data.value?.reduce((t, c) => {
+    t.push(...(c.children ?? []))
+
+    return t
+  }, []))
+})
+watchEffect(() => {
+  emit('selection-change', selectedRows.value)
+})
+provide('dataStore', dataStore)
+provide('columnStore', columnStore)
+provide('tableEmit', emit)
+const columns = computed(() => {
+  return props.groupBy ? columnStore.state.columns.filter((c) => c.field !== props.groupBy) : columnStore.state.columns
+})
+const hasSelection = computed(() => {
+  return columns.some((c) => c.type === 'selection')
+})
+const getColStyle = (col) => {
+  if (col.type === 'selection') {
+    return {
+      width: '30px'
+    }
+  }
+  if (col.width) {
+    const w = `${parseFloat(col.width, 10)}px`
+    return {
+      width: w
+    }
+  }
+  return {}
+}
 </script>
+
 <style>
 .k-table {
   @apply bg-warm-gray-100 w-full border-collapse min-w-400px overflow-hidden;

@@ -10,67 +10,50 @@
   </div>
 </template>
 <script>
+export default {
+  name: 'KTabs',
+}
+</script>
+<script setup>
 import KTabNav from './TabNav.vue'
-import KTabPane from './TabPane.vue'
 
-import { computed, provide, watch, watchEffect, defineComponent } from 'vue'
+import { computed, provide, watchEffect, defineProps, defineEmits } from 'vue'
 import useTabsStore from './store/useTabsStore.js'
 
-export default defineComponent({
-  name: 'KTabs',
-  props: {
-    closable: {
-      type: Boolean,
-      default: false,
-    },
-    tabPosition: {
-      type: String,
-      default: 'top', // 'top', 'bottom', 'left', 'right'
-    },
-    modelValue: {
-      default: null,
-      type: [String, Number]
-    }
+const props = defineProps({
+  closable: {
+    type: Boolean,
+    default: false,
   },
-  emits: ['update:modelValue', 'tab-remove', 'tab-click'],
-  setup(props, {emit}) {
-    const tabsStore = useTabsStore()
-    tabsStore.action.setClosable(props.closable)
-    provide('tabsStore', tabsStore)
-    provide('tabsEmit', emit)
-    const tabsClass = computed(() => {
-      return [`k-tabs--${props.tabPosition}`]
-    })
-    // watch([() => props.modelValue, () => tabsStore.state.active, () => tabsStore.state.tabs.length], ([v, active, len]) => {
-    //   if (v === null && active === null && len > 0) {
-    //     tabsStore.action.setActiveTab(tabsStore.state.tabs[0].id)
-    //   }
-    //   if (v) {
-    //     const id = tabsStore.state.tabs.find((t) => t.name === v)?.id
-    //     tabsStore.action.setActiveTab(id)
-    //   }
-    // })
-    watchEffect(() => {
-      if (props.modelValue === null && tabsStore.state.active === null && tabsStore.state.tabs.length > 0) {
-        tabsStore.action.setActiveTab(tabsStore.state.tabs[0].id)
-        return
-      }
-      if (props.modelValue === tabsStore.state.active) {
-        return
-      }
-      if (props.modelValue) {
-        const id = tabsStore.state.tabs.find((t) => t.name === props.modelValue)?.id
-        tabsStore.action.setActiveTab(id)
-      }
-    })
-    return {
-      tabsClass,
-      tabs: tabsStore.state.data
-    }
+  tabPosition: {
+    type: String,
+    default: 'top', // 'top', 'bottom', 'left', 'right'
   },
-  components: {
-    KTabNav,
-    KTabPane
+  modelValue: {
+    default: null,
+    type: [String, Number]
+  }
+})
+
+const emit = defineEmits(['update:modelValue', 'tab-remove', 'tab-click'])
+const tabsStore = useTabsStore()
+tabsStore.action.setClosable(props.closable)
+provide('tabsStore', tabsStore)
+provide('tabsEmit', emit)
+const tabsClass = computed(() => {
+  return [`k-tabs--${props.tabPosition}`]
+})
+watchEffect(() => {
+  if (props.modelValue === null && tabsStore.state.active === null && tabsStore.state.tabs.length > 0) {
+    tabsStore.action.setActiveTab(tabsStore.state.tabs[0].id)
+    return
+  }
+  if (props.modelValue === tabsStore.state.active) {
+    return
+  }
+  if (props.modelValue) {
+    const id = tabsStore.state.tabs.find((t) => t.name === props.modelValue)?.id
+    tabsStore.action.setActiveTab(id)
   }
 })
 </script>
