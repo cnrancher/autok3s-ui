@@ -22,7 +22,7 @@
         </template>
       </template>
     </base-grouped-table>
-    <pagination v-if="showPagination" :total="total" v-model:current-change="currentPage"></pagination>
+    <pagination v-if="showPagination" :total="total" v-model:current-page="currentPage" :page-size="pageSize"></pagination>
   </div>
 </template>
 <script>
@@ -117,7 +117,7 @@ const onOrderChange = (column, order) => {
 const onSelectionChange = (rows) => {
   emit('selection-change', rows)
 }
-const {pageData, currentPage, total, pageCount } = usePagination(dataOrder)
+const {pageData, currentPage, total, pageSize } = usePagination(dataOrder)
 
 const tableData = computed(() => {
   if (props.showPagination) {
