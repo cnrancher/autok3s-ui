@@ -27,7 +27,7 @@ export default {
 }
 </script>
 <script setup>
-import { ref, watchEffect, defineProps, defineEmits } from 'vue'
+import { ref, watchEffect } from 'vue'
 import KIcon from '@/components/Icon'
 
 const props = defineProps({

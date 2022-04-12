@@ -11,7 +11,7 @@ export default {
 }
 </script>
 <script setup>
-import { computed, ref, defineProps, defineEmits } from 'vue'
+import { computed, ref  } from 'vue'
 import KIcon from '@/components/Icon'
 
 const props = defineProps({

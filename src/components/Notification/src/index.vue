@@ -20,7 +20,7 @@ export default {
 }
 </script>
 <script setup>
-import { computed, defineProps } from 'vue'
+import { computed } from 'vue'
 import KIcon from '@/components/Icon'
 import useNotificationStore from '@/store/useNotificationStore.js'
 

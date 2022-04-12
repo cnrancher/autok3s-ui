@@ -11,7 +11,7 @@ export default {
 }
 </script>
 <script setup>
-import { nextTick, provide, reactive, toRefs, defineProps, defineEmits} from 'vue'
+import { nextTick, provide, reactive, toRefs } from 'vue'
 
 const props = defineProps({
   modelValue: {

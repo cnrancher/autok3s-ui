@@ -20,7 +20,7 @@ export default {
 </script>
 <script setup>
 import KIcon from '@/components/Icon'
-import { inject, defineProps } from 'vue'
+import { inject } from 'vue'
 
 const props = defineProps({
   column: {

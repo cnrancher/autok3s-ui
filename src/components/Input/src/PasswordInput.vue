@@ -12,7 +12,7 @@ export default {
 }
 </script>
 <script setup>
-import { computed, onBeforeUnmount, ref, defineProps } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import KInput from './index.vue'
 import KIcon from '@/components/Icon'
 

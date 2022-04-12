@@ -17,7 +17,7 @@ export default {
 <script setup>
 import KTabNav from './TabNav.vue'
 
-import { computed, provide, watchEffect, defineProps, defineEmits } from 'vue'
+import { computed, provide, watchEffect } from 'vue'
 import useTabsStore from './store/useTabsStore.js'
 
 const props = defineProps({

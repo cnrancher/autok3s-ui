@@ -34,7 +34,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.2.4",
-    "@vue/compiler-sfc": "^3.2.31",
     "vite": "^v2.8.6",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-windicss": "^1.8.3",

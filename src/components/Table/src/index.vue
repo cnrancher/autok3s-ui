@@ -35,7 +35,7 @@ import Pagination from '@/components/Pagination'
 import useDataOrder from '@/composables/useDataOrder.js'
 import usePagination from '@/composables/usePagination.js'
 
-import { toRefs, computed, defineProps, defineEmits } from 'vue'
+import { toRefs, computed } from 'vue'
 
 const props = defineProps({
   caption: {

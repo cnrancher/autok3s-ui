@@ -16,7 +16,7 @@ export default {
 <script setup>
 import usePopper from '@/composables/usePopper.js'
 import { onClickOutside } from '@vueuse/core'
-import {ref, nextTick, watch, defineProps, defineEmits} from 'vue'
+import { ref, nextTick, watch } from 'vue'
 
 const props = defineProps({
   option: {

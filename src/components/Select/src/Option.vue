@@ -11,7 +11,7 @@ export default {
 }
 </script>
 <script setup>
-import { inject, getCurrentInstance, onBeforeUnmount, computed, defineProps } from 'vue'
+import { inject, getCurrentInstance, onBeforeUnmount, computed } from 'vue'
 import { DropdownMenuItem }from '@/components/Dropdown'
 
 defineProps({

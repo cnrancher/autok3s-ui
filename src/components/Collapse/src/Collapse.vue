@@ -11,7 +11,7 @@ export default {
 </script>
 
 <script setup>
-import { provide, readonly, watchEffect, ref, defineProps, defineEmits } from 'vue'
+import { provide, readonly, watchEffect, ref } from 'vue'
 
 const props = defineProps({
    accordion: {

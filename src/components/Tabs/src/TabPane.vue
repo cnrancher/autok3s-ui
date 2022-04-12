@@ -11,7 +11,7 @@ export default {
 }
 </script>
 <script setup>
-import { computed, inject, toRef, watchEffect, ref, defineProps, onBeforeUnmount } from 'vue'
+import { computed, inject, toRef, watchEffect, ref, onBeforeUnmount } from 'vue'
 
 const props = defineProps({
   disabled: {

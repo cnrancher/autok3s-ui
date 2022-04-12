@@ -15,7 +15,7 @@ export default {
 </script>
 <script setup>
 import KIcon from '@/components/Icon'
-import { computed, inject, defineProps } from 'vue'
+import { computed, inject } from 'vue'
 
 const props = defineProps({
   tabPosition: {
