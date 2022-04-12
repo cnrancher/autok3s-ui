@@ -39,7 +39,7 @@
           <a class="text-$link">{{sshAdvanceVisible ? 'Hide':'Show'}}</a>
           <k-icon type="arrow-right" :direction="sshAdvanceVisible ? 'down' : ''"></k-icon>
         </div>
-        <div class="contents" v-show="sshAdvanceVisible">
+        <div v-show="sshAdvanceVisible" class="contents">
           <k-password-input
             v-model.trim="nativeForm['ssh-key-passphrase']"
             label="SSH Key Passphrase"
@@ -64,12 +64,12 @@
       </template>
       <template v-else>
         <k-input
-          label="Master"
           v-model="form.master"
+          label="Master"
           required />
         <k-input
-          label="Worker"
           v-model="form.worker"
+          label="Worker"
           required />
       </template>
     </div>
@@ -84,8 +84,8 @@
       </template>
 </k-modal>
 </template>
-<script>
-import {defineComponent, computed, inject, reactive, ref, toRef, watch} from 'vue'
+<script setup>
+import { computed, reactive, ref, toRef, watch } from 'vue'
 import useCluster from '@/composables/useCluster.js'
 import useProviders from '@/composables/useProviders.js'
 import IpAddressPoolForm from '@/views/components/baseForm/IpAddressPoolForm.vue'
@@ -114,181 +114,159 @@ const nativeFormDefaultValue = {
   'ssh-agent-auth': false,
 }
 
-export default defineComponent({
-  props: {
-    clusterId: {
-      type: String,
-      required: true
-    },
-    modelValue: {
-      type: Boolean,
-      default: false,
-    }
+const props = defineProps({
+  clusterId: {
+    type: String,
+    required: true
   },
-  emits: ['update:modelValue'],
-  setup(props, {emit}) {
-    const notificationStore = useNotificationStore()
-    const sshAdvanceVisible = ref(false)
-    const masterIps = ref(null)
-    const workerIps = ref(null)
-
-    const id = toRef(props, 'clusterId')
-    const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
-    const {cluster, error: loadClusterError, loading: clusterLoading} = useCluster(id)
-    const formErrors = ref([])
-    const form = reactive({...formDefaultValue})
-    const nativeForm = reactive({...nativeFormDefaultValue, options: { ...nativeFormDefaultValue.options }})
-    const loading = computed(() => {
-      return providersLoading.value || clusterLoading.value
-    })
-    const nativeProviderSchema = computed(() => {
-      return providers.value.find((p) => p.id === cluster.value?.provider)
-    })
-    watch(id, () => {
-      Object.entries(formDefaultValue).forEach((e) => {
-        form[e[0]] = e[1]
-      })
-      nativeForm.options = { ...nativeFormDefaultValue.options }
-    }, {
-      immediate: true
-    })
-    watch(loading, (l) => {
-      if (!l && cluster.value?.provider === 'native') {
-        Object.keys(nativeFormDefaultValue)
-          .filter((k) => k !== 'options')
-          .forEach((k) => {
-            nativeForm[k] = cluster.value?.[k] ?? nativeProviderSchema.value?.config?.[k]?.default ?? ''
-          })
-      }
-    })
-    const visible = computed({
-      get() {
-        return props.modelValue
-      },
-      set(v) {
-        emit('update:modelValue', v)
-      }
-    })
-    const provider = computed(() => {
-      return cluster.value?.provider
-    })
-    const desiredNodes = computed(() => {
-      if (!cluster.value) {
-        return {
-            master: '0',
-            worker: '0',
-          }
-      }
-      return {
-          master: `${parseInt(cluster.value.master, 10) + (parseInt(form.master, 10) || 0)}`,
-          worker: `${parseInt(cluster.value.worker, 10) + (parseInt(form.worker, 10) || 0)}`,
-        }
-    })
-    const errors = computed(() => {
-      const errors = [];
-      if (loadClusterError.value) {
-        errors.push(loadClusterError.value)
-      }
-      if (loadProviderError.value) {
-        errors.push(loadProviderError.value)
-      }
-      errors.push(...formErrors.value)
-      return errors
-    })
-
-    const validate = () => {
-      const errors = []
-      formErrors.value = errors
-      if (provider.value === 'native') {
-        const formData = {...nativeForm, options: {
-          'master-ips': masterIps.value.getForm().filter((v) => v).join(','),
-          'worker-ips': workerIps.value.getForm().filter((v) => v).join(',')
-        }}
-        const masterIpsLen = formData.options['master-ips'].split(',').reduce((t, c) => {
-          if (c.trim()) {
-            t = t + 1
-          }
-          return t
-        }, 0)
-        const workerIpsLen = formData.options['worker-ips'].split(',').reduce((t, c) => {
-          if (c.trim()) {
-            t = t + 1
-          }
-          return t
-        }, 0)
-
-        if (masterIpsLen === 0 && workerIpsLen === 0) {
-          errors.push('"Master IPs" and "Worker IPs" at least one');
-        }
-        
-        return errors.length === 0
-      }
-
-      const formData = {...form}
-      const numReg = /^[0-9]+$/
-
-      if (!numReg.test(formData.worker)) {
-        errors.push('"Worker" must a number');
-      }
-      if (!numReg.test(formData.master)) {
-        errors.push('"Master" must be a number');
-      }
-      if (errors.length > 0) {
-        return false
-      }
-      if (parseInt(formData.worker, 10) <= 0 && parseInt(formData.master, 10) <= 0) {
-        errors.push('One of "Master" and "Worker" must be greater than 0');
-      }
-      return errors.length === 0
-    }
-
-    const save = async () => {
-    if (!validate()) {
-      return
-    }
-    try {
-      let formData;
-      if (provider.value === 'native') {
-        formData = {...nativeForm, options: {
-          'master-ips': masterIps.value.getForm().filter((v) => v).join(','),
-          'worker-ips': workerIps.value.getForm().filter((v) => v).join(',')
-        }}
-      } else {
-        formData = {...form}
-      }
-       
-      const data = Object.assign({}, cluster.value, formData)
-      await joinNode(data)
-      saveCreatingCluster(data.id)
-    } catch (err) {
-      notificationStore.notify({
-          type: 'error',
-          title: 'Join Nodes Failed',
-          content: stringify(err),
-        })
-    }
-    visible.value = false
-  }
-
-    return {
-      save,
-      errors,
-      loading,
-      provider,
-      form,
-      nativeForm,
-      desiredNodes,
-      nativeProviderSchema,
-      visible,
-      sshAdvanceVisible,
-      masterIps,
-      workerIps,
-    }
-  },
-  components: {
-    IpAddressPoolForm,
-    BooleanForm,
-    StringForm,
+  modelValue: {
+    type: Boolean,
+    default: false,
   }
 })
+
+const emit = defineEmits(['update:modelValue'])
+
+const notificationStore = useNotificationStore()
+const sshAdvanceVisible = ref(false)
+const masterIps = ref(null)
+const workerIps = ref(null)
+
+const id = toRef(props, 'clusterId')
+const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
+const {cluster, error: loadClusterError, loading: clusterLoading} = useCluster(id)
+const formErrors = ref([])
+const form = reactive({...formDefaultValue})
+const nativeForm = reactive({...nativeFormDefaultValue, options: { ...nativeFormDefaultValue.options }})
+const loading = computed(() => {
+  return providersLoading.value || clusterLoading.value
+})
+const nativeProviderSchema = computed(() => {
+  return providers.value.find((p) => p.id === cluster.value?.provider)
+})
+watch(id, () => {
+  Object.entries(formDefaultValue).forEach((e) => {
+    form[e[0]] = e[1]
+  })
+  nativeForm.options = { ...nativeFormDefaultValue.options }
+}, {
+  immediate: true
+})
+watch(loading, (l) => {
+  if (!l && cluster.value?.provider === 'native') {
+    Object.keys(nativeFormDefaultValue)
+      .filter((k) => k !== 'options')
+      .forEach((k) => {
+        nativeForm[k] = cluster.value?.[k] ?? nativeProviderSchema.value?.config?.[k]?.default ?? ''
+      })
+  }
+})
+const visible = computed({
+  get() {
+    return props.modelValue
+  },
+  set(v) {
+    emit('update:modelValue', v)
+  }
+})
+const provider = computed(() => {
+  return cluster.value?.provider
+})
+const desiredNodes = computed(() => {
+  if (!cluster.value) {
+    return {
+        master: '0',
+        worker: '0',
+      }
+  }
+  return {
+      master: `${parseInt(cluster.value.master, 10) + (parseInt(form.master, 10) || 0)}`,
+      worker: `${parseInt(cluster.value.worker, 10) + (parseInt(form.worker, 10) || 0)}`,
+    }
+})
+const errors = computed(() => {
+  const errors = [];
+  if (loadClusterError.value) {
+    errors.push(loadClusterError.value)
+  }
+  if (loadProviderError.value) {
+    errors.push(loadProviderError.value)
+  }
+  errors.push(...formErrors.value)
+  return errors
+})
+
+const validate = () => {
+  const errors = []
+  formErrors.value = errors
+  if (provider.value === 'native') {
+    const formData = {...nativeForm, options: {
+      'master-ips': masterIps.value.getForm().filter((v) => v).join(','),
+      'worker-ips': workerIps.value.getForm().filter((v) => v).join(',')
+    }}
+    const masterIpsLen = formData.options['master-ips'].split(',').reduce((t, c) => {
+      if (c.trim()) {
+        t = t + 1
+      }
+      return t
+    }, 0)
+    const workerIpsLen = formData.options['worker-ips'].split(',').reduce((t, c) => {
+      if (c.trim()) {
+        t = t + 1
+      }
+      return t
+    }, 0)
+
+    if (masterIpsLen === 0 && workerIpsLen === 0) {
+      errors.push('"Master IPs" and "Worker IPs" at least one');
+    }
+    
+    return errors.length === 0
+  }
+
+  const formData = {...form}
+  const numReg = /^[0-9]+$/
+
+  if (!numReg.test(formData.worker)) {
+    errors.push('"Worker" must a number');
+  }
+  if (!numReg.test(formData.master)) {
+    errors.push('"Master" must be a number');
+  }
+  if (errors.length > 0) {
+    return false
+  }
+  if (parseInt(formData.worker, 10) <= 0 && parseInt(formData.master, 10) <= 0) {
+    errors.push('One of "Master" and "Worker" must be greater than 0');
+  }
+  return errors.length === 0
+}
+
+const save = async () => {
+  if (!validate()) {
+    return
+  }
+  try {
+    let formData;
+    if (provider.value === 'native') {
+      formData = {...nativeForm, options: {
+        'master-ips': masterIps.value.getForm().filter((v) => v).join(','),
+        'worker-ips': workerIps.value.getForm().filter((v) => v).join(',')
+      }}
+    } else {
+      formData = {...form}
+    }
+      
+    const data = Object.assign({}, cluster.value, formData)
+    await joinNode(data)
+    saveCreatingCluster(data.id)
+  } catch (err) {
+    notificationStore.notify({
+        type: 'error',
+        title: 'Join Nodes Failed',
+        content: stringify(err),
+      })
+  }
+  visible.value = false
+}
 </script>

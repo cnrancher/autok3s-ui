@@ -6,7 +6,8 @@
         <div class="k-notification__content" :class="[`k-notification--${item.type}`]">
           <div class="k-notification__title">{{item.title}}</div>
           <k-icon class="k-notification__close" type="close" @click="removeEvent(item.id, group)"></k-icon>
-          <div class="k-notification__message" v-html="item.content">
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div class="k-notification__message" v-html="DOMPurify.sanitize(item.content)">
           </div>
         </div>
       </slot>
@@ -23,6 +24,7 @@ export default {
 import { computed } from 'vue'
 import KIcon from '@/components/Icon'
 import useNotificationStore from '@/store/useNotificationStore.js'
+import DOMPurify from 'dompurify';
 
 const props = defineProps({
   position: {

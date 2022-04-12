@@ -1,5 +1,6 @@
 <template>
-  <div class="cursor-pointer flex justify-center items-center"
+  <div
+class="cursor-pointer flex justify-center items-center"
     @click="goToPrevPage">
     <span v-if="prevText ">{{ prevText }}</span><k-icon type="arrow-right" direction="left" :class="[prevDisabled ? 'cursor-not-allowed text-gray-300' : '']"></k-icon>
   </div>

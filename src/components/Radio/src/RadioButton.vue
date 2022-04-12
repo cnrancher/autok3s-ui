@@ -4,8 +4,8 @@
     :class="[model === label ? 'bg-light-blue-600' : 'bg-gray-200', isDisabled ? 'disabled' : '']">
     <input
       ref="radioRef"
-      type="radio"
       v-model="model"
+      type="radio"
       :value="label"
       :name="name"
       :disabled="isDisabled"

@@ -2,7 +2,7 @@
   <div>
     <k-table
     :data="data"
-    groupBy="name"
+    group-by="name"
     >
       <k-table-column
         type="selection"
@@ -89,29 +89,20 @@
     <k-pagination :hide-on-single-page="false" :total="80" :current-page="9" :pager-count="8"></k-pagination>
   </div>
 </template>
-<script>
-import {ref, defineComponent} from 'vue'
-export default defineComponent({
-  setup() {
-    const data = ref([])
-    data.value = [{
-      id: 1,
-      name: 'name1',
-      desc: 'desc1',
-      group: 'test',
-    },
-    {
-      id: 2,
-      name: 'name2',
-      desc: 'desc2',
-      group: 'test'
-    }]
-    const onOrderChange = (e) => {
-      console.log(e)
-    }
-    return {
-      data,
-    }
-  },
-})
+<script setup>
+import {ref} from 'vue'
+const data = ref([])
+data.value = [{
+  id: 1,
+  name: 'name1',
+  desc: 'desc1',
+  group: 'test',
+},
+{
+  id: 2,
+  name: 'name2',
+  desc: 'desc2',
+  group: 'test'
+}]
+
 </script>

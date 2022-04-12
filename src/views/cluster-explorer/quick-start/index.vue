@@ -34,7 +34,7 @@
               required
             />
           </div>
-          <component v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider" ref="formRef" :has-error="hasError" :schema="providerSchema" :is="clusterFormComponent"></component>
+          <component :is="clusterFormComponent" v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider" ref="formRef" :has-error="hasError" :schema="providerSchema"></component>
           <footer-actions>
             <k-button class="btn role-secondary" @click="goToCreatePage">Advance</k-button>
             <k-button class="role-primary" type="button" :loading="loading || creating" @click="create">Create</k-button>
@@ -47,7 +47,8 @@
   </div>
 </template>
 <script>
-import {computed, defineComponent, inject, ref, toRef, toRefs, watch, reactive} from 'vue'
+import {computed, defineComponent, ref, toRef, watch, reactive} from 'vue'
+import jsyaml from 'js-yaml'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/views/components/PageHeader.vue'
 import TemplateFilter from '@/views/components/TemplateFilter/index.vue'
@@ -73,9 +74,22 @@ const excludeProviders = [];
 
 export default defineComponent({
   name: 'QuickStart',
+  components: {
+    PageHeader,
+    TemplateFilter,
+    FooterActions,
+    AwsForm,
+    AlibabaForm,
+    TencentForm,
+    K3dForm,
+    GoogleForm,
+    HarvesterForm,
+    NativeForm,
+  },
   props: {
     templateId: {
-      type: String
+      type: String,
+      default: ''
     },
     defaultProvider: {
       type: String,
@@ -218,6 +232,7 @@ export default defineComponent({
       const configRequiredFields = Object.entries(providerSchema.config)
         .filter(([k, v]) => k!== 'name' && v?.required).map(([k]) => k);
       const optionRequiredFields = Object.entries(providerSchema.options)
+        // eslint-disable-next-line no-unused-vars
         .filter(([k, v]) => v?.required).map(([k]) => k);
       form = formRef.value?.getForm()
       if (!form) {
@@ -269,7 +284,7 @@ export default defineComponent({
       providerClusterStores[form.provider]?.saveFormHistory(form)
       router.push({name: 'ClusterExplorerCoreClustersCreate', query: { quickStart: form.provider }})
     }
-    const create = async (e) => {
+    const create = async () => {
       if (!validate()) {
         form = null
         return
@@ -326,18 +341,6 @@ export default defineComponent({
       create,
       handleProviderChange,
     }
-  },
-  components: {
-    PageHeader,
-    TemplateFilter,
-    FooterActions,
-    AwsForm,
-    AlibabaForm,
-    TencentForm,
-    K3dForm,
-    GoogleForm,
-    HarvesterForm,
-    NativeForm,
   }
 })
 </script>

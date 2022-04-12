@@ -9,15 +9,7 @@
   </page-header>
   <template-table></template-table>
 </template>
-<script>
-import {defineComponent} from 'vue'
+<script setup>
 import TemplateTable from './components/TemplateTable.vue'
 import PageHeader from '@/views/components/PageHeader.vue'
-
-export default defineComponent({
-  components: {
-    TemplateTable,
-    PageHeader,
-  }
-})
 </script>

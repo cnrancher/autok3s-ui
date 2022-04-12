@@ -7,26 +7,26 @@
         <template #popover>{{desc}}</template>
       </tooltip>
     </div>
-    <div class="k-select__prefix" v-if="$slots.prefix">
+    <div v-if="$slots.prefix" class="k-select__prefix">
       <slot name="prefix">{{prefix}}</slot>
     </div>
     <dropdown class="k-select__trigger" :option="popperOption" :append-to-body="false" :disabled="disabled" :lazy="false" @visible-change="handleVisibleChange">
       <div v-if="multiple" class="flex">
-        <span class="text-warm-gray-400" v-if="selectdOptions.length === 0">{{placeholder}}</span>
+        <span v-if="selectdOptions.length === 0" class="text-warm-gray-400">{{placeholder}}</span>
         <template v-else>
-          <k-tag class="flex items-center m-r-2px" type="info" v-for="o in selectdOptions" :key="o.value">
+          <k-tag v-for="o in selectdOptions" :key="o.value" class="flex items-center m-r-2px" type="info">
             {{o.label}}
-            <k-icon type="close" class="cursor-pointer" v-if="!disabled" @click.stop="removeOption(o.value)"></k-icon></k-tag>
+            <k-icon v-if="!disabled" type="close" class="cursor-pointer" @click.stop="removeOption(o.value)"></k-icon></k-tag>
         </template>
       </div>
       <input
         v-else
+        :id="inputId"
         autocomplete="off"
         readonly
         :disabled="disabled || loading"
         class="cursor-pointer overflow-ellipsis focus-visible:outline-none bg-transparent"
-        :class="[!label ? 'py-10.5px px-0' : '', visible ? 'text-warm-gray-400' : '']"
-        :id="inputId" v-bind="$attrs"
+        :class="[!label ? 'py-10.5px px-0' : '', visible ? 'text-warm-gray-400' : '']" v-bind="$attrs"
         :value="selectedOption?.label"
         :placeholder="placeholder"
         >
@@ -36,7 +36,7 @@
         <slot></slot>
       </template>
     </dropdown>
-    <div class="k-select__suffix" v-if="$slots.suffix">
+    <div v-if="$slots.suffix" class="k-select__suffix">
       <slot name="suffix"></slot>
     </div>
   </div>
@@ -90,7 +90,8 @@ const props = defineProps({
     default: false,
   },
   modelValue: {
-    type: [String, Number, Boolean, Array]
+    type: [String, Number, Boolean, Array],
+    default: ''
   },
   disabled: {
     type: Boolean,
@@ -101,7 +102,8 @@ const props = defineProps({
     default: false,
   },
   class: {
-    type: [Array, String, Object]
+    type: [Array, String, Object],
+    default: ''
   },
   desc: {
     type: String,

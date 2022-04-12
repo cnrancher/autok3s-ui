@@ -1,6 +1,6 @@
 <template>
   <teleport to="body">
-    <div class="grid items-center justify-center z-$modal-z-index overflow-auto absolute top-0 left-0 bottom-0 right-0 bg-[rgba(0,0,0,.5)]" v-if="visible">
+    <div v-if="visible" class="grid items-center justify-center z-$modal-z-index overflow-auto absolute top-0 left-0 bottom-0 right-0 bg-[rgba(0,0,0,.5)]">
       <div class="min-w-1/3 bg-white">
         <div class="flex justify-between items-center pt-20px pb-10px px-20px">
           <div class="text-18px">

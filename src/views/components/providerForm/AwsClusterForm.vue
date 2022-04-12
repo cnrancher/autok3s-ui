@@ -1,7 +1,7 @@
 <template>
   <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
   <input style="display: none" autocomplete="new-password" type="password" />
-  <k-tabs tab-position="left" v-model="acitiveTab">
+  <k-tabs v-model="acitiveTab" tab-position="left">
     <k-tab-pane label="Credential Options" name="credential">
       <form-group>
         <template #title>
@@ -232,6 +232,14 @@ import ClusterTagsForm from '../baseForm/ArrayListForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
 import useFormFromSchema from '../../composables/useFormFromSchema.js'
 export default defineComponent({
+  components: {
+    BooleanForm,
+    StringForm,
+    K3sOptionsForm,
+    SshPrivateForm,
+    FormGroup,
+    ClusterTagsForm,
+  },
   props: {
     schema: {
       type: Object,
@@ -283,14 +291,6 @@ export default defineComponent({
       tags,
       uiOptions,
     }
-  },
-  components: {
-    BooleanForm,
-    StringForm,
-    K3sOptionsForm,
-    SshPrivateForm,
-    FormGroup,
-    ClusterTagsForm,
   }
 })
 </script>

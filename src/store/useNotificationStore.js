@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import useIdGenerator from '@/composables/useIdGenerator.js'
-const {next: nextId, reset: resetId } = useIdGenerator()
+const { next: nextId } = useIdGenerator()
 const groupDefaultSettings = {
   speed: 300,
   duration: 5000,

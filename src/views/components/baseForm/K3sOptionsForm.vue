@@ -1,4 +1,5 @@
 <template>
+<!-- eslint-disable vue/no-mutating-props -->
   <form-group>
     <template #title>Basic</template>
     <template #default>
@@ -66,8 +67,8 @@
           :readonly="readonly"
         /> -->
         <command-args
-          :args="masterExtraArgs"
           v-model="form.config['master-extra-args']"
+          :args="masterExtraArgs"
           label="Master Extra Args"
           :desc="desc.config['master-extra-args']"
           :readonly="readonly"
@@ -94,8 +95,8 @@
           :readonly="readonly"
         /> -->
         <command-args
-          :args="workExtraArgs"
           v-model="form.config['worker-extra-args']"
+          :args="workExtraArgs"
           label="Worker Extra Args"
           :desc="desc.config['worker-extra-args']"
           :readonly="readonly"
@@ -129,8 +130,8 @@
           :readonly="readonly"
         />
         <registry-config-form
-          class="col-span-1 sm:col-span-2"
           v-model="form.config['registry-content']"
+          class="col-span-1 sm:col-span-2"
           label="Registry"
           :desc="desc.config['registry-content']"
           :options="{readOnly: readonly}"
@@ -139,8 +140,8 @@
     </template>
   </form-group>
 </template>
-<script>
-import {defineComponent, provide, toRef, ref, watch} from 'vue'
+<script setup>
+import { provide, toRef, watch} from 'vue'
 import StringForm from './StringForm.vue'
 import BooleanForm from './BooleanForm.vue'
 import RegistryConfigForm from './RegistryConfigForm.vue'
@@ -148,87 +149,72 @@ import FormGroup from './FormGroup.vue'
 import CommandArgs from './CommandArgs/index.vue'
 import ArrayListForm from '../baseForm/ArrayListForm.vue'
 
-export default defineComponent({
-  name: 'K3sOptionsForm',
-  props: {
-    form: {
-      type: Object,
-      required: true
-    },
-    desc: {
-      type: Object,
-      required: true,
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
-    visible: {
-      type: Boolean,
-      default: false
-    }
+const props = defineProps({
+  form: {
+    type: Object,
+    required: true
   },
-  setup(props) {
-    const visible = toRef(props, 'visible')
-    provide('parentVisible', visible)
-    const installScriptOptions = [
-      'https://get.k3s.io',
-      'https://rancher-mirror.rancher.cn/k3s/k3s-install.sh',
-    ]
-    watch(() => props.form.config['k3s-install-script'],(installScript) => {
-      if (installScript === installScriptOptions[1]) {
-        props.form.config['k3s-install-mirror'] = 'INSTALL_K3S_MIRROR=cn'
-      } else if (props.form.config['k3s-install-mirror']) {
-        props.form.config['k3s-install-mirror'] = ''
-      }
-    }, {
-      immediate: true
-    })
-    const masterExtraArgs = [{
-      long: '--docker',
-      alias: 'runtime',
-      flag: true,
-      values: ['docker', 'containerd'],
-      modelValue: true,
-      desc: '(agent/runtime) Automatic install docker on VM and use docker instead of containerd'
-    }, {
-      long: '--no-deploy',
-      alias: 'disable',
-      multiple: true,
-      values: [
-        'coredns', 'servicelb', 'traefik','local-storage', 'metrics-server'
-      ],
-      modelValue: '',
-      desc: 'Do not deploy packaged components (valid items: coredns, servicelb, traefik, local-storage, metrics-server)'
-    }, {
-      long: '--flannel-backend',
-      alias: 'flannel-backend',
-      values: ['none', 'vxlan', 'ipsec', 'host-gw', 'wireguard'],
-      modelValue: 'vxlan',
-      desc: `(networking) One of 'none', 'vxlan', 'ipsec', 'host-gw', or 'wireguard' (default: "vxlan")`
-    }]
-    const workExtraArgs = [{
-      long: '--docker',
-      alias: 'runtime',
-      flag: true,
-      values: ['docker', 'containerd'],
-      modelValue: true,
-      desc: '(agent/runtime) Use docker instead of containerd'
-    }]
-    return {
-      masterExtraArgs,
-      workExtraArgs,
-      installScriptOptions,
-    }
+  desc: {
+    type: Object,
+    required: true,
   },
-  components: {
-    StringForm,
-    BooleanForm,
-    RegistryConfigForm,
-    FormGroup,
-    CommandArgs,
-    ArrayListForm,
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
+  visible: {
+    type: Boolean,
+    default: false
   }
 })
+
+const visible = toRef(props, 'visible')
+provide('parentVisible', visible)
+const installScriptOptions = [
+  'https://get.k3s.io',
+  'https://rancher-mirror.rancher.cn/k3s/k3s-install.sh',
+]
+watch(() => props.form.config['k3s-install-script'],(installScript) => {
+  if (installScript === installScriptOptions[1]) {
+    // eslint-disable-next-line vue/no-mutating-props
+    props.form.config['k3s-install-mirror'] = 'INSTALL_K3S_MIRROR=cn'
+  } else if (props.form.config['k3s-install-mirror']) {
+    // eslint-disable-next-line vue/no-mutating-props
+    props.form.config['k3s-install-mirror'] = ''
+  }
+}, {
+  immediate: true
+})
+const masterExtraArgs = [{
+  long: '--docker',
+  alias: 'runtime',
+  flag: true,
+  values: ['docker', 'containerd'],
+  modelValue: true,
+  desc: '(agent/runtime) Automatic install docker on VM and use docker instead of containerd'
+}, {
+  long: '--no-deploy',
+  alias: 'disable',
+  multiple: true,
+  values: [
+    'coredns', 'servicelb', 'traefik','local-storage', 'metrics-server'
+  ],
+  modelValue: '',
+  desc: 'Do not deploy packaged components (valid items: coredns, servicelb, traefik, local-storage, metrics-server)'
+}, {
+  long: '--flannel-backend',
+  alias: 'flannel-backend',
+  values: ['none', 'vxlan', 'ipsec', 'host-gw', 'wireguard'],
+  modelValue: 'vxlan',
+  desc: `(networking) One of 'none', 'vxlan', 'ipsec', 'host-gw', or 'wireguard' (default: "vxlan")`
+}]
+const workExtraArgs = [{
+  long: '--docker',
+  alias: 'runtime',
+  flag: true,
+  values: ['docker', 'containerd'],
+  modelValue: true,
+  desc: '(agent/runtime) Use docker instead of containerd'
+}]
 </script>
 

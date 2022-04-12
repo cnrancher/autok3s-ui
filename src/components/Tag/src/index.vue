@@ -1,5 +1,6 @@
 <template>
-  <span class="bg-transparent inline-block px-10px rounded-20px border"
+  <span
+class="bg-transparent inline-block px-10px rounded-20px border"
     :class="classes"
     :style="{ backgroundColor: color }">
     <slot></slot>

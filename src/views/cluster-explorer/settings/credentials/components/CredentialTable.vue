@@ -26,7 +26,7 @@
         <k-icon type="folder" :color="groupBy === 'provider' ? '#fff' : ''"></k-icon>
       </k-radio-button>
     </k-radio-group>
-    <input type="search" placeholder="Filter" class="credential-table__search focus-visible:outline-none px-12px rounded border hover:bg-gray-100" v-model="searchQuery">
+    <input v-model="searchQuery" type="search" placeholder="Filter" class="credential-table__search focus-visible:outline-none px-12px rounded border hover:bg-gray-100">
   </div>
   <k-table
     :data="dataMatchingSearchQuery"
@@ -75,8 +75,8 @@
     </k-modal>
 </div>
 </template>
-<script>
-import {computed, defineComponent, inject, ref, watchEffect} from 'vue'
+<script setup>
+import {computed, ref, watchEffect} from 'vue'
 import { useRouter } from 'vue-router'
 import useCredentials from '@/composables/useCredentials.js'
 import useDataSearch from '@/composables/useDataSearch.js'
@@ -87,6 +87,7 @@ import CredentialActions from './CredentialActions.vue'
 import CredentialBulkActions from './CredentialBulkActions.vue'
 import PageHeader from '@/views/components/PageHeader.vue'
 import useNotificationStore from '@/store/useNotificationStore.js'
+import {stringify} from '@/utils/error.js'
 
 function accessKeyFieldValue(data, keyMap) {
   const v = data.secrets[keyMap[data.provider]] ?? '';
@@ -96,90 +97,66 @@ function accessSecretFieldValue(data, secretMap) {
   const v = data.secrets[secretMap[data.provider]] ?? '';
   return v.replace(/./g,'*');
 }
-export default defineComponent({
-  setup() {
-    const router = useRouter()
-    const confirmModalVisible = ref(false)
-    const commandParams = ref([])
-    const notificationStore = useNotificationStore()
-    const {providerKeyMap, providerSecretMap, providerKeyFieldMap} = useProviderKeyMap()
-    const {loading, error, credentials, fetchCredentials} = useCredentials()
-    const providerWithCredentialCount = computed(() => {
-      return Object.keys(providerKeyFieldMap).length
+
+const router = useRouter()
+const confirmModalVisible = ref(false)
+const commandParams = ref([])
+const notificationStore = useNotificationStore()
+const {providerKeyMap, providerSecretMap, providerKeyFieldMap} = useProviderKeyMap()
+const {loading, error, credentials, fetchCredentials} = useCredentials()
+const providerWithCredentialCount = computed(() => {
+  return Object.keys(providerKeyFieldMap).length
+})
+const data = computed(() => {
+  const providersWithCredential = Object.keys(providerKeyFieldMap)
+  return credentials.value
+    .filter((c) => providersWithCredential.includes(c.provider))
+    .map((c) => ({
+      ...c,
+      key: accessKeyFieldValue(c, providerKeyMap),
+      secret: accessSecretFieldValue(c, providerSecretMap),
+    }))
+})
+const {searchQuery, searchFields, dataMatchingSearchQuery} = useDataSearch(data)
+searchFields.value = ['provider']
+const groupBy = ref('provider')
+const { state }= useTableState(loading, error, data, dataMatchingSearchQuery,)
+const reload = () => {
+  fetchCredentials()
+}
+const selectedCredentials = ref([])
+const handleSelectionChange = (rows) => {
+  selectedCredentials.value = rows
+}
+const deleteCredencials = async (credencials) => {
+  confirmModalVisible.value=false
+  const results = await Promise.allSettled(credencials.map((c) => remove(c.id)))
+  const errors = results
+    .filter((p) => p.status === 'rejected')
+    .map((p) => p.reason)
+  errors.forEach((e) => {
+      notificationStore.notify({
+      type: 'error',
+      title: 'Delete Credencial Failed',
+      content: stringify(e)
     })
-    const data = computed(() => {
-      const providersWithCredential = Object.keys(providerKeyFieldMap)
-      return credentials.value
-        .filter((c) => providersWithCredential.includes(c.provider))
-        .map((c) => ({
-          ...c,
-          key: accessKeyFieldValue(c, providerKeyMap),
-          secret: accessSecretFieldValue(c, providerSecretMap),
-        }))
-    })
-    const {searchQuery, searchFields, dataMatchingSearchQuery} = useDataSearch(data)
-    searchFields.value = ['provider']
-    const groupBy = ref('provider')
-    const { state }= useTableState(loading, error, data, dataMatchingSearchQuery,)
-    const reload = () => {
-      fetchCredentials()
-    }
-    const selectedCredentials = ref([])
-    const handleSelectionChange = (rows) => {
-      selectedCredentials.value = rows
-    }
-    const deleteCredencials = async (credencials) => {
-      confirmModalVisible.value=false
-      const results = await Promise.allSettled(credencials.map((c) => remove(c.id)))
-      const errors = results
-        .filter((p) => p.status === 'rejected')
-        .map((p) => p.reason)
-      errors.forEach((e) => {
-         notificationStore.notify({
-          type: 'error',
-          title: 'Delete Credencial Failed',
-          content: stringify(e)
-        })
-      })
-      fetchCredentials()
-    }
-    const handleCommand = ({command, data}) => {
-      switch(command) {
-        case 'edit':
-          router.push({name: 'ClusterExplorerSettingsEdit', params: {credentialId: data[0].id}})
-          break;
-        case 'delete':
-          commandParams.value = data
-          confirmModalVisible.value=true
-          break;
-      }
-    }
-    watchEffect(() => {
-      if(confirmModalVisible.value === false) {
-        commandParams.value=[]
-      }
-    })
-    return {
-      searchQuery,
-      dataMatchingSearchQuery,
-      error,
-      state,
-      reload,
-      handleCommand,
-      confirmModalVisible,
-      handleSelectionChange,
-      selectedCredentials,
-      commandParams,
-      deleteCredencials,
-      credentials,
-      groupBy,
-      providerWithCredentialCount,
-    }
-  },
-  components: {
-    CredentialActions,
-    CredentialBulkActions,
-    PageHeader,
+  })
+  fetchCredentials()
+}
+const handleCommand = ({command, data}) => {
+  switch(command) {
+    case 'edit':
+      router.push({name: 'ClusterExplorerSettingsEdit', params: {credentialId: data[0].id}})
+      break;
+    case 'delete':
+      commandParams.value = data
+      confirmModalVisible.value=true
+      break;
+  }
+}
+watchEffect(() => {
+  if(confirmModalVisible.value === false) {
+    commandParams.value=[]
   }
 })
 </script>

@@ -1,7 +1,7 @@
 <template>
   <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
   <input style="display: none" autocomplete="new-password" type="password" />
-  <k-tabs tab-position="left" v-model="acitiveTab">
+  <k-tabs v-model="acitiveTab" tab-position="left">
     <k-tab-pane label="K3d Options" name="instance">
       <form-group>
         <template #title>Basic</template>
@@ -46,7 +46,7 @@
         :readonly="readonly">
       </k3d-options-form>
       <hr class="section-divider">
-      <form-group :closable="true" v-model="visible">
+      <form-group v-model="visible" :closable="true">
         <template #title>Advance</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
@@ -137,8 +137,8 @@
     </k-tab-pane>
   </k-tabs>
 </template>
-<script>
-import {defineComponent, ref, provide} from 'vue'
+<script setup>
+import {ref, provide} from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3dOptionsForm from '../baseForm/K3dOptionsForm.vue'
@@ -146,59 +146,41 @@ import ArrayListForm from '../baseForm/ArrayListForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
 import useFormFromSchema from '../../composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
-export default defineComponent({
-  props: {
-    schema: {
-      type: Object,
-      required: true,
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
+
+const props = defineProps({
+  schema: {
+    type: Object,
+    required: true,
   },
-  setup(props) {
-    const envs = ref(null)
-    const labels = ref(null)
-    const volumes = ref(null)
-    const ports = ref(null)
-    const { form, desc }= useFormFromSchema(props.schema)
-    const getForm = () => {
-      const f = cloneDeep(form)
-      const e = envs.value.getForm()
-      const l = labels.value.getForm()
-      const v = volumes.value.getForm()
-      const p = ports.value.getForm()
-
-      f.options['envs'] = e ? e.filter((item) => item) : e
-      f.options['labels'] = l ? l.filter((item) => item) : l
-      f.options['volumes'] = v ? v.filter((item) => item) : v
-      f.options['ports'] = p ? p.filter((item) => item) : p
-
-      return f
-    }
-    const acitiveTab = ref('instance')
-    const visible = ref(false)
-    provide('parentVisible', visible)
-
-    return {
-      form,
-      desc,
-      getForm,
-      visible,
-      envs,
-      labels,
-      volumes,
-      ports,
-      acitiveTab,
-    }
+  readonly: {
+    type: Boolean,
+    default: false,
   },
-  components: {
-    BooleanForm,
-    StringForm,
-    K3dOptionsForm,
-    ArrayListForm,
-    FormGroup,
-  }
 })
+
+const envs = ref(null)
+const labels = ref(null)
+const volumes = ref(null)
+const ports = ref(null)
+const { form, desc }= useFormFromSchema(props.schema)
+const getForm = () => {
+  const f = cloneDeep(form)
+  const e = envs.value.getForm()
+  const l = labels.value.getForm()
+  const v = volumes.value.getForm()
+  const p = ports.value.getForm()
+
+  f.options['envs'] = e ? e.filter((item) => item) : e
+  f.options['labels'] = l ? l.filter((item) => item) : l
+  f.options['volumes'] = v ? v.filter((item) => item) : v
+  f.options['ports'] = p ? p.filter((item) => item) : p
+
+  return f
+}
+const acitiveTab = ref('instance')
+const visible = ref(false)
+provide('parentVisible', visible)
+
+defineExpose({ getForm })
+
 </script>

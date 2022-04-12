@@ -12,18 +12,10 @@
     </k-modal>
   </div>
 </template>
-<script>
+<script setup>
 import {ref} from 'vue'
-export default {
-  setup() {
-    const visible = ref(false)
-    const showModal = () => {
-      visible.value = true
-    }
-    return {
-      visible,
-      showModal,
-    }
-  },
+const visible = ref(false)
+const showModal = () => {
+  visible.value = true
 }
 </script>

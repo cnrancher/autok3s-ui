@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { provide, watchEffect, defineComponent } from 'vue'
+import { watchEffect, defineComponent } from 'vue'
 import useThemeStore from '@/store/useThemeStore.js'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
 import useTemplateStore from '@/store/useTemplateStore.js'

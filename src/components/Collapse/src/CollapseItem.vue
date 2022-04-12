@@ -4,7 +4,7 @@
       <div><slot name="title" :active="active">{{title}}</slot></div>
       <k-icon type="arrow-right" :direction="active ? 'down' : ''"></k-icon>
     </div>
-    <div class="border pb-18px" :class="{'k-collapse-item--active': active}" v-show="active">
+    <div v-show="active" class="border pb-18px" :class="{'k-collapse-item--active': active}">
       <slot></slot>
     </div>
   </div>

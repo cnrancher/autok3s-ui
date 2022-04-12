@@ -14,7 +14,7 @@
           <k-icon type="folder" :color="groupBy === 'provider' ? '#fff' : ''"></k-icon>
         </radio-button>
       </radio-group>
-      <input type="search" placeholder="Filter" class="cluster-table__search focus-visible:outline-none px-12px rounded border hover:bg-gray-100" v-model="searchQuery">
+      <input v-model="searchQuery" type="search" placeholder="Filter" class="cluster-table__search focus-visible:outline-none px-12px rounded border hover:bg-gray-100">
     </div>
     <k-grouped-table
       :data="groupData"
@@ -48,7 +48,7 @@
       <template #error="error">
         <div class="justify-center flex-col items-center">
           <div>Load <span class="text-error">{{error.group}}</span> clusters  failed: {{error.error}}</div>
-          <div>Please click <button class="btn btn-sm role-secondary" @click="reload(error.group)" :disabled="error.state==='loading'">refresh</button> button to reload cluster data</div>
+          <div>Please click <button class="btn btn-sm role-secondary" :disabled="error.state==='loading'" @click="reload(error.group)">refresh</button> button to reload cluster data</div>
         </div>
         
       </template>
@@ -71,12 +71,12 @@
         <k-button class="role-danger" @click="deleteClusters(commandParams)">Delete</k-button>
       </template>
     </k-modal>
-    <join-node-modal v-model="joinNodeModalVisible" v-if="joinNodeModalVisible" :cluster-id="clusterId">
+    <join-node-modal v-if="joinNodeModalVisible" v-model="joinNodeModalVisible" :cluster-id="clusterId">
     </join-node-modal>
     <cli-command v-if="clusterForm && cliModalVisible" v-model:visible="cliModalVisible" :cluster-form="clusterForm"></cli-command>
   </div>
 </template>
-<script>
+<script setup>
 import { useRouter } from 'vue-router'
 import { remove, fetchById, disableExplorer, enableExplorer } from '@/api/cluster.js'
 import ClusterActions from './ClusterActions.vue'
@@ -92,307 +92,269 @@ import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import {stringify} from '@/utils/error.js'
 import { removeCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
-import { defineComponent, computed, inject, reactive, ref, toRef, watchEffect } from 'vue'
+import {  computed, ref, watchEffect } from 'vue'
 import { GroupedTable as KGroupedTable } from '@/components/Table'
 import useNotificationStore from '@/store/useNotificationStore.js'
 import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 
-export default defineComponent({
-  setup() {
-    const router =  useRouter()
-    const providerClusterStores = useProviderClusterStores()
-    const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
-    const errorGroups = computed(() => {
-      return Object.entries(providerClusterStores)
-        .filter(([k, v]) => !v.loading && v.error)
-        .map(([k,v]) => ({
-          group: k,
-          state: 'error',
-          error: v.error,
-        }))
-    })
+const router =  useRouter()
+const providerClusterStores = useProviderClusterStores()
+const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
+const errorGroups = computed(() => {
+  return Object.entries(providerClusterStores)
+    // eslint-disable-next-line no-unused-vars
+    .filter(([_, v]) => !v.loading && v.error)
+    .map(([k,v]) => ({
+      group: k,
+      state: 'error',
+      error: v.error,
+    }))
+})
 
-    const loadedGroups = computed(() => {
-      return Object.entries(providerClusterStores)
-        .filter(([k, v]) => !v.loading && !v.error)
-        .map(([k,v]) => ({
-          group: k,
-          state: 'loaded',
-          children: v.data,
-        }))
-    })
-    const loadedData = computed(() => {
-      return loadedGroups.value.reduce((t, c) => {
-        t.push(...c.children)
+const loadedGroups = computed(() => {
+  return Object.entries(providerClusterStores)
+    // eslint-disable-next-line no-unused-vars
+    .filter(([_, v]) => !v.loading && !v.error)
+    .map(([k,v]) => ({
+      group: k,
+      state: 'loaded',
+      children: v.data,
+    }))
+})
+const loadedData = computed(() => {
+  return loadedGroups.value.reduce((t, c) => {
+    t.push(...c.children)
 
-        return t
-      }, [])
-    })
+    return t
+  }, [])
+})
 
-    const isAllLoading = computed(() => {
-      Object.values(providerClusterStores).every((item) => item.loading === true)
-    })
+const isAllLoading = computed(() => {
+  return providersLoading.value || Object.values(providerClusterStores).every((item) => item.loading === true)
+})
 
-    const isNoData = computed(() => {
-      return errorGroups.value.length === 0 && loadedData.value.length === 0
-    })
+const isNoData = computed(() => {
+  return errorGroups.value.length === 0 && loadedData.value.length === 0
+})
 
-    const {searchQuery, searchFields, dataMatchingSearchQuery: clusters} = useDataSearch(loadedData)
-    searchFields.value=['status', 'name', 'region', 'master', 'worker']
-    const groupStatus = computed(() => {
-      const errorStatus = errorGroups.value.reduce((t, c)=> {
-        t[c.group] = {
-          state: 'error',
-          error: c.error,
-        }
+const {searchQuery, searchFields, dataMatchingSearchQuery: clusters} = useDataSearch(loadedData)
+searchFields.value=['status', 'name', 'region', 'master', 'worker']
+const groupStatus = computed(() => {
+  const errorStatus = errorGroups.value.reduce((t, c)=> {
+    t[c.group] = {
+      state: 'error',
+      error: c.error,
+    }
 
-        return t
-      }, {})
-      const loadingStatus = {
-        'loading': {
-          state: 'loading'
-        }
-      }
-      if (clusters.value.length === 0) {
-        if (loadedData.value.length === 0) {
-          return {
-            'noData': {
-              state: 'noData'
-            },
-            ...loadingStatus,
-            ...errorStatus
-          }
-        }
-        
-        if (searchQuery.value) {
-          return {
-            'noResults' : {
-              state: 'noResults'
-            },
-            ...loadingStatus,
-            ...errorStatus
-          }
-        }
-      }
-
+    return t
+  }, {})
+  const loadingStatus = {
+    'loading': {
+      state: 'loading'
+    }
+  }
+  if (clusters.value.length === 0) {
+    if (loadedData.value.length === 0) {
       return {
-        ...loadedGroups.value.reduce((t, c) => {
-          t[c.group] = {
-            state: 'loaded'
-          }
-          return t
-        }, {}),
+        'noData': {
+          state: 'noData'
+        },
         ...loadingStatus,
         ...errorStatus
       }
-    })
-
-    const groupData = computed(() => {
-      if (isAllLoading.value) {
-        return [{
-          group: 'loading',
-          state: 'noData'
-        }]
-      }
-      if (isNoData.value) {
-        return [{
-          group: 'noData',
-          state: 'noData'
-        }]
-      }
-      const statusMap = groupStatus.value
-      const groups = clusters.value.reduce((t, c) => {
-        const g = t[c.provider] ?? {group: c.provider, ...statusMap[c.provider], children: []}
-        g.children.push(c)
-        t[c.provider] = g
-
-        return t
-      }, [])
-      return [
-        ...Object.values(groups),
-        ...errorGroups.value
-      ]
-    })
-
-
-    const notificationStore = useNotificationStore()
-    const wmStore = useWindownManagerStore()
-
-    const joinNodeModalVisible = ref(false)
-    // generate cli command
-    const cliModalVisible = ref(false)
-    const clusterForm = ref(null)
-    
-    const selectedClusters = ref([])
-    const handleSelectionChange = (rows) => {
-      selectedClusters.value = rows
-    }
-
-    const groupBy = ref('provider')
-    const toggleGroupBy = () => {
-      if (groupBy.value) {
-        groupBy.value = ''
-        return
-      }
-      groupBy.value = 'provider'
     }
     
-    
-    const commandParams = ref([])
-
-    // join node
-    const clusterId = ref('')
-
-    // delete cluster
-    const confirmModalVisible = ref(false)
-    const handleCommand = ({command, data}) => {
-      const [cluster] = data
-      switch (command) {
-        case 'delete':
-          commandParams.value = data
-          confirmModalVisible.value=true
-          break;
-        case 'viewLog':
-          removeCreatingCluster(cluster.id)
-          wmStore.addTab({
-            id: `log_${cluster.id}`,
-            component: 'ClusterLogs',
-            label: `log: ${cluster.name}`,
-            icon: 'log',
-            attrs: {
-              cluster: cluster.id,
-            }
-          })
-          break;
-        case 'joinNode':
-          clusterId.value = cluster.id
-          joinNodeModalVisible.value = true
-          break;
-        case 'clone':
-        case 'edit':
-          router.push({name: 'ClusterExplorerCoreClustersCreate', query: {clusterId: cluster.id}})
-          break;
-        case 'saveAsTemplate':
-          router.push({name: 'ClusterExplorerSettingsTemplatesCreate', query: {clusterId: cluster.id}})
-          break;
-        case 'generateCliCommand':
-          if (loadProviderError.value) {
-            notificationStore.notify({
-              type: 'error',
-              title: 'Load Provider Failed',
-              content: stringify(loadProviderError.value)
-            })
-            return
-          }
-          fetchById(cluster.id).then((cluster) => {
-            const provider = providers.value.find((p) => p.id === cluster.provider)
-            const defaultVal = {
-              config: Object.keys(cluster)
-                .filter((k) => k != 'options')
-                .reduce((t, k) => {
-                  t[k] = cluster[k]
-                  return t
-                }, {}),
-              options: cluster.options,
-            }
-
-            const schema = overwriteSchemaDefaultValue(provider, defaultVal)
-            const { form }= useFormFromSchema(schema)
-            clusterForm.value = form
-            cliModalVisible.value = true
-          }).catch((err) => {
-            if (err) {
-              notificationStore.notify({
-                type: 'error',
-                title: 'Load Cluster Failed',
-                content: stringify(err)
-              })
-            }
-          })
-          break;
-        case 'disableExplorer':
-          disableExplorer(cluster).catch((err) => {
-            if (err) {
-              notificationStore.notify({
-                type: 'error',
-                title: 'Disable explorer Error',
-                content: stringify(err)
-              })
-            }
-          })
-          break;
-        case 'enableExplorer':
-          enableExplorer(cluster).then(({data}) => {
-            notificationStore.notify({
-              type: 'success',
-              title: 'Enable kube-explorer success',
-              content: stringify(data)
-            })
-          }).catch((err) => {
-            if (err) {
-              notificationStore.notify({
-                type: 'error',
-                title: 'Enable explorer Error',
-                content: stringify(err)
-              })
-            }
-          })
-          break;
+    if (searchQuery.value) {
+      return {
+        'noResults' : {
+          state: 'noResults'
+        },
+        ...loadingStatus,
+        ...errorStatus
       }
     }
-    const deleteClusters = async (clusters) => {
-      confirmModalVisible.value=false
-      const results = await Promise.allSettled(clusters.map((c) => remove(c.id)))
-      const errors = results
-        .filter((p) => p.status === 'rejected')
-        .map((p) => p.reason)
-      errors.forEach((e) => {
-         notificationStore.notify({
-          type: 'error',
-          title: 'Delete Cluster Failed',
-          content: stringify(e)
-        })
-      })
-    }
-    watchEffect(() => {
-      if(confirmModalVisible.value === false) {
-        commandParams.value=[]
-      }
-    })
-    const reload = (provider) => {
-     providerClusterStores[provider]?.loadData()
-    }
+  }
 
-    return {
-      clusterId,
-      groupData,
-      handleSelectionChange,
-      searchQuery,
-      selectedClusters,
-      toggleGroupBy,
-      groupBy,
-      reload,
-      handleCommand,
-      commandParams,
-      confirmModalVisible,
-      deleteClusters,
-      joinNodeModalVisible,
-      cliModalVisible,
-      clusterForm,
-    }
-  },
-  components: {
-    ClusterActions,
-    ClusterBulkActions,
-    ClusterStateTag,
-    CliCommand,
-    RadioGroup,
-    RadioButton,
-    ExplorerLink,
-    JoinNodeModal,
-    KGroupedTable,
+  return {
+    ...loadedGroups.value.reduce((t, c) => {
+      t[c.group] = {
+        state: 'loaded'
+      }
+      return t
+    }, {}),
+    ...loadingStatus,
+    ...errorStatus
   }
 })
+
+const groupData = computed(() => {
+  if (isAllLoading.value) {
+    return [{
+      group: 'loading',
+      state: 'loading'
+    }]
+  }
+  if (isNoData.value) {
+    return [{
+      group: 'noData',
+      state: 'noData'
+    }]
+  }
+  const statusMap = groupStatus.value
+  const groups = clusters.value.reduce((t, c) => {
+    const g = t[c.provider] ?? {group: c.provider, ...statusMap[c.provider], children: []}
+    g.children.push(c)
+    t[c.provider] = g
+
+    return t
+  }, [])
+  return [
+    ...Object.values(groups),
+    ...errorGroups.value
+  ]
+})
+
+
+const notificationStore = useNotificationStore()
+const wmStore = useWindownManagerStore()
+
+const joinNodeModalVisible = ref(false)
+// generate cli command
+const cliModalVisible = ref(false)
+const clusterForm = ref(null)
+
+const selectedClusters = ref([])
+const handleSelectionChange = (rows) => {
+  selectedClusters.value = rows
+}
+
+const groupBy = ref('provider')
+
+const commandParams = ref([])
+
+// join node
+const clusterId = ref('')
+
+// delete cluster
+const confirmModalVisible = ref(false)
+const handleCommand = ({command, data}) => {
+  const [cluster] = data
+  switch (command) {
+    case 'delete':
+      commandParams.value = data
+      confirmModalVisible.value=true
+      break;
+    case 'viewLog':
+      removeCreatingCluster(cluster.id)
+      wmStore.addTab({
+        id: `log_${cluster.id}`,
+        component: 'ClusterLogs',
+        label: `log: ${cluster.name}`,
+        icon: 'log',
+        attrs: {
+          cluster: cluster.id,
+        }
+      })
+      break;
+    case 'joinNode':
+      clusterId.value = cluster.id
+      joinNodeModalVisible.value = true
+      break;
+    case 'clone':
+    case 'edit':
+      router.push({name: 'ClusterExplorerCoreClustersCreate', query: {clusterId: cluster.id}})
+      break;
+    case 'saveAsTemplate':
+      router.push({name: 'ClusterExplorerSettingsTemplatesCreate', query: {clusterId: cluster.id}})
+      break;
+    case 'generateCliCommand':
+      if (loadProviderError.value) {
+        notificationStore.notify({
+          type: 'error',
+          title: 'Load Provider Failed',
+          content: stringify(loadProviderError.value)
+        })
+        return
+      }
+      fetchById(cluster.id).then((cluster) => {
+        const provider = providers.value.find((p) => p.id === cluster.provider)
+        const defaultVal = {
+          config: Object.keys(cluster)
+            .filter((k) => k != 'options')
+            .reduce((t, k) => {
+              t[k] = cluster[k]
+              return t
+            }, {}),
+          options: cluster.options,
+        }
+
+        const schema = overwriteSchemaDefaultValue(provider, defaultVal)
+        const { form }= useFormFromSchema(schema)
+        clusterForm.value = form
+        cliModalVisible.value = true
+      }).catch((err) => {
+        if (err) {
+          notificationStore.notify({
+            type: 'error',
+            title: 'Load Cluster Failed',
+            content: stringify(err)
+          })
+        }
+      })
+      break;
+    case 'disableExplorer':
+      disableExplorer(cluster).catch((err) => {
+        if (err) {
+          notificationStore.notify({
+            type: 'error',
+            title: 'Disable explorer Error',
+            content: stringify(err)
+          })
+        }
+      })
+      break;
+    case 'enableExplorer':
+      enableExplorer(cluster).then(({data}) => {
+        notificationStore.notify({
+          type: 'success',
+          title: 'Enable kube-explorer success',
+          content: stringify(data)
+        })
+      }).catch((err) => {
+        if (err) {
+          notificationStore.notify({
+            type: 'error',
+            title: 'Enable explorer Error',
+            content: stringify(err)
+          })
+        }
+      })
+      break;
+  }
+}
+const deleteClusters = async (clusters) => {
+  confirmModalVisible.value=false
+  const results = await Promise.allSettled(clusters.map((c) => remove(c.id)))
+  const errors = results
+    .filter((p) => p.status === 'rejected')
+    .map((p) => p.reason)
+  errors.forEach((e) => {
+      notificationStore.notify({
+      type: 'error',
+      title: 'Delete Cluster Failed',
+      content: stringify(e)
+    })
+  })
+}
+watchEffect(() => {
+  if(confirmModalVisible.value === false) {
+    commandParams.value=[]
+  }
+})
+const reload = (provider) => {
+  providerClusterStores[provider]?.loadData()
+}
+
 </script>
 <style>
 .cluster-table__header {

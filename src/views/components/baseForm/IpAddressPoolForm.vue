@@ -9,8 +9,8 @@
       </k-tooltip>
     </h3>
     <template v-for="(ip, index) in ips" :key="index">
-      <k-input :readonly="readonly" v-model.trim="ip.value" placeholder="e.g. 192.168.1.22" :ref="el => { if (el) { inputs[index] = el } }"></k-input>
-      <k-icon v-if="!readonly" class="cursor-pointer" type="ashbin" @click="remove(index)" :size="20"></k-icon>
+      <k-input :ref="el => { if (el) { inputs[index] = el } }" v-model.trim="ip.value" :readonly="readonly" placeholder="e.g. 192.168.1.22"></k-input>
+      <k-icon v-if="!readonly" class="cursor-pointer" type="ashbin" :size="20" @click="remove(index)"></k-icon>
       <div v-else></div>
     </template>
     <div class="col-span-2">
@@ -19,66 +19,55 @@
     </div>
   </div>
 </template>
-<script>
-import {defineComponent, ref, watch, onBeforeUpdate, nextTick} from 'vue'
+<script setup>
+import {ref, watch, onBeforeUpdate, nextTick} from 'vue'
 
-export default defineComponent({
-  name: 'IpAddressPoolForm',
-  props: {
-    initValue: {
-      type: String,
-      default: '',
-    },
-    label: {
-      type: String,
-      default: ''
-    },
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    desc: {
-      type: String,
-      default: ''
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
+const props = defineProps({
+  initValue: {
+    type: String,
+    default: '',
   },
-
-  setup(props) {
-    const inputs = ref([])
-    onBeforeUpdate(() => {
-      inputs.value = []
-    })
-    const ips = ref(props.initValue.split(',').map((ip) => ({ value: ip })))
-
-    watch(() => props.initValue, (v) => {
-      if (v !== ips.value.map((ip) => ip.value).join(',')) {
-        ips.value = props.initValue.split(',').map((ip) => ({ value: ip }))
-      }
-    })
-    const remove = (index) => {
-      ips.value.splice(index, 1)
-    }
-    const add = () => {
-      ips.value.push({ value: '' })
-      nextTick(() => {
-        inputs.value[inputs.value.length - 1]?.focus()
-      })
-    }
-    const getForm = () => {
-      return ips.value.map((ip) => ip.value)
-    }
-
-    return {
-      inputs,
-      ips,
-      remove,
-      add,
-      getForm,
-    }
+  label: {
+    type: String,
+    default: ''
+  },
+  required: {
+    type: Boolean,
+    default: false,
+  },
+  desc: {
+    type: String,
+    default: ''
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
   },
 })
+
+const inputs = ref([])
+onBeforeUpdate(() => {
+  inputs.value = []
+})
+const ips = ref(props.initValue.split(',').map((ip) => ({ value: ip })))
+
+watch(() => props.initValue, (v) => {
+  if (v !== ips.value.map((ip) => ip.value).join(',')) {
+    ips.value = props.initValue.split(',').map((ip) => ({ value: ip }))
+  }
+})
+const remove = (index) => {
+  ips.value.splice(index, 1)
+}
+const add = () => {
+  ips.value.push({ value: '' })
+  nextTick(() => {
+    inputs.value[inputs.value.length - 1]?.focus()
+  })
+}
+const getForm = () => {
+  return ips.value.map((ip) => ip.value)
+}
+
+defineExpose({ getForm })
 </script>

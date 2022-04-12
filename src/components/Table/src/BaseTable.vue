@@ -10,11 +10,11 @@
           <col :style="getColStyle(c)">
         </template>
       </colgroup>
-      <table-header v-show="showHeader" :groupBy="groupBy"></table-header>
+      <table-header v-show="showHeader" :group-by="groupBy"></table-header>
       <template v-if="state === 'loaded'">
         <table-body v-for="g in dataGroup" :key="g" :data="g.children" :group="g.group" :group-by="groupBy">
-          <template v-if="$slots.group" #group="props">
-            <slot name="group" v-bind="props"></slot>
+          <template v-if="$slots.group" #group="p">
+            <slot name="group" v-bind="p"></slot>
           </template>
         </table-body>
       </template>
@@ -106,9 +106,7 @@ provide('tableEmit', emit)
 const columns = computed(() => {
   return props.groupBy ? columnStore.state.columns.filter((c) => c.field !== props.groupBy) : columnStore.state.columns
 })
-const hasSelection = computed(() => {
-  return columns.some((c) => c.type === 'selection')
-})
+
 const getColStyle = (col) => {
   if (col.type === 'selection') {
     return {

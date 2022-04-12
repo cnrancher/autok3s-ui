@@ -3,12 +3,12 @@
   <div class="text-size-18px">
     <slot name="title"></slot>
   </div>
-  <div class="grid grid-flow-col items-center justify-between cursor-pointer" v-if="closable" @click="toggleVisible">
+  <div v-if="closable" class="grid grid-flow-col items-center justify-between cursor-pointer" @click="toggleVisible">
     <a class="text-light-blue-500">{{visible ? 'Hide':'Show'}}</a>
     <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
   </div>
-  <small class="col-span-2" v-if="$slots.subtitle"><slot name="subtitle"></slot></small>
-  <div class="col-span-2" v-show="show">
+  <small v-if="$slots.subtitle" class="col-span-2"><slot name="subtitle"></slot></small>
+  <div v-show="show" class="col-span-2">
     <slot></slot>
   </div>
 </div>

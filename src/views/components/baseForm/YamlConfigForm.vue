@@ -24,7 +24,7 @@
   </div>
 </template>
 <script>
-import {computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import {computed, defineComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import useThemeStore from '@/store/useThemeStore.js'
 import useNotificationStore from '@/store/useNotificationStore.js'
 import CodeMirror from 'codemirror'

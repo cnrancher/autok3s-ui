@@ -1,4 +1,5 @@
 <template>
+<!-- eslint-disable vue/no-mutating-props -->
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-end">
     <string-form
       v-model.trim="form.config['ssh-key-path']"
@@ -11,7 +12,7 @@
       <a class="text-light-blue-500">{{visible ? 'Hide':'Show'}}</a>
       <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
     </div>
-    <div class="contents" v-show="visible">
+    <div v-show="visible" class="contents">
       <k-password-input
         v-model.trim="form.config['ssh-key-passphrase']"
         label="SSH Key Passphrase"
@@ -39,39 +40,29 @@
     </div>
   </div>
 </template>
-<script>
-import {defineComponent, ref} from 'vue'
+<script setup>
+import {ref} from 'vue'
 import BooleanForm from './BooleanForm.vue'
 import StringForm from './StringForm.vue'
-export default defineComponent({
-  name: 'SSHPrivateForm',
-  props: {
-    form: {
-      type: Object,
-      required: true
-    },
-    desc: {
-      type: Object,
-      required: true,
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
+
+defineProps({
+  form: {
+    type: Object,
+    required: true
   },
-  setup() {
-    const visible = ref(false)
-    const toggleVisible = () => {
-      visible.value = !visible.value
-    }
-    return {
-      visible,
-      toggleVisible,
-    }
+  desc: {
+    type: Object,
+    required: true,
   },
-  components: {
-    BooleanForm,
-    StringForm,
-  }
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
 })
+
+const visible = ref(false)
+const toggleVisible = () => {
+  visible.value = !visible.value
+}
+
 </script>

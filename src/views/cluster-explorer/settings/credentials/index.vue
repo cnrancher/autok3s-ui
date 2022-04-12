@@ -9,15 +9,8 @@
   </page-header> -->
   <credential-table></credential-table>
 </template>
-<script>
-import {defineComponent} from 'vue'
+<script setup>
 import CredentialTable from './components/CredentialTable.vue'
 // import PageHeader from '@/views/components/PageHeader.vue'
-export default defineComponent({
-  name: 'Credentials',
-  components: {
-    CredentialTable,
-    // PageHeader,
-  }
-})
+
 </script>

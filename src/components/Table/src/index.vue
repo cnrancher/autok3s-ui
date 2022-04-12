@@ -2,9 +2,9 @@
   <div>
     <base-table
       :caption="caption"
-      :showHeader="showHeader"
+      :show-header="showHeader"
       :data="tableData"
-      :groupBy="groupBy"
+      :group-by="groupBy"
       :state="state"
       @order-change="onOrderChange"
       @selection-change="onSelectionChange"
@@ -12,16 +12,16 @@
       <template #default>
         <slot></slot>
       </template>
-      <template #group="props" v-if="$slots.group">
-        <slot name="group" v-bind="props">
+      <template v-if="$slots.group" #group="p">
+        <slot name="group" v-bind="p">
         </slot>
       </template>
-      <template #state-error v-if="$slots.error">
+      <template v-if="$slots.error" #state-error>
         <slot name="error">
         </slot>
       </template>
     </base-table>
-    <pagination v-if="showPagination" :total="total" v-model:current-page="currentPage" :page-size="pageSize"></pagination>
+    <pagination v-if="showPagination" v-model:current-page="currentPage" :total="total" :page-size="pageSize"></pagination>
   </div>
 </template>
 <script>

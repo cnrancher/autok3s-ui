@@ -1,8 +1,8 @@
 <script>
-import {defineComponent, inject, h, toRef, onBeforeUnmount, reactive, watch} from 'vue'
+import { defineComponent, inject, h, onBeforeUnmount, reactive } from 'vue'
 import useIdGenrator from '@/composables/useIdGenerator.js'
 
-const {next: nextId, reset: resetId } = useIdGenrator()
+const { next: nextId } = useIdGenrator()
 const getFieldValue = (obj, field) => {
   return field.split('.')
     .reduce((o, i) => o?.[i], obj) ?? ''

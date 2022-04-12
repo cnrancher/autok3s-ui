@@ -28,11 +28,11 @@
         <boolean-form
           v-model="isDefault"
           label="Default Template"
-          trueLabel="True"
-          falseLabel="False"
+          true-label="True"
+          false-label="False"
         ></boolean-form>
       </div>
-      <component v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider" ref="formRef" :schema="providerSchema" :is="clusterFormComponent"></component>
+      <component :is="clusterFormComponent" v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider" ref="formRef" :schema="providerSchema"></component>
       <footer-actions>
         <router-link :to="{name: 'ClusterExplorerSettingsTemplates'}" class="btn role-secondary">Cancel</router-link>
         <k-button class="role-primary" type="button" :loading="loading || creating" @click="create">Create</k-button>
@@ -43,7 +43,7 @@
   </div>
 </template>
 <script>
-import {computed, defineComponent, inject, reactive, ref, toRef, toRefs, watch} from 'vue'
+import {computed, defineComponent, reactive, ref, toRef, watch} from 'vue'
 import { useRouter } from 'vue-router'
 import jsyaml from 'js-yaml'
 import PageHeader from '@/views/components/PageHeader.vue'
@@ -70,6 +70,20 @@ import { storeToRefs } from 'pinia'
 
 export default defineComponent({
   name: 'CreateTemplate',
+  components: {
+    PageHeader,
+    FooterActions,
+    AwsClusterCreateForm,
+    AlibabaClusterCreateForm,
+    TencentClusterCreateForm,
+    NativeClusterCreateForm,
+    K3dClusterCreateForm,
+    GoogleClusterCreateForm,
+    HarvesterClusterCreateForm,
+    TemplateFilter,
+    StringForm,
+    BooleanForm,
+  },
   props: {
     clusterId: {
       type: String,
@@ -245,6 +259,7 @@ export default defineComponent({
     }
     let form = null
     const validate = () => {
+      // eslint-disable-next-line no-unused-vars
       const allRequiredFields = Object.entries(providerSchema).filter(([k, v]) => v?.required).map(([k]) => k);
       form = formRef.value?.getForm()
       if (!form) {
@@ -274,7 +289,7 @@ export default defineComponent({
       formErrors.value= errors;
       return errors.length === 0
     }
-    const create = async (e) => {
+    const create = async () => {
       if (!validate()) {
         form = null
         return
@@ -352,20 +367,6 @@ export default defineComponent({
       handleApplyTemplate,
       isDefault,
     }
-  },
-  components: {
-    PageHeader,
-    FooterActions,
-    AwsClusterCreateForm,
-    AlibabaClusterCreateForm,
-    TencentClusterCreateForm,
-    NativeClusterCreateForm,
-    K3dClusterCreateForm,
-    GoogleClusterCreateForm,
-    HarvesterClusterCreateForm,
-    TemplateFilter,
-    StringForm,
-    BooleanForm,
   }
 })
 </script>

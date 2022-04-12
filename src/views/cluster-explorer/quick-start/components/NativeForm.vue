@@ -24,46 +24,35 @@
     />
   </div>
 </template>
-<script>
-import {ref,defineComponent} from 'vue'
+<script setup>
+import {ref} from 'vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
 import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import IpAddressPoolForm from '@/views/components/baseForm/IpAddressPoolForm.vue'
 import { cloneDeep } from '@/utils'
 
-export default defineComponent({
-  props: {
-    schema: {
-      type: Object,
-      required: true,
-    },
-    hasError: {
-      type: Boolean,
-      default: false,
-    }
+const props = defineProps({
+  schema: {
+    type: Object,
+    required: true,
   },
-  setup(props) {
-    const { form, desc }= useFormFromSchema(props.schema)
-    const masterIps = ref(null)
-    const workerIps = ref(null)
-   
-    const getForm = () => {
-      const f = cloneDeep(form)
-      f.options['master-ips'] = masterIps.value.getForm().filter((v) => v).join(',')
-      f.options['worker-ips'] = workerIps.value.getForm().filter((v) => v).join(',')
-      return f
-    }
-    return {
-      form,
-      desc,
-      masterIps,
-      workerIps,
-      getForm,
-    }
-  },
-  components: {
-    StringForm,
-    IpAddressPoolForm,
+  hasError: {
+    type: Boolean,
+    default: false,
   }
 })
+
+const { form, desc }= useFormFromSchema(props.schema)
+const masterIps = ref(null)
+const workerIps = ref(null)
+
+const getForm = () => {
+  const f = cloneDeep(form)
+  f.options['master-ips'] = masterIps.value.getForm().filter((v) => v).join(',')
+  f.options['worker-ips'] = workerIps.value.getForm().filter((v) => v).join(',')
+  return f
+}
+
+defineExpose({ getForm })
+
 </script>

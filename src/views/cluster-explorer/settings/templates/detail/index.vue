@@ -3,7 +3,7 @@
     <page-header>
       <template #title><router-link :to="{ name: 'ClusterExplorerSettingsTemplates' }">Template: </router-link>Detail {{name}}</template>
       <template #actions>
-        <router-link :to="{name: 'ClusterExplorerCoreClustersCreate', query: {templateId}}" class="btn role-secondary" v-if="!warning">Create Cluster</router-link>
+        <router-link v-if="!warning" :to="{name: 'ClusterExplorerCoreClustersCreate', query: {templateId}}" class="btn role-secondary">Create Cluster</router-link>
         <router-link :to="{name: 'ClusterExplorerSettingsTemplatesEdit', params: {templateId}}" class="btn role-secondary">Edit</router-link>
       </template>
     </page-header>
@@ -32,12 +32,12 @@
           <boolean-form
             v-model="isDefault"
             label="Default Template"
-            trueLabel="True"
-            falseLabel="False"
+            true-label="True"
+            false-label="False"
             readonly
           ></boolean-form>
         </div>
-        <component readonly v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider" ref="formRef" :schema="providerSchema" :is="clusterFormComponent"></component>
+        <component :is="clusterFormComponent" v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider" ref="formRef" readonly :schema="providerSchema"></component>
         <footer-actions>
           <router-link :to="{name: 'ClusterExplorerSettingsTemplates'}" class="btn role-secondary">Go Back</router-link>
         </footer-actions>
@@ -48,7 +48,7 @@
   </div>
 </template>
 <script>
-import {computed, defineComponent, inject, reactive, ref, toRef, toRefs, watch} from 'vue'
+import {computed, defineComponent, reactive, ref, toRef, watch} from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/views/components/PageHeader.vue'
 import FooterActions from '@/views/components/FooterActions.vue'
@@ -70,6 +70,19 @@ import { storeToRefs } from 'pinia'
 
 export default defineComponent({
   name: 'TemplateDetail',
+  components: {
+    PageHeader,
+    FooterActions,
+    AwsClusterCreateForm,
+    AlibabaClusterCreateForm,
+    TencentClusterCreateForm,
+    K3dClusterCreateForm,
+    NativeClusterCreateForm,
+    GoogleClusterCreateForm,
+    HarvesterClusterCreateForm,
+    StringForm,
+    BooleanForm
+  },
   props: {
     templateId: {
       type: String,
@@ -172,19 +185,6 @@ export default defineComponent({
       formErrors,
       warning,
     }
-  },
-  components: {
-    PageHeader,
-    FooterActions,
-    AwsClusterCreateForm,
-    AlibabaClusterCreateForm,
-    TencentClusterCreateForm,
-    K3dClusterCreateForm,
-    NativeClusterCreateForm,
-    GoogleClusterCreateForm,
-    HarvesterClusterCreateForm,
-    StringForm,
-    BooleanForm
   }
 })
 </script>

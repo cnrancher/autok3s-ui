@@ -1,8 +1,8 @@
 <template>
-  <div class="k-alert" v-show="visible" :class="typeClass">
+  <div v-show="visible" class="k-alert" :class="typeClass">
     <div class="k-alert__title"><slot>{{title}}</slot></div>
-    <div class="k-alert__close" v-if="closable"><k-icon type="close" @click="close"></k-icon></div>
-    <div class="k-alert-desc" v-if="description">{{description}}</div>
+    <div v-if="closable" class="k-alert__close"><k-icon type="close" @click="close"></k-icon></div>
+    <div v-if="description" class="k-alert-desc">{{description}}</div>
   </div>
 </template>
 <script>

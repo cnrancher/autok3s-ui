@@ -1,18 +1,23 @@
 <template>
-  <div v-if="pageCount > 0" class="py-5px px-10px"
+  <div
+v-if="pageCount > 0" class="py-5px px-10px"
     :class="[1 === currentPage ? 'text-light-blue-500 cursor-default' : 'cursor-pointer']"
     @click="handlePageChange(1)">1</div>
-  <div v-if="showPrevMore"
+  <div
+v-if="showPrevMore"
     class="py-5px px-10px"
     @click="handlePrevMore"><k-icon type="ellipsis"></k-icon></div>
-  <div v-for="pager in pagers" :key="pager"
+  <div
+v-for="pager in pagers" :key="pager"
     class="py-5px px-10px"
     :class="[pager === currentPage ? 'text-light-blue-500 cursor-default' : 'cursor-pointer']"
     @click="handlePageChange(pager)">{{pager}}</div>
-  <div v-if="showNextMore"
+  <div
+v-if="showNextMore"
     class="py-5px px-10px"
     @click="handleNextMore"><k-icon type="ellipsis"></k-icon></div>
-  <div v-if="pageCount > 1" class="py-5px px-10px"
+  <div
+v-if="pageCount > 1" class="py-5px px-10px"
      :class="[pageCount === currentPage ? 'text-light-blue-500 cursor-default' : 'cursor-pointer']"
      @click="handlePageChange(pageCount)">{{pageCount}}</div>
 </template>

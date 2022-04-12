@@ -5,7 +5,7 @@
 </template>
 <script>
 import useIdGenrator from '@/composables/useIdGenerator.js'
-const {next: nextId, reset: resetId } = useIdGenrator()
+const {next: nextId } = useIdGenrator()
 export default {
   name: 'KTabPane',
 }

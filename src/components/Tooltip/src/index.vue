@@ -1,13 +1,14 @@
 <template>
-  <div class="inline-flex items-center" ref="trigger" @mouseenter="showTooltip" @focus="showTooltip" @mouseleave="hideTooltip" @blur="hideTooltip">
+  <div ref="trigger" class="inline-flex items-center" @mouseenter="showTooltip" @focus="showTooltip" @mouseleave="hideTooltip" @blur="hideTooltip">
     <slot></slot>
     <teleport to="body" :disabled="!appendToBody">
-       <div ref="popover"
+       <div
+v-if="!lazy || show"
+        ref="popover"
         class="k-tooltip bg-gray-200 text-gray-800 rounded p-8px absolute max-w-80vw z-$tooltip-z-index"
-        :class="[show ? 'block':'hidden']"
-        @mouseenter="showTooltip" @focus="showTooltip"
-        @mouseleave="hideTooltip" @blur="hideTooltip"
-        v-if="!lazy || show">
+        :class="[show ? 'block':'hidden']" @mouseenter="showTooltip"
+        @focus="showTooltip" @mouseleave="hideTooltip"
+        @blur="hideTooltip">
          <slot name="popover"></slot>
          <div class="k-tooltip__arrow" data-popper-arrow></div>
       </div>

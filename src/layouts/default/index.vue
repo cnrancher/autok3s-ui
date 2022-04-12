@@ -11,32 +11,23 @@
     <window-manager class="autok3s-ui__wm"></window-manager>
   </div>
 </template>
-<script>
+<script setup>
 import AppFooter from './footer/index.vue'
 import AppHeader from './header/index.vue'
 import AppSider from './sider/index.vue'
 import WindowManager from '@/layouts/components/WindowManager/index.vue'
 import { useRoute } from 'vue-router'
-import {defineComponent, ref, watch, provide} from 'vue'
+import { ref, watch, provide } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const openSideBar = ref(false)
-    const route = useRoute()
+const openSideBar = ref(false)
+const route = useRoute()
 
-    provide('openSideBar', openSideBar)
+provide('openSideBar', openSideBar)
 
-    watch(() => route.path, () => {
-      openSideBar.value = false
-    })
-  },
-  components: {
-    AppFooter,
-    AppHeader,
-    AppSider,
-    WindowManager
-  }
+watch(() => route.path, () => {
+  openSideBar.value = false
 })
+
 </script>
 <style>
 .autok3s-ui__root {
