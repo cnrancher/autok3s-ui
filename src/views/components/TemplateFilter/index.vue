@@ -7,7 +7,7 @@
       :placeholder="placeholder"
       :disabled="loading || disabled"
       v-model="searchQuery"
-      @focus="handleFocus"
+      @click.prevent="handleFocus"
       @keydown.down.prevent="handleKeyDown"
       @keydown.up.prevent="handleKeyUp"
       @keydown.esc.stop.prevent="handleKeyESC"
@@ -46,193 +46,173 @@
   </div>
 </template>
 <script>
+export default {
+  name: 'TemplateFilter',
+}
+</script>
 
-import {computed, defineComponent, inject, nextTick, ref, toRefs, watch, watchEffect} from 'vue'
+<script setup>
+
+import {computed, nextTick, ref, watch, watchEffect, defineProps, defineEmits} from 'vue'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useDataGroup from '@/composables/useDataGroup.js'
 import usePopper from '@/composables/usePopper.js'
 import { onClickOutside } from '@vueuse/core'
 import useTemplateStore from '@/store/useTemplateStore.js'
 import { storeToRefs } from 'pinia'
-
 const popperOption = {
   placement: 'bottom-start'
 }
-export default defineComponent({
-  name: 'TemplateFilter',
-  props: {
-    modelValue: {
-      type: String,
-      default: ''
-    },
-    disabled: {
-      type: Boolean,
-      default: false
-    },
-    provider: {
-      type: String,
-      default: '',
-    }
+
+const props = defineProps({
+  modelValue: {
+    type: String,
+    default: ''
   },
-  emits: ['update:modelValue', 'apply-template'],
-  setup(props, {emit}) {
-    const templateStore = useTemplateStore()
-    const inputRef = ref(null)
-    const resultRef = ref(null)
-    const show = ref(false)
-    const currentTemplate = ref(null)
-    
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  provider: {
+    type: String,
+    default: '',
+  }
+})
 
-    const { create, remove, update } = usePopper(inputRef, resultRef, popperOption)
-    onClickOutside(resultRef, () => {
-      show.value = false
-    })
-    const { loading, data: templates, error } = storeToRefs(templateStore)
-    const providerTemplates = computed(() => {
-      if (props.provider) {
-        return templates.value.filter((t) => t.provider === props.provider && !t.status)
-      }
-      return templates.value.filter((t) => !t.status)
-    })
-    const {searchQuery, searchFields, dataMatchingSearchQuery} = useDataSearch(providerTemplates)
-    const hoverIndex = ref(-1)
-    const resultLength = computed(() => {
-      return dataMatchingSearchQuery.value.length
-    })
-    const hoverTemplate = computed(() => {
-      return dataMatchingSearchQuery.value[hoverIndex.value]
-    })
-    searchFields.value = ['provider', 'name', 'options.region', 'options.zone']
-    const { groupField, dataGroup } = useDataGroup(dataMatchingSearchQuery)
-    groupField.value = 'provider'
+const emit = defineEmits(['update:modelValue', 'apply-template'])
 
-    const placeholder = computed(() => {
-      if (show.value || !currentTemplate.value) {
-        return 'Place select a template'
-      }
-      return ''
-    })
-    
-    const noResult = computed(() => {
-      if (templates.value.length > 0 && dataMatchingSearchQuery.value.length === 0) {
-        return true
-      }
-      return false
-    })
-    const noData = computed(() => {
-      return templates.length === 0
-    })
-    const templateDisplayValue = computed(() => {
-      if (!currentTemplate.value) {
-        return ''
-      }
-      const t = currentTemplate.value
-      if (!t) {
-        return ''
-      }
-      if (['native', 'k3d', 'harvester'].includes(t.provider)) {
-        return `${t.provider} | ${t.name}`
-      }
-      return `${t.provider} | ${t.name} | ${t.options.region} | ${t.options.zone}`
-    })
-    watchEffect(() => {
-      currentTemplate.value = props.modelValue
-    })
+const templateStore = useTemplateStore()
+const inputRef = ref(null)
+const resultRef = ref(null)
+const show = ref(false)
+const currentTemplate = ref(null)
 
-    const handleFocus = () => {
-      searchQuery.value = ''
-      show.value = true
-    }
 
-    const handleSelect = (template)=> {
-      currentTemplate.value = template
-      show.value = false
-      emit('update:modelValue', template.id)
-    }
-    const handlePopperClick = (e) => {
-      // do nothing
-    }
-    const handleKeyDown = () => {
-      if (!show.value) {
-        return
-      }
-      if (resultLength.value === 0) {
-        return
-      }
-      hoverIndex.value = (hoverIndex.value + 1) % resultLength.value
-    }
-    const handleKeyUp = () => {
-       if (!show.value) {
-        return
-      }
-      if (resultLength.value === 0) {
-        return
-      }
-      hoverIndex.value = (hoverIndex.value - 1 + resultLength.value) % resultLength.value
-    }
-    const handleKeyESC = () => {
-      show.value = false
-    }
-    const handleKeyEnter = () => {
-      if (!show.value) {
-        return
-      }
-      if (hoverTemplate.value) {
-        currentTemplate.value = hoverTemplate.value
-        emit('update:modelValue', hoverTemplate.value.id)
-      }
-      inputRef.value.blur()
-      show.value = false
-    }
-    const handleApplyTemplate = () => {
-      emit('apply-template', currentTemplate.value.id)
-    }
-    const createPopper = () => {
-      create()
+const { create, remove, update } = usePopper(inputRef, resultRef, popperOption)
+onClickOutside(resultRef, () => {
+  show.value = false
+})
+const { loading, data: templates, error } = storeToRefs(templateStore)
+const providerTemplates = computed(() => {
+  if (props.provider) {
+    return templates.value.filter((t) => t.provider === props.provider && !t.status)
+  }
+  return templates.value.filter((t) => !t.status)
+})
+const {searchQuery, searchFields, dataMatchingSearchQuery} = useDataSearch(providerTemplates)
+const hoverIndex = ref(-1)
+const resultLength = computed(() => {
+  return dataMatchingSearchQuery.value.length
+})
+const hoverTemplate = computed(() => {
+  return dataMatchingSearchQuery.value[hoverIndex.value]
+})
+searchFields.value = ['provider', 'name', 'options.region', 'options.zone']
+const { groupField, dataGroup } = useDataGroup(dataMatchingSearchQuery)
+groupField.value = 'provider'
+
+const placeholder = computed(() => {
+  if (show.value || !currentTemplate.value) {
+    return 'Place select a template'
+  }
+  return ''
+})
+
+const noResult = computed(() => {
+  if (templates.value.length > 0 && dataMatchingSearchQuery.value.length === 0) {
+    return true
+  }
+  return false
+})
+const noData = computed(() => {
+  return templates.length === 0
+})
+const templateDisplayValue = computed(() => {
+  if (!currentTemplate.value) {
+    return ''
+  }
+  const t = currentTemplate.value
+  if (!t) {
+    return ''
+  }
+  if (['native', 'k3d', 'harvester'].includes(t.provider)) {
+    return `${t.provider} | ${t.name}`
+  }
+  return `${t.provider} | ${t.name} | ${t.options.region} | ${t.options.zone}`
+})
+watchEffect(() => {
+  currentTemplate.value = props.modelValue
+})
+
+const handleFocus = () => {
+  searchQuery.value = ''
+  show.value = true
+}
+
+const handleSelect = (template)=> {
+  currentTemplate.value = template
+  show.value = false
+  emit('update:modelValue', template.id)
+}
+const handlePopperClick = (e) => {
+  // do nothing
+}
+const handleKeyDown = () => {
+  if (!show.value) {
+    return
+  }
+  if (resultLength.value === 0) {
+    return
+  }
+  hoverIndex.value = (hoverIndex.value + 1) % resultLength.value
+}
+const handleKeyUp = () => {
+    if (!show.value) {
+    return
+  }
+  if (resultLength.value === 0) {
+    return
+  }
+  hoverIndex.value = (hoverIndex.value - 1 + resultLength.value) % resultLength.value
+}
+const handleKeyESC = () => {
+  show.value = false
+}
+const handleKeyEnter = () => {
+  if (!show.value) {
+    return
+  }
+  if (hoverTemplate.value) {
+    currentTemplate.value = hoverTemplate.value
+    emit('update:modelValue', hoverTemplate.value.id)
+  }
+  inputRef.value.blur()
+  show.value = false
+}
+const handleApplyTemplate = () => {
+  emit('apply-template', currentTemplate.value.id)
+}
+const createPopper = () => {
+  create()
+  update()
+}
+watch(show, () => {
+  if (show.value) {
+    nextTick(() => {
+      createPopper()
+    })
+    return
+  }
+  remove()
+  hoverIndex.value = -1
+  searchQuery.value = ''
+})
+watch(dataGroup, () => {
+  if (show.value) {
+    nextTick(() => {
       update()
-    }
-    watch(show, () => {
-      if (show.value) {
-        nextTick(() => {
-          createPopper()
-        })
-        return
-      }
-      remove()
-      hoverIndex.value = -1
-      searchQuery.value = ''
     })
-    watch(dataGroup, () => {
-      if (show.value) {
-        nextTick(() => {
-          update()
-        })
-      }
-    })
-    return {
-      placeholder,
-      searchQuery,
-      handleFocus,
-      handleSelect,
-      handleApplyTemplate,
-      loading,
-      error,
-      noResult,
-      noData,
-      dataGroup,
-      show,
-      inputRef,
-      resultRef,
-      templateDisplayValue,
-      currentTemplate,
-      handlePopperClick,
-      handleKeyDown,
-      handleKeyUp,
-      handleKeyESC,
-      handleKeyEnter,
-      hoverTemplate,
-    }
-  },
+  }
 })
 </script>
 <style>
