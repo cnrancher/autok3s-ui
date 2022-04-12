@@ -20,7 +20,7 @@ export default {
 }
 </script>
 <script setup>
-import {defineComponent, nextTick, onBeforeUnmount, ref, watch, defineProps} from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import usePopper from '@/composables/usePopper.js'
 
 const props = defineProps({

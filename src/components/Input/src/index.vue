@@ -51,7 +51,7 @@ export default {
 </script>
 
 <script setup>
-import { ref, defineProps } from 'vue'
+import { ref } from 'vue'
 import Tooltip from '@/components/Tooltip'
 import KIcon from '@/components/Icon'
 

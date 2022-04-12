@@ -14,7 +14,6 @@ export default {
 }
 </script>
 <script setup>
-import { defineProps } from 'vue'
 import KIcon from '@/components/Icon'
 
 defineProps({

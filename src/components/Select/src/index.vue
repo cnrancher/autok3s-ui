@@ -64,7 +64,7 @@ export default {
 </script>
 
 <script setup>
-import { computed, provide, watch, ref, defineProps, defineEmits, useSlots, nextTick } from 'vue'
+import { computed, provide, watch, ref, useSlots, nextTick } from 'vue'
 
 import { Dropdown }from '@/components/Dropdown'
 import KIcon from '@/components/Icon'

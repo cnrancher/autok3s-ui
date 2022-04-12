@@ -64,7 +64,7 @@ export default {
 }
 </script>
 <script setup>
-import { defineProps, defineEmits, useSlots } from 'vue'
+import { useSlots } from 'vue'
 import { Dropdown, DropdownMenuItem }from '@/components/Dropdown'
 import Tooltip from '@/components/Tooltip'
 import KIcon from '@/components/Icon'

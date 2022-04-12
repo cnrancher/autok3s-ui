@@ -43,7 +43,7 @@ import TableHeader from './TableHeader.vue'
 import TableBody from './TableBody.vue'
 import useColumnStore from './store/useColumnStore.js'
 import useDataStore from './store/useDataStore.js'
-import { computed, watch, watchEffect, toRefs, toRef, provide, defineProps, defineEmits } from 'vue'
+import { computed, watch, watchEffect, toRefs, toRef, provide } from 'vue'
 
 const tableStatus = {loading: 'Loading', loaded: '', error: 'Load Data Failed', noResults: 'No Result', noData: 'There are no rows to show.'}
 

@@ -52,8 +52,7 @@ export default {
 </script>
 
 <script setup>
-
-import {computed, nextTick, ref, watch, watchEffect, defineProps, defineEmits} from 'vue'
+import { computed, nextTick, ref, watch, watchEffect } from 'vue'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useDataGroup from '@/composables/useDataGroup.js'
 import usePopper from '@/composables/usePopper.js'
