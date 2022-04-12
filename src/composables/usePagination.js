@@ -1,9 +1,9 @@
-import { computed, ref } from "vue"
+import { computed, ref, unref } from "vue"
 
 export default function usePagination(data) {
   const pageSize = ref(20)
   const currentPage = ref(1)
-  const total = computed(() => data.value.length)
+  const total = computed(() => unref(data).length)
   const pageCount = computed(() => {
     if (pageSize.value <= 0 || total.value === 0) {
       return 1
@@ -30,7 +30,7 @@ export default function usePagination(data) {
     }
   }
   const pageData = computed(() => {
-    return data.value.slice(currentPage.value - 1, pageSize.value)
+    return unref(data).slice(currentPage.value - 1, currentPage.value * pageSize.value)
   })
   return {
     goToPage,
@@ -38,6 +38,7 @@ export default function usePagination(data) {
     prePage,
     pageData,
     currentPage,
+    pageSize,
     total,
     pageCount
   }
