@@ -9,14 +9,7 @@
     <cluster-table></cluster-table>
   </div>
 </template>
-<script>
-import {defineComponent} from 'vue'
+<script setup>
 import ClusterTable from './components/ClusterTable.vue'
 import PageHeader from '@/views/components/PageHeader.vue'
-export default defineComponent({
-  components: {
-    ClusterTable,
-    PageHeader,
-  }
-})
 </script>

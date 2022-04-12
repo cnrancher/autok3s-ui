@@ -3,7 +3,7 @@
     {{status}}
   </k-tag>
 </template>
-<script>
+<script setup>
 import { computed } from 'vue'
 
 const states = {
@@ -13,26 +13,19 @@ const states = {
   'unknown': { color: 'error' },
   'active': { color: 'success' },
   'removed': { color: 'warning' },
-  'removed': { color: 'warning' },
   'removing': { color: 'warning' },
   'updating': { color: 'warning' },
 }
 
-export default {
-  props: {
-    status: {
-      type: String,
-      required: true
-    }
-  },
-  setup(props) {
-    const type = computed(() => {
+const props = defineProps({
+  status: {
+    type: String,
+    required: true
+  }
+})
 
-      return states[props.status?.toLowerCase()]?.color ?? 'warning'
-    })
-    return {
-      type
-    }
-  },
-}
+const type = computed(() => {
+  return states[props.status?.toLowerCase()]?.color ?? 'warning'
+})
+
 </script>

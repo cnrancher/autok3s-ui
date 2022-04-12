@@ -2,7 +2,7 @@ import { onBeforeUnmount } from 'vue'
 import { getRootPath } from '@/utils/index.js'
 import { useWebSocket } from '@vueuse/core'
 
-export default function useResourceChangeSocket(notify) {
+export default function useResourceChangeSocket() {
   const url = `${window.location.origin.replace(/^http/, 'ws') }${getRootPath()}${import.meta.env.VITE_APP_BASE_API}/subscribe`
   // cache: {
 	// 	resouceType: {
@@ -47,7 +47,7 @@ export default function useResourceChangeSocket(notify) {
           callback(msg)
         })
       } catch (err) {
-        console.error(error)
+        console.error(err)
       }
     }
   })

@@ -9,32 +9,18 @@
     <kube-ctl-button></kube-ctl-button>
   </header>
 </template>
-<script>
-// import KDropdownNav from './DropdownNav.vue'
+<script setup>
 import KubeCtlButton from './KubeCtlButton.vue'
 import useRouteGroups from '../composables/useRouteGroups.js'
 import k3sLogo from '@/assets/k3s.svg'
 import KIcon from '@/components/Icon'
-import {defineComponent, inject} from 'vue'
-export default defineComponent({
-  setup(props, { emit }) {
-    const { currentGroup } = useRouteGroups()
-    const openSideBar = inject('openSideBar')
+import { inject } from 'vue'
 
-    const toggleSidBar = () => {
-     openSideBar.value = !openSideBar.value
-    }
-    return {
-      currentGroup,
-      k3sLogo,
-      toggleSidBar,
-    }
-  },
-  components: {
-    // KDropdownNav,
-    KubeCtlButton,
-    KIcon,
-  }
-})
+const { currentGroup } = useRouteGroups()
+const openSideBar = inject('openSideBar')
+
+const toggleSidBar = () => {
+  openSideBar.value = !openSideBar.value
+}
 </script>
 

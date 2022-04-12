@@ -1,7 +1,7 @@
 <template>
   <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
   <input style="display: none" autocomplete="new-password" type="password" />
-  <k-tabs tab-position="left" v-model="acitiveTab">
+  <k-tabs v-model="acitiveTab" tab-position="left">
     <k-tab-pane label="Instance Options" name="instance">
       <form-group>
         <template #title>Basic</template>
@@ -52,7 +52,7 @@
               <a class="text-$link">{{visible ? 'Hide':'Show'}}</a>
               <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
             </div>
-            <div class="contents" v-show="visible">
+            <div v-show="visible" class="contents">
               <k-password-input
                 v-model.trim="form.config['ssh-key-passphrase']"
                 label="SSH Key Passphrase"
@@ -113,75 +113,56 @@
     </k-tab-pane>
   </k-tabs>
 </template>
-<script>
-import {defineComponent, ref, computed} from 'vue'
+<script setup>
+import { ref, computed} from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import IpAddressPoolForm from '../baseForm/IpAddressPoolForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
-import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
 import useFormFromSchema from '../../composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
-export default defineComponent({
-  props: {
-    schema: {
-      type: Object,
-      required: true,
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
+
+const props = defineProps({
+  schema: {
+    type: Object,
+    required: true,
   },
-  setup(props) {
-    const masterIps = ref(null)
-    const workerIps = ref(null)
-    const { form, desc }= useFormFromSchema(props.schema)
-    const uiOptions = computed({
-      get() {
-        if (form.config.enable) {
-          return form.config.enable
-        }
-        if (form.config.ui) {
-          return ['dashboard']
-        }
-        return []
-      },
-      set(v) {
-        form.config.enable = v
-      }
-    })
-    const getForm = () => {
-      const f = cloneDeep(form)
-      f.options['master-ips'] = masterIps.value.getForm().filter((v) => v).join(',')
-      f.options['worker-ips'] = workerIps.value.getForm().filter((v) => v).join(',')
-      return f
-    }
-    const acitiveTab = ref('instance')
-    const visible = ref(false)
-    const toggleVisible = () => {
-      visible.value = !visible.value
-    }
-    return {
-      form,
-      desc,
-      getForm,
-      visible,
-      toggleVisible,
-      masterIps,
-      workerIps,
-      acitiveTab,
-      uiOptions,
-    }
+  readonly: {
+    type: Boolean,
+    default: false,
   },
-  components: {
-    BooleanForm,
-    StringForm,
-    IpAddressPoolForm,
-    K3sOptionsForm,
-    SshPrivateForm,
-    FormGroup,
+})
+
+const masterIps = ref(null)
+const workerIps = ref(null)
+const { form, desc }= useFormFromSchema(props.schema)
+const uiOptions = computed({
+  get() {
+    if (form.config.enable) {
+      return form.config.enable
+    }
+    if (form.config.ui) {
+      return ['dashboard']
+    }
+    return []
+  },
+  set(v) {
+    form.config.enable = v
   }
 })
+const getForm = () => {
+  const f = cloneDeep(form)
+  f.options['master-ips'] = masterIps.value.getForm().filter((v) => v).join(',')
+  f.options['worker-ips'] = workerIps.value.getForm().filter((v) => v).join(',')
+  return f
+}
+const acitiveTab = ref('instance')
+const visible = ref(false)
+const toggleVisible = () => {
+  visible.value = !visible.value
+}
+
+defineExpose({ getForm })
+
 </script>

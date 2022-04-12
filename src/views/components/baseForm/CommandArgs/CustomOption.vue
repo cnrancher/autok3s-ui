@@ -1,27 +1,25 @@
 <template>
     <code class="custom-option">{{value}}</code>
 </template>
-<script>
-import {computed, defineComponent} from 'vue'
+<script setup>
+import {computed} from 'vue'
 
-export default defineComponent({
-  name: 'CustomOption',
-  props: {
-    modelValue: {
-      type: String,
-      required: true,
-    }
-  },
-  setup(props, {emit}) {
-    const value = computed({
-      get() {
-        return props.modelValue
-      },
-      set(v) {
-        emit('update:modelValue', v)
-      }
-    })
-    return { value }
+const props = defineProps({
+  modelValue: {
+    type: String,
+    required: true,
   }
 })
+
+const emit = defineEmits(['update:modelValue'])
+
+const value = computed({
+  get() {
+    return props.modelValue
+  },
+  set(v) {
+    emit('update:modelValue', v)
+  }
+})
+
 </script>

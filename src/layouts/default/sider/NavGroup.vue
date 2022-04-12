@@ -17,16 +17,17 @@
     <k-icon v-if="routeGroup.level > 1" :type="routeGroup.icon || 'folder'" class="k-nav-group-link__icon"></k-icon>
     <span>{{routeGroup.title}}</span>
   </router-link> -->
-  <router-link v-else
+  <router-link
+v-else
+    v-slot="{ navigate, href, route, isActive, isExactActive}"
     :to="{name: routeGroup.name}"
-    custom
-    v-slot="{ navigate, href, route, isActive, isExactActive}">
+    custom>
     <a
       :href="href"
-      @click="navigate"
       class="k-nav-group__link grid grid-cols-[auto,1fr] gap-2px items-center py-3px"
-      :class="[isActive || $route.path.startsWith(route.path) ? 'router-link-active bg-gray-100' : 'hover:bg-gray-200', isExactActive ? 'router-link-exact-active' : '', routeGroup.level > 1 ? 'grid-cols-[20px,1fr] pl-16px': 'pl-8px']">
-      <k-icon class="k-nav-group__icon" v-if="routeGroup.level > 1" :type="routeGroup.icon || 'folder'" :class="[isActive || $route.path.startsWith(route.path) ? 'k-nav-group__icon--active': '']"></k-icon>
+      :class="[isActive || $route.path.startsWith(route.path) ? 'router-link-active bg-gray-100' : 'hover:bg-gray-200', isExactActive ? 'router-link-exact-active' : '', routeGroup.level > 1 ? 'grid-cols-[20px,1fr] pl-16px': 'pl-8px']"
+      @click="navigate">
+      <k-icon v-if="routeGroup.level > 1" class="k-nav-group__icon" :type="routeGroup.icon || 'folder'" :class="[isActive || $route.path.startsWith(route.path) ? 'k-nav-group__icon--active': '']"></k-icon>
       <span class="overflow-hidden overflow-ellipsis whitespace-nowrap">{{routeGroup.title}}</span>
     </a>
   </router-link>
@@ -34,6 +35,10 @@
 <script>
 import KIcon from '@/components/Icon'
 export default {
+  name: 'NavGroup',
+  components: {
+    KIcon
+  },
   props: {
     routeGroup: {
       type: Object,
@@ -45,7 +50,6 @@ export default {
     },
   },
   emits: ['toggle-open'],
-  name: 'NavGroup',
   setup(props, context) {
     const {emit} = context
     const toggleOpen = (name) => {
@@ -54,9 +58,6 @@ export default {
     return {
       toggleOpen
     }
-  },
-  components: {
-    KIcon
   }
 }
 </script>

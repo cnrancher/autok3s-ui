@@ -1,5 +1,5 @@
 import { fetchList } from '@/api/provider'
-import {onMounted, reactive, toRefs} from 'vue'
+import { reactive, toRefs } from 'vue'
 import {stringify} from '@/utils/error.js'
 
 export default function useProviders () {

@@ -21,7 +21,7 @@
     <div class="registry-config-form__content relative max-h-400px overflow-auto col-span-3" @dragenter="handleDrag" @dragover="handleDrag" @drop="handleDrop">
       <textarea ref="textarea" :name="name" :placeholder="placeholder"></textarea>
     </div>
-    <div class="grid col-span-3 grid-flow-col gap-x-10px justify-start" v-if="!options.readOnly">
+    <div v-if="!options.readOnly" class="grid col-span-3 grid-flow-col gap-x-10px justify-start">
       <k-button type="input" class="btn-sm role-secondary" @click="setAliyunMirror">aliyun mirror example</k-button>
       <k-button type="input" class="btn-sm role-secondary" @click="setUSTCMirror">USTC mirror example</k-button>
     </div>

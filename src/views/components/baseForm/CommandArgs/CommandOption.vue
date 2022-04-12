@@ -5,7 +5,7 @@
     </div>
     <div v-if="!flag || choices" class="flex items-center flex-wrap max-w-300px">
       <template v-if="choices">
-        <select v-model="value" v-if="!multiple" class="focus-visible:outline-none border rounded">
+        <select v-if="!multiple" v-model="value" class="focus-visible:outline-none border rounded">
           <option
             v-for="v in choices"
             :key="v.value"
@@ -14,8 +14,8 @@
             </option>
         </select>
         <template v-else>
-          <label v-for="(v, index) in values" :key="index" @click.stop="handleClick" class="grid items-center grid-cols-[max-content,max-content] gap-x-10px mr-10px">
-            <input type="checkbox" :value="v"  v-model="multipleValue">
+          <label v-for="(v, index) in values" :key="index" class="grid items-center grid-cols-[max-content,max-content] gap-x-10px mr-10px" @click.stop="handleClick">
+            <input v-model="multipleValue" type="checkbox"  :value="v">
             <span>{{v}}</span>
           </label>
         </template>
@@ -30,93 +30,91 @@
     </k-tooltip>
   </div>
 </template>
-<script>
-import {computed, defineComponent, ref, watch} from 'vue'
+<script setup>
+import {computed, ref, watch} from 'vue'
 
-export default defineComponent({
-  name: 'CommandOption',
-  props: {
-    desc: {
-      type: String,
-      default: '',
-    },
-    alias: {
-      type: String,
-      default: '',
-    },
-    long: {
-      type: String,
-      required: true,
-    },
-    short: {
-      type: String,
-      default: ''
-    },
-    values: {
-      type: Array
-    },
-    multiple: {
-      type: Boolean,
-      default: false,
-    },
-    modelValue: {
-      type: [String, Number, Boolean],
-    },
-    flag: {
-      type: Boolean,
-      default: false
-    },
+const props = defineProps({
+  desc: {
+    type: String,
+    default: '',
   },
-  emits: ['update:modelValue'],
-  setup(props, {emit}) {
-    const multipleValue = ref([])
-    if (props.multiple) {
-      multipleValue.value = props.modelValue.split(',').filter((v) => v).map((v) => v.trim())
+  alias: {
+    type: String,
+    default: '',
+  },
+  long: {
+    type: String,
+    required: true,
+  },
+  short: {
+    type: String,
+    default: ''
+  },
+  values: {
+    type: Array,
+    default() {
+      return []
     }
-    watch(multipleValue, (v) => {
-      emit('update:modelValue', v.join(','))
-    })
-    const value = computed({
-      get() {
-        return props.modelValue
-      },
-      set(v) {
-        emit('update:modelValue', v)
-      }
-    })
-    const option = computed(() => {
-      if (props.alias) {
-        return props.alias
-      }
-      const o = []
-      if (props.long) {
-        o.push(props.long)
-      }
-      if (props.short) {
-        o.push(props.short)
-      }
-      return o.join(' / ')
-    })
-    const choices = computed(() => {
-      if (!props.values) {
-        return
-      }
-      if (props.flag) {
-        return props.values.map((v, i) => ({
-          label: v,
-          value: i === 0 ? true : false,
-        }))
-      }
-      return props.values.map((v) => ({
-        label: v,
-        value: v,
-      }))
-    })
-    const handleClick = () => {
-      // do nothing
-    }
-
-    return { value, option, choices, multipleValue, handleClick }
+  },
+  multiple: {
+    type: Boolean,
+    default: false,
+  },
+  modelValue: {
+    type: [String, Number, Boolean],
+    default: ''
+  },
+  flag: {
+    type: Boolean,
+    default: false
   },
 })
+
+const emit = defineEmits(['update:modelValue'])
+const multipleValue = ref([])
+if (props.multiple) {
+  multipleValue.value = props.modelValue.split(',').filter((v) => v).map((v) => v.trim())
+}
+watch(multipleValue, (v) => {
+  emit('update:modelValue', v.join(','))
+})
+const value = computed({
+  get() {
+    return props.modelValue
+  },
+  set(v) {
+    emit('update:modelValue', v)
+  }
+})
+const option = computed(() => {
+  if (props.alias) {
+    return props.alias
+  }
+  const o = []
+  if (props.long) {
+    o.push(props.long)
+  }
+  if (props.short) {
+    o.push(props.short)
+  }
+  return o.join(' / ')
+})
+const choices = computed(() => {
+  if (!props.values) {
+    return
+  }
+  if (props.flag) {
+    return props.values.map((v, i) => ({
+      label: v,
+      value: i === 0 ? true : false,
+    }))
+  }
+  return props.values.map((v) => ({
+    label: v,
+    value: v,
+  }))
+})
+const handleClick = () => {
+  // do nothing
+}
 </script>

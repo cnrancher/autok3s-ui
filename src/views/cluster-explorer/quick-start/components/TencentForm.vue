@@ -45,6 +45,9 @@ import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
 
 export default defineComponent({
+  components: {
+    StringForm,
+  },
   props: {
     schema: {
       type: Object,
@@ -69,9 +72,6 @@ export default defineComponent({
       showKeyForm,
       getForm,
     }
-  },
-  components: {
-    StringForm,
   }
 })
 </script>

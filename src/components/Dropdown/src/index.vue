@@ -1,8 +1,8 @@
 <template>
-  <div ref="toggleRef" class="inline-block relative" :class="{'cursor-not-allowed': disabled}" v-on:[trigger]="toggleDropDown">
+  <div ref="toggleRef" class="inline-block relative" :class="{'cursor-not-allowed': disabled}" @[trigger]="toggleDropDown">
     <slot></slot>
     <teleport to="body" :disabled="!appendToBody">
-      <div ref="contentRef" class="absolute z-$popper-z-index border rounded bg-white shadow min-w-160px" :class="{'block': show, 'hidden': !show}" v-if="!lazy || show">
+      <div v-if="!lazy || show" ref="contentRef" class="absolute z-$popper-z-index border rounded bg-white shadow min-w-160px" :class="{'block': show, 'hidden': !show}">
         <slot name="content"></slot>
       </div>
     </teleport>

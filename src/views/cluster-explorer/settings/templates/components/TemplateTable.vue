@@ -14,7 +14,7 @@
           <k-icon type="folder" :color="groupBy === 'provider' ? '#fff' : ''"></k-icon>
         </k-radio-button>
       </k-radio-group>
-      <input type="search" placeholder="Filter" class="template-table__search focus-visible:outline-none px-12px rounded border hover:bg-gray-100" v-model="searchQuery">
+      <input v-model="searchQuery" type="search" placeholder="Filter" class="template-table__search focus-visible:outline-none px-12px rounded border hover:bg-gray-100">
     </div>
     <k-table
       :data="data"
@@ -25,7 +25,7 @@
       <k-table-column type="selection"></k-table-column>
       <k-table-column sortable label="ID" field="id">
         <template #default="{row, column}">
-          <div class="flex items-center" v-if="row.status">
+          <div v-if="row.status" class="flex items-center">
             {{row[column.field]}}
             <k-tooltip >
               <k-icon type="warning" color="var(--error)"></k-icon>
@@ -84,8 +84,7 @@
     </k-modal>
   </div>
 </template>
-<script>
-import {defineComponent, toRefs} from 'vue'
+<script setup>
 import { useRouter } from 'vue-router'
 import { remove, update } from '@/api/template.js';
 import TemplateActions from './TemplateActions.vue'
@@ -97,137 +96,107 @@ import { cloneDeep } from '@/utils'
 import useTemplateStore from '@/store/useTemplateStore.js'
 import { storeToRefs } from 'pinia'
 import useNotificationStore from '@/store/useNotificationStore.js'
+import { ref, watchEffect } from 'vue'
 
-import { inject,  ref, watchEffect } from 'vue'
-export default defineComponent({
-  setup() {
-    const router =  useRouter()
-    const notificationStore = useNotificationStore()
-    const templateStore = useTemplateStore()
-    const {loading, error, data: templates,} = storeToRefs(templateStore)
-    const {searchQuery, searchFields, dataMatchingSearchQuery: data} = useDataSearch(templates)
-    searchFields.value = ['id', 'provider', 'name', 'options.region', 'options.zone']
-    const { state }= useTableState(loading, error, templates, data)
-    const selectedTemplates = ref([])
-    const handleSelectionChange = (rows) => {
-      selectedTemplates.value = rows
-    }
-    const groupBy = ref('provider')
-    const toggleGroupBy = () => {
-      if (groupBy.value) {
-        groupBy.value = ''
-        return
-      }
-      groupBy.value = 'provider'
-    }
-    const commandParams = ref([])
-    // delete template
-    const confirmModalVisible = ref(false)
-    const reload = () => {
-      templateStore.loadData()
-    }
-    const setDefault = async (template) => {
-      const results = await Promise.allSettled([
-        ...templates.value.filter((t) => t.provider === template.provider && t['is-default'] && t.id !== template.id)
-          .map((t) => {
-            return update(t.id, {
-              ...cloneDeep(t),
-              'is-default': false,
-            })
-          }),
-          update(template.id, {
-            ...template,
-            'is-default': true,
-          })
-        ])
-        const errors = results
-          .filter((p) => p.status === 'rejected')
-          .map((p) => p.reason)
+const router =  useRouter()
+const notificationStore = useNotificationStore()
+const templateStore = useTemplateStore()
+const {loading, error, data: templates,} = storeToRefs(templateStore)
+const {searchQuery, searchFields, dataMatchingSearchQuery: data} = useDataSearch(templates)
+searchFields.value = ['id', 'provider', 'name', 'options.region', 'options.zone']
+const { state }= useTableState(loading, error, templates, data)
+const selectedTemplates = ref([])
+const handleSelectionChange = (rows) => {
+  selectedTemplates.value = rows
+}
+const groupBy = ref('provider')
 
-        errors.forEach((e) => {
-          notificationStore.notify({
-            type: 'error',
-            title: 'Update Template Failed',
-            content: stringify(e)
-          })
-        })
-    }
-    const unsetDefault = async (template) => {
-      try {
-        await update(template.id, {
-          ...template,
+const commandParams = ref([])
+// delete template
+const confirmModalVisible = ref(false)
+const reload = () => {
+  templateStore.loadData()
+}
+const setDefault = async (template) => {
+  const results = await Promise.allSettled([
+    ...templates.value.filter((t) => t.provider === template.provider && t['is-default'] && t.id !== template.id)
+      .map((t) => {
+        return update(t.id, {
+          ...cloneDeep(t),
           'is-default': false,
         })
-      } catch (err) {
-        notificationStore.notify({
-          type: 'error',
-          title: 'Update Template Failed',
-          content: stringify(e)
-        })
-      }
-    }
-    const handleCommand = ({command, data}) => {
-      switch (command) {
-        case 'delete':
-          commandParams.value = data
-          confirmModalVisible.value=true
-          break;
-        case 'createCluster':
-          router.push({name: 'ClusterExplorerCoreClustersCreate', query: {templateId: data[0].id}})
-          break;
-        case 'edit':
-          router.push({name: 'ClusterExplorerSettingsTemplatesEdit', params: {templateId: data[0].id}})
-          break;
-        case 'clone':
-          router.push({name: 'ClusterExplorerSettingsTemplatesCreate', query: {templateId: data[0].id}})
-          break;
-        case 'setDefault':
-          setDefault(data[0])
-          break;
-        case 'unsetDefault':
-          unsetDefault(data[0])
-          break;
-      }
-    }
-    const deleteTemplates = async (templates) => {
-      confirmModalVisible.value=false
-      const results = await Promise.allSettled(templates.map((c) => remove(c.id)))
-      const errors = results
-        .filter((p) => p.status === 'rejected')
-        .map((p) => p.reason)
-      errors.forEach((e) => {
-         notificationStore.notify({
-          type: 'error',
-          title: 'Delete Template Failed',
-          content: stringify(e)
-        })
+      }),
+      update(template.id, {
+        ...template,
+        'is-default': true,
       })
-    }
-    watchEffect(() => {
-      if(confirmModalVisible.value === false) {
-        commandParams.value=[]
-      }
-    })
+    ])
+    const errors = results
+      .filter((p) => p.status === 'rejected')
+      .map((p) => p.reason)
 
-    return {
-      data,
-      state,
-      handleSelectionChange,
-      searchQuery,
-      selectedTemplates,
-      toggleGroupBy,
-      groupBy,
-      error,
-      reload,
-      handleCommand,
-      commandParams,
-      confirmModalVisible,
-      deleteTemplates,
-    }
-  },
-  components: {
-    TemplateActions,
-    TemplateBulkActions,
+    errors.forEach((e) => {
+      notificationStore.notify({
+        type: 'error',
+        title: 'Update Template Failed',
+        content: stringify(e)
+      })
+    })
+}
+const unsetDefault = async (template) => {
+  try {
+    await update(template.id, {
+      ...template,
+      'is-default': false,
+    })
+  } catch (e) {
+    notificationStore.notify({
+      type: 'error',
+      title: 'Update Template Failed',
+      content: stringify(e)
+    })
+  }
+}
+const handleCommand = ({command, data}) => {
+  switch (command) {
+    case 'delete':
+      commandParams.value = data
+      confirmModalVisible.value=true
+      break;
+    case 'createCluster':
+      router.push({name: 'ClusterExplorerCoreClustersCreate', query: {templateId: data[0].id}})
+      break;
+    case 'edit':
+      router.push({name: 'ClusterExplorerSettingsTemplatesEdit', params: {templateId: data[0].id}})
+      break;
+    case 'clone':
+      router.push({name: 'ClusterExplorerSettingsTemplatesCreate', query: {templateId: data[0].id}})
+      break;
+    case 'setDefault':
+      setDefault(data[0])
+      break;
+    case 'unsetDefault':
+      unsetDefault(data[0])
+      break;
+  }
+}
+const deleteTemplates = async (templates) => {
+  confirmModalVisible.value=false
+  const results = await Promise.allSettled(templates.map((c) => remove(c.id)))
+  const errors = results
+    .filter((p) => p.status === 'rejected')
+    .map((p) => p.reason)
+  errors.forEach((e) => {
+      notificationStore.notify({
+      type: 'error',
+      title: 'Delete Template Failed',
+      content: stringify(e)
+    })
+  })
+}
+watchEffect(() => {
+  if(confirmModalVisible.value === false) {
+    commandParams.value=[]
   }
 })
 </script>

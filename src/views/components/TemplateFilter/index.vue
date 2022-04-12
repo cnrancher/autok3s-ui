@@ -2,19 +2,20 @@
   <div class="template-filter">
     <input
       ref="inputRef"
+      v-model="searchQuery"
       class="template-filter__search p-8px rounded border border-gray-300 focus-visible:outline-none hover:bg-gray-100"
       type="search"
       :placeholder="placeholder"
       :disabled="loading || disabled"
-      v-model="searchQuery"
       @click.prevent="handleFocus"
       @keydown.down.prevent="handleKeyDown"
       @keydown.up.prevent="handleKeyUp"
       @keydown.esc.stop.prevent="handleKeyESC"
       @keydown.tab="handleKeyESC"
       @keydown.enter.stop.prevent="handleKeyEnter">
-      <div class="template-filter__display-value pointer-events-none overflow-hidden truncate p-10px" v-show="!show">{{templateDisplayValue}}</div>
-      <button class="btn role-primary btn-sm template-filter__btn"
+      <div v-show="!show" class="template-filter__display-value pointer-events-none overflow-hidden truncate p-10px">{{templateDisplayValue}}</div>
+      <button
+class="btn role-primary btn-sm template-filter__btn"
         :disabled="!currentTemplate || loading || disabled"
         @click="handleApplyTemplate">Fill Form</button>
       <teleport to="body">
@@ -30,10 +31,11 @@
             <div v-else class="template-filter__result">
               <template v-for="d in dataGroup" :key="d.group">
                 <div class="col-span-3 text-size-12px pt-10px pb-0 px-20px"><span class="template-filter__group-name">Provider:</span> <span>{{d.group}}</span></div>
-                <div class="template-filter__row-wrap relative contents"
-                  :class="{'template-filter--selected': c.id === currentTemplate?.id, 'template-filter--hover': c.id === hoverTemplate?.id}"
-                  v-for="c in d.children"
+                <div
+v-for="c in d.children"
                   :key="c.id"
+                  class="template-filter__row-wrap relative contents"
+                  :class="{'template-filter--selected': c.id === currentTemplate?.id, 'template-filter--hover': c.id === hoverTemplate?.id}"
                   @click="handleSelect(c)">
                   <div>{{c.name}}</div>
                   <div>{{c.options.region}}</div>
@@ -153,7 +155,7 @@ const handleSelect = (template)=> {
   show.value = false
   emit('update:modelValue', template.id)
 }
-const handlePopperClick = (e) => {
+const handlePopperClick = () => {
   // do nothing
 }
 const handleKeyDown = () => {

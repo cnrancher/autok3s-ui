@@ -6,7 +6,7 @@
     <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
     <input style="display: none" type="text" />
     <input style="display: none" type="password" />
-    <credential-form :credencialId="credentialId"></credential-form>
+    <credential-form :credencial-id="credentialId"></credential-form>
   </div>
 </template>
 <script>
@@ -16,15 +16,15 @@ import CredentialForm from '../components/CredentialEditForm.vue'
 
 export default defineComponent({
   name: 'CredentialEdit',
+  components: {
+    PageHeader,
+    CredentialForm,
+  },
   props: {
     credentialId: {
       type: [String, Number],
       required: true,
     },
-  },
-  components: {
-    PageHeader,
-    CredentialForm,
   }
 })
 </script>

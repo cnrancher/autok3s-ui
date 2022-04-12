@@ -42,7 +42,7 @@
     <hr class="section-divider">
     <div class="cluster-node__table-header">
       <h3 class="text-size-18px">Nodes</h3>
-      <input type="search" placeholder="Filter(State, Node Status, Version, Roles)" class="h-10 focus-visible:outline-none px-12px rounded border hover:bg-gray-100" v-model="searchQuery">
+      <input v-model="searchQuery" type="search" placeholder="Filter(State, Node Status, Version, Roles)" class="h-10 focus-visible:outline-none px-12px rounded border hover:bg-gray-100">
     </div>
     <k-table
       :data="nodes"
@@ -90,8 +90,8 @@
     </k-table>
   </k-loading>
 </template>
-<script>
-import {computed, defineComponent, inject, toRef} from 'vue'
+<script setup>
+import {computed, toRef} from 'vue'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useTableState from '@/composables/useTableState.js'
 import useNodes from '@/composables/useNodes.js'
@@ -100,62 +100,43 @@ import ClusterStateTag from '../components/ClusterStateTag.vue'
 import NodeActions from './components/NodeActions.vue'
 import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 
-export default defineComponent({
-  props: {
-    clusterId: {
-      type: String,
-      required: true
-    }
-  },
-  setup(props) {
-    const wmStore = useWindownManagerStore()
-    const clusterId = toRef(props, 'clusterId')
-    const {clusterNodes, error, loading, fetchClusterNodes} = useNodes(clusterId)
-    const rawNodes = computed(() => {
-      return clusterNodes.value.nodes ?? []
-    })
-    const {searchQuery, searchFields, dataMatchingSearchQuery: nodes} = useDataSearch(rawNodes)
-    searchFields.value = ['instance-status', 'status', 'version', 'roles']
-    const { state }= useTableState(loading, error, rawNodes, nodes,)
-
-    const reload = () => {
-      fetchClusterNodes()
-    }
-    const handleCommand = ({command, node, cluster}) => {
-      switch (command) {
-        case 'exec-shell':
-          wmStore.addTab({
-            id: `node-shell_${node['instance-id']}`,
-            component: 'NodeShell',
-            label: `shell: ${node['external-ip']?.[0] ?? node['instance-id']}`,
-            icon: 'terminal',
-            attrs: {
-              clusterId: cluster.id,
-              nodeId: `${node['instance-id']}`,
-              provider: cluster.provider,
-            }
-          })
-          break
-      }
-    }
-    return {
-      clusterNodes,
-      nodes,
-      state,
-      reload,
-      searchQuery,
-      handleCommand,
-      loading,
-      error,
-    }
-
-  },
-  components: {
-    PageHeader,
-    ClusterStateTag,
-    NodeActions,
+const props = defineProps({
+  clusterId: {
+    type: String,
+    required: true
   }
 })
+
+const wmStore = useWindownManagerStore()
+const clusterId = toRef(props, 'clusterId')
+const {clusterNodes, error, loading, fetchClusterNodes} = useNodes(clusterId)
+const rawNodes = computed(() => {
+  return clusterNodes.value.nodes ?? []
+})
+const {searchQuery, searchFields, dataMatchingSearchQuery: nodes} = useDataSearch(rawNodes)
+searchFields.value = ['instance-status', 'status', 'version', 'roles']
+const { state }= useTableState(loading, error, rawNodes, nodes,)
+
+const reload = () => {
+  fetchClusterNodes()
+}
+const handleCommand = ({command, node, cluster}) => {
+  switch (command) {
+    case 'exec-shell':
+      wmStore.addTab({
+        id: `node-shell_${node['instance-id']}`,
+        component: 'NodeShell',
+        label: `shell: ${node['external-ip']?.[0] ?? node['instance-id']}`,
+        icon: 'terminal',
+        attrs: {
+          clusterId: cluster.id,
+          nodeId: `${node['instance-id']}`,
+          provider: cluster.provider,
+        }
+      })
+      break
+  }
+}
 </script>
 <style>
 .cluster-node__table-header {

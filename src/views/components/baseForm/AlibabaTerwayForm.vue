@@ -1,20 +1,20 @@
 <template>
   <k-select
-    label="Terwary"
     v-model="form.mode"
-    @change="debounceUpdate"
+    label="Terwary"
     :desc="desc"
-    :disabled="readonly">
+    :disabled="readonly"
+    @change="debounceUpdate">
     <k-option label="Disable" value="none"></k-option>
     <k-option  label="Enable" value="eni"></k-option>
   </k-select>
   <k-input
     v-show="form.mode === 'eni'"
+    v-model="form['terway-max-pool-size']"
     label="max-pool-size"
     type="number"
-    v-model="form['terway-max-pool-size']"
-    @change="debounceUpdate"
-    :readonly="readonly">
+    :readonly="readonly"
+    @change="debounceUpdate">
   </k-input>
 </template>
 <script>

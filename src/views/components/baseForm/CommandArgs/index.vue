@@ -1,5 +1,5 @@
 <template>
-<div class="command-args"  ref="commandArgsRef" @click="togglePopper">
+<div ref="commandArgsRef"  class="command-args" @click="togglePopper">
   <div class="command-args__label">
     <label v-if="label">{{label}} <sup v-if="required" class="k-form-item--required">*</sup></label>
     <k-tooltip v-if="desc">
@@ -12,21 +12,22 @@
   </div>
   <k-icon type="arrow-right-blod" class="command-args__suffix" direction="down"></k-icon>
 <teleport to="body">
-  <div class="absolute bg-white z-$popper-z-index shadow max-h90vh overflow-auto" v-if="!readonly || show"
-    ref="commandOptionsRef"
+  <div
+v-if="!readonly || show" ref="commandOptionsRef"
+    class="absolute bg-white z-$popper-z-index shadow max-h90vh overflow-auto"
     :class="[show ? 'block' : 'hidden']"
     @click.stop="handlePopperClick">
     <div class="grid grid-cols-[1fr,auto,1fr] gap-x-10px min-h-200px max-w-80vw">
       <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border rounded">
         <div class="grid grid-cols-[auto,1fr,auto] gap-x-10px items-center bg-gray-100 p-8px">
-          <input type="checkbox" v-model="optionsAllSelected" :indeterminate="optionsIndeterminate">
+          <input v-model="optionsAllSelected" type="checkbox" :indeterminate="optionsIndeterminate">
           Available Options
           <div>{{selectedOptions.length}}/{{options.length}}</div>
         </div>
       <div class="command-args__search"></div>
       <div class="grid gap-y-10px p-8px content-start">
         <label v-for="(o, index) in options" :key="index" class="grid grid-cols-[auto,1fr] gap-x-10px items-center select-none">
-          <input type="checkbox" :value="o" v-model="selectedOptions">
+          <input v-model="selectedOptions" type="checkbox" :value="o">
           <command-option v-bind="o" v-model="o.modelValue"></command-option>
         </label>
       </div>
@@ -42,23 +43,24 @@
       </div>
       <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border rounded">
         <div class="grid grid-cols-[auto,1fr,auto] gap-x-10px items-center bg-gray-100 p-8px">
-          <input type="checkbox" v-model="usedOptionsAllSelected" :indeterminate="usedOptionsIndeterminate">
+          <input v-model="usedOptionsAllSelected" type="checkbox" :indeterminate="usedOptionsIndeterminate">
             Used Options
             <div>{{selectedUsedOptions.length}}/{{usedOptions.length}}</div>
         </div>
         <div class="command-args__search"></div>
         <div class="grid gap-y-10px p-8px content-start">
           <label v-for="(o, index) in usedOptions" :key="index" class="grid grid-cols-[auto,1fr] gap-x-10px items-center select-none">
-            <input type="checkbox" :value="o" v-model="selectedUsedOptions">
+            <input v-model="selectedUsedOptions" type="checkbox" :value="o">
+            <!-- eslint-disable-next-line vue/v-on-event-hyphenation -->
             <command-option v-bind="o" @update:modelValue="handleOptionChange(o, $event)"></command-option>
           </label>
           <div v-for="(o, index) in customValue" :key="index" class="grid grid-cols-[1fr,auto] items-center">
             <custom-option v-model="customValue[index]"></custom-option>
-            <k-icon type="close" @click="removeCustomArg(index)" class="cursor-pointer"></k-icon>
+            <k-icon type="close" class="cursor-pointer" @click="removeCustomArg(index)"></k-icon>
           </div>
         </div>
         <div class="command-args__footer mx-[-1px]">
-          <k-input label="Add Custom Args(must start with '-' or '--')" @keyup.enter="addCustemArg" v-model.trim="customCommandArgs">
+          <k-input v-model.trim="customCommandArgs" label="Add Custom Args(must start with '-' or '--')" @keyup.enter="addCustemArg">
             <template #suffix>
               <button
                 class="btn btn-sm role-primary"
@@ -74,12 +76,6 @@
 </div>
 </template>
 <script>
-import {computed, defineComponent, watchEffect, ref, watch, nextTick} from 'vue'
-import CommandOption from './CommandOption.vue'
-import CustomOption from './CustomOption.vue'
-import usePopper from '@/composables/usePopper.js'
-import { onClickOutside } from '@vueuse/core'
-
 const useMinWithModifier = (minWith = '200px') => {
   return {
     name: 'selectOptionMinWith',
@@ -91,261 +87,241 @@ const useMinWithModifier = (minWith = '200px') => {
     }
   }
 }
-
-export default defineComponent({
+export default {
   name: 'CommandArgs',
-  props: {
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    label: {
-      type: String,
-      default: ''
-    },
-    desc: {
-      type: String,
-      default: '',
-    },
-    args: {
-      type: Array,
-      required: true
-    },
-    modelValue: {
-      type: [String, Number, Boolean],
-      default: ''
-    },
+}
+</script>
+<script setup>
+import {computed, watchEffect, ref, watch, nextTick} from 'vue'
+import CommandOption from './CommandOption.vue'
+import CustomOption from './CustomOption.vue'
+import usePopper from '@/composables/usePopper.js'
+import { onClickOutside } from '@vueuse/core'
+
+const props = defineProps({
+  readonly: {
+    type: Boolean,
+    default: false,
   },
-  emits: ['update:modelValue'],
-  setup(props, {emit}) {
-    const customCommandArgs = ref('')
-    const addCustomArgDisabled = computed(() => {
-      return !customCommandArgs.value.startsWith('-') || customCommandArgs.value.endsWith('-')
-    })
-
-    const show = ref(false)
-    const commandArgsRef = ref(null)
-    const commandOptionsRef = ref(null)
-    const minWithModifier = useMinWithModifier()
-    const popperOption = {
-      modifiers: [
-        {
-          name: 'offset',
-          options: {
-            offset: [ 0, 8],
-          },
-        },
-        minWithModifier,
-      ],
-      placement: 'bottom-start'
-    }
-    const { create, remove, update } = usePopper(commandArgsRef, commandOptionsRef, popperOption)
-    onClickOutside(commandOptionsRef, () => {
-      show.value = false
-    })
-    const createPopper = () => {
-      create()
-      update()
-    }
-    watch(show, () => {
-      if (show.value) {
-        nextTick(() => {
-          createPopper()
-        })
-        return
-      }
-      remove()
-    })
-
-    const usedOptions = ref([])
-    const customValue = ref([])
-    const options = computed(() => {
-      return props.args.filter((a) => !usedOptions.value.some((o) => a.long ? a.long === o.long : a.short === o.short))
-    })
-
-    const selectedOptions = ref([])
-    const selectedUsedOptions = ref([])
-    const optionsIndeterminate = computed(() => {
-      if (selectedOptions.value.length === 0) {
-        return false
-      }
-      return selectedOptions.value.length < options.value.length
-    })
-    const usedOptionsIndeterminate = computed(() => {
-      if (selectedUsedOptions.value.length === 0) {
-        return false
-      }
-      return selectedUsedOptions.value.length < usedOptions.value.length
-    })
-    const usedOptionsAllSelected = ref(false)
-    watch(usedOptionsAllSelected, () => {
-      if (usedOptionsAllSelected.value) {
-        selectedUsedOptions.value = [...usedOptions.value]
-      } else {
-        selectedUsedOptions.value = []
-      }
-    })
-    watchEffect(() => {
-      if (usedOptions.value.length > 0 && usedOptions.value.length === selectedUsedOptions.value.length) {
-        usedOptionsAllSelected.value = true
-      } else {
-        usedOptionsAllSelected.value = false
-      }
-    })
-
-    const optionsAllSelected = ref(false)
-    watch(optionsAllSelected, () => {
-      if (optionsAllSelected.value) {
-        selectedOptions.value = [...options.value]
-      } else {
-        selectedOptions.value = []
-      }
-    })
-
-    watchEffect(() => {
-      if (options.value.length > 0 && options.value.length === selectedOptions.value.length) {
-        optionsAllSelected.value = true
-      } else {
-        optionsAllSelected.value = false
-      }
-    })
-
-    const usedOptionsStr = computed(() => {
-      return usedOptions.value
-        .filter((o) => !(o.flag && o.modelValue === false))
-        .filter((o) => !(o.multiple && !o.modelValue))
-        .map((o) => `${o.long ?? o.short} ${o.flag && o.modelValue === true ? '' : o.modelValue ?? ''}`.trim()).join(' ')
-    })
-    const initOptions = () => {
-      var reg = /\s+--?/
-      var options = []
-      var str = props.modelValue.trim()
-      var index = str.search(reg)
-
-      while(index > -1) {
-        options.push(str.slice(0, index))
-        str = str.substr(index).trim()
-        index = str.search(reg)
-      }
-      if (str && !options.includes(str)) {
-        options.push(str)
-      }
-      const args = []
-      const customArgs = []
-      options.forEach((item) => {
-        const o = item.split(/\s+/)
-        const arg = props.args.find((a) => a.long === o[0] || a.short === o[0])
-        if (arg) {
-          const v = o.slice(1).join('')
-          args.push({
-            ...arg,
-            modelValue: arg.flag ? true : v,
-          })
-          return
-        }
-        customArgs.push(item)
-      })
-      usedOptions.value = args
-      customValue.value = customArgs
-    }
-    watch(()=> props.modelValue, (v) => {
-      if (v !== `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim()) {
-         initOptions()
-      }
-    }, {
-      immediate: true
-    })
-    const removeCustomArg = (index) => {
-      customValue.value.splice(index, 1)
-      emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
-      nextTick(() => {
-        update()
-      })
-    }
-    const addCustemArg = () => {
-      if (addCustomArgDisabled.value) {
-        return
-      }
-      if (customValue.value.includes(customCommandArgs.value)) {
-        customCommandArgs.value = ''
-        return
-      }
-      if (!customCommandArgs.value.startsWith('-')) {
-        return
-      }
-      customValue.value.push(customCommandArgs.value)
-      emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
-      customCommandArgs.value = ''
-      nextTick(() => {
-        update()
-      })
-    }
-
-    const removeOptions = () => {
-      selectedUsedOptions.value.forEach((v) => {
-        const index = usedOptions.value.indexOf(v)
-        if (index > -1) {
-          usedOptions.value.splice(index, 1)
-        }
-      })
-      emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
-      selectedUsedOptions.value = []
-    }
-    const addOptions = () => {
-      usedOptions.value.push(...selectedOptions.value)
-      emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
-      selectedOptions.value=[]
-    }
-
-    const handlePopperClick = (e) => {
-      // do nothing
-    }
-    const togglePopper = () => {
-      if (props.readonly) {
-        return
-      }
-      show.value = !show.value
-    }
-    const handleOptionChange = (option, v) => {
-      const o = usedOptions.value.find((o) => o.long ? o.long === option.long : o.short === option.short)
-      if (o) {
-        o.modelValue = v
-        emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
-      }
-    }
-    return {
-      show,
-      usedOptions,
-      options,
-      optionsIndeterminate,
-      usedOptionsIndeterminate,
-      selectedOptions,
-      selectedUsedOptions,
-      optionsAllSelected,
-      usedOptionsAllSelected,
-      customValue,
-      addCustomArgDisabled,
-      commandArgsRef,
-      commandOptionsRef,
-      customCommandArgs,
-      removeCustomArg,
-      addCustemArg,
-      removeOptions,
-      addOptions,
-      handlePopperClick,
-      togglePopper,
-      handleOptionChange,
-    }
+  required: {
+    type: Boolean,
+    default: false,
   },
-  components: {
-    CommandOption,
-    CustomOption,
+  label: {
+    type: String,
+    default: ''
+  },
+  desc: {
+    type: String,
+    default: '',
+  },
+  args: {
+    type: Array,
+    required: true
+  },
+  modelValue: {
+    type: [String, Number, Boolean],
+    default: ''
+  },
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+const customCommandArgs = ref('')
+const addCustomArgDisabled = computed(() => {
+  return !customCommandArgs.value.startsWith('-') || customCommandArgs.value.endsWith('-')
+})
+
+const show = ref(false)
+const commandArgsRef = ref(null)
+const commandOptionsRef = ref(null)
+const minWithModifier = useMinWithModifier()
+const popperOption = {
+  modifiers: [
+    {
+      name: 'offset',
+      options: {
+        offset: [ 0, 8],
+      },
+    },
+    minWithModifier,
+  ],
+  placement: 'bottom-start'
+}
+const { create, remove, update } = usePopper(commandArgsRef, commandOptionsRef, popperOption)
+onClickOutside(commandOptionsRef, () => {
+  show.value = false
+})
+const createPopper = () => {
+  create()
+  update()
+}
+watch(show, () => {
+  if (show.value) {
+    nextTick(() => {
+      createPopper()
+    })
+    return
+  }
+  remove()
+})
+
+const usedOptions = ref([])
+const customValue = ref([])
+const options = computed(() => {
+  return props.args.filter((a) => !usedOptions.value.some((o) => a.long ? a.long === o.long : a.short === o.short))
+})
+
+const selectedOptions = ref([])
+const selectedUsedOptions = ref([])
+const optionsIndeterminate = computed(() => {
+  if (selectedOptions.value.length === 0) {
+    return false
+  }
+  return selectedOptions.value.length < options.value.length
+})
+const usedOptionsIndeterminate = computed(() => {
+  if (selectedUsedOptions.value.length === 0) {
+    return false
+  }
+  return selectedUsedOptions.value.length < usedOptions.value.length
+})
+const usedOptionsAllSelected = ref(false)
+watch(usedOptionsAllSelected, () => {
+  if (usedOptionsAllSelected.value) {
+    selectedUsedOptions.value = [...usedOptions.value]
+  } else {
+    selectedUsedOptions.value = []
   }
 })
+watchEffect(() => {
+  if (usedOptions.value.length > 0 && usedOptions.value.length === selectedUsedOptions.value.length) {
+    usedOptionsAllSelected.value = true
+  } else {
+    usedOptionsAllSelected.value = false
+  }
+})
+
+const optionsAllSelected = ref(false)
+watch(optionsAllSelected, () => {
+  if (optionsAllSelected.value) {
+    selectedOptions.value = [...options.value]
+  } else {
+    selectedOptions.value = []
+  }
+})
+
+watchEffect(() => {
+  if (options.value.length > 0 && options.value.length === selectedOptions.value.length) {
+    optionsAllSelected.value = true
+  } else {
+    optionsAllSelected.value = false
+  }
+})
+
+const usedOptionsStr = computed(() => {
+  return usedOptions.value
+    .filter((o) => !(o.flag && o.modelValue === false))
+    .filter((o) => !(o.multiple && !o.modelValue))
+    .map((o) => `${o.long ?? o.short} ${o.flag && o.modelValue === true ? '' : o.modelValue ?? ''}`.trim()).join(' ')
+})
+const initOptions = () => {
+  var reg = /\s+--?/
+  var options = []
+  var str = props.modelValue.trim()
+  var index = str.search(reg)
+
+  while(index > -1) {
+    options.push(str.slice(0, index))
+    str = str.substr(index).trim()
+    index = str.search(reg)
+  }
+  if (str && !options.includes(str)) {
+    options.push(str)
+  }
+  const args = []
+  const customArgs = []
+  options.forEach((item) => {
+    const o = item.split(/\s+/)
+    const arg = props.args.find((a) => a.long === o[0] || a.short === o[0])
+    if (arg) {
+      const v = o.slice(1).join('')
+      args.push({
+        ...arg,
+        modelValue: arg.flag ? true : v,
+      })
+      return
+    }
+    customArgs.push(item)
+  })
+  usedOptions.value = args
+  customValue.value = customArgs
+}
+watch(()=> props.modelValue, (v) => {
+  if (v !== `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim()) {
+      initOptions()
+  }
+}, {
+  immediate: true
+})
+const removeCustomArg = (index) => {
+  customValue.value.splice(index, 1)
+  emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
+  nextTick(() => {
+    update()
+  })
+}
+const addCustemArg = () => {
+  if (addCustomArgDisabled.value) {
+    return
+  }
+  if (customValue.value.includes(customCommandArgs.value)) {
+    customCommandArgs.value = ''
+    return
+  }
+  if (!customCommandArgs.value.startsWith('-')) {
+    return
+  }
+  customValue.value.push(customCommandArgs.value)
+  emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
+  customCommandArgs.value = ''
+  nextTick(() => {
+    update()
+  })
+}
+
+const removeOptions = () => {
+  selectedUsedOptions.value.forEach((v) => {
+    const index = usedOptions.value.indexOf(v)
+    if (index > -1) {
+      usedOptions.value.splice(index, 1)
+    }
+  })
+  emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
+  selectedUsedOptions.value = []
+}
+const addOptions = () => {
+  usedOptions.value.push(...selectedOptions.value)
+  emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
+  selectedOptions.value=[]
+}
+
+const handlePopperClick = () => {
+  // do nothing
+}
+const togglePopper = () => {
+  if (props.readonly) {
+    return
+  }
+  show.value = !show.value
+}
+const handleOptionChange = (option, v) => {
+  const o = usedOptions.value.find((o) => o.long ? o.long === option.long : o.short === option.short)
+  if (o) {
+    o.modelValue = v
+    emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
+  }
+}
 </script>
 <style>
 .command-args {

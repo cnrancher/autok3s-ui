@@ -1,7 +1,7 @@
 <template>
   <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
   <input style="display: none" autocomplete="new-password" type="password" />
-  <k-tabs tab-position="left" v-model="acitiveTab">
+  <k-tabs v-model="acitiveTab" tab-position="left">
     <k-tab-pane label="Credential Options" name="credential">
       <form-group>
         <template #title>Credential Options</template>
@@ -205,9 +205,9 @@
     </k-tab-pane>
   </k-tabs>
 </template>
-<script>
+<script setup>
 import { cloneDeep } from '@/utils'
-import {defineComponent, ref, computed} from 'vue'
+import {ref, computed} from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
@@ -215,66 +215,50 @@ import ClusterTagsForm from '../baseForm/ArrayListForm.vue'
 import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
 import useFormFromSchema from '../../composables/useFormFromSchema.js'
-export default defineComponent({
-  props: {
-    schema: {
-      type: Object,
-      required: true,
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  setup(props) {
-    const { form, desc }= useFormFromSchema(props.schema)
-    const acitiveTab = ref('instance')
-    const updateActiveTab = () => {
-      if (!form.options['secret-id'] || !form.options['secret-key']) {
-        acitiveTab.value = 'credential'
-        return
-      }
-      acitiveTab.value = 'instance'
-    }
-    const uiOptions = computed({
-      get() {
-        if (form.config.enable) {
-          return form.config.enable
-        }
-        if (form.config.ui) {
-          return ['dashboard']
-        }
-        return []
-      },
-      set(v) {
-        form.config.enable = v
-      }
-    })
-    updateActiveTab()
 
-    const tags = ref(null)
-    const getForm = () => {
-      const f = cloneDeep(form)
-      const values = tags.value.getForm()
-      f.options.tags = values ? values.filter((v) => v) : values
-      return f
-    }
-    return {
-      form,
-      desc,
-      acitiveTab,
-      getForm,
-      tags,
-      uiOptions,
-    }
+const props = defineProps({
+  schema: {
+    type: Object,
+    required: true,
   },
-  components: {
-    BooleanForm,
-    StringForm,
-    K3sOptionsForm,
-    ClusterTagsForm,
-    SshPrivateForm,
-    FormGroup,
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+const { form, desc }= useFormFromSchema(props.schema)
+const acitiveTab = ref('instance')
+const updateActiveTab = () => {
+  if (!form.options['secret-id'] || !form.options['secret-key']) {
+    acitiveTab.value = 'credential'
+    return
+  }
+  acitiveTab.value = 'instance'
+}
+const uiOptions = computed({
+  get() {
+    if (form.config.enable) {
+      return form.config.enable
+    }
+    if (form.config.ui) {
+      return ['dashboard']
+    }
+    return []
+  },
+  set(v) {
+    form.config.enable = v
   }
 })
+updateActiveTab()
+
+const tags = ref(null)
+const getForm = () => {
+  const f = cloneDeep(form)
+  const values = tags.value.getForm()
+  f.options.tags = values ? values.filter((v) => v) : values
+  return f
+}
+
+defineExpose({ getForm })
 </script>

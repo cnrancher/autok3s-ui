@@ -1,8 +1,9 @@
 <template>
-  <div class="wm" v-show="isOpen">
+  <div v-show="isOpen" class="wm">
     <div class="wm__header"></div>
     <div class="wm__tabs-nav">
-      <div v-for="t in tabs" :key="t.id"
+      <div
+        v-for="t in tabs" :key="t.id"
         class="flex items-center border-t border-r cursor-pointer px-10px py-5px min-w-50px"
         :class="[t.id === activeTabId ? 'bg-gray-200' : 'bg-gray-300']"
         @click="setActive(t.id)"
@@ -12,16 +13,16 @@
         <k-icon type="close" @click="remove(t.id)"></k-icon>
       </div>
     </div>
-    <div class="wm__resize" ref="resizer">
+    <div ref="resizer" class="wm__resize">
       <k-icon type="arrows-resize-v" :size="24" @click="toggleMin"></k-icon>
-      <div class="wm__resize-proxy" v-show="draging" :style="{top: `${resizerOffset}px`}"></div>
+      <div v-show="draging" class="wm__resize-proxy" :style="{top: `${resizerOffset}px`}"></div>
     </div>
     <div class="wm__tabs-content">
       <component
+        :is="t.component"
         v-for="t in tabs"
         :key="t.id"
         :class="[t.id === activeTabId ? 'block' : 'hidden']"
-        :is="t.component"
         v-bind="t.attrs"
         :renew-count="t.renewCount"
         :show='t.id === activeTabId'
@@ -31,7 +32,7 @@
   </div>
 </template>
 <script>
-import {computed, defineComponent, inject, onBeforeUnmount, onMounted, watchEffect, ref} from 'vue'
+import {computed, defineComponent, onBeforeUnmount, onMounted, watchEffect, ref} from 'vue'
 import KIcon from '@/components/Icon'
 import ClusterLogs from './components/ClusterLogs.vue'
 import KubectlShell from './components/KubectlShell.vue'
@@ -40,6 +41,12 @@ import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 
 export default defineComponent({
   name: 'WindownManager',
+  components: {
+    KIcon,
+    ClusterLogs,
+    KubectlShell,
+    NodeShell,
+  },
   setup() {
     const windowManagerStore = useWindownManagerStore()
     const isOpen = computed(() => {
@@ -94,12 +101,6 @@ export default defineComponent({
       resizerOffset,
       toggleMin,
     }
-  },
-  components: {
-    KIcon,
-    ClusterLogs,
-    KubectlShell,
-    NodeShell,
   }
 })
 
@@ -123,11 +124,11 @@ function useEvent(targetRef) {
     windowManagerStore.setUserHeight(h)
     document.documentElement.style.setProperty('--wm-height', `${h}px`)
   }
-  const handleMouseDown = (e) => {
+  const handleMouseDown = () => {
     addEvents()
     height = window.innerHeight
   }
-  const handleMouseUp = (e) => {
+  const handleMouseUp = () => {
     removeEvents()
     if (draging.value === true) {
       updateWMHeight()
@@ -138,7 +139,7 @@ function useEvent(targetRef) {
     draging.value = true
     updatePosition(e)
   }
-  const handleMouseLeave = (e) => {
+  const handleMouseLeave = () => {
     removeEvents()
     draging.value = false
     updateWMHeight()

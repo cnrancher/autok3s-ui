@@ -20,8 +20,6 @@
 </template>
 <script>
 export default {
-  setup() {
-
-  },
+  name: 'ExamplesTabs'
 }
 </script>

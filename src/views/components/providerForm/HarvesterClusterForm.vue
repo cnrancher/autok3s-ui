@@ -1,7 +1,7 @@
 <template>
   <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
   <input style="display: none" autocomplete="new-password" type="password" />
-  <k-tabs tab-position="left" v-model="acitiveTab">
+  <k-tabs v-model="acitiveTab" tab-position="left">
     <k-tab-pane label="Instance Options" name="instance">
       <form-group>
         <template #title>Basic</template>
@@ -61,16 +61,16 @@
               :readonly="readonly"
             />
             <yaml-config-form
-              class="col-span-1 sm:col-span-2"
               v-model="form.options['kubeconfig-content']"
+              class="col-span-1 sm:col-span-2"
               label="Kubeconfig"
               :desc="desc.options['kubeconfig-content']"
               :options="{readOnly: readonly}"
               :visible="instanceTabVisible"
             />
              <yaml-config-form
-              class="col-span-1 sm:col-span-2"
               v-model="form.options['user-data']"
+              class="col-span-1 sm:col-span-2"
               label="User Data"
               :desc="desc.options['user-data']"
               :options="{readOnly: readonly}"
@@ -80,7 +80,7 @@
         </template>
       </form-group>
       <hr class="section-divider">
-      <form-group :closable="true" v-model="networkConfigVisible" >
+      <form-group v-model="networkConfigVisible" :closable="true" >
         <template #title>
           Network
         </template>
@@ -114,8 +114,8 @@
               <k-option value="masquerade" label="masquerade"></k-option>
             </k-select>
             <yaml-config-form
-              class="col-span-1 sm:col-span-2"
               v-model="form.options['network-data']"
+              class="col-span-1 sm:col-span-2"
               label="Network Data"
               :desc="desc.options['network-data']"
               :options="{readOnly: readonly}"
@@ -152,7 +152,7 @@
               <a class="text-$link">{{visible ? 'Hide':'Show'}}</a>
               <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
             </div>
-            <div class="contents" v-show="visible">
+            <div v-show="visible" class="contents">
               <k-password-input
                 v-model.trim="form.config['ssh-key-passphrase']"
                 label="SSH Key Passphrase"
@@ -213,12 +213,11 @@
     </k-tab-pane>
   </k-tabs>
 </template>
-<script>
-import {defineComponent, ref, computed, provide, watchEffect, watch} from 'vue'
+<script setup>
+import { ref, computed, watch} from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
-import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
 import YamlConfigForm from '../baseForm/YamlConfigForm.vue'
 import useFormFromSchema from '../../composables/useFormFromSchema.js'
@@ -228,98 +227,76 @@ import { Base64 } from 'js-base64'
 
 const needDecodeOptionKeys = ['kubeconfig-content', 'network-data', 'user-data']
 
-export default defineComponent({
-  props: {
-    schema: {
-      type: Object,
-      required: true,
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
+const props = defineProps({
+  schema: {
+    type: Object,
+    required: true,
   },
-  setup(props) {
-    const { form, desc } = useFormFromSchema(props.schema)
-    // decode options
-    watch(() => form.options, () => {
-      needDecodeOptionKeys.forEach((k) => {
-        const v = form.options[k]
-        if (v) {
-          form.options[k] = Base64.decode(v)
-        }
-      })
-    }, {
-      immediate: true,
-    })
-    
-    const diskSize = computed({
-      get() {
-        return parseSi(form.options['disk-size'], { increment: 1024 }) / (1024 ** 3)
-      },
-      set(v) {
-        form.options['disk-size'] = `${v}Gi`
-      }
-    })
-    const memorySize = computed({
-      get() {
-        return parseSi(form.options['memory-size'], { increment: 1024 }) / (1024 ** 3)
-      },
-      set(v) {
-        form.options['memory-size'] = `${v}Gi`
-      }
-    })
-    const uiOptions = computed({
-      get() {
-        if (form.config.enable) {
-          return form.config.enable
-        }
-        if (form.config.ui) {
-          return ['dashboard']
-        }
-        return []
-      },
-      set(v) {
-        form.config.enable = v
-      }
-    })
-    const getForm = () => {
-      const f = cloneDeep(form)
-      
-      return f
-    }
-    const acitiveTab = ref('instance')
-    const visible = ref(false)
-    const toggleVisible = () => {
-      visible.value = !visible.value
-    }
-
-    const networkConfigVisible = ref(false)
-    const instanceTabVisible = computed(() => {
-      return acitiveTab.value === 'instance'
-    })
-
-    return {
-      form,
-      desc,
-      diskSize,
-      memorySize,
-      getForm,
-      visible,
-      networkConfigVisible,
-      instanceTabVisible,
-      toggleVisible,
-      acitiveTab,
-      uiOptions,
-    }
+  readonly: {
+    type: Boolean,
+    default: false,
   },
-  components: {
-    BooleanForm,
-    StringForm,
-    K3sOptionsForm,
-    SshPrivateForm,
-    FormGroup,
-    YamlConfigForm,
+})
+
+const { form, desc } = useFormFromSchema(props.schema)
+// decode options
+watch(() => form.options, () => {
+  needDecodeOptionKeys.forEach((k) => {
+    const v = form.options[k]
+    if (v) {
+      form.options[k] = Base64.decode(v)
+    }
+  })
+}, {
+  immediate: true,
+})
+
+const diskSize = computed({
+  get() {
+    return parseSi(form.options['disk-size'], { increment: 1024 }) / (1024 ** 3)
+  },
+  set(v) {
+    form.options['disk-size'] = `${v}Gi`
   }
 })
+const memorySize = computed({
+  get() {
+    return parseSi(form.options['memory-size'], { increment: 1024 }) / (1024 ** 3)
+  },
+  set(v) {
+    form.options['memory-size'] = `${v}Gi`
+  }
+})
+const uiOptions = computed({
+  get() {
+    if (form.config.enable) {
+      return form.config.enable
+    }
+    if (form.config.ui) {
+      return ['dashboard']
+    }
+    return []
+  },
+  set(v) {
+    form.config.enable = v
+  }
+})
+const getForm = () => {
+  const f = cloneDeep(form)
+  
+  return f
+}
+const acitiveTab = ref('instance')
+const visible = ref(false)
+const toggleVisible = () => {
+  visible.value = !visible.value
+}
+
+const networkConfigVisible = ref(false)
+const instanceTabVisible = computed(() => {
+  return acitiveTab.value === 'instance'
+})
+
+defineExpose({ getForm })
+
 </script>

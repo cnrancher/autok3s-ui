@@ -7,20 +7,20 @@
         <template #popover>{{desc}}</template>
       </tooltip>
     </div>
-    <div class="k-combo-box__prefix" v-if="$slots.prefix">
+    <div v-if="$slots.prefix" class="k-combo-box__prefix">
       <slot name="prefix">{{prefix}}</slot>
     </div>
     <dropdown class="k-combo-box__trigger" :option="popperOption" :append-to-body="false" :disabled="disabled" :lazy="false">
       <input
+        :id="inputId"
         autocomplete="off"
         :disabled="disabled"
         class="cursor-pointer bg-transparent focus-visible:outline-none overflow-ellipsis"
         :class="[!label ? 'py-9px' : '']"
-        :id="inputId"
         :value="modelValue"
-        @input="$emit('update:modelValue', $event.target.value)"
         v-bind="$attrs"
         :placeholder="placeholder"
+        @input="$emit('update:modelValue', $event.target.value)"
         >
       <k-icon v-if="loading" type="loading"></k-icon>
       <k-icon v-else type="arrow-right-blod" direction="down"></k-icon>
@@ -28,7 +28,8 @@
         <div v-if="loading">Loading ...</div>
         <div v-else-if="options.length === 0">No Data</div>
         <div v-else>
-          <dropdown-menu-item v-for="(v, index) in options"
+          <dropdown-menu-item
+v-for="(v, index) in options"
             :key="index"
             class="k-combo-box__option"
             :class="[modelValue === v ? 'text-white bg-warm-gray-400': '']"
@@ -38,7 +39,7 @@
         </div>
       </template>
     </dropdown>
-    <div class="k-combo-box__suffix" v-if="$slots.suffix">
+    <div v-if="$slots.suffix" class="k-combo-box__suffix">
       <slot name="suffix"></slot>
     </div>
   </div>
@@ -83,7 +84,8 @@ defineProps({
     default: false,
   },
   modelValue: {
-    type: [String, Number, Boolean]
+    type: [String, Number, Boolean],
+    default: ''
   },
   disabled: {
     type: Boolean,
@@ -94,7 +96,8 @@ defineProps({
     default: false,
   },
   class: {
-    type: [Array, String, Object]
+    type: [Array, String, Object],
+    default: ''
   },
   desc: {
     type: String,

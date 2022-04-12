@@ -13,7 +13,7 @@
       <template #suffix>suffix</template>
       <k-option value="v1" label="select label1"></k-option>
     </k-select>
-    <k-select label="select label2" v-model="selectedValue">
+    <k-select v-model="selectedValue" label="select label2">
        <k-option value="v1" label="select label1"></k-option>
        <k-option value="v2" label="select label2"></k-option>
        <k-option value="v3" label="select label3"></k-option>

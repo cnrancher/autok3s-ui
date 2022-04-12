@@ -1,6 +1,7 @@
 <template>
   <div class="min-w-200px" :class="tabNavClass">
-    <div v-for="t in tabs" :key="t.id"
+    <div
+v-for="t in tabs" :key="t.id"
       class="k-tabs__item"
       :class="{'k-tabs__item--active': t.id === activeTabId, 'cursor-not-allowed': t.disabled}" @click="setActiveTab(t)">
       {{t.label}}&nbsp;

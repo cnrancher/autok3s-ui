@@ -9,9 +9,9 @@
       <ul class="w-300px max-h-90vh py-5px overflow-y-auto bg-transparent shadow">
         <router-link
           v-for="g in routeGroups" :key="g.name"
+          v-slot="{ navigate, isActive, isExactActive }"
           :to="{name: g.name}"
           custom
-          v-slot="{ navigate, isActive, isExactActive }"
         >
           <li
             class="grid grid-cols-[30px,1fr] items-center cursor-pointer text-light-blue-500 p-10px border-l-5px border-transparent"
@@ -29,6 +29,10 @@ import KDropdown from '@/components/Dropdown'
 import KIcon from '@/components/Icon'
 import k3sLogo from '@/assets/k3s.svg'
 export default {
+  components: {
+    KDropdown,
+    KIcon
+  },
   props: {
     routeGroups: {
       type: Array,
@@ -46,10 +50,6 @@ export default {
     return {
       k3sLogo,
     }
-  },
-  components: {
-    KDropdown,
-    KIcon
   }
 }
 </script>

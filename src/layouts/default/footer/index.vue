@@ -12,22 +12,12 @@
     </dropdown>
   </footer>
 </template>
-<script>
-import {defineComponent} from 'vue'
+<script setup>
 import {Dropdown, DropdownMenu, DropdownMenuItem} from '@/components/Dropdown'
-export default defineComponent({
-  setup() {
-    const version = __VERSION__
-    return {
-      version
-    }
-  },
-  components: {
-    Dropdown,
-    DropdownMenu,
-    DropdownMenuItem
-  }
-})
+
+// eslint-disable-next-line no-undef
+const version = __VERSION__
+
 </script>
 <style>
 .k-footer {

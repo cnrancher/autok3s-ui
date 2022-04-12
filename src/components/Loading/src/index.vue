@@ -3,7 +3,7 @@
     <div class="k-loading__content">
       <slot></slot>
     </div>
-    <div class="k-loading__mask" v-if="loading">
+    <div v-if="loading" class="k-loading__mask">
        <k-icon type="loading"></k-icon>Loading...
     </div>
   </div>

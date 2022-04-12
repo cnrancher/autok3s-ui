@@ -6,8 +6,9 @@
       <div class="overflow-ellipsis">{{currentGroup.title}}</div>
     </div>
     <div class="overflow-y-auto flex-grow">
-      <nav-group v-for="g in routeGroups" :key="g.name"
-      :routeGroup="g"
+      <nav-group
+v-for="g in routeGroups" :key="g.name"
+      :route-group="g"
       :expanded-state-map="stateMap"
       @toggle-open="toggleOpenState($event)"
       >
@@ -15,39 +16,23 @@
     </div>
   </nav>
 </template>
-<script>
+<script setup>
 import NavGroup from "./NavGroup.vue"
 import useRouteGroups from '../composables/useRouteGroups.js'
 import useRouteGroupState from '../composables/useRouteGroupState.js'
 import KIcon from '@/components/Icon'
-import { computed, defineComponent, inject } from 'vue'
+import { computed, inject } from 'vue'
 import k3sLogo from '@/assets/k3s.svg'
 
-export default defineComponent({
-  setup() {
-    const { routeGroups: rootRouteGroups, currentGroup } = useRouteGroups()
-    const {stateMap, toggleOpenState} = useRouteGroupState(rootRouteGroups)
-    const routeGroups = computed(() => {
-      return currentGroup.value.children
-    })
-    const openSideBar = inject('openSideBar')
-    const toggleSideBar = () => {
-     openSideBar.value = !openSideBar.value
-    }
-
-    return {
-      routeGroups,
-      stateMap,
-      toggleOpenState,
-      currentGroup,
-      toggleSideBar,
-      openSideBar,
-      k3sLogo,
-    }
-  },
-  components: {
-    NavGroup,
-    KIcon,
-  }  
+const { routeGroups: rootRouteGroups, currentGroup } = useRouteGroups()
+const {stateMap, toggleOpenState} = useRouteGroupState(rootRouteGroups)
+const routeGroups = computed(() => {
+  return currentGroup.value.children
 })
+const openSideBar = inject('openSideBar')
+const toggleSideBar = () => {
+  openSideBar.value = !openSideBar.value
+}
+
+
 </script>

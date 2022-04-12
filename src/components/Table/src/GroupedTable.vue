@@ -2,9 +2,9 @@
   <div>
     <base-grouped-table
       :caption="caption"
-      :showHeader="showHeader"
+      :show-header="showHeader"
       :data="allTableData"
-      :groupBy="groupBy"
+      :group-by="groupBy"
       :group-status="groupStatus"
       @order-change="onOrderChange"
       @selection-change="onSelectionChange"
@@ -12,17 +12,17 @@
       <template #default>
         <slot></slot>
       </template>
-      <template #group="props" v-if="$slots.group">
-        <slot name="group" v-bind="props">
+      <template v-if="$slots.group" #group="p">
+        <slot name="group" v-bind="p">
         </slot>
       </template>
-      <template v-for="n in errorSlotNames" #[n]="props">
+      <template v-for="n in errorSlotNames" #[n]="p">
         <template v-if="$slots[n]">
-          <slot :name="n" v-bind="props"></slot>
+          <slot :name="n" v-bind="p"></slot>
         </template>
       </template>
     </base-grouped-table>
-    <pagination v-if="showPagination" :total="total" v-model:current-page="currentPage" :page-size="pageSize"></pagination>
+    <pagination v-if="showPagination" v-model:current-page="currentPage" :total="total" :page-size="pageSize"></pagination>
   </div>
 </template>
 <script>
@@ -134,7 +134,7 @@ watch(() => props.groupBy ,(groupBy) => {
 })
 
 const allTableData = computed(() => {
-  if (['noData', 'noResults'].includes(data.value[0]?.group)) {
+  if (['noData', 'noResults', 'loading'].includes(data.value[0]?.group)) {
 
     return data.value
   }

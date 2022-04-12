@@ -1,8 +1,8 @@
 <template>
   <k-input :type="inputType" :autocomplete="autocomplete">
     <template #suffix>
-      <k-icon class="cursor-pointer" type="view" v-if="show" :size="18" @click="toggleShow"></k-icon>
-      <k-icon class="cursor-pointer" type="view-off" v-else :size="18" @click="toggleShow"></k-icon>
+      <k-icon v-if="show" class="cursor-pointer" type="view" :size="18" @click="toggleShow"></k-icon>
+      <k-icon v-else class="cursor-pointer" type="view-off" :size="18" @click="toggleShow"></k-icon>
     </template>
   </k-input>
 </template>

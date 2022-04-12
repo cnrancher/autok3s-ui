@@ -7,34 +7,35 @@
         <template #popover>{{desc}}</template>
       </tooltip>
     </div>
-    <div class="k-input__prefix" v-if="$slots.prefix">
+    <div v-if="$slots.prefix" class="k-input__prefix">
       <slot name="prefix">{{prefix}}</slot>
     </div>
-    <textarea v-if="type==='textarea'"
+    <textarea
+v-if="type==='textarea'"
+      :id="inputId"
+      v-bind="$attrs"
+      ref="inputRef"
       class="k-input__textarea"
       :class="[!label ? 'py-10.5px px-0' : '']"
       :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
-      :id="inputId"
       :disabled="disabled"
       :autocomplete="autocomplete"
       :rows="rows"
-      v-bind="$attrs"
-      ref="inputRef"
+      @input="$emit('update:modelValue', $event.target.value)"
     ></textarea>
     <input
       v-else
+      :id="inputId"
+      v-bind="$attrs"
+      ref="inputRef"
       class="k-input__input"
       :class="[!label ? 'py-10.5px px-0' : '']"
       :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
-      :id="inputId"
       :disabled="disabled"
       :autocomplete="autocomplete"
       :type="type"
-      v-bind="$attrs"
-      ref="inputRef">
-    <div class="k-input__suffix" v-if="$slots.suffix">
+      @input="$emit('update:modelValue', $event.target.value)">
+    <div v-if="$slots.suffix" class="k-input__suffix">
       <slot name="suffix"></slot>
     </div>
   </div>
@@ -65,7 +66,8 @@ defineProps({
       default: false,
     },
     modelValue: {
-      type: [String, Boolean, Number]
+      type: [String, Boolean, Number],
+      default: ''
     },
     disabled: {
       type: Boolean,
@@ -88,6 +90,8 @@ defineProps({
       default: 2
     }
 })
+
+defineEmits(['update:modelValue'])
 
 const inputId = getId()
 const inputRef = ref(null)

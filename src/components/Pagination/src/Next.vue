@@ -1,5 +1,6 @@
 <template>
-  <div class="cursor-pointer flex justify-center items-center"
+  <div
+class="cursor-pointer flex justify-center items-center"
     @click="goToNextPage">
     <span v-if="nextText ">{{ nextText }}</span><k-icon type="arrow-right" :class="[nextDisabled ? 'cursor-not-allowed text-gray-300' : '']"></k-icon>
   </div>
@@ -20,7 +21,8 @@ const props = defineProps({
   },
   pageCount: {
     type: Number,
-    requird: true
+    requird: true,
+    default: 20
   },
   nextText: {
     type: String,

@@ -9,20 +9,20 @@
   </div>
   <template v-for=" (t, index) in tags" :key="index">
     <k-input
+      v-model.trim="t.label"
       :label="keyLabel"
       :readonly="readonly"
-      v-model.trim="t.label"
-      @change="debounceUpdate"
-      placeholder="e.g. foo">
+      placeholder="e.g. foo"
+      @change="debounceUpdate">
     </k-input>
     <k-input
+      v-model.trim="t.value"
       :label="valueLabel"
       :readonly="readonly"
-      v-model.trim="t.value"
-      @change="debounceUpdate"
-      placeholder="e.g. bar">
+      placeholder="e.g. bar"
+      @change="debounceUpdate">
     </k-input>
-    <k-icon v-if="!readonly" class="cursor-pointer" type="ashbin" @click="remove(index)" :size="20"></k-icon>
+    <k-icon v-if="!readonly" class="cursor-pointer" type="ashbin" :size="20" @click="remove(index)"></k-icon>
     <div v-else></div>
   </template>
   <div class="col-span-2">
@@ -31,81 +31,75 @@
   </div>
 </div>
 </template>
-<script>
-import {defineComponent, ref} from 'vue'
+<script setup>
+import {ref} from 'vue'
 import { debounce } from 'lodash-es'
-export default defineComponent({
-  name: 'KeyValueMapForm',
-  props: {
-    modelValue: {
-      type: Object,
-      default() {
-        return {}
-      },
-    },
-    label: {
-      type: String,
-      default: ''
-    },
-    desc: {
-      type: String,
-      default: ''
-    },
-    keyLabel: {
-      type: String,
-      default: 'Key'
-    },
-    valueLabel: {
-      type: String,
-      default: 'Value'
-    },
-    actionLabel: {
-      type: String,
-      default: 'Add'
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
+
+const props = defineProps({
+  modelValue: {
+    type: Object,
+    default() {
+      return {}
     },
   },
-  emits: ['update:modelValue'],
-  setup(props, {emit}) {
-    const tags = ref(
-      Object.entries(props.modelValue ?? {}).map(([label, value]) => ({
-      label,
-      value,
-    })))
-    const update = () => {
-      emit('update:modelValue', getForm())
-    }
-
-    const debounceUpdate = debounce(update, 500)
-    const remove = (index) => {
-      tags.value.splice(index, 1)
-      debounceUpdate()
-    }
-    const add = () => {
-      tags.value.push({ label: '', value: '' })
-      debounceUpdate()
-    }
-    const getForm = () => {
-      const f = tags.value.filter((t) => t.label).reduce((t, c) => {
-        t[c.label] = c.value
-        return t
-      }, {})
-      if (Object.keys(f).length === 0) {
-        return null
-      }
-      return f
-    }
-    return {
-      tags,
-      debounceUpdate,
-      remove,
-      add,
-      getForm,
-    }
+  label: {
+    type: String,
+    default: ''
+  },
+  desc: {
+    type: String,
+    default: ''
+  },
+  keyLabel: {
+    type: String,
+    default: 'Key'
+  },
+  valueLabel: {
+    type: String,
+    default: 'Value'
+  },
+  actionLabel: {
+    type: String,
+    default: 'Add'
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
   },
 })
+
+const emit = defineEmits(['update:modelValue'])
+
+const tags = ref(
+  Object.entries(props.modelValue ?? {}).map(([label, value]) => ({
+  label,
+  value,
+})))
+const update = () => {
+  emit('update:modelValue', getForm())
+}
+
+const debounceUpdate = debounce(update, 500)
+const remove = (index) => {
+  tags.value.splice(index, 1)
+  debounceUpdate()
+}
+const add = () => {
+  tags.value.push({ label: '', value: '' })
+  debounceUpdate()
+}
+const getForm = () => {
+  const f = tags.value.filter((t) => t.label).reduce((t, c) => {
+    t[c.label] = c.value
+    return t
+  }, {})
+  if (Object.keys(f).length === 0) {
+    return null
+  }
+  return f
+}
+
+defineExpose({ getForm })
+
 </script>
 
