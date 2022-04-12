@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center">
+  <div class="flex items-center gap-x-6px">
     <div class="command-option__flag">
       <code class="bg-gray-100 border">{{option}}</code>
     </div>
