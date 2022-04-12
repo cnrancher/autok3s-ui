@@ -3,12 +3,12 @@
     <div class="wm__header"></div>
     <div class="wm__tabs-nav">
       <div v-for="t in tabs" :key="t.id"
-        class="flex items-center border-t border-r truncate cursor-pointer px-10px py-5px min-w-50px"
+        class="flex items-center border-t border-r cursor-pointer px-10px py-5px min-w-50px"
         :class="[t.id === activeTabId ? 'bg-gray-200' : 'bg-gray-300']"
         @click="setActive(t.id)"
       >
         <k-icon v-if="t.icon" :type="t.icon"></k-icon>
-        {{t.label}} &nbsp;
+        <div class="truncate">{{t.label}}</div> &nbsp;
         <k-icon type="close" @click="remove(t.id)"></k-icon>
       </div>
     </div>
