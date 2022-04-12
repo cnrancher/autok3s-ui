@@ -2,7 +2,7 @@
 import Pager from './Pager.vue'
 import Next from './Next.vue'
 import Prev from './Prev.vue'
-import { computed, defineComponent, ref, h, watchEffect, withDirectives, vShow } from 'vue'
+import { computed, defineComponent, h, withDirectives, vShow } from 'vue'
 
 export default defineComponent({
   name: 'KPagination',
@@ -40,7 +40,7 @@ export default defineComponent({
       default: true
     }
   },
-  emits: ['current-change', 'update:current-change'],
+  emits: ['current-change', 'update:current-page'],
   setup(props, {emit}) {
     const pageCount = computed(() => {
       if (props.total <= 0) {
@@ -51,14 +51,19 @@ export default defineComponent({
       }
       return Math.ceil(props.total/props.pageSize)
     })
-    const innerCurrentPage = ref(Math.min(props.currentPage, pageCount.value))
-    watchEffect(() => {
-      innerCurrentPage.value = props.currentPage
+    const innerCurrentPage = computed({
+      get() {
+        return Math.min(props.currentPage, pageCount.value)
+      },
+      set(page) {
+        console.log(page)
+        emit('update:current-page', page)
+        emit('current-change', page)
+      }
     })
+
     const handlePageChange = (page) => {
       innerCurrentPage.value = page
-      emit('update:current-change', page)
-      emit('current-change', page)
     }
     const templateMap = {
       pager: () => h(Pager, {
@@ -72,7 +77,6 @@ export default defineComponent({
         nextText: props.nextText,
         pageCount: pageCount.value,
         onChangeCurrentPage: handlePageChange,
-        // onChange: handlePageChange
       }),
       prev: () => h(Prev, {
         currentPage: innerCurrentPage.value,
@@ -90,7 +94,7 @@ export default defineComponent({
       })
       return rootChildren
     })
-    return () => withDirectives(h('div', {class: 'k-pagination'}, rootChildren.value), [[vShow, !props.hideOnSinglePage]])
+    return () => withDirectives(h('div', {class: 'k-pagination'}, rootChildren.value), [[vShow, pageCount.value === 1 ? !props.hideOnSinglePage : true]])
   },
 })
 </script>
