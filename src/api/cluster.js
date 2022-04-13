@@ -7,64 +7,64 @@ export function fetchList(provider) {
     params: {
       provider
     }
-  });
+  })
 }
 
 export function fetchById(id) {
   return request({
     url: `/clusters/${id}`,
-    method: 'get',
-  });
+    method: 'get'
+  })
 }
 
 export function remove(id) {
   return request({
     url: `/clusters/${id}`,
-    method: 'delete',
-  });
+    method: 'delete'
+  })
 }
 
 export function fetchNodes(id) {
   return request({
     url: `/clusters/${id}?link=nodes`,
-    method: 'get',
-  });
+    method: 'get'
+  })
 }
 
 export function createCluster(data) {
   return request({
     url: '/clusters',
     method: 'post',
-    data,
-  });
+    data
+  })
 }
 
 export function joinNode(data) {
   return request({
     url: `/clusters/${data.id}?action=join`,
     method: 'post',
-    data,
-  });
+    data
+  })
 }
 
 export function fetchContextList() {
   return request({
     url: `/config`,
-    method: 'get',
-  });
+    method: 'get'
+  })
 }
 
 export function disableExplorer(data) {
   return request({
     url: `/clusters/${data.id}?action=disable-explorer`,
     method: 'post',
-    data,
-  });
+    data
+  })
 }
 export function enableExplorer(data) {
   return request({
     url: `/clusters/${data.id}?action=enable-explorer`,
     method: 'post',
-    data,
-  });
+    data
+  })
 }

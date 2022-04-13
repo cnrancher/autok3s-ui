@@ -20,17 +20,17 @@ export default ({ command, mode }) => {
         inject: {
           data: {
             title: env.VITE_APP_TITLE,
-            basePath: env.VITE_APP_BASE_PATH,
-          },
+            basePath: env.VITE_APP_BASE_PATH
+          }
         },
-        minify: isBuild,
-      }),
+        minify: isBuild
+      })
     ],
     resolve: {
       alias: [{ find: '@', replacement: resolve(__dirname, './src') }]
     },
     define: {
-      '__VERSION__': JSON.stringify(packageVersion)
+      __VERSION__: JSON.stringify(packageVersion)
     },
     // base: './',
     base: process.env.UI_BASE_PATH ? process.env.UI_BASE_PATH : './',
@@ -38,8 +38,8 @@ export default ({ command, mode }) => {
       proxy: {
         '/v1': {
           target: 'http://localhost:8080',
-          ws: true,
-        },
+          ws: true
+        }
       }
     },
     build: {

@@ -1,10 +1,16 @@
 <template>
   <div>
-    <div class="k-collapse-item grid grid-cols-[1fr,auto] items-center min-h-48px cursor-pointer" :class="{'k-collapse-item--active': active}" @click="toggleActiveName(name)">
-      <div><slot name="title" :active="active">{{title}}</slot></div>
+    <div
+      class="k-collapse-item grid grid-cols-[1fr,auto] items-center min-h-48px cursor-pointer"
+      :class="{ 'k-collapse-item--active': active }"
+      @click="toggleActiveName(name)"
+    >
+      <div>
+        <slot name="title" :active="active">{{ title }}</slot>
+      </div>
       <k-icon type="arrow-right" :direction="active ? 'down' : ''"></k-icon>
     </div>
-    <div v-show="active" class="border pb-18px" :class="{'k-collapse-item--active': active}">
+    <div v-show="active" class="border pb-18px" :class="{ 'k-collapse-item--active': active }">
       <slot></slot>
     </div>
   </div>
@@ -12,11 +18,11 @@
 <script>
 import useIdGenerator from '@/composables/useIdGenerator.js'
 
-const {next: nextId} = useIdGenerator()
+const { next: nextId } = useIdGenerator()
 const prefix = 'collapse_item_'
 
 export default {
-  name: 'KCollapseItem',
+  name: 'KCollapseItem'
 }
 </script>
 <script setup>
@@ -26,14 +32,14 @@ import KIcon from '@/components/Icon'
 const props = defineProps({
   title: {
     type: String,
-    default: '',
+    default: ''
   },
   name: {
     type: [String, Number],
     default() {
       return `${prefix}${nextId()}`
-    },
-  },
+    }
+  }
 })
 
 const activeNames = inject('activeNames')

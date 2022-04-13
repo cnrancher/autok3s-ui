@@ -8,10 +8,10 @@ export default defineConfig({
       fontFamily: {
         sans: ['Lato', 'arial', 'helvetica', 'sans-serif'],
         serif: ['Poppins', 'sans-serif'],
-        mono: ['Roboto Mono', 'monospace'],
-      },
-    },
-  },
+        mono: ['Roboto Mono', 'monospace']
+      }
+    }
+  }
   // plugins: [formsPlugin],
   // plugins: [
   //   plugin(({ addComponents }) => {

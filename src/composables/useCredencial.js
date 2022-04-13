@@ -1,12 +1,12 @@
-import { fetchById } from '@/api/credential.js';
-import {reactive, toRefs, watchEffect} from 'vue'
-import {stringify} from '@/utils/error.js'
+import { fetchById } from '@/api/credential.js'
+import { reactive, toRefs, watchEffect } from 'vue'
+import { stringify } from '@/utils/error.js'
 
-export default function useCluster (credentialId) {
+export default function useCluster(credentialId) {
   const state = reactive({
     credential: null,
     error: '',
-    loading: false,
+    loading: false
   })
   const fetchCredential = async () => {
     state.loading = true
@@ -26,6 +26,6 @@ export default function useCluster (credentialId) {
   })
   return {
     ...toRefs(state),
-    fetchCredential,
+    fetchCredential
   }
 }

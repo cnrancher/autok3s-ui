@@ -1,18 +1,23 @@
 <template>
   <div>
-    <div style="display: none;">
+    <div style="display: none">
       <slot></slot>
     </div>
     <table class="k-table">
-      <caption v-if="caption">{{caption}}</caption>
+      <caption v-if="caption">{{ caption }}</caption>
       <colgroup>
         <template v-for="c in columns" :key="c.id">
-          <col :style="getColStyle(c)">
+          <col :style="getColStyle(c)" />
         </template>
       </colgroup>
       <table-header v-show="showHeader" :group-by="groupBy"></table-header>
       <template v-for="g in data" :key="g">
-        <table-body v-if="g.group === '' || groupStatus[g.group]?.state === 'loaded'" :data="g.children" :group="g.group" :group-by="groupBy">
+        <table-body
+          v-if="g.group === '' || groupStatus[g.group]?.state === 'loaded'"
+          :data="g.children"
+          :group="g.group"
+          :group-by="groupBy"
+        >
           <template v-if="$slots.group" #group="p">
             <slot name="group" v-bind="p"></slot>
           </template>
@@ -20,10 +25,18 @@
         <tbody v-else :class="getStatusClass(g.state)">
           <tr>
             <td :colspan="columns.length">
-              <slot v-if="groupStatus[g.group]?.state" :name="groupStatus[g.group]?.state" v-bind="groupStatus[g.group]">
-                <div class="k-table__status">{{tableStatus[groupStatus[g.group]?.state]}}</div>
+              <slot
+                v-if="groupStatus[g.group]?.state"
+                :name="groupStatus[g.group]?.state"
+                v-bind="groupStatus[g.group]"
+              >
+                <div class="k-table__status">{{ tableStatus[groupStatus[g.group]?.state] }}</div>
               </slot>
-              <div v-else>State Value Error: ({{groupStatus[g.group]?.state}})，Allow State Value:{{Object.keys(tableStatus).join(', ')}}</div>
+              <div v-else>
+                State Value Error: ({{ groupStatus[g.group]?.state }})，Allow State Value:{{
+                  Object.keys(tableStatus).join(', ')
+                }}
+              </div>
             </td>
           </tr>
         </tbody>
@@ -34,7 +47,7 @@
 </template>
 <script>
 export default {
-  name: 'KBaseGroupedTable',
+  name: 'KBaseGroupedTable'
 }
 </script>
 <script setup>
@@ -43,18 +56,25 @@ import TableBody from './TableBody.vue'
 import useColumnStore from './store/useColumnStore.js'
 import useDataStore from './store/useDataStore.js'
 import { computed, watchEffect, toRefs, provide } from 'vue'
-const tableStatus = {loading: 'Loading', loaded: '', error: 'Load Data Failed', noResults: 'No Result', noData: 'There are no rows to show.'}
+const tableStatus = {
+  loading: 'Loading',
+  loaded: '',
+  error: 'Load Data Failed',
+  noResults: 'No Result',
+  noData: 'There are no rows to show.'
+}
 
 const props = defineProps({
   caption: {
     type: String,
-    default: '',
+    default: ''
   },
   showHeader: {
     type: Boolean,
-    default: true,
+    default: true
   },
-  data: { // [{group, children, state}]
+  data: {
+    // [{group, children, state}]
     type: Array,
     required: true
   },
@@ -71,9 +91,10 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['selection-change', 'row-click', 'cell-click', 'select', 'select-all', 'order-change'])
-const {data} = toRefs(props)
-    
-const getStatusClass = (state) => { // loading, loaded, noResults, noData, error
+const { data } = toRefs(props)
+
+const getStatusClass = (state) => {
+  // loading, loaded, noResults, noData, error
   return Object.keys(tableStatus).reduce((t, c) => {
     t[`k-table-status--${c}`] = state === c
     return t
@@ -82,15 +103,16 @@ const getStatusClass = (state) => { // loading, loaded, noResults, noData, error
 const columnStore = useColumnStore()
 const dataStore = useDataStore()
 const selectedRows = computed(() => {
-  return [...dataStore.state.selection]
-    .map((id) => dataStore.state.data.find((item) => item.id === id))
+  return [...dataStore.state.selection].map((id) => dataStore.state.data.find((item) => item.id === id))
 })
 watchEffect(() => {
-  dataStore.action.initState(data.value?.reduce((t, c) => {
-    t.push(...(c.children ?? []))
+  dataStore.action.initState(
+    data.value?.reduce((t, c) => {
+      t.push(...(c.children ?? []))
 
-    return t
-  }, []))
+      return t
+    }, [])
+  )
 })
 watchEffect(() => {
   emit('selection-change', selectedRows.value)

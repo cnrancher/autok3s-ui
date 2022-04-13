@@ -1,23 +1,33 @@
 <template>
-  <div ref="trigger" class="inline-flex items-center" @mouseenter="showTooltip" @focus="showTooltip" @mouseleave="hideTooltip" @blur="hideTooltip">
+  <div
+    ref="trigger"
+    class="inline-flex items-center"
+    @mouseenter="showTooltip"
+    @focus="showTooltip"
+    @mouseleave="hideTooltip"
+    @blur="hideTooltip"
+  >
     <slot></slot>
     <teleport to="body" :disabled="!appendToBody">
-       <div
-v-if="!lazy || show"
+      <div
+        v-if="!lazy || show"
         ref="popover"
         class="k-tooltip bg-gray-200 text-gray-800 rounded p-8px absolute max-w-80vw z-$tooltip-z-index"
-        :class="[show ? 'block':'hidden']" @mouseenter="showTooltip"
-        @focus="showTooltip" @mouseleave="hideTooltip"
-        @blur="hideTooltip">
-         <slot name="popover"></slot>
-         <div class="k-tooltip__arrow" data-popper-arrow></div>
+        :class="[show ? 'block' : 'hidden']"
+        @mouseenter="showTooltip"
+        @focus="showTooltip"
+        @mouseleave="hideTooltip"
+        @blur="hideTooltip"
+      >
+        <slot name="popover"></slot>
+        <div class="k-tooltip__arrow" data-popper-arrow></div>
       </div>
     </teleport>
   </div>
 </template>
 <script>
 export default {
-  name: 'KTooltip',
+  name: 'KTooltip'
 }
 </script>
 <script setup>
@@ -34,16 +44,16 @@ const props = defineProps({
           {
             name: 'offset',
             options: {
-              offset: [0, 8],
-            },
-          },
-        ],
+              offset: [0, 8]
+            }
+          }
+        ]
       }
     }
   },
   disabled: {
     type: Boolean,
-    default: false,
+    default: false
   },
   appendToBody: {
     type: Boolean,
@@ -63,7 +73,7 @@ const trigger = ref(null)
 const popover = ref(null)
 const show = ref(false)
 let timer = null
-const {create, remove, update} = usePopper(trigger, popover, props.option)
+const { create, remove, update } = usePopper(trigger, popover, props.option)
 
 const removeTimer = () => {
   if (timer) {

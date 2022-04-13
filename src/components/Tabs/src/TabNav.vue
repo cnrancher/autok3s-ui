@@ -1,17 +1,20 @@
 <template>
   <div class="min-w-200px" :class="tabNavClass">
     <div
-v-for="t in tabs" :key="t.id"
+      v-for="t in tabs"
+      :key="t.id"
       class="k-tabs__item"
-      :class="{'k-tabs__item--active': t.id === activeTabId, 'cursor-not-allowed': t.disabled}" @click="setActiveTab(t)">
-      {{t.label}}&nbsp;
+      :class="{ 'k-tabs__item--active': t.id === activeTabId, 'cursor-not-allowed': t.disabled }"
+      @click="setActiveTab(t)"
+    >
+      {{ t.label }}&nbsp;
       <k-icon v-if="t.closable || tabsClosable" type="close" @click="removeTab(t)"></k-icon>
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: 'KTabNav',
+  name: 'KTabNav'
 }
 </script>
 <script setup>
@@ -27,9 +30,9 @@ const props = defineProps({
 const tabsStore = inject('tabsStore')
 const tabsEmit = inject('tabsEmit')
 const tabNavClass = computed(() => {
-  return [`k-tabs__nav--${props.tabPosition}`, ]
+  return [`k-tabs__nav--${props.tabPosition}`]
 })
-const activeTabId = computed(()=>tabsStore.state.active)
+const activeTabId = computed(() => tabsStore.state.active)
 const setActiveTab = (t) => {
   if (!t.disabled) {
     tabsStore.action.setActiveTab(t.id)
@@ -54,7 +57,7 @@ const tabs = tabsStore.state.tabs
   }
 }
 .k-tabs__nav--left,
-.k-tabs__nav--right{
+.k-tabs__nav--right {
   @apply flex flex-col;
   & > .k-tabs__item {
     @apply py-7.5px px-15px border-l-5px border-l-transparent;
@@ -66,5 +69,4 @@ const tabs = tabsStore.state.tabs
 .k-tabs__item {
   @apply flex items-center text-light-blue-500 cursor-pointer;
 }
-
 </style>

@@ -1,23 +1,25 @@
 <template>
   <div v-show="visible" class="k-alert" :class="typeClass">
-    <div class="k-alert__title"><slot>{{title}}</slot></div>
+    <div class="k-alert__title">
+      <slot>{{ title }}</slot>
+    </div>
     <div v-if="closable" class="k-alert__close"><k-icon type="close" @click="close"></k-icon></div>
-    <div v-if="description" class="k-alert-desc">{{description}}</div>
+    <div v-if="description" class="k-alert-desc">{{ description }}</div>
   </div>
 </template>
 <script>
 export default {
-  name: 'KAlert',
+  name: 'KAlert'
 }
 </script>
 <script setup>
-import { computed, ref  } from 'vue'
+import { computed, ref } from 'vue'
 import KIcon from '@/components/Icon'
 
 const props = defineProps({
   title: {
     type: String,
-    default: '',
+    default: ''
   },
   closable: {
     type: Boolean,
@@ -46,8 +48,9 @@ const typeClass = computed(() => `k-alert--${props.type}`)
 <style>
 .k-alert {
   display: grid;
-  grid-template-areas: "title close"
-                       "desc desc";
+  grid-template-areas:
+    'title close'
+    'desc desc';
   grid-template-columns: 1fr 28px;
   align-items: center;
   @apply p-10px my-15px;

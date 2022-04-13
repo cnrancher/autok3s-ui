@@ -1,5 +1,5 @@
 <template>
-<!-- eslint-disable vue/no-mutating-props -->
+  <!-- eslint-disable vue/no-mutating-props -->
   <form-group>
     <template #title>Basic</template>
     <template #default>
@@ -32,7 +32,7 @@
           :desc="desc.config['cluster']"
           :readonly="readonly"
         />
-          <string-form
+        <string-form
           v-model.trim="form.config['datastore']"
           label="Datastore"
           :desc="desc.config['datastore']"
@@ -48,7 +48,7 @@
       </div>
     </template>
   </form-group>
-  <hr class="section-divider">
+  <hr class="section-divider" />
   <form-group>
     <template #title>Master</template>
     <template #default>
@@ -72,11 +72,11 @@
           label="Master Extra Args"
           :desc="desc.config['master-extra-args']"
           :readonly="readonly"
-          ></command-args>
+        ></command-args>
       </div>
     </template>
   </form-group>
-  <hr class="section-divider">
+  <hr class="section-divider" />
   <form-group>
     <template #title>Worker</template>
     <template #default>
@@ -100,11 +100,11 @@
           label="Worker Extra Args"
           :desc="desc.config['worker-extra-args']"
           :readonly="readonly"
-          ></command-args>
+        ></command-args>
       </div>
     </template>
   </form-group>
-  <hr class="section-divider">
+  <hr class="section-divider" />
   <form-group>
     <template #title>Advance</template>
     <template #default>
@@ -134,14 +134,14 @@
           class="col-span-1 sm:col-span-2"
           label="Registry"
           :desc="desc.config['registry-content']"
-          :options="{readOnly: readonly}"
+          :options="{ readOnly: readonly }"
         />
       </div>
     </template>
   </form-group>
 </template>
 <script setup>
-import { provide, toRef, watch} from 'vue'
+import { provide, toRef, watch } from 'vue'
 import StringForm from './StringForm.vue'
 import BooleanForm from './BooleanForm.vue'
 import RegistryConfigForm from './RegistryConfigForm.vue'
@@ -156,11 +156,11 @@ const props = defineProps({
   },
   desc: {
     type: Object,
-    required: true,
+    required: true
   },
   readonly: {
     type: Boolean,
-    default: false,
+    default: false
   },
   visible: {
     type: Boolean,
@@ -170,51 +170,55 @@ const props = defineProps({
 
 const visible = toRef(props, 'visible')
 provide('parentVisible', visible)
-const installScriptOptions = [
-  'https://get.k3s.io',
-  'https://rancher-mirror.rancher.cn/k3s/k3s-install.sh',
-]
-watch(() => props.form.config['k3s-install-script'],(installScript) => {
-  if (installScript === installScriptOptions[1]) {
-    // eslint-disable-next-line vue/no-mutating-props
-    props.form.config['k3s-install-mirror'] = 'INSTALL_K3S_MIRROR=cn'
-  } else if (props.form.config['k3s-install-mirror']) {
-    // eslint-disable-next-line vue/no-mutating-props
-    props.form.config['k3s-install-mirror'] = ''
+const installScriptOptions = ['https://get.k3s.io', 'https://rancher-mirror.rancher.cn/k3s/k3s-install.sh']
+watch(
+  () => props.form.config['k3s-install-script'],
+  (installScript) => {
+    if (installScript === installScriptOptions[1]) {
+      // eslint-disable-next-line vue/no-mutating-props
+      props.form.config['k3s-install-mirror'] = 'INSTALL_K3S_MIRROR=cn'
+    } else if (props.form.config['k3s-install-mirror']) {
+      // eslint-disable-next-line vue/no-mutating-props
+      props.form.config['k3s-install-mirror'] = ''
+    }
+  },
+  {
+    immediate: true
   }
-}, {
-  immediate: true
-})
-const masterExtraArgs = [{
-  long: '--docker',
-  alias: 'runtime',
-  flag: true,
-  values: ['docker', 'containerd'],
-  modelValue: true,
-  desc: '(agent/runtime) Automatic install docker on VM and use docker instead of containerd'
-}, {
-  long: '--no-deploy',
-  alias: 'disable',
-  multiple: true,
-  values: [
-    'coredns', 'servicelb', 'traefik','local-storage', 'metrics-server'
-  ],
-  modelValue: '',
-  desc: 'Do not deploy packaged components (valid items: coredns, servicelb, traefik, local-storage, metrics-server)'
-}, {
-  long: '--flannel-backend',
-  alias: 'flannel-backend',
-  values: ['none', 'vxlan', 'ipsec', 'host-gw', 'wireguard'],
-  modelValue: 'vxlan',
-  desc: `(networking) One of 'none', 'vxlan', 'ipsec', 'host-gw', or 'wireguard' (default: "vxlan")`
-}]
-const workExtraArgs = [{
-  long: '--docker',
-  alias: 'runtime',
-  flag: true,
-  values: ['docker', 'containerd'],
-  modelValue: true,
-  desc: '(agent/runtime) Use docker instead of containerd'
-}]
+)
+const masterExtraArgs = [
+  {
+    long: '--docker',
+    alias: 'runtime',
+    flag: true,
+    values: ['docker', 'containerd'],
+    modelValue: true,
+    desc: '(agent/runtime) Automatic install docker on VM and use docker instead of containerd'
+  },
+  {
+    long: '--no-deploy',
+    alias: 'disable',
+    multiple: true,
+    values: ['coredns', 'servicelb', 'traefik', 'local-storage', 'metrics-server'],
+    modelValue: '',
+    desc: 'Do not deploy packaged components (valid items: coredns, servicelb, traefik, local-storage, metrics-server)'
+  },
+  {
+    long: '--flannel-backend',
+    alias: 'flannel-backend',
+    values: ['none', 'vxlan', 'ipsec', 'host-gw', 'wireguard'],
+    modelValue: 'vxlan',
+    desc: `(networking) One of 'none', 'vxlan', 'ipsec', 'host-gw', or 'wireguard' (default: "vxlan")`
+  }
+]
+const workExtraArgs = [
+  {
+    long: '--docker',
+    alias: 'runtime',
+    flag: true,
+    values: ['docker', 'containerd'],
+    modelValue: true,
+    desc: '(agent/runtime) Use docker instead of containerd'
+  }
+]
 </script>
-

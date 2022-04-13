@@ -1,4 +1,4 @@
-import {computed, reactive, readonly, watch, onBeforeUnmount} from 'vue'
+import { computed, reactive, readonly, watch, onBeforeUnmount } from 'vue'
 
 // state
 export function createStore() {
@@ -55,7 +55,7 @@ export function createAction(state) {
     addSelection: addSelection(state),
     removeSelection: removeSelection(state),
     clearSelection: clearSelection(state),
-    checkAll: checkAll(state),
+    checkAll: checkAll(state)
   }
 }
 
@@ -89,11 +89,14 @@ export default function useStore() {
   const state = createStore()
   const action = createAction(state)
   const getter = createGetter(state)
-  watch(() => state.data, () => {
-    [...state.selection]
-      .filter((key) => !state.data.some((d) => d.id === key))
-      .forEach((key) => state.selection.delete(key))
-  })
+  watch(
+    () => state.data,
+    () => {
+      ;[...state.selection]
+        .filter((key) => !state.data.some((d) => d.id === key))
+        .forEach((key) => state.selection.delete(key))
+    }
+  )
   onBeforeUnmount(() => {
     action.clearData()
   })

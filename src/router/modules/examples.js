@@ -7,7 +7,7 @@ const exampleRouter = {
   hidden: import.meta.env.PROD,
   name: 'Examples',
   meta: {
-    title: 'Examples',
+    title: 'Examples'
   },
   children: [
     {

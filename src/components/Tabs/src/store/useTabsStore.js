@@ -1,11 +1,11 @@
-import { reactive, onBeforeUnmount, computed, readonly } from "vue"
+import { reactive, onBeforeUnmount, computed, readonly } from 'vue'
 
 // state
 export function createStore() {
   const state = {
     tabs: [],
     active: null,
-    closable: false,
+    closable: false
   }
   return reactive(state)
 }
@@ -15,7 +15,7 @@ function addTab(state) {
     if (!tab.name) {
       throw new Error('tab name is required')
     }
-    if(state.tabs.some((d) => d.id === tab.id)) {
+    if (state.tabs.some((d) => d.id === tab.id)) {
       throw new Error(`tab name(${tab.name}) already exists`)
     }
     state.tabs.push(tab)
@@ -62,11 +62,9 @@ function createAction(state) {
     removeTab: removeTab(state),
     setActiveTab: setActiveTab(state),
     clearData: clearData(state),
-    setClosable: setClosable(state),
+    setClosable: setClosable(state)
   }
 }
-
-
 
 // getters
 function activeTab(state) {

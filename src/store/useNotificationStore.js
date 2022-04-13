@@ -15,7 +15,7 @@ const notificationStore = defineStore('notificationStore', {
   },
   actions: {
     addItem(event) {
-      const {group = 'default', title, content, type = 'warn', data, speed, duration, closeOnClick} = event
+      const { group = 'default', title, content, type = 'warn', data, speed, duration, closeOnClick } = event
       let events = this.groupEvents[group] ?? []
       const e = {
         id: nextId(),

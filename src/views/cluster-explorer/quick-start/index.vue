@@ -1,19 +1,19 @@
 <template>
   <div>
     <page-header>
-      <template #title>
-        Quick Start
-      </template>
-      <template #subtitle>
-        User quick guides to help you quickly create K3s cluster and add K3s nodes.
-      </template>
+      <template #title>Quick Start</template>
+      <template #subtitle>User quick guides to help you quickly create K3s cluster and add K3s nodes.</template>
       <template #actions>
-        <template-filter :disabled="loading || creating" :provider="currentProvider" @apply-template="handleApplyTemplate"></template-filter>
+        <template-filter
+          :disabled="loading || creating"
+          :provider="currentProvider"
+          @apply-template="handleApplyTemplate"
+        ></template-filter>
       </template>
     </page-header>
     <div class="grid grid-cols-[auto,1fr]">
       <div>
-        <img :src="clustcerIcon" class="w-160px h-100px object-contain"/>
+        <img :src="clustcerIcon" class="w-160px h-100px object-contain" />
       </div>
       <div class="quick-start__form">
         <k-loading :loading="loading || creating">
@@ -27,17 +27,20 @@
             >
               <k-option v-for="p in providerOptions" :key="p.id" :value="p.id" :label="p.name"></k-option>
             </k-select>
-            <k-input
-              v-model.trim="name"
-              label="Name"
-              placeholder="e.g. test"
-              required
-            />
+            <k-input v-model.trim="name" label="Name" placeholder="e.g. test" required />
           </div>
-          <component :is="clusterFormComponent" v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider" ref="formRef" :has-error="hasError" :schema="providerSchema"></component>
+          <component
+            :is="clusterFormComponent"
+            v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider"
+            ref="formRef"
+            :has-error="hasError"
+            :schema="providerSchema"
+          ></component>
           <footer-actions>
             <k-button class="btn role-secondary" @click="goToCreatePage">Advance</k-button>
-            <k-button class="role-primary" type="button" :loading="loading || creating" @click="create">Create</k-button>
+            <k-button class="role-primary" type="button" :loading="loading || creating" @click="create">
+              Create
+            </k-button>
           </footer-actions>
           <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
           <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>
@@ -47,7 +50,7 @@
   </div>
 </template>
 <script>
-import {computed, defineComponent, ref, toRef, watch, reactive} from 'vue'
+import { computed, defineComponent, ref, toRef, watch, reactive } from 'vue'
 import jsyaml from 'js-yaml'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/views/components/PageHeader.vue'
@@ -64,13 +67,13 @@ import clustcerIcon from '@/assets/images/cluster-single.svg'
 import useProviders from '@/composables/useProviders.js'
 import { createCluster } from '@/api/cluster.js'
 import { cloneDeep, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
-import {capitalize} from 'lodash-es'
-import {stringify} from '@/utils/error.js'
+import { capitalize } from 'lodash-es'
+import { stringify } from '@/utils/error.js'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
 import useTemplateStore from '@/store/useTemplateStore.js'
 import { storeToRefs } from 'pinia'
 
-const excludeProviders = [];
+const excludeProviders = []
 
 export default defineComponent({
   name: 'QuickStart',
@@ -84,7 +87,7 @@ export default defineComponent({
     K3dForm,
     GoogleForm,
     HarvesterForm,
-    NativeForm,
+    NativeForm
   },
   props: {
     templateId: {
@@ -95,7 +98,6 @@ export default defineComponent({
       type: String,
       default: 'aws'
     }
-
   },
   setup(props) {
     const router = useRouter()
@@ -114,9 +116,9 @@ export default defineComponent({
     })
     const templateId = toRef(props, 'templateId')
     const defaultProvider = toRef(props, 'defaultProvider')
-    const {loading: providerLoading, providers, error: loadProviderError} = useProviders()
-    const {loading: templateLoading, error: loadTemplateError, data: templates} = storeToRefs(templateStore)
-    
+    const { loading: providerLoading, providers, error: loadProviderError } = useProviders()
+    const { loading: templateLoading, error: loadTemplateError, data: templates } = storeToRefs(templateStore)
+
     const loading = computed(() => {
       return templateLoading.value || providerLoading.value
     })
@@ -160,7 +162,7 @@ export default defineComponent({
     }
     const createFromTemplate = (templateId) => {
       const template = templates.value.find((t) => t.id === templateId)
-       if (!template) {
+      if (!template) {
         formErrors.value = [`Template (${templateId}) not found`]
         return
       }
@@ -177,7 +179,7 @@ export default defineComponent({
             r[k] = t[k]
             return r
           }, {}),
-        options: t.options,
+        options: t.options
       }
       updateProviderSchema(provider, defaultVal)
     }
@@ -196,7 +198,7 @@ export default defineComponent({
               r[k] = t[k]
               return r
             }, {}),
-          options: t.options,
+          options: t.options
         }
         updateProviderSchema(provider, defaultVal)
         return
@@ -208,48 +210,64 @@ export default defineComponent({
         createFromTemplate(templateId)
         return
       }
-      router.push({name: 'QuickStart', query: {templateId}})
+      router.push({ name: 'QuickStart', query: { templateId } })
     }
-    watch([templateId, providers, templates, defaultProvider, loading], () => {
-      if (loading.value) {
-        return
+    watch(
+      [templateId, providers, templates, defaultProvider, loading],
+      () => {
+        if (loading.value) {
+          return
+        }
+        // create from template
+        if (templateId.value) {
+          createFromTemplate(templateId.value)
+          return
+        }
+        // create from default provider, switch provider
+        if (defaultProvider.value) {
+          createFromProvider(defaultProvider.value)
+          return
+        }
+      },
+      {
+        immediate: true
       }
-      // create from template
-      if (templateId.value) {
-        createFromTemplate(templateId.value)
-        return
-      }
-      // create from default provider, switch provider
-      if (defaultProvider.value) {
-       createFromProvider(defaultProvider.value)
-       return
-      }
-    }, {
-      immediate: true
-    })
+    )
     let form = null
     const validate = () => {
       const configRequiredFields = Object.entries(providerSchema.config)
-        .filter(([k, v]) => k!== 'name' && v?.required).map(([k]) => k);
+        .filter(([k, v]) => k !== 'name' && v?.required)
+        .map(([k]) => k)
       const optionRequiredFields = Object.entries(providerSchema.options)
         // eslint-disable-next-line no-unused-vars
-        .filter(([k, v]) => v?.required).map(([k]) => k);
+        .filter(([k, v]) => v?.required)
+        .map(([k]) => k)
       form = formRef.value?.getForm()
       if (!form) {
         return
       }
       const configErrors = configRequiredFields.reduce((t, c) => {
         if (!form.config?.[c]) {
-          t.push(`"${ c.split('-').map(o => capitalize(o)).join(' ') }" is required`);
+          t.push(
+            `"${c
+              .split('-')
+              .map((o) => capitalize(o))
+              .join(' ')}" is required`
+          )
         }
-        return t;
-      }, []);
+        return t
+      }, [])
       const optionErrors = optionRequiredFields.reduce((t, c) => {
         if (!form.options?.[c]) {
-          t.push(`"${ c.split('-').map(o => capitalize(o)).join(' ') }" is required`);
+          t.push(
+            `"${c
+              .split('-')
+              .map((o) => capitalize(o))
+              .join(' ')}" is required`
+          )
         }
-        return t;
-      }, []);
+        return t
+      }, [])
 
       const errors = [...configErrors, ...optionErrors]
 
@@ -268,21 +286,21 @@ export default defineComponent({
           errors.push(err)
         }
       }
-      formErrors.value= errors;
+      formErrors.value = errors
       return errors.length === 0
     }
     const goBack = () => {
-      router.push({name: 'ClusterExplorerCoreClusters'})
+      router.push({ name: 'ClusterExplorerCoreClusters' })
     }
     const goToCreatePage = () => {
       const form = formRef.value?.getForm()
       if (!form) {
-        router.push({name: 'ClusterExplorerCoreClustersCreate', query: { quickStart: currentProvider.value}})
+        router.push({ name: 'ClusterExplorerCoreClustersCreate', query: { quickStart: currentProvider.value } })
         return
       }
       form.config.name = name.value
       providerClusterStores[form.provider]?.saveFormHistory(form)
-      router.push({name: 'ClusterExplorerCoreClustersCreate', query: { quickStart: form.provider }})
+      router.push({ name: 'ClusterExplorerCoreClustersCreate', query: { quickStart: form.provider } })
     }
     const create = async () => {
       if (!validate()) {
@@ -297,7 +315,7 @@ export default defineComponent({
           ...form.options
         }
       }
-      creating.value=true
+      creating.value = true
       try {
         const { id = '' } = await createCluster(formData)
         saveCreatingCluster(id)
@@ -317,10 +335,10 @@ export default defineComponent({
       } catch (err) {
         formErrors.value = [stringify(err)]
       }
-      creating.value=false
+      creating.value = false
     }
-     const handleProviderChange = (value) => {
-      router.push({name: 'QuickStart', query: {defaultProvider: value}})
+    const handleProviderChange = (value) => {
+      router.push({ name: 'QuickStart', query: { defaultProvider: value } })
     }
 
     return {
@@ -339,7 +357,7 @@ export default defineComponent({
       handleApplyTemplate,
       goToCreatePage,
       create,
-      handleProviderChange,
+      handleProviderChange
     }
   }
 })

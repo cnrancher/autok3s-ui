@@ -2,13 +2,13 @@
   <k-dropdown>
     <button class="btn btn-xs role-tertiary"><k-icon type="ellipsis" direction="down"></k-icon></button>
     <template #content>
-      <div v-if="actions.length === 0"> No Actions </div>
+      <div v-if="actions.length === 0">No Actions</div>
       <k-dropdown-menu v-else>
-          <k-dropdown-menu-item v-for="a in actions" :key="a.command" @click="handleCommand(a.command)">
-            <!-- <k-icon :type="a.icon" color="var(--k-dropdown-text)"></k-icon> -->
-            {{a.label}}
-          </k-dropdown-menu-item>
-        </k-dropdown-menu>
+        <k-dropdown-menu-item v-for="a in actions" :key="a.command" @click="handleCommand(a.command)">
+          <!-- <k-icon :type="a.icon" color="var(--k-dropdown-text)"></k-icon> -->
+          {{ a.label }}
+        </k-dropdown-menu-item>
+      </k-dropdown-menu>
     </template>
   </k-dropdown>
 </template>
@@ -24,27 +24,27 @@ export default {
     }
   },
   emits: ['exec-command'],
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const explorerStore = useExplorerStore()
     const actions = computed(() => {
       const status = props.cluster.status?.toLowerCase()
 
-      if ( status === 'running') {
+      if (status === 'running') {
         const actions = [
           {
             label: 'Join Node',
             icon: 'editor',
-            command: 'joinNode',
+            command: 'joinNode'
           },
           {
             label: 'Clone',
             icon: 'clone',
-            command: 'clone',
+            command: 'clone'
           },
           {
             label: 'Save As Template',
             icon: 'clone',
-            command: 'saveAsTemplate',
+            command: 'saveAsTemplate'
           },
           {
             label: 'Delete',
@@ -79,19 +79,18 @@ export default {
         }
 
         return actions
-
       }
       if (['upgrading', 'creating'].includes(status)) {
         return [
           {
             label: 'Clone',
             icon: 'clone',
-            command: 'clone',
+            command: 'clone'
           },
           {
             label: 'Save As Template',
             icon: 'clone',
-            command: 'saveAsTemplate',
+            command: 'saveAsTemplate'
           },
           {
             label: 'Delete',
@@ -119,12 +118,12 @@ export default {
         {
           label: 'Clone',
           icon: 'clone',
-          command: 'clone',
+          command: 'clone'
         },
         {
           label: 'Save As Template',
           icon: 'clone',
-          command: 'saveAsTemplate',
+          command: 'saveAsTemplate'
         },
         {
           label: 'Delete',
@@ -134,7 +133,7 @@ export default {
         {
           label: 'Back To Edit',
           icon: 'editor',
-          command: 'edit',
+          command: 'edit'
         },
         {
           label: 'View Logs',
@@ -149,13 +148,13 @@ export default {
       ]
     })
     const handleCommand = (command) => {
-      emit('exec-command', {command, data: [cloneDeep(props.cluster)]})
+      emit('exec-command', { command, data: [cloneDeep(props.cluster)] })
     }
 
     return {
       actions,
-      handleCommand,
+      handleCommand
     }
-  },
+  }
 }
 </script>

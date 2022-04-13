@@ -1,15 +1,7 @@
 <template>
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-20px">
-    <string-form
-      v-model.trim="form.config['master']"
-      label="Master"
-      :desc="desc.config['master']"
-    />
-    <string-form
-      v-model.trim="form.config['worker']"
-      label="Worker"
-      :desc="desc.config['worker']"
-    />
+    <string-form v-model.trim="form.config['master']" label="Master" :desc="desc.config['master']" />
+    <string-form v-model.trim="form.config['worker']" label="Worker" :desc="desc.config['worker']" />
     <k-password-input
       v-show="showKeyForm"
       v-model.trim="form.options['access-key']"
@@ -24,18 +16,8 @@
       :desc="desc.options['access-secret']"
       required
     />
-    <string-form
-      v-model.trim="form.options.region"
-      label="Region"
-      :desc="desc.options.region"
-      disabled
-    />
-    <string-form
-      v-model.trim="form.options.zone"
-      label="Zone"
-      :desc="desc.options.zone"
-      disabled
-    />
+    <string-form v-model.trim="form.options.region" label="Region" :desc="desc.options.region" disabled />
+    <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" disabled />
   </div>
 </template>
 <script setup>
@@ -47,22 +29,23 @@ import { cloneDeep } from '@/utils'
 const props = defineProps({
   schema: {
     type: Object,
-    required: true,
+    required: true
   },
   hasError: {
     type: Boolean,
-    default: false,
+    default: false
   }
 })
 
-const { form, desc }= useFormFromSchema(props.schema)
+const { form, desc } = useFormFromSchema(props.schema)
 const showKeyForm = computed(() => {
-  return props.hasError || !props.schema.options['access-key']?.default || !props.schema.options['access-secret']?.default
+  return (
+    props.hasError || !props.schema.options['access-key']?.default || !props.schema.options['access-secret']?.default
+  )
 })
 const getForm = () => {
   return cloneDeep(form)
 }
 
 defineExpose({ getForm })
-
 </script>

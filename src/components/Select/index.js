@@ -5,5 +5,5 @@ import option from './src/Option.vue'
 const Select = withInstall(select)
 const Option = withInstall(option)
 
-export {Select, Option}
+export { Select, Option }
 export default Select

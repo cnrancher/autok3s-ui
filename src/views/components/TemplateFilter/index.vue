@@ -12,44 +12,61 @@
       @keydown.up.prevent="handleKeyUp"
       @keydown.esc.stop.prevent="handleKeyESC"
       @keydown.tab="handleKeyESC"
-      @keydown.enter.stop.prevent="handleKeyEnter">
-      <div v-show="!show" class="template-filter__display-value pointer-events-none overflow-hidden truncate p-10px">{{templateDisplayValue}}</div>
-      <button
-class="btn role-primary btn-sm template-filter__btn"
-        :disabled="!currentTemplate || loading || disabled"
-        @click="handleApplyTemplate">Fill Form</button>
-      <teleport to="body">
-        <div ref="resultRef" class="absolute bg-white z-$popper-z-index border rounded shadow max-h-90vh overflow-auto min-w-324px" :class="[show ? 'block' : 'hidden']" @click.prevent.stop="handlePopperClick">
-          <div v-if="loading"><k-icon type="loading"></k-icon>Loading...</div>
-            <div v-else-if="error">{{error}}</div>
-            <div v-else-if="noResult">
-              No Results
-            </div>
-            <div v-else-if="noData">
-              No Data
-            </div>
-            <div v-else class="template-filter__result">
-              <template v-for="d in dataGroup" :key="d.group">
-                <div class="col-span-3 text-size-12px pt-10px pb-0 px-20px"><span class="template-filter__group-name">Provider:</span> <span>{{d.group}}</span></div>
-                <div
-v-for="c in d.children"
-                  :key="c.id"
-                  class="template-filter__row-wrap relative contents"
-                  :class="{'template-filter--selected': c.id === currentTemplate?.id, 'template-filter--hover': c.id === hoverTemplate?.id}"
-                  @click="handleSelect(c)">
-                  <div>{{c.name}}</div>
-                  <div>{{c.options.region}}</div>
-                  <div>{{c.options.zone}}</div>
-                </div>
-              </template>
-            </div>
+      @keydown.enter.stop.prevent="handleKeyEnter"
+    />
+    <div v-show="!show" class="template-filter__display-value pointer-events-none overflow-hidden truncate p-10px">
+      {{ templateDisplayValue }}
+    </div>
+    <button
+      class="btn role-primary btn-sm template-filter__btn"
+      :disabled="!currentTemplate || loading || disabled"
+      @click="handleApplyTemplate"
+    >
+      Fill Form
+    </button>
+    <teleport to="body">
+      <div
+        ref="resultRef"
+        class="absolute bg-white z-$popper-z-index border rounded shadow max-h-90vh overflow-auto min-w-324px"
+        :class="[show ? 'block' : 'hidden']"
+        @click.prevent.stop="handlePopperClick"
+      >
+        <div v-if="loading">
+          <k-icon type="loading"></k-icon>
+          Loading...
         </div>
-      </teleport>
+        <div v-else-if="error">{{ error }}</div>
+        <div v-else-if="noResult">No Results</div>
+        <div v-else-if="noData">No Data</div>
+        <div v-else class="template-filter__result">
+          <template v-for="d in dataGroup" :key="d.group">
+            <div class="col-span-3 text-size-12px pt-10px pb-0 px-20px">
+              <span class="template-filter__group-name">Provider:</span>
+              <span>{{ d.group }}</span>
+            </div>
+            <div
+              v-for="c in d.children"
+              :key="c.id"
+              class="template-filter__row-wrap relative contents"
+              :class="{
+                'template-filter--selected': c.id === currentTemplate?.id,
+                'template-filter--hover': c.id === hoverTemplate?.id
+              }"
+              @click="handleSelect(c)"
+            >
+              <div>{{ c.name }}</div>
+              <div>{{ c.options.region }}</div>
+              <div>{{ c.options.zone }}</div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </teleport>
   </div>
 </template>
 <script>
 export default {
-  name: 'TemplateFilter',
+  name: 'TemplateFilter'
 }
 </script>
 
@@ -76,7 +93,7 @@ const props = defineProps({
   },
   provider: {
     type: String,
-    default: '',
+    default: ''
   }
 })
 
@@ -87,7 +104,6 @@ const inputRef = ref(null)
 const resultRef = ref(null)
 const show = ref(false)
 const currentTemplate = ref(null)
-
 
 const { create, remove, update } = usePopper(inputRef, resultRef, popperOption)
 onClickOutside(resultRef, () => {
@@ -100,7 +116,7 @@ const providerTemplates = computed(() => {
   }
   return templates.value.filter((t) => !t.status)
 })
-const {searchQuery, searchFields, dataMatchingSearchQuery} = useDataSearch(providerTemplates)
+const { searchQuery, searchFields, dataMatchingSearchQuery } = useDataSearch(providerTemplates)
 const hoverIndex = ref(-1)
 const resultLength = computed(() => {
   return dataMatchingSearchQuery.value.length
@@ -150,7 +166,7 @@ const handleFocus = () => {
   show.value = true
 }
 
-const handleSelect = (template)=> {
+const handleSelect = (template) => {
   currentTemplate.value = template
   show.value = false
   emit('update:modelValue', template.id)
@@ -168,7 +184,7 @@ const handleKeyDown = () => {
   hoverIndex.value = (hoverIndex.value + 1) % resultLength.value
 }
 const handleKeyUp = () => {
-    if (!show.value) {
+  if (!show.value) {
     return
   }
   if (resultLength.value === 0) {
@@ -219,12 +235,14 @@ watch(dataGroup, () => {
 <style>
 .template-filter__result {
   display: grid;
-  grid-template-columns: "name region zone";
+  grid-template-columns: 'name region zone';
   row-gap: 6px;
 }
 .template-filter__row-wrap {
-  &:hover > div, &.template-filter--selected > div, &.template-filter--hover > div {
-    @apply cursor-pointer text-white bg-light-blue-500 ;
+  &:hover > div,
+  &.template-filter--selected > div,
+  &.template-filter--hover > div {
+    @apply cursor-pointer text-white bg-light-blue-500;
   }
   & > div {
     padding: 2px 6px;
@@ -240,7 +258,7 @@ watch(dataGroup, () => {
 .template-filter {
   width: 400px;
   display: grid;
-  grid-template-areas: "search btn";
+  grid-template-areas: 'search btn';
   grid-template-columns: 1fr auto;
   column-gap: 6px;
   align-items: center;

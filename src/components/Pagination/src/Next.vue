@@ -1,13 +1,12 @@
 <template>
-  <div
-class="cursor-pointer flex justify-center items-center"
-    @click="goToNextPage">
-    <span v-if="nextText ">{{ nextText }}</span><k-icon type="arrow-right" :class="[nextDisabled ? 'cursor-not-allowed text-gray-300' : '']"></k-icon>
+  <div class="cursor-pointer flex justify-center items-center" @click="goToNextPage">
+    <span v-if="nextText">{{ nextText }}</span>
+    <k-icon type="arrow-right" :class="[nextDisabled ? 'cursor-not-allowed text-gray-300' : '']"></k-icon>
   </div>
 </template>
 <script>
 export default {
-  name: 'KNext',
+  name: 'KNext'
 }
 </script>
 <script setup>
@@ -17,7 +16,7 @@ import { computed } from 'vue'
 const props = defineProps({
   currentPage: {
     type: Number,
-    default: 1,
+    default: 1
   },
   pageCount: {
     type: Number,
@@ -26,8 +25,8 @@ const props = defineProps({
   },
   nextText: {
     type: String,
-    default: '',
-  },
+    default: ''
+  }
 })
 
 const emit = defineEmits(['change-current-page'])

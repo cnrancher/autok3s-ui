@@ -5,9 +5,9 @@
 </template>
 <script>
 import useIdGenrator from '@/composables/useIdGenerator.js'
-const {next: nextId } = useIdGenrator()
+const { next: nextId } = useIdGenrator()
 export default {
-  name: 'KTabPane',
+  name: 'KTabPane'
 }
 </script>
 <script setup>
@@ -16,11 +16,11 @@ import { computed, inject, toRef, watchEffect, ref, onBeforeUnmount } from 'vue'
 const props = defineProps({
   disabled: {
     type: Boolean,
-    default: false,
+    default: false
   },
   name: {
     type: String,
-    required: true,
+    required: true
   },
   label: {
     type: String,
@@ -32,15 +32,18 @@ const props = defineProps({
   },
   lazy: {
     type: Boolean,
-    default: false,
+    default: false
   }
 })
 
 const tabsStore = inject('tabsStore')
-const tab = ['disabled', 'name', 'closable', 'lazy', 'label'].reduce((t, c) => {
-  t[c] = toRef(props, c)
-  return t
-}, { id: nextId()})
+const tab = ['disabled', 'name', 'closable', 'lazy', 'label'].reduce(
+  (t, c) => {
+    t[c] = toRef(props, c)
+    return t
+  },
+  { id: nextId() }
+)
 tabsStore.action.addTab(tab)
 
 onBeforeUnmount(() => {
@@ -56,6 +59,6 @@ watchEffect(() => {
   }
 })
 const shouldBeRender = computed(() => {
-  return (!props.lazy || loaded.value) || active.value
+  return !props.lazy || loaded.value || active.value
 })
 </script>

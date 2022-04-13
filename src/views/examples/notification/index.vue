@@ -25,7 +25,7 @@ const addNotify2 = (type = 'info') => {
     type,
     title: 'test title',
     content: 'test content',
-    duration: 0,
+    duration: 0
   })
 }
 </script>

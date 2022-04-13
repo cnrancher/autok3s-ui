@@ -1,4 +1,3 @@
-
 import { defineStore } from 'pinia'
 
 const useWindowManagerStore = defineStore('windowManagerStore', {
@@ -7,7 +6,7 @@ const useWindowManagerStore = defineStore('windowManagerStore', {
       tabs: [],
       active: null,
       open: false,
-      userHeight: window.localStorage.getItem('wm-height'),
+      userHeight: window.localStorage.getItem('wm-height')
     }
   },
   actions: {
@@ -49,7 +48,7 @@ const useWindowManagerStore = defineStore('windowManagerStore', {
     },
     setUserHeight(height) {
       this.userHeight = height
-      window.localStorage.setItem('wm-height', height);
+      window.localStorage.setItem('wm-height', height)
     }
   }
 })

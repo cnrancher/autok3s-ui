@@ -1,17 +1,20 @@
 <template>
   <div class="k-input" :class="{ disabled: disabled }">
     <div class="k-input__label">
-      <label v-if="label" :for="inputId">{{label}} <sup v-if="required" class="text-red-500 top-0">*</sup></label>
+      <label v-if="label" :for="inputId">
+        {{ label }}
+        <sup v-if="required" class="text-red-500 top-0">*</sup>
+      </label>
       <tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
-        <template #popover>{{desc}}</template>
+        <template #popover>{{ desc }}</template>
       </tooltip>
     </div>
     <div v-if="$slots.prefix" class="k-input__prefix">
-      <slot name="prefix">{{prefix}}</slot>
+      <slot name="prefix">{{ prefix }}</slot>
     </div>
     <textarea
-v-if="type==='textarea'"
+      v-if="type === 'textarea'"
       :id="inputId"
       v-bind="$attrs"
       ref="inputRef"
@@ -34,7 +37,8 @@ v-if="type==='textarea'"
       :disabled="disabled"
       :autocomplete="autocomplete"
       :type="type"
-      @input="$emit('update:modelValue', $event.target.value)">
+      @input="$emit('update:modelValue', $event.target.value)"
+    />
     <div v-if="$slots.suffix" class="k-input__suffix">
       <slot name="suffix"></slot>
     </div>
@@ -47,7 +51,7 @@ const getId = useIdGenerator(0, 'labeled-input_')
 
 export default {
   name: 'KInput',
-  inheritAttrs: false,
+  inheritAttrs: false
 }
 </script>
 
@@ -57,38 +61,38 @@ import Tooltip from '@/components/Tooltip'
 import KIcon from '@/components/Icon'
 
 defineProps({
-    label: {
-      type: String,
-      default: ''
-    },
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    modelValue: {
-      type: [String, Boolean, Number],
-      default: ''
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    desc: {
-      type: String,
-      default: ''
-    },
-    autocomplete: {
-      type: String,
-      default: 'off'
-    },
-    type: {
-      type: String,
-      default: 'text'
-    },
-    rows: {
-      type: Number,
-      default: 2
-    }
+  label: {
+    type: String,
+    default: ''
+  },
+  required: {
+    type: Boolean,
+    default: false
+  },
+  modelValue: {
+    type: [String, Boolean, Number],
+    default: ''
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  desc: {
+    type: String,
+    default: ''
+  },
+  autocomplete: {
+    type: String,
+    default: 'off'
+  },
+  type: {
+    type: String,
+    default: 'text'
+  },
+  rows: {
+    type: Number,
+    default: 2
+  }
 })
 
 defineEmits(['update:modelValue'])
@@ -96,19 +100,19 @@ defineEmits(['update:modelValue'])
 const inputId = getId()
 const inputRef = ref(null)
 const focus = () => {
-  inputRef.value?.focus();
+  inputRef.value?.focus()
 }
 
 defineExpose({
   focus
 })
-
 </script>
 <style>
 .k-input {
   display: grid;
-  grid-template-areas: "label label suffix"
-                       "prefix input suffix";
+  grid-template-areas:
+    'label label suffix'
+    'prefix input suffix';
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
   @apply p-8px rounded border border-gray-300;
@@ -129,9 +133,12 @@ defineExpose({
   grid-area: suffix;
   @apply flex items-center text-warm-gray-500 pl-8px border-l border-warm-gray-600 font-400;
 }
-input.k-input__input, .k-input__textarea,
-input.k-input__input:hover, .k-input__textarea:hover,
-input.k-input__input:focus, .k-input__textarea:focus {
+input.k-input__input,
+.k-input__textarea,
+input.k-input__input:hover,
+.k-input__textarea:hover,
+input.k-input__input:focus,
+.k-input__textarea:focus {
   grid-area: input;
   @apply bg-transparent focus-visible:outline-none;
 }

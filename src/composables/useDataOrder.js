@@ -1,5 +1,5 @@
-import {ref, computed} from 'vue'
-import {orderBy} from 'lodash-es'
+import { ref, computed } from 'vue'
+import { orderBy } from 'lodash-es'
 
 export default function useDataOrder(data) {
   const fields = ref([])
@@ -14,6 +14,6 @@ export default function useDataOrder(data) {
   return {
     fields,
     orders,
-    dataOrder,
+    dataOrder
   }
 }

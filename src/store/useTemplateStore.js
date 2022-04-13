@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { fetchList } from '@/api/template.js'
-import {stringify} from '@/utils/error.js'
+import { stringify } from '@/utils/error.js'
 
 const useTemplateStore = defineStore('templateStore', {
   state: () => {
@@ -15,7 +15,7 @@ const useTemplateStore = defineStore('templateStore', {
     async loadData() {
       this.loading = true
       try {
-        const {data} = await fetchList()
+        const { data } = await fetchList()
         this.data = data
         this.error = null
       } catch (err) {

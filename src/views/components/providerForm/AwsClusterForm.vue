@@ -4,32 +4,28 @@
   <k-tabs v-model="acitiveTab" tab-position="left">
     <k-tab-pane label="Credential Options" name="credential">
       <form-group>
-        <template #title>
-          Credential Options
-        </template>
+        <template #title>Credential Options</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <k-password-input
               v-model="form.options['access-key']"
               label="Access Key"
               :desc="desc.options['access-key']"
-              :readonly="readonly">
-            </k-password-input>
+              :readonly="readonly"
+            ></k-password-input>
             <k-password-input
               v-model="form.options['secret-key']"
               label="Secret Key"
               :desc="desc.options['secret-key']"
-              :readonly="readonly">
-            </k-password-input>
+              :readonly="readonly"
+            ></k-password-input>
           </div>
         </template>
       </form-group>
     </k-tab-pane>
     <k-tab-pane label="Instance Options" name="instance">
       <form-group>
-        <template #title>
-          Basic
-        </template>
+        <template #title>Basic</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <string-form
@@ -38,12 +34,7 @@
               :desc="desc.options.region"
               :readonly="readonly"
             />
-            <string-form
-              v-model.trim="form.options.zone"
-              label="Zone"
-              :desc="desc.options.zone"
-              :readonly="readonly"
-            />
+            <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" :readonly="readonly" />
             <string-form
               v-model.trim="form.options['instance-type']"
               label="Instance Type"
@@ -84,42 +75,36 @@
           </div>
         </template>
       </form-group>
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <form-group :closable="true">
-        <template #title>
-          Network
-        </template>
+        <template #title>Network</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-          <string-form
-            v-model.trim="form.options['vpc-id']"
-            label="VPC ID"
-            :desc="desc.options['vpc-id']"
-            :readonly="readonly"
-          />
-          <string-form
-            v-model.trim="form.options['subnet-id']"
-            label="Subnet ID"
-            :desc="desc.options['subnet-id']"
-            :readonly="readonly"
-          />
-          <string-form
-            v-model.trim="form.options['security-group']"
-            label="Security Group"
-            :desc="desc.options['security-group']"
-            :readonly="readonly"
-          />
-        </div>
+            <string-form
+              v-model.trim="form.options['vpc-id']"
+              label="VPC ID"
+              :desc="desc.options['vpc-id']"
+              :readonly="readonly"
+            />
+            <string-form
+              v-model.trim="form.options['subnet-id']"
+              label="Subnet ID"
+              :desc="desc.options['subnet-id']"
+              :readonly="readonly"
+            />
+            <string-form
+              v-model.trim="form.options['security-group']"
+              label="Security Group"
+              :desc="desc.options['security-group']"
+              :readonly="readonly"
+            />
+          </div>
         </template>
       </form-group>
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <form-group>
-        <template #title>
-          SSH Public
-        </template>
-        <template #subtitle>
-          Params used to login to instance via ssh, e.g. key-pair, ssh user, ssh port
-        </template>
+        <template #title>SSH Public</template>
+        <template #subtitle>Params used to login to instance via ssh, e.g. key-pair, ssh user, ssh port</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <string-form
@@ -143,7 +128,7 @@
           </div>
         </template>
       </form-group>
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <form-group>
         <template #title>SSH Private</template>
         <template #subtitle>
@@ -153,7 +138,7 @@
           <ssh-private-form :form="form" :desc="desc" :readonly="readonly"></ssh-private-form>
         </template>
       </form-group>
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <form-group :closable="true">
         <template #title>Advance</template>
         <template #default>
@@ -165,8 +150,9 @@
               :readonly="readonly"
               label="Tags"
               placeholder="e.g. foo=bar"
-              action-label="Add Tag"></cluster-tags-form>
-            </div>
+              action-label="Add Tag"
+            ></cluster-tags-form>
+          </div>
         </template>
       </form-group>
     </k-tab-pane>
@@ -175,8 +161,8 @@
         :visible="acitiveTab === 'k3s'"
         :form="form"
         :desc="desc"
-        :readonly="readonly">
-      </k3s-options-form>
+        :readonly="readonly"
+      ></k3s-options-form>
     </k-tab-pane>
     <k-tab-pane label="Additional Options" name="additional">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
@@ -203,14 +189,14 @@
           :desc="desc.options['cloud-controller-manager']"
           :readonly="readonly"
         />
-         <string-form
+        <string-form
           v-show="form.options['cloud-controller-manager']"
           v-model.trim="form.options['iam-instance-profile-control']"
           label="IAM Instance Profile Control"
           :desc="desc.options['iam-instance-profile-control']"
           :readonly="readonly"
         />
-         <string-form
+        <string-form
           v-show="form.options['cloud-controller-manager']"
           v-model.trim="form.options['iam-instance-profile-worker']"
           label="IAM Instance Profile Worker"
@@ -223,7 +209,7 @@
 </template>
 <script>
 import { cloneDeep } from '@/utils'
-import {defineComponent, ref, computed} from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
@@ -238,20 +224,20 @@ export default defineComponent({
     K3sOptionsForm,
     SshPrivateForm,
     FormGroup,
-    ClusterTagsForm,
+    ClusterTagsForm
   },
   props: {
     schema: {
       type: Object,
-      required: true,
+      required: true
     },
     readonly: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   setup(props) {
-    const { form, desc }= useFormFromSchema(props.schema)
+    const { form, desc } = useFormFromSchema(props.schema)
     const acitiveTab = ref('instance')
     const uiOptions = computed({
       get() {
@@ -289,7 +275,7 @@ export default defineComponent({
       acitiveTab,
       getForm,
       tags,
-      uiOptions,
+      uiOptions
     }
   }
 })

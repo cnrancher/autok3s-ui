@@ -1,11 +1,6 @@
 <template>
   <div class="cluster-bulk-action">
-    <k-button
-      :disabled="deleteDisabled"
-      class="role-primary"
-      @click="handleBulkDelete">
-      Delete
-    </k-button>
+    <k-button :disabled="deleteDisabled" class="role-primary" @click="handleBulkDelete">Delete</k-button>
   </div>
 </template>
 <script>
@@ -19,17 +14,17 @@ export default {
     }
   },
   emits: ['exec-command'],
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const deleteDisabled = computed(() => {
       return props.clusters.length === 0
     })
     const handleBulkDelete = () => {
-      emit('exec-command', {command: 'delete', data: cloneDeep(props.clusters)})
+      emit('exec-command', { command: 'delete', data: cloneDeep(props.clusters) })
     }
     return {
       deleteDisabled,
       handleBulkDelete
     }
-  },
+  }
 }
 </script>

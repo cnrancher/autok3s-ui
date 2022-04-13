@@ -1,5 +1,5 @@
 <script>
-import {defineComponent, h, inject, computed} from 'vue'
+import { defineComponent, h, inject, computed } from 'vue'
 import FieldOrder from './FieldOrder.vue'
 
 export default defineComponent({
@@ -8,14 +8,14 @@ export default defineComponent({
     groupBy: {
       type: String,
       default: ''
-    },
+    }
   },
   emits: ['order-change'],
   setup(props) {
     const dataStore = inject('dataStore')
     const columnStore = inject('columnStore')
     const columns = columnStore.state.columns
-    const {checkAll, clearSelection} = dataStore.action
+    const { checkAll, clearSelection } = dataStore.action
     const isAllSelected = computed(() => {
       return dataStore.getter.isAllSelected
     })
@@ -30,23 +30,24 @@ export default defineComponent({
     }
     const renderHeaderCell = (column) => {
       if (column.type === 'selection') {
-        return h('div',
-        {
-          class: 'k-table__header-selection'
-        },
-        [
-          h('input',
-            {
+        return h(
+          'div',
+          {
+            class: 'k-table__header-selection'
+          },
+          [
+            h('input', {
               type: 'checkbox',
               onChange,
               checked: isAllSelected.value,
               indeterminate: indeterminate.value
-            }
-          )
-        ])
+            })
+          ]
+        )
       }
-      
-      return h('div',
+
+      return h(
+        'div',
         {
           class: 'k-table__header-cell'
         },
@@ -56,17 +57,18 @@ export default defineComponent({
         ]
       )
     }
-    return () => h('thead', {},
-    [
-      h('tr',
-        {
-          class: 'k-table__header-row'
-        },
-        columns
-          .filter((c) => props.groupBy ? c.field !== props.groupBy : true )
-          .map((column) => h('th', { class: 'k-table__header' }, [ renderHeaderCell(column) ]))
-      )
-    ])
+    return () =>
+      h('thead', {}, [
+        h(
+          'tr',
+          {
+            class: 'k-table__header-row'
+          },
+          columns
+            .filter((c) => (props.groupBy ? c.field !== props.groupBy : true))
+            .map((column) => h('th', { class: 'k-table__header' }, [renderHeaderCell(column)]))
+        )
+      ])
   }
 })
 </script>

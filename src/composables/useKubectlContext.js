@@ -1,12 +1,12 @@
-import { fetchContextList } from '@/api/cluster.js';
-import { toRefs, reactive } from 'vue';
-import {stringify} from '@/utils/error.js'
+import { fetchContextList } from '@/api/cluster.js'
+import { toRefs, reactive } from 'vue'
+import { stringify } from '@/utils/error.js'
 
 export default function useKubectlContext() {
   const state = reactive({
     contexts: [],
     error: '',
-    loading: true,
+    loading: true
   })
   const enCollator = new Intl.Collator('en')
   const fetchContexts = async () => {
@@ -23,6 +23,6 @@ export default function useKubectlContext() {
 
   return {
     ...toRefs(state),
-    fetchContexts,
+    fetchContexts
   }
 }

@@ -1,4 +1,3 @@
-
 const PROVIDER_KEY_FIELD_MAP = {
   tencent: {
     key: 'secret-id',
@@ -20,13 +19,11 @@ const PROVIDER_KEY_FIELD_MAP = {
 
 export default function useProviderKeyMap() {
   const providerFields = Object.entries(PROVIDER_KEY_FIELD_MAP)
-  const keyMap = providerFields
-    .reduce((t, [k, v])=> {
-      t[k] = v.key
-      return t
-    }, {})
-  const secretMap = providerFields
-  .reduce((t, [k, v])=> {
+  const keyMap = providerFields.reduce((t, [k, v]) => {
+    t[k] = v.key
+    return t
+  }, {})
+  const secretMap = providerFields.reduce((t, [k, v]) => {
     t[k] = v.secret
     return t
   }, {})

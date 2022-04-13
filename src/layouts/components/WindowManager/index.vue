@@ -3,19 +3,21 @@
     <div class="wm__header"></div>
     <div class="wm__tabs-nav">
       <div
-        v-for="t in tabs" :key="t.id"
+        v-for="t in tabs"
+        :key="t.id"
         class="flex items-center border-t border-r cursor-pointer px-10px py-5px min-w-50px"
         :class="[t.id === activeTabId ? 'bg-gray-200' : 'bg-gray-300']"
         @click="setActive(t.id)"
       >
         <k-icon v-if="t.icon" :type="t.icon"></k-icon>
-        <div class="truncate">{{t.label}}</div> &nbsp;
+        <div class="truncate">{{ t.label }}</div>
+        &nbsp;
         <k-icon type="close" @click="remove(t.id)"></k-icon>
       </div>
     </div>
     <div ref="resizer" class="wm__resize">
       <k-icon type="arrows-resize-v" :size="24" @click="toggleMin"></k-icon>
-      <div v-show="draging" class="wm__resize-proxy" :style="{top: `${resizerOffset}px`}"></div>
+      <div v-show="draging" class="wm__resize-proxy" :style="{ top: `${resizerOffset}px` }"></div>
     </div>
     <div class="wm__tabs-content">
       <component
@@ -25,14 +27,13 @@
         :class="[t.id === activeTabId ? 'block' : 'hidden']"
         v-bind="t.attrs"
         :renew-count="t.renewCount"
-        :show='t.id === activeTabId'
-      >
-      </component>
+        :show="t.id === activeTabId"
+      ></component>
     </div>
   </div>
 </template>
 <script>
-import {computed, defineComponent, onBeforeUnmount, onMounted, watchEffect, ref} from 'vue'
+import { computed, defineComponent, onBeforeUnmount, onMounted, watchEffect, ref } from 'vue'
 import KIcon from '@/components/Icon'
 import ClusterLogs from './components/ClusterLogs.vue'
 import KubectlShell from './components/KubectlShell.vue'
@@ -45,7 +46,7 @@ export default defineComponent({
     KIcon,
     ClusterLogs,
     KubectlShell,
-    NodeShell,
+    NodeShell
   },
   setup() {
     const windowManagerStore = useWindownManagerStore()
@@ -68,9 +69,9 @@ export default defineComponent({
       }
       return h
     })
-    
+
     watchEffect(() => {
-      document.documentElement.style.setProperty('--wm-height', `${ height.value }px`);
+      document.documentElement.style.setProperty('--wm-height', `${height.value}px`)
     })
     const activeTabId = computed(() => {
       return windowManagerStore.active
@@ -82,7 +83,7 @@ export default defineComponent({
       windowManagerStore.setActiveTab(id)
     }
     const resizer = ref(null)
-    const {draging, resizerOffset} = useEvent(resizer)
+    const { draging, resizerOffset } = useEvent(resizer)
     const toggleMin = () => {
       if (draging.value) {
         return
@@ -99,7 +100,7 @@ export default defineComponent({
       resizer,
       draging,
       resizerOffset,
-      toggleMin,
+      toggleMin
     }
   }
 })
@@ -111,12 +112,12 @@ function useEvent(targetRef) {
   const marginBottomMin = 60
   const resizerOffset = ref(0)
   let height = window.innerHeight
-  const doc = document.documentElement;
+  const doc = document.documentElement
   const preventDefault = (e) => {
     e.preventDefault()
   }
   const updatePosition = (e) => {
-    const {clientY} = e
+    const { clientY } = e
     resizerOffset.value = Math.min(Math.max(marginTopMin, clientY), height - marginBottomMin)
   }
   const updateWMHeight = () => {
@@ -172,7 +173,7 @@ function useEvent(targetRef) {
   })
   return {
     draging,
-    resizerOffset,
+    resizerOffset
   }
 }
 </script>
@@ -180,9 +181,10 @@ function useEvent(targetRef) {
 .wm {
   position: relative;
   display: grid;
-  grid-template-areas: "header header"
-                       "tabsNav resize"
-                       "tabsContent tabsContent";
+  grid-template-areas:
+    'header header'
+    'tabsNav resize'
+    'tabsContent tabsContent';
   grid-template-rows: auto auto 1fr;
   grid-template-columns: 1fr auto;
   height: var(--wm-height);
@@ -223,6 +225,4 @@ function useEvent(targetRef) {
   grid-area: tabsContent;
   overflow: hidden;
 }
-
-
 </style>

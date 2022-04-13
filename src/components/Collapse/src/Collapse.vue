@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'KCollapse',
+  name: 'KCollapse'
 }
 </script>
 
@@ -14,16 +14,16 @@ export default {
 import { provide, readonly, watchEffect, ref } from 'vue'
 
 const props = defineProps({
-   accordion: {
-      type: Boolean,
-      default: false,
-    },
-    modelValue: {
-      type: Array,
-      default() {
-        return []
-      }
+  accordion: {
+    type: Boolean,
+    default: false
+  },
+  modelValue: {
+    type: Array,
+    default() {
+      return []
     }
+  }
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])

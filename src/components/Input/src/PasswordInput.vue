@@ -8,7 +8,7 @@
 </template>
 <script>
 export default {
-  name: 'KPasswordInput',
+  name: 'KPasswordInput'
 }
 </script>
 <script setup>
@@ -18,9 +18,9 @@ import KIcon from '@/components/Icon'
 
 defineProps({
   autocomplete: {
-      type: String,
-      default: 'new-password'
-    }
+    type: String,
+    default: 'new-password'
+  }
 })
 
 const show = ref(false)

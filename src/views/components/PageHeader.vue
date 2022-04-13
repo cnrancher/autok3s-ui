@@ -10,8 +10,9 @@
 <style>
 .page-header {
   display: grid;
-  grid-template-areas: "title actions"
-                       "subtitle subtitle";
+  grid-template-areas:
+    'title actions'
+    'subtitle subtitle';
   grid-template-columns: 1fr auto;
   margin-bottom: 20px;
   align-items: center;

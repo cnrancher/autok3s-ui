@@ -11,14 +11,14 @@
               v-model="form.options['secret-id']"
               label="Secret Id"
               :desc="desc.options['secret-id']"
-              :readonly="readonly">
-            </k-password-input>
+              :readonly="readonly"
+            ></k-password-input>
             <k-password-input
               v-model="form.options['secret-key']"
               label="Secret Key"
               :desc="desc.options['secret-key']"
-              :readonly="readonly">
-            </k-password-input>
+              :readonly="readonly"
+            ></k-password-input>
           </div>
         </template>
       </form-group>
@@ -34,12 +34,7 @@
               :desc="desc.options.region"
               :readonly="readonly"
             />
-            <string-form
-              v-model.trim="form.options.zone"
-              label="Zone"
-              :desc="desc.options.zone"
-              :readonly="readonly"
-            />
+            <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" :readonly="readonly" />
             <string-form
               v-model.trim="form.options['instance-type']"
               label="Instance Type"
@@ -67,7 +62,7 @@
           </div>
         </template>
       </form-group>
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <form-group :closable="true">
         <template #title>Network</template>
         <template #default>
@@ -96,21 +91,14 @@
               :desc="desc.options['security-group']"
               :readonly="readonly"
             />
-            <boolean-form
-              v-model="form.options['eip']"
-              label="EIP"
-              :desc="desc.options['eip']"
-              :readonly="readonly"
-            />
+            <boolean-form v-model="form.options['eip']" label="EIP" :desc="desc.options['eip']" :readonly="readonly" />
           </div>
         </template>
       </form-group>
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <form-group>
         <template #title>SSH Public</template>
-        <template #subtitle>
-          Params used to login to instance via ssh, e.g. key-pair, ssh user, ssh port
-        </template>
+        <template #subtitle>Params used to login to instance via ssh, e.g. key-pair, ssh user, ssh port</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <string-form
@@ -134,7 +122,7 @@
           </div>
         </template>
       </form-group>
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <form-group>
         <template #title>SSH Private</template>
         <template #subtitle>
@@ -144,7 +132,7 @@
           <ssh-private-form :form="form" :desc="desc" :readonly="readonly"></ssh-private-form>
         </template>
       </form-group>
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <form-group :closable="true">
         <template #title>Advance</template>
         <template #default>
@@ -156,7 +144,8 @@
               :readonly="readonly"
               label="Tags"
               placeholder="e.g. foo=bar"
-              action-label="Add Tag"></cluster-tags-form>
+              action-label="Add Tag"
+            ></cluster-tags-form>
           </div>
         </template>
       </form-group>
@@ -166,8 +155,8 @@
         :visible="acitiveTab === 'k3s'"
         :form="form"
         :desc="desc"
-        :readonly="readonly">
-      </k3s-options-form>
+        :readonly="readonly"
+      ></k3s-options-form>
     </k-tab-pane>
     <k-tab-pane label="Additional Options" name="additional">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
@@ -207,7 +196,7 @@
 </template>
 <script setup>
 import { cloneDeep } from '@/utils'
-import {ref, computed} from 'vue'
+import { ref, computed } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
@@ -219,15 +208,15 @@ import useFormFromSchema from '../../composables/useFormFromSchema.js'
 const props = defineProps({
   schema: {
     type: Object,
-    required: true,
+    required: true
   },
   readonly: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 })
 
-const { form, desc }= useFormFromSchema(props.schema)
+const { form, desc } = useFormFromSchema(props.schema)
 const acitiveTab = ref('instance')
 const updateActiveTab = () => {
   if (!form.options['secret-id'] || !form.options['secret-key']) {

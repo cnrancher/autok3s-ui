@@ -1,12 +1,7 @@
 <template>
-  <k-select
-    v-model="form.mode"
-    label="Terwary"
-    :desc="desc"
-    :disabled="readonly"
-    @change="debounceUpdate">
+  <k-select v-model="form.mode" label="Terwary" :desc="desc" :disabled="readonly" @change="debounceUpdate">
     <k-option label="Disable" value="none"></k-option>
-    <k-option  label="Enable" value="eni"></k-option>
+    <k-option label="Enable" value="eni"></k-option>
   </k-select>
   <k-input
     v-show="form.mode === 'eni'"
@@ -14,18 +9,18 @@
     label="max-pool-size"
     type="number"
     :readonly="readonly"
-    @change="debounceUpdate">
-  </k-input>
+    @change="debounceUpdate"
+  ></k-input>
 </template>
 <script>
-import {defineComponent, reactive} from 'vue'
+import { defineComponent, reactive } from 'vue'
 import { debounce } from 'lodash-es'
 export default defineComponent({
   name: 'AlibabaTerwayForm',
   props: {
     modelValue: {
       type: Object,
-      required: true,
+      required: true
     },
     desc: {
       type: String,
@@ -33,20 +28,20 @@ export default defineComponent({
     },
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     }
   },
   emits: ['update:modelValue'],
-  setup(props, {emit}) {
-    const form = reactive({...props.modelValue})
+  setup(props, { emit }) {
+    const form = reactive({ ...props.modelValue })
     const update = () => {
-      emit('update:modelValue', {...form})
+      emit('update:modelValue', { ...form })
     }
     const debounceUpdate = debounce(update, 500)
     return {
       form,
-      debounceUpdate,
+      debounceUpdate
     }
-  },
+  }
 })
 </script>

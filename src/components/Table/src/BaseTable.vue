@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div style="display: none;">
+    <div style="display: none">
       <slot></slot>
     </div>
     <table class="k-table">
-      <caption v-if="caption">{{caption}}</caption>
+      <caption v-if="caption">{{ caption }}</caption>
       <colgroup>
         <template v-for="c in columns" :key="c.id">
-          <col :style="getColStyle(c)">
+          <col :style="getColStyle(c)" />
         </template>
       </colgroup>
       <table-header v-show="showHeader" :group-by="groupBy"></table-header>
@@ -22,9 +22,11 @@
         <tr>
           <td :colspan="columns.length">
             <slot v-if="tableStatus[state]" :name="`state-${state}`">
-              <div class="k-table__status">{{tableStatus[state]}}</div>
+              <div class="k-table__status">{{ tableStatus[state] }}</div>
             </slot>
-            <div v-else>State Value Error: ({{state}})，Allow State Value:{{Object.keys(tableStatus).join(', ')}}</div>
+            <div v-else>
+              State Value Error: ({{ state }})，Allow State Value:{{ Object.keys(tableStatus).join(', ') }}
+            </div>
           </td>
         </tr>
       </tbody>
@@ -34,7 +36,7 @@
 </template>
 <script>
 export default {
-  name: 'KBaseTable',
+  name: 'KBaseTable'
 }
 </script>
 <script setup>
@@ -45,16 +47,22 @@ import useColumnStore from './store/useColumnStore.js'
 import useDataStore from './store/useDataStore.js'
 import { computed, watch, watchEffect, toRefs, toRef, provide } from 'vue'
 
-const tableStatus = {loading: 'Loading', loaded: '', error: 'Load Data Failed', noResults: 'No Result', noData: 'There are no rows to show.'}
+const tableStatus = {
+  loading: 'Loading',
+  loaded: '',
+  error: 'Load Data Failed',
+  noResults: 'No Result',
+  noData: 'There are no rows to show.'
+}
 
 const props = defineProps({
   caption: {
     type: String,
-    default: '',
+    default: ''
   },
   showHeader: {
     type: Boolean,
-    default: true,
+    default: true
   },
   data: {
     type: Array,
@@ -72,15 +80,19 @@ const props = defineProps({
 
 const emit = defineEmits(['selection-change', 'row-click', 'cell-click', 'select', 'select-all', 'order-change'])
 
-const {data} = toRefs(props)
+const { data } = toRefs(props)
 const groupBy = toRef(props, 'groupBy')
 const { groupField, dataGroup } = useDataGroup(data)
 
-watch(groupBy, (v) => {
-  groupField.value = v
-}, {
-  immediate: true
-})
+watch(
+  groupBy,
+  (v) => {
+    groupField.value = v
+  },
+  {
+    immediate: true
+  }
+)
 const currentStatusClass = computed(() => {
   return Object.keys(tableStatus).reduce((t, c) => {
     t[`k-table-status--${c}`] = props.state === c
@@ -90,8 +102,7 @@ const currentStatusClass = computed(() => {
 const columnStore = useColumnStore()
 const dataStore = useDataStore()
 const selectedRows = computed(() => {
-  return [...dataStore.state.selection]
-    .map((id) => dataStore.state.data.find((item) => item.id === id))
+  return [...dataStore.state.selection].map((id) => dataStore.state.data.find((item) => item.id === id))
 })
 watchEffect(() => {
   dataStore.action.initState(data.value)
@@ -121,7 +132,6 @@ const getColStyle = (col) => {
   }
   return {}
 }
-
 </script>
 <style>
 .k-table {

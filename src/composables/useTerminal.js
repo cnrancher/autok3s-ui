@@ -1,4 +1,4 @@
-import {onMounted, onBeforeUnmount, readonly, ref} from 'vue'
+import { onMounted, onBeforeUnmount, readonly, ref } from 'vue'
 import 'xterm/css/xterm.css'
 
 export const LOADING = 'loading'
@@ -25,31 +25,31 @@ export default function useTerminal(domRef, onDataCallback, xtermConfig = {}) {
 
   const setupTerminal = async () => {
     readyState.value = LOADING
-    const docStyle = getComputedStyle(document.querySelector('body'));
-    const xterm = await import('xterm');
+    const docStyle = getComputedStyle(document.querySelector('body'))
+    const xterm = await import('xterm')
     const [fitA, webgl, weblinks, search] = await Promise.all([
       import('xterm-addon-fit'),
       import('xterm-addon-webgl'),
       import('xterm-addon-web-links'),
-      import('xterm-addon-search'),
+      import('xterm-addon-search')
     ])
     terminal = new xterm.Terminal({
       theme: {
         background: docStyle.getPropertyValue('--terminal-bg').trim(),
-        cursor:     docStyle.getPropertyValue('--terminal-cursor').trim(),
-        selection:  docStyle.getPropertyValue('--terminal-selection').trim(),
+        cursor: docStyle.getPropertyValue('--terminal-cursor').trim(),
+        selection: docStyle.getPropertyValue('--terminal-selection').trim(),
         foreground: docStyle.getPropertyValue('--terminal-text').trim()
       },
-      ...xtermConfig,
-    });
+      ...xtermConfig
+    })
     readyState.value = INITIALIZING
-    fitAddon = new fitA.FitAddon();
-    const searchAddon = new search.SearchAddon();
+    fitAddon = new fitA.FitAddon()
+    const searchAddon = new search.SearchAddon()
 
-    terminal.loadAddon(fitAddon);
-    terminal.loadAddon(searchAddon);
-    terminal.loadAddon(new weblinks.WebLinksAddon());
-    terminal.open(domRef.value);
+    terminal.loadAddon(fitAddon)
+    terminal.loadAddon(searchAddon)
+    terminal.loadAddon(new weblinks.WebLinksAddon())
+    terminal.open(domRef.value)
     let webglAddon = null
     try {
       webglAddon = new webgl.WebglAddon()
@@ -57,7 +57,7 @@ export default function useTerminal(domRef, onDataCallback, xtermConfig = {}) {
       console.error('xterm webglAddon: ', e)
     }
     if (webglAddon) {
-      terminal.loadAddon(webglAddon);
+      terminal.loadAddon(webglAddon)
     }
     terminal.onData((input) => {
       onDataCallback?.(input)

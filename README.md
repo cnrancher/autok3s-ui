@@ -6,11 +6,13 @@
 2. For production: the default build targets browsers that support [native ESM via script tags](https://caniuse.com/es6-module).
 
 ## Project setup
+
 ```shell
 npm install
 ```
 
 ### Compiles and hot-reloads for development
+
 1. Download [Autok3s CLI](https://github.com/cnrancher/autok3s/releases) binary file, and run.
 
 ```shell
@@ -26,9 +28,11 @@ npm run dev
 ```
 
 ### Compiles and minifies for production
+
 ```
 npm run build
 ```
 
 ### Customize configuration
+
 See [Configuration Reference](https://vitejs.dev/config/).

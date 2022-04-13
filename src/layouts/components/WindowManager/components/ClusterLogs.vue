@@ -3,8 +3,7 @@
     <template #default>
       <div ref="logsRef" class="h-full overflow-auto">
         <!-- eslint-disable-next-line vue/no-v-html -->
-        <div v-for="(log, index) in logs" :key="index" class="whitespace-nowrap" v-html="log">
-        </div>
+        <div v-for="(log, index) in logs" :key="index" class="whitespace-nowrap" v-html="log"></div>
       </div>
     </template>
     <template #footer>
@@ -13,20 +12,20 @@
         &nbsp;
         <k-button class="btn-sm role-primary" @click="clear">Clear</k-button>
       </div>
-      <div class="capitalize" :class="stateToClassMap[readyState]">{{readyState}}</div>
+      <div class="capitalize" :class="stateToClassMap[readyState]">{{ readyState }}</div>
     </template>
   </WindowContainer>
 </template>
 <script>
-import AnsiUp from 'ansi_up';
-const ansiup = new AnsiUp();
+import AnsiUp from 'ansi_up'
+const ansiup = new AnsiUp()
 const stateToClassMap = {
   [CLOSED]: 'text-error',
   [CONNECTING]: 'text-info',
-  [CONNECTED]: 'text-success',
+  [CONNECTED]: 'text-success'
 }
 export default {
-  name: 'ClusterLogs',
+  name: 'ClusterLogs'
 }
 </script>
 
@@ -35,20 +34,20 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import KButton from '@/components/Button'
 import WindowContainer from './WindowContainer.vue'
 import useEventSource from '@/composables/useEventSource.js'
-import {CLOSED, CONNECTING, CONNECTED} from '@/composables/useEventSource.js'
+import { CLOSED, CONNECTING, CONNECTED } from '@/composables/useEventSource.js'
 
 const props = defineProps({
   cluster: {
     type: String,
-    required: true,
+    required: true
   },
   provider: {
     type: String,
-    default: '',
+    default: ''
   },
   show: {
     type: Boolean,
-    required: true,
+    required: true
   },
   renewCount: {
     type: [Number],
@@ -60,8 +59,10 @@ const logsRef = ref(null)
 const logs = ref([])
 const isFollowing = ref(true)
 
-const url = `${location.protocol}//${location.host}${import.meta.env.VITE_APP_BASE_API}/logs?cluster=${props.cluster}${props.provider ? `&provider=${props.provider}` : ''}`
-const {readyState, connect} = useEventSource(url, {
+const url = `${location.protocol}//${location.host}${import.meta.env.VITE_APP_BASE_API}/logs?cluster=${props.cluster}${
+  props.provider ? `&provider=${props.provider}` : ''
+}`
+const { readyState, connect } = useEventSource(url, {
   message: (e) => {
     const msg = ansiup.ansi_to_html(e.data)
     logs.value.push(msg)
@@ -70,7 +71,7 @@ const {readyState, connect} = useEventSource(url, {
         follow()
       })
     }
-  },
+  }
 })
 const follow = () => {
   const el = logsRef.value
@@ -80,18 +81,21 @@ const clear = () => {
   logs.value = []
 }
 const updateFollowing = (e) => {
-  const el = e.target;
+  const el = e.target
   isFollowing.value = el.scrollTop + el.clientHeight + 2 >= el.scrollHeight
 }
 
-watch(() => props.renewCount, () => {
-  if (readyState.value === CLOSED) {
-    logs.value = []
-    connect()
+watch(
+  () => props.renewCount,
+  () => {
+    if (readyState.value === CLOSED) {
+      logs.value = []
+      connect()
+    }
   }
-})
+)
 
-onMounted(()=> {
+onMounted(() => {
   connect()
   logsRef.value.addEventListener('scroll', updateFollowing)
 })

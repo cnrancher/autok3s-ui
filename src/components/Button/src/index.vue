@@ -6,7 +6,7 @@
 </template>
 <script>
 export default {
-  name: 'KButton',
+  name: 'KButton'
 }
 </script>
 <script setup>
@@ -16,16 +16,15 @@ import KIcon from '@/components/Icon'
 const props = defineProps({
   loading: {
     type: Boolean,
-    default: false,
+    default: false
   },
   disabled: {
     type: Boolean,
-    default: false,
+    default: false
   }
 })
 
 const btnDisabled = computed(() => {
   return props.disabled || props.loading
 })
-
 </script>

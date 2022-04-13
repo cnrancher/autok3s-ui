@@ -4,13 +4,14 @@
       <slot></slot>
     </div>
     <div v-if="loading" class="k-loading__mask">
-       <k-icon type="loading"></k-icon>Loading...
+      <k-icon type="loading"></k-icon>
+      Loading...
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: 'KLoading',
+  name: 'KLoading'
 }
 </script>
 <script setup>
@@ -26,7 +27,7 @@ defineProps({
 <style>
 .k-loading {
   display: grid;
-  grid-template-areas: "content";
+  grid-template-areas: 'content';
 }
 .k-loading__content {
   grid-area: content;
@@ -36,7 +37,7 @@ defineProps({
   align-self: stretch;
   /* width: 100%;
   height: 100%; */
-  background-color: hsla(0,0%,100%,.9);
+  background-color: hsla(0, 0%, 100%, 0.9);
   display: flex;
   justify-content: center;
   align-items: center;

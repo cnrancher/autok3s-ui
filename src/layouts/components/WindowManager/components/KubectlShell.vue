@@ -5,7 +5,7 @@
     </template>
     <template #footer>
       <k-button class="btn-sm role-primary" @click="clear">Clear</k-button>
-      <div class="capitalize" :class="stateToClassMap[status]">{{readyState}}</div>
+      <div class="capitalize" :class="stateToClassMap[status]">{{ readyState }}</div>
     </template>
   </WindowContainer>
 </template>
@@ -13,12 +13,12 @@
 const stateToClassMap = {
   CLOSED: 'text-error',
   CONNECTING: 'text-info',
-  OPEN: 'text-success',
+  OPEN: 'text-success'
 }
 const stateMap = {
   CLOSED: 'Close',
   CONNECTING: 'Connecting',
-  OPEN: 'Connected',
+  OPEN: 'Connected'
 }
 
 const textEncoder = new TextEncoder()
@@ -26,16 +26,16 @@ const defaultWidth = 20
 const defaultHeight = 40
 
 export default {
-  name: 'KubectlShell',
+  name: 'KubectlShell'
 }
 </script>
 <script setup>
 import WindowContainer from './WindowContainer.vue'
-import { computed, nextTick, ref, watchEffect, watch} from 'vue'
+import { computed, nextTick, ref, watchEffect, watch } from 'vue'
 import KButton from '@/components/Button'
 import useTerminal from '@/composables/useTerminal.js'
 import { useResizeObserver } from '@vueuse/core'
-import {DONE} from '@/composables/useTerminal.js'
+import { DONE } from '@/composables/useTerminal.js'
 import { useWebSocket } from '@vueuse/core'
 import useNotificationStore from '@/store/useNotificationStore.js'
 import useWindownManagerStore from '@/store/useWindowManagerStore.js'
@@ -43,11 +43,11 @@ import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 const props = defineProps({
   contextId: {
     type: String,
-    required: true,
+    required: true
   },
   show: {
     type: Boolean,
-    required: true,
+    required: true
   },
   renewCount: {
     type: [Number],
@@ -58,16 +58,28 @@ const props = defineProps({
 const wmStore = useWindownManagerStore()
 const notificationStore = useNotificationStore()
 const xterm = ref(null)
-const url = `${location.protocol.replace('http', 'ws')}//${location.host}${import.meta.env.VITE_APP_BASE_API}/config/${props.contextId}`
+const url = `${location.protocol.replace('http', 'ws')}//${location.host}${import.meta.env.VITE_APP_BASE_API}/config/${
+  props.contextId
+}`
 // let lines = []
-const {clear, focus, write, fit, readyState: xtermReadyState} = useTerminal(xterm, (input) => {
-  const d = textEncoder.encode(input)
-  send(d)
-}, {
-    cursorBlink:  true,
-    useStyle:     true,
-    fontSize:     12,
-  })
+const {
+  clear,
+  focus,
+  write,
+  fit,
+  readyState: xtermReadyState
+} = useTerminal(
+  xterm,
+  (input) => {
+    const d = textEncoder.encode(input)
+    send(d)
+  },
+  {
+    cursorBlink: true,
+    useStyle: true,
+    fontSize: 12
+  }
+)
 const { status, send, open, close } = useWebSocket(url, {
   immediate: false,
   autoReconnect: {
@@ -89,8 +101,16 @@ const { status, send, open, close } = useWebSocket(url, {
     // send(textEncoder.encode(`alias kubectl='kubectl --context ${props.contextId}' \n`))
     // send(textEncoder.encode("# If you want to run other command instead of kubectl, for example, if you're going to use `helm`, you can try `helm --kube-context " + props.contextId + "`\n"))
     // send(textEncoder.encode("# If you want to set global kubeconfig context, please run `kubectl config use-context " + props.contextId + "`\n"))
-    write("# If you want to run other command instead of kubectl, for example, if you're going to use `helm`, you can try `helm --kube-context " + props.contextId + "`\r\n")
-    write("# If you want to set global kubeconfig context, please run `kubectl config use-context " + props.contextId + "`\r\n")
+    write(
+      "# If you want to run other command instead of kubectl, for example, if you're going to use `helm`, you can try `helm --kube-context " +
+        props.contextId +
+        '`\r\n'
+    )
+    write(
+      '# If you want to set global kubeconfig context, please run `kubectl config use-context ' +
+        props.contextId +
+        '`\r\n'
+    )
   },
   async onMessage(_, e) {
     const msg = await e.data.text()
@@ -116,11 +136,13 @@ const fitTerminal = () => {
   if (!dimensions) {
     return
   }
-  const { rows=defaultHeight, cols=defaultWidth } = dimensions
-  send(JSON.stringify({
-    width:  Math.floor(cols),
-    height: Math.floor(rows),
-  }))
+  const { rows = defaultHeight, cols = defaultWidth } = dimensions
+  send(
+    JSON.stringify({
+      width: Math.floor(cols),
+      height: Math.floor(rows)
+    })
+  )
 }
 
 let stopWatch = watchEffect(() => {
@@ -144,10 +166,13 @@ useResizeObserver(xterm, () => {
   }
 })
 
-watch(() => props.renewCount, () => {
-  if (status.value === 'CLOSED') {
-    close()
-    open()
+watch(
+  () => props.renewCount,
+  () => {
+    if (status.value === 'CLOSED') {
+      close()
+      open()
+    }
   }
-})
+)
 </script>

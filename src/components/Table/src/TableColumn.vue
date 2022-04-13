@@ -4,15 +4,12 @@ import useIdGenrator from '@/composables/useIdGenerator.js'
 
 const { next: nextId } = useIdGenrator()
 const getFieldValue = (obj, field) => {
-  return field.split('.')
-    .reduce((o, i) => o?.[i], obj) ?? ''
+  return field.split('.').reduce((o, i) => o?.[i], obj) ?? ''
 }
 
 const defaultRenderRowCell = (props) => h('span', {}, `${getFieldValue(props.row, props.column?.field)}`)
 const defaultRenderHeaderCell = (props) => {
-  return h('div', { }, [
-    `${props.column?.label}`,
-  ])
+  return h('div', {}, [`${props.column?.label}`])
 }
 
 export default defineComponent({
@@ -43,38 +40,48 @@ export default defineComponent({
       default: ''
     }
   },
-  setup(props,context) {
+  setup(props, context) {
     const columnStore = inject('columnStore')
     if (!columnStore) {
       console.warn('columnStore not provide')
       return
     }
     const fields = ['label', 'field', 'type', 'order', 'sortable', 'width']
-    const column = reactive(fields.reduce((t, c) => {
-      t[c] = props[c]
-      return t
-    }, {
-      id: nextId(),
-      renderRowCell: context.slots.default ?? defaultRenderRowCell,
-      renderHeaderCell: context.slots.header ?? defaultRenderHeaderCell,
-      }))
+    const column = reactive(
+      fields.reduce(
+        (t, c) => {
+          t[c] = props[c]
+          return t
+        },
+        {
+          id: nextId(),
+          renderRowCell: context.slots.default ?? defaultRenderRowCell,
+          renderHeaderCell: context.slots.header ?? defaultRenderHeaderCell
+        }
+      )
+    )
     columnStore.action.addColumn(column)
 
     onBeforeUnmount(() => {
       columnStore.action.removeColumn(column)
     })
 
-    return () => h('div', fields.reduce((t, c) => {
-      t[`data-${c ?? column.id}`] = column[c] ?? column.id
-      return t
-    }, { id: column.id }))
-  },
+    return () =>
+      h(
+        'div',
+        fields.reduce(
+          (t, c) => {
+            t[`data-${c ?? column.id}`] = column[c] ?? column.id
+            return t
+          },
+          { id: column.id }
+        )
+      )
+  }
 })
 </script>
 <style>
 .k-table-header {
   @apply flex items-center;
 }
-
 </style>
-

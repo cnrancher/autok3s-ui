@@ -1,4 +1,4 @@
-import {reactive, readonly} from 'vue'
+import { reactive, readonly } from 'vue'
 
 // state
 export function createStore() {
@@ -12,13 +12,13 @@ export function createStore() {
 
 function updateColumnOrder(state) {
   return (id, order) => {
-    state.columns.forEach(c => {
+    state.columns.forEach((c) => {
       if (c.id === id) {
         c.order = order
         return
       }
       c.order = ''
-    });
+    })
   }
 }
 function addColumn(state) {
@@ -28,7 +28,7 @@ function addColumn(state) {
 }
 function removeColumn(state) {
   return (column) => {
-    const index = state.columns.findIndex(c => c.id === column.id)
+    const index = state.columns.findIndex((c) => c.id === column.id)
     if (index > -1) {
       state.columns.splice(index, 1)
     }
