@@ -1,19 +1,19 @@
 import { fetchList } from '@/api/provider'
 import { reactive, toRefs } from 'vue'
-import {stringify} from '@/utils/error.js'
+import { stringify } from '@/utils/error.js'
 
-export default function useProviders () {
+export default function useProviders() {
   const state = reactive({
     providers: [],
     error: '',
-    loading: false,
+    loading: false
   })
   const enCollator = new Intl.Collator('en')
   const fetchProviders = async () => {
     state.loading = true
     state.error = ''
     try {
-      const {data} = await fetchList()
+      const { data } = await fetchList()
       state.providers = data.sort((a, b) => enCollator.compare(a.id, b.id))
     } catch (err) {
       state.error = stringify(err)
@@ -24,6 +24,6 @@ export default function useProviders () {
 
   return {
     ...toRefs(state),
-    fetchProviders,
+    fetchProviders
   }
 }

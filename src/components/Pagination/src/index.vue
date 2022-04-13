@@ -13,7 +13,7 @@ export default defineComponent({
     },
     total: {
       type: Number,
-      required: true,
+      required: true
     },
     pageSize: {
       type: Number,
@@ -29,11 +29,11 @@ export default defineComponent({
     },
     prevText: {
       type: String,
-      default: '',
+      default: ''
     },
     nextText: {
       type: String,
-      default: '',
+      default: ''
     },
     hideOnSinglePage: {
       type: Boolean,
@@ -41,7 +41,7 @@ export default defineComponent({
     }
   },
   emits: ['current-change', 'update:current-page'],
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const pageCount = computed(() => {
       if (props.total <= 0) {
         return 1
@@ -49,7 +49,7 @@ export default defineComponent({
       if (props.pageSize <= 0) {
         return 1
       }
-      return Math.ceil(props.total/props.pageSize)
+      return Math.ceil(props.total / props.pageSize)
     })
     const innerCurrentPage = computed({
       get() {
@@ -66,36 +66,45 @@ export default defineComponent({
       innerCurrentPage.value = page
     }
     const templateMap = {
-      pager: () => h(Pager, {
-        currentPage: innerCurrentPage.value,
-        pagerCount: props.pagerCount,
-        pageCount: pageCount.value,
-        onChangeCurrentPage: handlePageChange
-      }),
-      next: () => h(Next, {
-        currentPage: innerCurrentPage.value,
-        nextText: props.nextText,
-        pageCount: pageCount.value,
-        onChangeCurrentPage: handlePageChange,
-      }),
-      prev: () => h(Prev, {
-        currentPage: innerCurrentPage.value,
-        prevText: props.prevText,
-        onChangeCurrentPage: handlePageChange
-      })
+      pager: () =>
+        h(Pager, {
+          currentPage: innerCurrentPage.value,
+          pagerCount: props.pagerCount,
+          pageCount: pageCount.value,
+          onChangeCurrentPage: handlePageChange
+        }),
+      next: () =>
+        h(Next, {
+          currentPage: innerCurrentPage.value,
+          nextText: props.nextText,
+          pageCount: pageCount.value,
+          onChangeCurrentPage: handlePageChange
+        }),
+      prev: () =>
+        h(Prev, {
+          currentPage: innerCurrentPage.value,
+          prevText: props.prevText,
+          onChangeCurrentPage: handlePageChange
+        })
     }
     const rootChildren = computed(() => {
       const rootChildren = []
-      props.layout.split(',').map((c) => c.trim()).forEach((c) => {
-        const render = templateMap[c]
-        if (render) {
-          rootChildren.push(render())
-        }
-      })
+      props.layout
+        .split(',')
+        .map((c) => c.trim())
+        .forEach((c) => {
+          const render = templateMap[c]
+          if (render) {
+            rootChildren.push(render())
+          }
+        })
       return rootChildren
     })
-    return () => withDirectives(h('div', {class: 'k-pagination'}, rootChildren.value), [[vShow, pageCount.value === 1 ? !props.hideOnSinglePage : true]])
-  },
+    return () =>
+      withDirectives(h('div', { class: 'k-pagination' }, rootChildren.value), [
+        [vShow, pageCount.value === 1 ? !props.hideOnSinglePage : true]
+      ])
+  }
 })
 </script>
 <style>

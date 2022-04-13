@@ -4,51 +4,38 @@
   <k-tabs v-model="acitiveTab" tab-position="left">
     <k-tab-pane label="Credential Options" name="credential">
       <form-group>
-        <template #title>
-          Credential Options
-        </template>
+        <template #title>Credential Options</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <string-form
               v-model="form.options['service-account']"
               label="Service Account"
               :desc="desc.options['service-account']"
-              :readonly="readonly">
-            </string-form>
+              :readonly="readonly"
+            ></string-form>
             <string-form
               v-model="form.options['service-account-file']"
               label="Service Account File"
               :desc="desc.options['service-account-file']"
-              :readonly="readonly">
-            </string-form>
+              :readonly="readonly"
+            ></string-form>
           </div>
         </template>
       </form-group>
     </k-tab-pane>
     <k-tab-pane label="Instance Options" name="instance">
       <form-group>
-        <template #title>
-          Basic
-        </template>
+        <template #title>Basic</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <string-form
-              v-model.trim="form.options['project']"
-              label="Project"
-              :desc="desc.options['project']"
-            />
+            <string-form v-model.trim="form.options['project']" label="Project" :desc="desc.options['project']" />
             <string-form
               v-model.trim="form.options.region"
               label="Region"
               :desc="desc.options.region"
               :readonly="readonly"
             />
-            <string-form
-              v-model.trim="form.options.zone"
-              label="Zone"
-              :desc="desc.options.zone"
-              :readonly="readonly"
-            />
+            <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" :readonly="readonly" />
             <string-form
               v-model.trim="form.options['machine-type']"
               label="Machine Type"
@@ -88,41 +75,40 @@
           </div>
         </template>
       </form-group>
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <form-group :closable="true">
-        <template #title>
-          Network
-        </template>
+        <template #title>Network</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-          <string-form
-            v-model.trim="form.options['network']"
-            label="Network"
-            :desc="desc.options['network']"
-            :readonly="readonly"
-          />
-          <string-form
-            v-model.trim="form.options['subnetwork']"
-            label="Subnetwork"
-            :desc="desc.options['subnetwork']"
-            :readonly="readonly"
-          />
-          <boolean-form
-            v-model="form.options['use-internal-ip-only']"
-            label="Use Internal IP Only"
-            :desc="desc.options['use-internal-ip-only']"
-            :readonly="readonly"
-          />
-          <div></div>
-          <array-list-form
-            ref="ports"
-            v-model="form.options['open-ports']"
-            :desc="desc.options['open-ports']"
-            :readonly="readonly"
-            label="Open Ports"
-            placeholder="e.g. 8080/tcp"
-            action-label="Add Port"></array-list-form>
-        </div>
+            <string-form
+              v-model.trim="form.options['network']"
+              label="Network"
+              :desc="desc.options['network']"
+              :readonly="readonly"
+            />
+            <string-form
+              v-model.trim="form.options['subnetwork']"
+              label="Subnetwork"
+              :desc="desc.options['subnetwork']"
+              :readonly="readonly"
+            />
+            <boolean-form
+              v-model="form.options['use-internal-ip-only']"
+              label="Use Internal IP Only"
+              :desc="desc.options['use-internal-ip-only']"
+              :readonly="readonly"
+            />
+            <div></div>
+            <array-list-form
+              ref="ports"
+              v-model="form.options['open-ports']"
+              :desc="desc.options['open-ports']"
+              :readonly="readonly"
+              label="Open Ports"
+              placeholder="e.g. 8080/tcp"
+              action-label="Add Port"
+            ></array-list-form>
+          </div>
         </template>
       </form-group>
       <!-- <hr class="section-divider">
@@ -156,7 +142,7 @@
           </div>
         </template>
       </form-group> -->
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <form-group>
         <template #title>SSH Private</template>
         <template #subtitle>
@@ -166,7 +152,7 @@
           <ssh-private-form :form="form" :desc="desc" :readonly="readonly"></ssh-private-form>
         </template>
       </form-group>
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <form-group :closable="true">
         <template #title>Advance</template>
         <template #default>
@@ -178,8 +164,9 @@
               :readonly="readonly"
               label="Tags"
               placeholder="e.g. foo=bar"
-              action-label="Add Tag"></array-list-form>
-            </div>
+              action-label="Add Tag"
+            ></array-list-form>
+          </div>
         </template>
       </form-group>
     </k-tab-pane>
@@ -188,8 +175,8 @@
         :visible="acitiveTab === 'k3s'"
         :form="form"
         :desc="desc"
-        :readonly="readonly">
-      </k3s-options-form>
+        :readonly="readonly"
+      ></k3s-options-form>
     </k-tab-pane>
     <k-tab-pane label="Additional Options" name="additional">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
@@ -210,7 +197,7 @@
           <k-option value="explorer" label="explorer"></k-option>
           <k-option value="dashboard" label="dashboard"></k-option>
         </k-select>
-         <boolean-form
+        <boolean-form
           v-model="form.options['cloud-controller-manager']"
           label="Cloud Controller Manager"
           :desc="desc.options['cloud-controller-manager']"
@@ -236,7 +223,7 @@
 </template>
 <script setup>
 import { cloneDeep } from '@/utils'
-import {ref, computed} from 'vue'
+import { ref, computed } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
@@ -248,14 +235,14 @@ import useFormFromSchema from '../../composables/useFormFromSchema.js'
 const props = defineProps({
   schema: {
     type: Object,
-    required: true,
+    required: true
   },
   readonly: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 })
-const { form, desc }= useFormFromSchema(props.schema)
+const { form, desc } = useFormFromSchema(props.schema)
 const acitiveTab = ref('instance')
 const uiOptions = computed({
   get() {

@@ -1,7 +1,8 @@
 <template>
   <label
     class="k-radio-button"
-    :class="[model === label ? 'bg-light-blue-600' : 'bg-gray-200', isDisabled ? 'disabled' : '']">
+    :class="[model === label ? 'bg-light-blue-600' : 'bg-gray-200', isDisabled ? 'disabled' : '']"
+  >
     <input
       ref="radioRef"
       v-model="model"
@@ -9,17 +10,16 @@
       :value="label"
       :name="name"
       :disabled="isDisabled"
-      class="k-radio-button__origin-radio">
-    <span
-      class="k-radio-button__label flex items-center"
-    >
-      <slot>{{label}}</slot>
+      class="k-radio-button__origin-radio"
+    />
+    <span class="k-radio-button__label flex items-center">
+      <slot>{{ label }}</slot>
     </span>
   </label>
 </template>
 <script>
 export default {
-  name: 'KRadioButton',
+  name: 'KRadioButton'
 }
 </script>
 <script setup>
@@ -28,15 +28,15 @@ import { computed, inject, ref } from 'vue'
 const props = defineProps({
   modelValue: {
     type: [String, Number, Boolean],
-    default: '',
+    default: ''
   },
   label: {
     type: [String, Number, Boolean],
-    default: '',
+    default: ''
   },
   name: {
     type: String,
-    default: '',
+    default: ''
   },
   disabled: {
     type: Boolean,
@@ -80,8 +80,8 @@ const isDisabled = computed(() => {
 .k-radio-button__origin-radio {
   opacity: 0;
 }
-.k-radio-button__origin-radio, .k-radio-button__label {
+.k-radio-button__origin-radio,
+.k-radio-button__label {
   grid-area: a;
 }
-
 </style>

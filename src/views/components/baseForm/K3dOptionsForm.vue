@@ -1,5 +1,5 @@
 <template>
-<!-- eslint-disable vue/no-mutating-props -->
+  <!-- eslint-disable vue/no-mutating-props -->
   <form-group>
     <template #title>Master</template>
     <template #default>
@@ -17,11 +17,11 @@
           label="Master Extra Args"
           :desc="desc.config['master-extra-args']"
           :readonly="readonly"
-          ></command-args>
+        ></command-args>
       </div>
     </template>
   </form-group>
-  <hr class="section-divider">
+  <hr class="section-divider" />
   <form-group>
     <template #title>Worker</template>
     <template #default>
@@ -57,11 +57,11 @@ const props = defineProps({
   },
   desc: {
     type: Object,
-    required: true,
+    required: true
   },
   readonly: {
     type: Boolean,
-    default: false,
+    default: false
   },
   visible: {
     type: Boolean,
@@ -71,20 +71,21 @@ const props = defineProps({
 
 const visible = toRef(props, 'visible')
 provide('parentVisible', visible)
-const masterExtraArgs = [{
-  long: '--no-deploy',
-  alias: 'disable',
-  multiple: true,
-  values: [
-    'coredns', 'servicelb', 'traefik','local-storage', 'metrics-server'
-  ],
-  modelValue: '',
-  desc: 'Do not deploy packaged components (valid items: coredns, servicelb, traefik, local-storage, metrics-server)'
-}, {
-  long: '--flannel-backend',
-  alias: 'flannel-backend',
-  values: ['none', 'vxlan', 'ipsec', 'host-gw', 'wireguard'],
-  modelValue: 'vxlan',
-  desc: `(networking) One of 'none', 'vxlan', 'ipsec', 'host-gw', or 'wireguard' (default: "vxlan")`
-}]
+const masterExtraArgs = [
+  {
+    long: '--no-deploy',
+    alias: 'disable',
+    multiple: true,
+    values: ['coredns', 'servicelb', 'traefik', 'local-storage', 'metrics-server'],
+    modelValue: '',
+    desc: 'Do not deploy packaged components (valid items: coredns, servicelb, traefik, local-storage, metrics-server)'
+  },
+  {
+    long: '--flannel-backend',
+    alias: 'flannel-backend',
+    values: ['none', 'vxlan', 'ipsec', 'host-gw', 'wireguard'],
+    modelValue: 'vxlan',
+    desc: `(networking) One of 'none', 'vxlan', 'ipsec', 'host-gw', or 'wireguard' (default: "vxlan")`
+  }
+]
 </script>

@@ -1,7 +1,6 @@
-import {computed} from 'vue'
+import { computed } from 'vue'
 
 export default function useTableState(loading, error, rawData, queryResult) {
-
   const state = computed(() => {
     if (loading.value) {
       return 'loading'
@@ -18,6 +17,6 @@ export default function useTableState(loading, error, rawData, queryResult) {
     return 'loaded'
   })
   return {
-    state,
+    state
   }
 }

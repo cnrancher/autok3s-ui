@@ -1,10 +1,17 @@
 <template>
   <div v-if="routeGroup.children && routeGroup.children.length > 0" :key="routeGroup.name">
-    <div class="grid grid-cols-[1fr,22px] items-center py-5px cursor-pointer hover:bg-gray-200" @click="toggleOpen(routeGroup.name)">
-      <h6 class="pl-8px">{{routeGroup.title}}</h6>
-      <k-icon type="arrow-right" :direction="expandedStateMap[routeGroup.name] ? 'up':''" class="justify-self-center"></k-icon>
+    <div
+      class="grid grid-cols-[1fr,22px] items-center py-5px cursor-pointer hover:bg-gray-200"
+      @click="toggleOpen(routeGroup.name)"
+    >
+      <h6 class="pl-8px">{{ routeGroup.title }}</h6>
+      <k-icon
+        type="arrow-right"
+        :direction="expandedStateMap[routeGroup.name] ? 'up' : ''"
+        class="justify-self-center"
+      ></k-icon>
     </div>
-    <ul :class="[expandedStateMap[routeGroup.name] ? 'block': 'hidden']">
+    <ul :class="[expandedStateMap[routeGroup.name] ? 'block' : 'hidden']">
       <li v-for="child in routeGroup.children" :key="child.name">
         <nav-group :route-group="child" :expanded-state-map="expandedStateMap"></nav-group>
       </li>
@@ -18,17 +25,28 @@
     <span>{{routeGroup.title}}</span>
   </router-link> -->
   <router-link
-v-else
-    v-slot="{ navigate, href, route, isActive, isExactActive}"
-    :to="{name: routeGroup.name}"
-    custom>
+    v-else
+    v-slot="{ navigate, href, route, isActive, isExactActive }"
+    :to="{ name: routeGroup.name }"
+    custom
+  >
     <a
       :href="href"
       class="k-nav-group__link grid grid-cols-[auto,1fr] gap-2px items-center py-3px"
-      :class="[isActive || $route.path.startsWith(route.path) ? 'router-link-active bg-gray-100' : 'hover:bg-gray-200', isExactActive ? 'router-link-exact-active' : '', routeGroup.level > 1 ? 'grid-cols-[20px,1fr] pl-16px': 'pl-8px']"
-      @click="navigate">
-      <k-icon v-if="routeGroup.level > 1" class="k-nav-group__icon" :type="routeGroup.icon || 'folder'" :class="[isActive || $route.path.startsWith(route.path) ? 'k-nav-group__icon--active': '']"></k-icon>
-      <span class="overflow-hidden overflow-ellipsis whitespace-nowrap">{{routeGroup.title}}</span>
+      :class="[
+        isActive || $route.path.startsWith(route.path) ? 'router-link-active bg-gray-100' : 'hover:bg-gray-200',
+        isExactActive ? 'router-link-exact-active' : '',
+        routeGroup.level > 1 ? 'grid-cols-[20px,1fr] pl-16px' : 'pl-8px'
+      ]"
+      @click="navigate"
+    >
+      <k-icon
+        v-if="routeGroup.level > 1"
+        class="k-nav-group__icon"
+        :type="routeGroup.icon || 'folder'"
+        :class="[isActive || $route.path.startsWith(route.path) ? 'k-nav-group__icon--active' : '']"
+      ></k-icon>
+      <span class="overflow-hidden overflow-ellipsis whitespace-nowrap">{{ routeGroup.title }}</span>
     </a>
   </router-link>
 </template>
@@ -42,16 +60,16 @@ export default {
   props: {
     routeGroup: {
       type: Object,
-      required: true,
+      required: true
     },
     expandedStateMap: {
       type: Object,
       required: true
-    },
+    }
   },
   emits: ['toggle-open'],
   setup(props, context) {
-    const {emit} = context
+    const { emit } = context
     const toggleOpen = (name) => {
       emit('toggle-open', name)
     }

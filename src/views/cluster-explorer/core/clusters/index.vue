@@ -3,7 +3,7 @@
     <page-header>
       <template #title>Clusters</template>
       <template #actions>
-        <router-link :to="{name: 'ClusterExplorerCoreClustersCreate'}" class="btn role-primary">Create</router-link>
+        <router-link :to="{ name: 'ClusterExplorerCoreClustersCreate' }" class="btn role-primary">Create</router-link>
       </template>
     </page-header>
     <cluster-table></cluster-table>

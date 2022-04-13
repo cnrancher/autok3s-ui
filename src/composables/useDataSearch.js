@@ -1,8 +1,7 @@
-import {ref, computed} from 'vue'
+import { ref, computed } from 'vue'
 
 const getFieldValue = (obj, field) => {
-  return field.split('.')
-    .reduce((o, i) => o?.[i], obj)
+  return field.split('.').reduce((o, i) => o?.[i], obj)
 }
 export default function useDataSearch(data) {
   const searchQuery = ref('')
@@ -11,7 +10,9 @@ export default function useDataSearch(data) {
     if (!searchQuery.value || searchFields.value.length === 0) {
       return data.value
     }
-    return data.value.filter(item => searchFields.value.some(f => `${getFieldValue(item, f)}`.includes(searchQuery.value)))
+    return data.value.filter((item) =>
+      searchFields.value.some((f) => `${getFieldValue(item, f)}`.includes(searchQuery.value))
+    )
   })
   return {
     searchQuery,

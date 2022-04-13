@@ -1,5 +1,5 @@
 <template>
-<!-- eslint-disable vue/no-mutating-props -->
+  <!-- eslint-disable vue/no-mutating-props -->
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-end">
     <string-form
       v-model.trim="form.config['ssh-key-path']"
@@ -7,9 +7,12 @@
       :desc="desc.config['ssh-key-path']"
       :readonly="readonly"
     />
-    <div class="cursor-pointer grid grid-cols-[auto,auto,1fr] items-center justify-items-end gap-x-10px h-full" @click="toggleVisible">
+    <div
+      class="cursor-pointer grid grid-cols-[auto,auto,1fr] items-center justify-items-end gap-x-10px h-full"
+      @click="toggleVisible"
+    >
       <div>Advance</div>
-      <a class="text-light-blue-500">{{visible ? 'Hide':'Show'}}</a>
+      <a class="text-light-blue-500">{{ visible ? 'Hide' : 'Show' }}</a>
       <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
     </div>
     <div v-show="visible" class="contents">
@@ -41,7 +44,7 @@
   </div>
 </template>
 <script setup>
-import {ref} from 'vue'
+import { ref } from 'vue'
 import BooleanForm from './BooleanForm.vue'
 import StringForm from './StringForm.vue'
 
@@ -52,17 +55,16 @@ defineProps({
   },
   desc: {
     type: Object,
-    required: true,
+    required: true
   },
   readonly: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 })
 
 const visible = ref(false)
 const toggleVisible = () => {
   visible.value = !visible.value
 }
-
 </script>

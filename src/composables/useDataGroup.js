@@ -1,4 +1,4 @@
-import {ref, computed, unref} from 'vue'
+import { ref, computed, unref } from 'vue'
 
 export default function useDataGroup(data) {
   const groupField = ref('')
@@ -6,10 +6,12 @@ export default function useDataGroup(data) {
     const groupBy = groupField.value
     const d = unref(data)
     if (!groupBy) {
-      return [{
-        group: '',
-        children: d,
-      }]
+      return [
+        {
+          group: '',
+          children: d
+        }
+      ]
     }
     const groupMap = d.reduce((t, c) => {
       const children = t[c[groupBy]] ?? []
@@ -17,7 +19,7 @@ export default function useDataGroup(data) {
       t[c[groupBy]] = children
       return t
     }, {})
-    return Object.entries(groupMap).map(e => ({
+    return Object.entries(groupMap).map((e) => ({
       group: e[0],
       children: e[1]
     }))

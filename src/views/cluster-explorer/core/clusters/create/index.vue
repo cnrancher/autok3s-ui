@@ -1,7 +1,10 @@
 <template>
   <div>
     <page-header>
-      <template #title><router-link :to="{ name: 'ClusterExplorerCoreClusters' }">Cluster: </router-link>Create</template>
+      <template #title>
+        <router-link :to="{ name: 'ClusterExplorerCoreClusters' }">Cluster:</router-link>
+        Create
+      </template>
       <template #actions>
         <template-filter :provider="currentProvider" @apply-template="handleApplyTemplate"></template-filter>
       </template>
@@ -10,29 +13,33 @@
       <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
       <input style="display: none" type="text" />
       <input style="display: none" type="password" />
-      <k-alert v-if="currentProvider === 'native'" type="warning" title="Native provider only supports create K3s cluster and join K3s nodes."></k-alert>
-      <k-alert v-if="currentProvider === 'k3d'" type="warning" title="Highly recommended that K3d provider run in a Linux / Unix environment, do not run K3d provider in MacOS container environment."></k-alert>
+      <k-alert
+        v-if="currentProvider === 'native'"
+        type="warning"
+        title="Native provider only supports create K3s cluster and join K3s nodes."
+      ></k-alert>
+      <k-alert
+        v-if="currentProvider === 'k3d'"
+        type="warning"
+        title="Highly recommended that K3d provider run in a Linux / Unix environment, do not run K3d provider in MacOS container environment."
+      ></k-alert>
       <div class="grid grid-cols-2 gap-10px pb-20px">
-        <k-select
-          v-model="currentProvider"
-          label="Provider"
-          required
-          :loading="loading"
-          @change="handleProviderChange"
-        >
+        <k-select v-model="currentProvider" label="Provider" required :loading="loading" @change="handleProviderChange">
           <k-option v-for="p in providers" :key="p.id" :value="p.id" :label="p.name"></k-option>
         </k-select>
-        <k-input
-          v-model.trim="name"
-          label="Name"
-          placeholder="e.g. test"
-          required
-        />
+        <k-input v-model.trim="name" label="Name" placeholder="e.g. test" required />
       </div>
-      <component :is="clusterFormComponent" v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider" ref="formRef" :schema="providerSchema"></component>
+      <component
+        :is="clusterFormComponent"
+        v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider"
+        ref="formRef"
+        :schema="providerSchema"
+      ></component>
       <footer-actions>
-        <router-link :to="{name: 'ClusterExplorerCoreClusters'}" class="btn role-secondary">Cancel</router-link>
-        <k-button class="role-secondary" type="button" :loading="loading || creating" @click="showCliModal">Generate CLI Command</k-button>
+        <router-link :to="{ name: 'ClusterExplorerCoreClusters' }" class="btn role-secondary">Cancel</router-link>
+        <k-button class="role-secondary" type="button" :loading="loading || creating" @click="showCliModal">
+          Generate CLI Command
+        </k-button>
         <k-button class="role-primary" type="button" :loading="loading || creating" @click="create">Create</k-button>
       </footer-actions>
       <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
@@ -42,7 +49,7 @@
   </div>
 </template>
 <script>
-import {computed, defineComponent, reactive, ref, toRef, watch} from 'vue'
+import { computed, defineComponent, reactive, ref, toRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import jsyaml from 'js-yaml'
 import PageHeader from '@/views/components/PageHeader.vue'
@@ -59,8 +66,8 @@ import HarvesterClusterCreateForm from '@/views/components/providerForm/Harveste
 import useProviders from '@/composables/useProviders.js'
 import useCluster from '@/composables/useCluster.js'
 import { createCluster } from '@/api/cluster.js'
-import {capitalize} from 'lodash-es'
-import {stringify} from '@/utils/error.js'
+import { capitalize } from 'lodash-es'
+import { stringify } from '@/utils/error.js'
 import { cloneDeep, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
 import { Base64 } from 'js-base64'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
@@ -81,25 +88,26 @@ export default defineComponent({
     GoogleClusterCreateForm,
     HarvesterClusterCreateForm,
     TemplateFilter,
-    CliCommand,
+    CliCommand
   },
   props: {
     clusterId: {
       type: String,
-      default: '',
+      default: ''
     },
     templateId: {
       type: String,
-      default: '',
+      default: ''
     },
     defaultProvider: {
       type: String,
       default: 'aws'
     },
-    quickStart: { // quickStart: 'aws'
+    quickStart: {
+      // quickStart: 'aws'
       type: String,
       default: ''
-    },
+    }
   },
   setup(props) {
     const providerClusterStores = useProviderClusterStores()
@@ -123,9 +131,9 @@ export default defineComponent({
     const defaultProvider = toRef(props, 'defaultProvider')
     const quickStart = toRef(props, 'quickStart')
 
-    const {loading: providersLoading, providers, error: loadProviderError} = useProviders()
-    const {loading: clusterLoading, error: loadClusterError, cluster} = useCluster(clusterId)
-    const {loading: templateLoading, error: loadTemplateError, data: templates} = storeToRefs(templateStore)
+    const { loading: providersLoading, providers, error: loadProviderError } = useProviders()
+    const { loading: clusterLoading, error: loadClusterError, cluster } = useCluster(clusterId)
+    const { loading: templateLoading, error: loadTemplateError, data: templates } = storeToRefs(templateStore)
 
     const loading = computed(() => {
       return providersLoading.value || clusterLoading.value || templateLoading.value
@@ -175,13 +183,13 @@ export default defineComponent({
             t[k] = c[k]
             return t
           }, {}),
-        options: c.options,
+        options: c.options
       }
       updateProviderSchema(provider, defaultVal, ['config.ip', 'config.token'])
     }
     const createFromTemplate = (templateId) => {
       const template = templates.value.find((t) => t.id === templateId)
-       if (!template) {
+      if (!template) {
         formErrors.value = [`Template (${templateId}) not found`]
         return
       }
@@ -198,7 +206,7 @@ export default defineComponent({
             r[k] = t[k]
             return r
           }, {}),
-        options: t.options,
+        options: t.options
       }
       updateProviderSchema(provider, defaultVal)
     }
@@ -217,7 +225,7 @@ export default defineComponent({
               r[k] = t[k]
               return r
             }, {}),
-          options: t.options,
+          options: t.options
         }
         updateProviderSchema(provider, defaultVal)
         return
@@ -239,39 +247,43 @@ export default defineComponent({
       createFromProvider(providerId)
     }
 
-    watch([clusterId, templateId, defaultProvider, quickStart, providers, cluster, templates, loading], () => {
-      if (loading.value) {
-        return
-      }
-      // create from clone or reedit
-      if (clusterId.value) {
-        createFromCluster(clusterId.value)
-        return
-      }
-      
-      // create from template
-      if (templateId.value) {
-        createFromTemplate(templateId.value)
-        return
-      }
+    watch(
+      [clusterId, templateId, defaultProvider, quickStart, providers, cluster, templates, loading],
+      () => {
+        if (loading.value) {
+          return
+        }
+        // create from clone or reedit
+        if (clusterId.value) {
+          createFromCluster(clusterId.value)
+          return
+        }
 
-      // create from quick start
-      if (quickStart.value) {
-        createFromQuickStart(quickStart.value)
-        return
-      }
+        // create from template
+        if (templateId.value) {
+          createFromTemplate(templateId.value)
+          return
+        }
 
-      // create from default provider, switch provider
-      if (defaultProvider.value) {
-       createFromProvider(defaultProvider.value)
-       return
+        // create from quick start
+        if (quickStart.value) {
+          createFromQuickStart(quickStart.value)
+          return
+        }
+
+        // create from default provider, switch provider
+        if (defaultProvider.value) {
+          createFromProvider(defaultProvider.value)
+          return
+        }
+        // create from history
+        // createFromHistory(currentProvider.value)
+        // return
+      },
+      {
+        immediate: true
       }
-      // create from history
-      // createFromHistory(currentProvider.value)
-      // return
-    }, {
-      immediate: true
-    })
+    )
 
     const clusterFormComponent = computed(() => {
       const p = providerSchema.id
@@ -279,22 +291,24 @@ export default defineComponent({
     })
 
     const goBack = () => {
-      router.push({name: 'ClusterExplorerCoreClusters'})
+      router.push({ name: 'ClusterExplorerCoreClusters' })
     }
     let form = null
     const validate = () => {
-      // eslint-disable-next-line no-unused-vars
-      const allRequiredFields = Object.entries(providerSchema).filter(([k, v]) => v?.required).map(([k]) => k);
+      const allRequiredFields = Object.entries(providerSchema)
+        // eslint-disable-next-line no-unused-vars
+        .filter(([k, v]) => v?.required)
+        .map(([k]) => k)
       form = formRef.value?.getForm()
       if (!form) {
         return
       }
       const errors = allRequiredFields.reduce((t, c) => {
         if (!form[c]) {
-          t.push(`"${ c }" is required`);
+          t.push(`"${c}" is required`)
         }
-        return t;
-      }, []);
+        return t
+      }, [])
 
       if (!name.value) {
         errors.unshift(`"Name" is required`)
@@ -311,7 +325,7 @@ export default defineComponent({
           errors.push(err)
         }
       }
-      formErrors.value= errors;
+      formErrors.value = errors
       return errors.length === 0
     }
     const create = async () => {
@@ -329,14 +343,14 @@ export default defineComponent({
       }
       // encode kubeconfig-content, network-data, user-data to base64 for harvester provider
       if (formData.provider === 'harvester') {
-        ['kubeconfig-content', 'network-data', 'user-data'].forEach((k) => {
+        ;['kubeconfig-content', 'network-data', 'user-data'].forEach((k) => {
           const v = formData.options[k]
           if (v) {
             formData.options[k] = Base64.encode(v)
           }
         })
       }
-      creating.value=true
+      creating.value = true
       try {
         const { id = '' } = await createCluster(formData)
         saveCreatingCluster(id)
@@ -348,7 +362,7 @@ export default defineComponent({
             icon: 'log',
             attrs: {
               cluster: id,
-              provider: formData.provider,
+              provider: formData.provider
             }
           })
         }
@@ -356,17 +370,17 @@ export default defineComponent({
       } catch (err) {
         formErrors.value = [stringify(err)]
       }
-      creating.value=false
+      creating.value = false
     }
     const handleProviderChange = (value) => {
-      router.push({name: 'ClusterExplorerCoreClustersCreate', query: {defaultProvider: value}})
+      router.push({ name: 'ClusterExplorerCoreClustersCreate', query: { defaultProvider: value } })
     }
     const handleApplyTemplate = (templateId) => {
       if (props.templateId === templateId) {
         createFromTemplate(templateId)
         return
       }
-      router.push({name: 'ClusterExplorerCoreClustersCreate', query: {templateId}})
+      router.push({ name: 'ClusterExplorerCoreClustersCreate', query: { templateId } })
     }
     // onBeforeUnmount(() => {
     //   const f = formRef.value?.getForm()
@@ -403,7 +417,7 @@ export default defineComponent({
       handleApplyTemplate,
       showCliModal,
       cliModalVisible,
-      clusterForm,
+      clusterForm
     }
   }
 })

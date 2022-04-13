@@ -1,16 +1,25 @@
 <template>
   <div class="k-combo-box" :class="{ disabled: disabled }">
     <div class="k-combo-box__label">
-      <label v-if="label" :for="inputId">{{label}} <sup v-if="required" class="k-form-item--required">*</sup></label>
+      <label v-if="label" :for="inputId">
+        {{ label }}
+        <sup v-if="required" class="k-form-item--required">*</sup>
+      </label>
       <tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
-        <template #popover>{{desc}}</template>
+        <template #popover>{{ desc }}</template>
       </tooltip>
     </div>
     <div v-if="$slots.prefix" class="k-combo-box__prefix">
-      <slot name="prefix">{{prefix}}</slot>
+      <slot name="prefix">{{ prefix }}</slot>
     </div>
-    <dropdown class="k-combo-box__trigger" :option="popperOption" :append-to-body="false" :disabled="disabled" :lazy="false">
+    <dropdown
+      class="k-combo-box__trigger"
+      :option="popperOption"
+      :append-to-body="false"
+      :disabled="disabled"
+      :lazy="false"
+    >
       <input
         :id="inputId"
         autocomplete="off"
@@ -21,7 +30,7 @@
         v-bind="$attrs"
         :placeholder="placeholder"
         @input="$emit('update:modelValue', $event.target.value)"
-        >
+      />
       <k-icon v-if="loading" type="loading"></k-icon>
       <k-icon v-else type="arrow-right-blod" direction="down"></k-icon>
       <template #content>
@@ -29,13 +38,14 @@
         <div v-else-if="options.length === 0">No Data</div>
         <div v-else>
           <dropdown-menu-item
-v-for="(v, index) in options"
+            v-for="(v, index) in options"
             :key="index"
             class="k-combo-box__option"
-            :class="[modelValue === v ? 'text-white bg-warm-gray-400': '']"
-            @click="setValue(v)">
-            {{v}}
-        </dropdown-menu-item>
+            :class="[modelValue === v ? 'text-white bg-warm-gray-400' : '']"
+            @click="setValue(v)"
+          >
+            {{ v }}
+          </dropdown-menu-item>
         </div>
       </template>
     </dropdown>
@@ -45,8 +55,8 @@ v-for="(v, index) in options"
   </div>
 </template>
 <script>
-import {useIdGenerator} from '@/utils/idGenerator.js'
-const getId = useIdGenerator(0, 'combo-box_');
+import { useIdGenerator } from '@/utils/idGenerator.js'
+const getId = useIdGenerator(0, 'combo-box_')
 const useMinWithModifier = (minWith = '200px') => {
   return {
     name: 'selectOptionMinWith',
@@ -61,12 +71,12 @@ const useMinWithModifier = (minWith = '200px') => {
 
 export default {
   name: 'KComboBox',
-  inheritAttrs: false,
+  inheritAttrs: false
 }
 </script>
 <script setup>
 import { useSlots } from 'vue'
-import { Dropdown, DropdownMenuItem }from '@/components/Dropdown'
+import { Dropdown, DropdownMenuItem } from '@/components/Dropdown'
 import Tooltip from '@/components/Tooltip'
 import KIcon from '@/components/Icon'
 
@@ -81,7 +91,7 @@ defineProps({
   },
   required: {
     type: Boolean,
-    default: false,
+    default: false
   },
   modelValue: {
     type: [String, Number, Boolean],
@@ -89,11 +99,11 @@ defineProps({
   },
   disabled: {
     type: Boolean,
-    default: false,
+    default: false
   },
   loading: {
     type: Boolean,
-    default: false,
+    default: false
   },
   class: {
     type: [Array, String, Object],
@@ -123,10 +133,10 @@ const popperOption = {
     {
       name: 'offset',
       options: {
-        offset: [slots.prefix ? 0 : -10, 8],
-      },
+        offset: [slots.prefix ? 0 : -10, 8]
+      }
     },
-    minWithModifier,
+    minWithModifier
   ],
   placement: 'bottom-start'
 }
@@ -134,8 +144,9 @@ const popperOption = {
 <style>
 .k-combo-box {
   display: grid;
-  grid-template-areas: "label label suffix"
-                       "prefix select suffix";
+  grid-template-areas:
+    'label label suffix'
+    'prefix select suffix';
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
   @apply p-8px rounded border;
@@ -160,5 +171,4 @@ const popperOption = {
   grid-area: select;
   @apply grid grid-cols-[1fr,auto,auto] items-center;
 }
-
 </style>

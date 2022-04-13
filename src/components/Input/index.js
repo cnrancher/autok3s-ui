@@ -5,5 +5,5 @@ import passwordInput from './src/PasswordInput.vue'
 const Input = withInstall(input)
 const PasswordInput = withInstall(passwordInput)
 
-export {PasswordInput, Input}
+export { PasswordInput, Input }
 export default Input

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { fetchList } from '@/api/cluster.js'
 import { cloneDeep } from '@/utils'
-import {stringify} from '@/utils/error.js'
+import { stringify } from '@/utils/error.js'
 import { SUPPORTED_PROVIDERS } from '@/utils/constants.js'
 
 export function defineClusterStoreFactory(provider) {
@@ -12,14 +12,14 @@ export function defineClusterStoreFactory(provider) {
       historySize: 1,
       error: null,
       data: [],
-      provider,
+      provider
     }),
-  
+
     actions: {
       async loadData() {
         this.loading = true
         try {
-          const {data} = await fetchList(provider)
+          const { data } = await fetchList(provider)
           this.data = data
           this.error = null
         } catch (err) {
@@ -28,7 +28,7 @@ export function defineClusterStoreFactory(provider) {
         }
         this.loading = false
       },
-  
+
       add(cluster) {
         if (this.loading || this.error) {
           return
@@ -40,7 +40,7 @@ export function defineClusterStoreFactory(provider) {
           zone: cluster.options?.zone
         })
       },
-  
+
       update(cluster) {
         if (this.loading || this.error) {
           return
@@ -52,20 +52,20 @@ export function defineClusterStoreFactory(provider) {
             zone: cluster.options?.zone,
             status: cluster.status?.status,
             worker: cluster.worker,
-            master: cluster.master,
+            master: cluster.master
           }
-          const temp = {...cloneDeep(this.data[index]), ...props}
+          const temp = { ...cloneDeep(this.data[index]), ...props }
           this.data.splice(index, 1, temp)
         }
       },
-  
+
       remove(id) {
         const index = this.data.findIndex((item) => item.id === id)
         if (index > -1) {
           this.data.splice(index, 1)
         }
       },
-  
+
       saveFormHistory(form) {
         if (this.formHistory.length >= this.historySize) {
           this.formHistory.shift()

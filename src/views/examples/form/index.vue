@@ -4,31 +4,27 @@
       <template #prefix>prefix</template>
       <template #suffix>suffix</template>
     </k-input>
-    <k-input label="label2">
-    </k-input>
-    <k-input>
-    </k-input>
+    <k-input label="label2"></k-input>
+    <k-input></k-input>
     <k-select label="select label">
       <template #prefix>prefix</template>
       <template #suffix>suffix</template>
       <k-option value="v1" label="select label1"></k-option>
     </k-select>
     <k-select v-model="selectedValue" label="select label2">
-       <k-option value="v1" label="select label1"></k-option>
-       <k-option value="v2" label="select label2"></k-option>
-       <k-option value="v3" label="select label3"></k-option>
-       <k-option value="v4" label="select label4"></k-option>
+      <k-option value="v1" label="select label1"></k-option>
+      <k-option value="v2" label="select label2"></k-option>
+      <k-option value="v3" label="select label3"></k-option>
+      <k-option value="v4" label="select label4"></k-option>
     </k-select>
     <k-select>
-       <k-option value="v1" label="select label1"></k-option>
+      <k-option value="v1" label="select label1"></k-option>
     </k-select>
     <k-dropdown>
       dropdown
       <template #content>
         <k-dropdown-menu>
-          <k-dropdown-menu-item>
-           dropdown-item
-          </k-dropdown-menu-item>
+          <k-dropdown-menu-item>dropdown-item</k-dropdown-menu-item>
         </k-dropdown-menu>
       </template>
     </k-dropdown>
@@ -45,12 +41,15 @@
   </k-radio-group>
   <k-loading>
     dfasfsafsdfs
-    <button>ddddd</button><br>
-    <button>ddddd</button><br>
-    <button>ddddd</button><br>
-    <button>ddddd</button><br>
     <button>ddddd</button>
-
+    <br />
+    <button>ddddd</button>
+    <br />
+    <button>ddddd</button>
+    <br />
+    <button>ddddd</button>
+    <br />
+    <button>ddddd</button>
   </k-loading>
 </template>
 <script>
@@ -59,11 +58,11 @@ export default {
   name: 'FormIndex',
   setup() {
     const selectedValue = ref('v1')
-    const testRadio=ref('')
+    const testRadio = ref('')
     return {
       selectedValue,
-      testRadio,
+      testRadio
     }
-  },
+  }
 }
 </script>

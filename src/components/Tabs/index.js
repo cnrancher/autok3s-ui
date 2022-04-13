@@ -6,4 +6,3 @@ const Tabs = withInstall(tabs)
 const TabPane = withInstall(tabPane)
 
 export { Tabs, TabPane }
-

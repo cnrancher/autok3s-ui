@@ -1,13 +1,13 @@
 <template>
-    <code class="custom-option">{{value}}</code>
+  <code class="custom-option">{{ value }}</code>
 </template>
 <script setup>
-import {computed} from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   modelValue: {
     type: String,
-    required: true,
+    required: true
   }
 })
 
@@ -21,5 +21,4 @@ const value = computed({
     emit('update:modelValue', v)
   }
 })
-
 </script>

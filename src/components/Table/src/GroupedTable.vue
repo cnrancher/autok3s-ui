@@ -8,13 +8,12 @@
       :group-status="groupStatus"
       @order-change="onOrderChange"
       @selection-change="onSelectionChange"
-      >
+    >
       <template #default>
         <slot></slot>
       </template>
       <template v-if="$slots.group" #group="p">
-        <slot name="group" v-bind="p">
-        </slot>
+        <slot name="group" v-bind="p"></slot>
       </template>
       <template v-for="n in errorSlotNames" #[n]="p">
         <template v-if="$slots[n]">
@@ -22,12 +21,17 @@
         </template>
       </template>
     </base-grouped-table>
-    <pagination v-if="showPagination" v-model:current-page="currentPage" :total="total" :page-size="pageSize"></pagination>
+    <pagination
+      v-if="showPagination"
+      v-model:current-page="currentPage"
+      :total="total"
+      :page-size="pageSize"
+    ></pagination>
   </div>
 </template>
 <script>
 export default {
-  name: 'KGroupedTable', 
+  name: 'KGroupedTable'
 }
 </script>
 <script setup>
@@ -42,11 +46,11 @@ import { toRefs, computed, watch } from 'vue'
 const props = defineProps({
   caption: {
     type: String,
-    default: '',
+    default: ''
   },
   showHeader: {
     type: Boolean,
-    default: true,
+    default: true
   },
   data: {
     type: Array,
@@ -59,31 +63,36 @@ const props = defineProps({
   showPagination: {
     type: Boolean,
     default: true
-  },
+  }
 })
 
 const emit = defineEmits(['selection-change'])
-const {data} = toRefs(props)
+const { data } = toRefs(props)
 const groupStatus = computed(() => {
-  return data.value.reduce((t, c) => {
-    t[c.group] = Object.entries(c).filter(([k]) => k !== 'children').reduce((s, [k, v]) => {
-      s[k] = v
+  return data.value.reduce(
+    (t, c) => {
+      t[c.group] = Object.entries(c)
+        .filter(([k]) => k !== 'children')
+        .reduce((s, [k, v]) => {
+          s[k] = v
 
-      return s
-    },{})
+          return s
+        }, {})
 
-    return t
-  }, {
-    loading: {
-      state: 'loading',
+      return t
     },
-    noData: {
-      state: 'noData'
-    },
-    noResults: {
-      state: 'noResults'
+    {
+      loading: {
+        state: 'loading'
+      },
+      noData: {
+        state: 'noData'
+      },
+      noResults: {
+        state: 'noResults'
+      }
     }
-  })
+  )
 })
 const loadedGroups = computed(() => {
   return data.value.filter((g) => g.state === 'loaded' && !g.error)
@@ -101,7 +110,7 @@ const errorGroups = computed(() => {
   return data.value.filter((g) => g.state === 'error' && g.error)
 })
 
-const {fields, orders, dataOrder} = useDataOrder(loadedData)
+const { fields, orders, dataOrder } = useDataOrder(loadedData)
 
 const errorSlotNames = ['loading', 'loaded', 'noResults', 'noData', 'error']
 
@@ -117,7 +126,7 @@ const onOrderChange = (column, order) => {
 const onSelectionChange = (rows) => {
   emit('selection-change', rows)
 }
-const {pageData, currentPage, total, pageSize } = usePagination(dataOrder)
+const { pageData, currentPage, total, pageSize } = usePagination(dataOrder)
 
 const tableData = computed(() => {
   if (props.showPagination) {
@@ -127,15 +136,18 @@ const tableData = computed(() => {
 })
 
 const { groupField, dataGroup } = useDataGroup(tableData)
-watch(() => props.groupBy ,(groupBy) => {
-  groupField.value = groupBy
-}, {
-  immediate: true
-})
+watch(
+  () => props.groupBy,
+  (groupBy) => {
+    groupField.value = groupBy
+  },
+  {
+    immediate: true
+  }
+)
 
 const allTableData = computed(() => {
   if (['noData', 'noResults', 'loading'].includes(data.value[0]?.group)) {
-
     return data.value
   }
 

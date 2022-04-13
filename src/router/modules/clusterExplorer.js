@@ -7,7 +7,7 @@ const clusterExplorerRouter = {
   name: 'ClusterExplorer',
   meta: {
     title: import.meta.env.VITE_APP_TITLE,
-    icon: 'set',
+    icon: 'set'
   },
   children: [
     {
@@ -16,7 +16,7 @@ const clusterExplorerRouter = {
       name: 'QuickStart',
       props: (route) => ({
         templateId: route.query.templateId,
-        defaultProvider: route.query.defaultProvider,
+        defaultProvider: route.query.defaultProvider
       }),
       meta: { title: 'Quick start' }
     },
@@ -30,28 +30,28 @@ const clusterExplorerRouter = {
           path: 'clusters',
           component: () => import('@/views/cluster-explorer/core/clusters/index.vue'),
           name: 'ClusterExplorerCoreClusters',
-          meta: { title: 'Clusters', icon: 'cluster' },
+          meta: { title: 'Clusters', icon: 'cluster' }
         },
         {
           path: 'clusters/create',
           component: () => import('@/views/cluster-explorer/core/clusters/create/index.vue'),
           name: 'ClusterExplorerCoreClustersCreate',
-          props: (route)=> ({
+          props: (route) => ({
             clusterId: route.query.clusterId,
             templateId: route.query.templateId,
             defaultProvider: route.query.defaultProvider,
             quickStart: route.query.quickStart
           }),
-          hidden: true,
+          hidden: true
         },
         {
           path: 'clusters/detail/:clusterId',
           component: () => import('@/views/cluster-explorer/core/clusters/detail/index.vue'),
           name: 'ClusterExplorerCoreClustersDetail',
           props: true,
-          hidden: true,
-        },
-      ],
+          hidden: true
+        }
+      ]
     },
     {
       path: 'settings',
@@ -60,57 +60,58 @@ const clusterExplorerRouter = {
       meta: { title: 'Settings' },
       children: [
         {
-        path: 'credentials',
-        component: () => import('@/views/cluster-explorer/settings/credentials/index.vue'),
-        name: 'ClusterExplorerSettingsCredentials',
-        meta: { title:'Credentials', icon: 'folder'}
-      },
-      {
-        path: 'credentials/create',
-        component: () => import('@/views/cluster-explorer/settings/credentials/create/index.vue'),
-        name: 'ClusterExplorerSettingsCreate',
-        hidden: true,
-      },{
-        path: 'credentials/edit/:credentialId',
-        component: () => import('@/views/cluster-explorer/settings/credentials/edit/index.vue'),
-        name: 'ClusterExplorerSettingsEdit',
-        props: true,
-        hidden: true,
-      },
-      {
-        path: 'templates',
-        component: () => import('@/views/cluster-explorer/settings/templates/index.vue'),
-        name: 'ClusterExplorerSettingsTemplates',
-        meta: { title: 'Templates', icon: 'cluster' },
-      },
-      {
-        path: 'templates/detail/:templateId',
-        component: () => import('@/views/cluster-explorer/settings/templates/detail/index.vue'),
-        name: 'ClusterExplorerSettingsTemplatesDetail',
-        props: true,
-        hidden: true,
-      },
-      {
-        path: 'templates/edit/:templateId',
-        component: () => import('@/views/cluster-explorer/settings/templates/edit/index.vue'),
-        name: 'ClusterExplorerSettingsTemplatesEdit',
-        props: true,
-        hidden: true,
-      },
-      {
-        path: 'templates/create',
-        component: () => import('@/views/cluster-explorer/settings/templates/create/index.vue'),
-        name: 'ClusterExplorerSettingsTemplatesCreate',
-        props: (route)=> ({
-          clusterId: route.query.clusterId,
-          templateId: route.query.templateId,
-          defaultProvider: route.query.defaultProvider,
-        }),
-        hidden: true,
-      },
-    ],
+          path: 'credentials',
+          component: () => import('@/views/cluster-explorer/settings/credentials/index.vue'),
+          name: 'ClusterExplorerSettingsCredentials',
+          meta: { title: 'Credentials', icon: 'folder' }
+        },
+        {
+          path: 'credentials/create',
+          component: () => import('@/views/cluster-explorer/settings/credentials/create/index.vue'),
+          name: 'ClusterExplorerSettingsCreate',
+          hidden: true
+        },
+        {
+          path: 'credentials/edit/:credentialId',
+          component: () => import('@/views/cluster-explorer/settings/credentials/edit/index.vue'),
+          name: 'ClusterExplorerSettingsEdit',
+          props: true,
+          hidden: true
+        },
+        {
+          path: 'templates',
+          component: () => import('@/views/cluster-explorer/settings/templates/index.vue'),
+          name: 'ClusterExplorerSettingsTemplates',
+          meta: { title: 'Templates', icon: 'cluster' }
+        },
+        {
+          path: 'templates/detail/:templateId',
+          component: () => import('@/views/cluster-explorer/settings/templates/detail/index.vue'),
+          name: 'ClusterExplorerSettingsTemplatesDetail',
+          props: true,
+          hidden: true
+        },
+        {
+          path: 'templates/edit/:templateId',
+          component: () => import('@/views/cluster-explorer/settings/templates/edit/index.vue'),
+          name: 'ClusterExplorerSettingsTemplatesEdit',
+          props: true,
+          hidden: true
+        },
+        {
+          path: 'templates/create',
+          component: () => import('@/views/cluster-explorer/settings/templates/create/index.vue'),
+          name: 'ClusterExplorerSettingsTemplatesCreate',
+          props: (route) => ({
+            clusterId: route.query.clusterId,
+            templateId: route.query.templateId,
+            defaultProvider: route.query.defaultProvider
+          }),
+          hidden: true
+        }
+      ]
     }
-  ],
+  ]
 }
 
-export default clusterExplorerRouter;
+export default clusterExplorerRouter

@@ -1,6 +1,11 @@
 <template>
-  <a v-if="explorer?.links?.explorer" class="py-5px inline-flex items-center btn btn-xs role-tertiary" target="_blank" :href="`${explorer?.links?.explorer}`">
-    <tooltip >
+  <a
+    v-if="explorer?.links?.explorer"
+    class="py-5px inline-flex items-center btn btn-xs role-tertiary"
+    target="_blank"
+    :href="`${explorer?.links?.explorer}`"
+  >
+    <tooltip>
       Explorer
       <template #popover>Go to kube-explorer page</template>
     </tooltip>
@@ -14,8 +19,8 @@ import useExplorerStore from '@/store/useExplorerStore.js'
 const props = defineProps({
   clusterId: {
     type: String,
-    default: '',
-  },
+    default: ''
+  }
 })
 
 const explorerStore = useExplorerStore()

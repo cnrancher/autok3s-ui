@@ -3,5 +3,5 @@ import tag from './src/index.vue'
 
 const Tag = withInstall(tag)
 
-export {Tag}
+export { Tag }
 export default Tag

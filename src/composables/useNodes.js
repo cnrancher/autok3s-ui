@@ -1,12 +1,12 @@
-import { fetchNodes } from '@/api/cluster.js';
-import {reactive, toRefs, watchEffect} from 'vue'
-import {stringify} from '@/utils/error.js'
+import { fetchNodes } from '@/api/cluster.js'
+import { reactive, toRefs, watchEffect } from 'vue'
+import { stringify } from '@/utils/error.js'
 
-export default function useNodes (clusterId) {
+export default function useNodes(clusterId) {
   const state = reactive({
     clusterNodes: { nodes: [] },
     error: '',
-    loading: false,
+    loading: false
   })
   const fetchClusterNodes = async () => {
     state.loading = true
@@ -26,6 +26,6 @@ export default function useNodes (clusterId) {
   })
   return {
     ...toRefs(state),
-    fetchClusterNodes,
+    fetchClusterNodes
   }
 }

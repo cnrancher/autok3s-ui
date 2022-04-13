@@ -1,26 +1,38 @@
 <template>
   <div class="grid grid-cols-[1fr,auto] gap-10px items-center content-start">
     <h4 class="col-span-2 grid grid-flow-col items-center justify-start gap-x-10px">
-      <span class="text-size-18px">{{label}}</span>
+      <span class="text-size-18px">{{ label }}</span>
       <sup v-if="required" class="text-red-500">*</sup>
       <k-tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
-        <template #popover>{{desc}}</template>
+        <template #popover>{{ desc }}</template>
       </k-tooltip>
     </h4>
     <template v-for="(item, index) in items" :key="index">
-      <k-input :ref="el => { if (el) { inputs[index] = el } }" v-model.trim="item.value" :readonly="readonly" :placeholder="placeholder" @input="debounceUpdate"></k-input>
+      <k-input
+        :ref="
+          (el) => {
+            if (el) {
+              inputs[index] = el
+            }
+          }
+        "
+        v-model.trim="item.value"
+        :readonly="readonly"
+        :placeholder="placeholder"
+        @input="debounceUpdate"
+      ></k-input>
       <k-icon v-if="!readonly" class="cursor-pointer" type="ashbin" :size="20" @click="remove(index)"></k-icon>
       <div v-else></div>
     </template>
     <div class="col-span-2">
-      <k-button v-if="!readonly" type="button" class="btn-sm role-tertiary" @click="add">{{actionLabel}}</k-button>
+      <k-button v-if="!readonly" type="button" class="btn-sm role-tertiary" @click="add">{{ actionLabel }}</k-button>
       <div v-else></div>
     </div>
   </div>
 </template>
 <script setup>
-import { ref, onBeforeUpdate, nextTick} from 'vue'
+import { ref, onBeforeUpdate, nextTick } from 'vue'
 import { debounce } from 'lodash-es'
 
 const props = defineProps({
@@ -28,7 +40,7 @@ const props = defineProps({
     type: Array,
     default() {
       return []
-    },
+    }
   },
   label: {
     type: String,
@@ -36,7 +48,7 @@ const props = defineProps({
   },
   required: {
     type: Boolean,
-    default: false,
+    default: false
   },
   desc: {
     type: String,
@@ -48,7 +60,7 @@ const props = defineProps({
   },
   readonly: {
     type: Boolean,
-    default: false,
+    default: false
   },
   actionLabel: {
     type: String,
@@ -64,7 +76,10 @@ onBeforeUpdate(() => {
   inputs.value = []
 })
 const update = () => {
-  emit('update:modelValue', items.value.map((item) => item.value))
+  emit(
+    'update:modelValue',
+    items.value.map((item) => item.value)
+  )
 }
 const debounceUpdate = debounce(update, 300)
 const remove = (index) => {
@@ -86,5 +101,4 @@ const getForm = () => {
 }
 
 defineExpose({ getForm })
-
 </script>

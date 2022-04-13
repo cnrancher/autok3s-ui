@@ -8,75 +8,75 @@ platform:
   arch: amd64
 
 steps:
-- name: lint
-  image: node:lts
-  commands:
-  - npm install
-  - npm run lint
-  when:
-    branch:
-    - main
-    event:
-    - push
-    - pull_request
+  - name: lint
+    image: node:lts
+    commands:
+      - npm install
+      - npm run lint
+    when:
+      branch:
+        - main
+      event:
+        - push
+        - pull_request
 
-- name: build
-  image: node:lts
-  commands:
-  - npm install
-  - UI_BASE_PATH=//s3-ap-southeast-2.amazonaws.com/autok3s-ui/static/ npm run build
-  when:
-    branch:
-    - main
-    event:
-    - push
-    - pull_request
-    - tag
+  - name: build
+    image: node:lts
+    commands:
+      - npm install
+      - UI_BASE_PATH=//s3-ap-southeast-2.amazonaws.com/autok3s-ui/static/ npm run build
+    when:
+      branch:
+        - main
+      event:
+        - push
+        - pull_request
+        - tag
 
-- name: build-tag
-  image: node:lts
-  commands:
-  - ./scripts/build-static
-  when:
-    event:
-    - tag
+  - name: build-tag
+    image: node:lts
+    commands:
+      - ./scripts/build-static
+    when:
+      event:
+        - tag
 
-- name: upload-latest
-  pull: default
-  image: plugins/s3
-  settings:
-    bucket: autok3s-ui
-    region: ap-southeast-2
-    acl: public-read
-    access_key:
-      from_secret: aws_access_id
-    secret_key:
-      from_secret: aws_access_secret
-    source: dist/static/**/*
-    strip_prefix: dist/static
-    target: /static
-  when:
-    branch:
-    - main
-    event:
-    - push
+  - name: upload-latest
+    pull: default
+    image: plugins/s3
+    settings:
+      bucket: autok3s-ui
+      region: ap-southeast-2
+      acl: public-read
+      access_key:
+        from_secret: aws_access_id
+      secret_key:
+        from_secret: aws_access_secret
+      source: dist/static/**/*
+      strip_prefix: dist/static
+      target: /static
+    when:
+      branch:
+        - main
+      event:
+        - push
 
-- name: upload
-  image: plugins/s3
-  settings:
-    bucket: autok3s-ui
-    region: ap-southeast-2
-    acl: public-read
-    access_key:
-      from_secret: aws_access_id
-    secret_key:
-      from_secret: aws_access_secret
-    source: dist/${DRONE_TAG}.tar.gz
-    strip_prefix: dist/
-    target: /
-  when:
-    event:
-    - tag
+  - name: upload
+    image: plugins/s3
+    settings:
+      bucket: autok3s-ui
+      region: ap-southeast-2
+      acl: public-read
+      access_key:
+        from_secret: aws_access_id
+      secret_key:
+        from_secret: aws_access_secret
+      source: dist/${DRONE_TAG}.tar.gz
+      strip_prefix: dist/
+      target: /
+    when:
+      event:
+        - tag
 
 node:
   instance: agent-amd64

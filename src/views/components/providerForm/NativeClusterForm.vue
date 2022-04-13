@@ -24,7 +24,7 @@
           </div>
         </template>
       </form-group>
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <form-group>
         <template #title>SSH</template>
         <template #default>
@@ -47,9 +47,12 @@
               :desc="desc.config['ssh-key-path']"
               :readonly="readonly"
             />
-            <div class="cursor-pointer grid grid-cols-[auto,auto,1fr] gap-x-10px items-center justify-items-end" @click="toggleVisible">
+            <div
+              class="cursor-pointer grid grid-cols-[auto,auto,1fr] gap-x-10px items-center justify-items-end"
+              @click="toggleVisible"
+            >
               <div>Advance</div>
-              <a class="text-$link">{{visible ? 'Hide':'Show'}}</a>
+              <a class="text-$link">{{ visible ? 'Hide' : 'Show' }}</a>
               <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
             </div>
             <div v-show="visible" class="contents">
@@ -87,8 +90,8 @@
         :visible="acitiveTab === 'k3s'"
         :form="form"
         :desc="desc"
-        :readonly="readonly">
-      </k3s-options-form>
+        :readonly="readonly"
+      ></k3s-options-form>
     </k-tab-pane>
     <k-tab-pane label="Additional Options" name="additional">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
@@ -114,7 +117,7 @@
   </k-tabs>
 </template>
 <script setup>
-import { ref, computed} from 'vue'
+import { ref, computed } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import IpAddressPoolForm from '../baseForm/IpAddressPoolForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
@@ -126,17 +129,17 @@ import { cloneDeep } from '@/utils'
 const props = defineProps({
   schema: {
     type: Object,
-    required: true,
+    required: true
   },
   readonly: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 })
 
 const masterIps = ref(null)
 const workerIps = ref(null)
-const { form, desc }= useFormFromSchema(props.schema)
+const { form, desc } = useFormFromSchema(props.schema)
 const uiOptions = computed({
   get() {
     if (form.config.enable) {
@@ -153,8 +156,14 @@ const uiOptions = computed({
 })
 const getForm = () => {
   const f = cloneDeep(form)
-  f.options['master-ips'] = masterIps.value.getForm().filter((v) => v).join(',')
-  f.options['worker-ips'] = workerIps.value.getForm().filter((v) => v).join(',')
+  f.options['master-ips'] = masterIps.value
+    .getForm()
+    .filter((v) => v)
+    .join(',')
+  f.options['worker-ips'] = workerIps.value
+    .getForm()
+    .filter((v) => v)
+    .join(',')
   return f
 }
 const acitiveTab = ref('instance')
@@ -164,5 +173,4 @@ const toggleVisible = () => {
 }
 
 defineExpose({ getForm })
-
 </script>

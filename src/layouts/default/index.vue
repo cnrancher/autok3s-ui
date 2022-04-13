@@ -24,18 +24,21 @@ const route = useRoute()
 
 provide('openSideBar', openSideBar)
 
-watch(() => route.path, () => {
-  openSideBar.value = false
-})
-
+watch(
+  () => route.path,
+  () => {
+    openSideBar.value = false
+  }
+)
 </script>
 <style>
 .autok3s-ui__root {
   display: grid;
   height: 100vh;
-  grid-template-areas: "header"
-                       "main"
-                       "wm";
+  grid-template-areas:
+    'header'
+    'main'
+    'wm';
   grid-template-rows: var(--header-height) auto var(--wm-height, 0);
   grid-template-columns: auto;
 }
@@ -62,9 +65,10 @@ watch(() => route.path, () => {
 
 @screen lg {
   .autok3s-ui__root {
-    grid-template-areas: "header header"
-                         "nav main"
-                         "wm wm";
+    grid-template-areas:
+      'header header'
+      'nav main'
+      'wm wm';
     grid-template-columns: var(--nav-width) auto;
   }
   .autok3s-ui__nav {

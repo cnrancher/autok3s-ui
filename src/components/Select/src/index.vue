@@ -1,22 +1,33 @@
 <template>
   <div class="k-select" :class="{ disabled: disabled }">
     <div class="k-select__label">
-      <label v-if="label" :for="inputId">{{label}} <sup v-if="required" class="text-red-500 top-0">*</sup></label>
+      <label v-if="label" :for="inputId">
+        {{ label }}
+        <sup v-if="required" class="text-red-500 top-0">*</sup>
+      </label>
       <tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
-        <template #popover>{{desc}}</template>
+        <template #popover>{{ desc }}</template>
       </tooltip>
     </div>
     <div v-if="$slots.prefix" class="k-select__prefix">
-      <slot name="prefix">{{prefix}}</slot>
+      <slot name="prefix">{{ prefix }}</slot>
     </div>
-    <dropdown class="k-select__trigger" :option="popperOption" :append-to-body="false" :disabled="disabled" :lazy="false" @visible-change="handleVisibleChange">
+    <dropdown
+      class="k-select__trigger"
+      :option="popperOption"
+      :append-to-body="false"
+      :disabled="disabled"
+      :lazy="false"
+      @visible-change="handleVisibleChange"
+    >
       <div v-if="multiple" class="flex">
-        <span v-if="selectdOptions.length === 0" class="text-warm-gray-400">{{placeholder}}</span>
+        <span v-if="selectdOptions.length === 0" class="text-warm-gray-400">{{ placeholder }}</span>
         <template v-else>
           <k-tag v-for="o in selectdOptions" :key="o.value" class="flex items-center m-r-2px" type="info">
-            {{o.label}}
-            <k-icon v-if="!disabled" type="close" class="cursor-pointer" @click.stop="removeOption(o.value)"></k-icon></k-tag>
+            {{ o.label }}
+            <k-icon v-if="!disabled" type="close" class="cursor-pointer" @click.stop="removeOption(o.value)"></k-icon>
+          </k-tag>
         </template>
       </div>
       <input
@@ -26,10 +37,11 @@
         readonly
         :disabled="disabled || loading"
         class="cursor-pointer overflow-ellipsis focus-visible:outline-none bg-transparent"
-        :class="[!label ? 'py-10.5px px-0' : '', visible ? 'text-warm-gray-400' : '']" v-bind="$attrs"
+        :class="[!label ? 'py-10.5px px-0' : '', visible ? 'text-warm-gray-400' : '']"
+        v-bind="$attrs"
         :value="selectedOption?.label"
         :placeholder="placeholder"
-        >
+      />
       <k-icon v-if="loading" type="loading"></k-icon>
       <k-icon v-else type="arrow-right-blod" direction="down"></k-icon>
       <template #content>
@@ -42,9 +54,9 @@
   </div>
 </template>
 <script>
-import {useIdGenerator} from '@/utils/idGenerator.js'
+import { useIdGenerator } from '@/utils/idGenerator.js'
 
-const getId = useIdGenerator(0, 'labeled-select_');
+const getId = useIdGenerator(0, 'labeled-select_')
 const useMinWithModifier = (minWith = '200px') => {
   return {
     name: 'selectOptionMinWith',
@@ -59,14 +71,14 @@ const useMinWithModifier = (minWith = '200px') => {
 
 export default {
   name: 'KSelect',
-  inheritAttrs: false,
+  inheritAttrs: false
 }
 </script>
 
 <script setup>
 import { computed, provide, watch, ref, useSlots, nextTick } from 'vue'
 
-import { Dropdown }from '@/components/Dropdown'
+import { Dropdown } from '@/components/Dropdown'
 import KIcon from '@/components/Icon'
 import KTag from '@/components/Tag'
 import Tooltip from '@/components/Tooltip'
@@ -83,11 +95,11 @@ const props = defineProps({
   },
   required: {
     type: Boolean,
-    default: false,
+    default: false
   },
   multiple: {
     type: Boolean,
-    default: false,
+    default: false
   },
   modelValue: {
     type: [String, Number, Boolean, Array],
@@ -95,11 +107,11 @@ const props = defineProps({
   },
   disabled: {
     type: Boolean,
-    default: false,
+    default: false
   },
   loading: {
     type: Boolean,
-    default: false,
+    default: false
   },
   class: {
     type: [Array, String, Object],
@@ -108,7 +120,7 @@ const props = defineProps({
   desc: {
     type: String,
     default: ''
-  },
+  }
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
@@ -125,26 +137,30 @@ const selectedOption = computed(() => {
   return selectStore.getter.activeOption
 })
 
-watch([() => props.modelValue, () => props.loading], ([modelValue, loading]) => {
-  if (loading)  {
-    return
-  }
-  nextTick(() => {
-    if (props.multiple) {
-      const values = selectStore.state.values
-      if (values?.length !== modelValue?.length || values?.some((v) => !modelValue?.includes(v))) {
-        selectStore.action.setValues([...modelValue])
+watch(
+  [() => props.modelValue, () => props.loading],
+  ([modelValue, loading]) => {
+    if (loading) {
+      return
+    }
+    nextTick(() => {
+      if (props.multiple) {
+        const values = selectStore.state.values
+        if (values?.length !== modelValue?.length || values?.some((v) => !modelValue?.includes(v))) {
+          selectStore.action.setValues([...modelValue])
+        }
+        return
       }
-      return
-    }
-    if (modelValue !== selectStore.state.value) {
-      selectStore.action.setValue(modelValue)
-      return
-    }
-  })
-}, {
-  immediate: true
-})
+      if (modelValue !== selectStore.state.value) {
+        selectStore.action.setValue(modelValue)
+        return
+      }
+    })
+  },
+  {
+    immediate: true
+  }
+)
 
 const minWithModifier = useMinWithModifier()
 const popperOption = {
@@ -152,10 +168,10 @@ const popperOption = {
     {
       name: 'offset',
       options: {
-        offset: [slots.prefix ? 0 : -10, 8],
-      },
+        offset: [slots.prefix ? 0 : -10, 8]
+      }
     },
-    minWithModifier,
+    minWithModifier
   ],
   placement: 'bottom-start'
 }
@@ -173,15 +189,14 @@ const handleVisibleChange = (v) => {
 }
 </script>
 <style>
-
 .k-select {
   display: grid;
-  grid-template-areas: "label label suffix"
-                       "prefix select suffix";
+  grid-template-areas:
+    'label label suffix'
+    'prefix select suffix';
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
   @apply p-8px rounded border;
-  
 }
 .k-select:not(.disabled):hover {
   @apply bg-gray-100;

@@ -1,6 +1,6 @@
 // state
 
-import { computed, reactive, readonly } from "vue"
+import { computed, reactive, readonly } from 'vue'
 
 // state
 export function createStore() {
@@ -9,7 +9,7 @@ export function createStore() {
     value: null,
     values: null,
     loading: false,
-    errors: [],
+    errors: []
   }
   return reactive(state)
 }
@@ -103,6 +103,6 @@ export default function useStore() {
   return {
     state: readonly(state),
     action: readonly(action),
-    getter: readonly(getter),
+    getter: readonly(getter)
   }
 }

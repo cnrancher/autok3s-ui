@@ -1,79 +1,95 @@
 <template>
-<div ref="commandArgsRef"  class="command-args" @click="togglePopper">
-  <div class="command-args__label">
-    <label v-if="label">{{label}} <sup v-if="required" class="k-form-item--required">*</sup></label>
-    <k-tooltip v-if="desc">
-      <k-icon type="prompt"></k-icon>
-      <template #popover>{{desc}}</template>
-    </k-tooltip>
-  </div>
-  <div class="command-args__trigger">
-    {{modelValue}}
-  </div>
-  <k-icon type="arrow-right-blod" class="command-args__suffix" direction="down"></k-icon>
-<teleport to="body">
-  <div
-v-if="!readonly || show" ref="commandOptionsRef"
-    class="absolute bg-white z-$popper-z-index shadow max-h90vh overflow-auto"
-    :class="[show ? 'block' : 'hidden']"
-    @click.stop="handlePopperClick">
-    <div class="grid grid-cols-[1fr,auto,1fr] gap-x-10px min-h-200px max-w-80vw">
-      <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border rounded">
-        <div class="grid grid-cols-[auto,1fr,auto] gap-x-10px items-center bg-gray-100 p-8px">
-          <input v-model="optionsAllSelected" type="checkbox" :indeterminate="optionsIndeterminate">
-          Available Options
-          <div>{{selectedOptions.length}}/{{options.length}}</div>
-        </div>
-      <div class="command-args__search"></div>
-      <div class="grid gap-y-10px p-8px content-start">
-        <label v-for="(o, index) in options" :key="index" class="grid grid-cols-[auto,1fr] gap-x-10px items-center select-none">
-          <input v-model="selectedOptions" type="checkbox" :value="o">
-          <command-option v-bind="o" v-model="o.modelValue"></command-option>
-        </label>
-      </div>
-      <div class="command-args__footer"></div>
-      </div>
-      <div class="grid self-center gap-y-10px content-start">
-        <button class="btn btn-sm role-primary" :disabled="selectedOptions.length === 0" @click="addOptions">
-          <k-icon type="arrow-right-blod"></k-icon>
-        </button>
-        <button class="btn btn-sm role-primary" :disabled="selectedUsedOptions.length === 0" @click="removeOptions">
-          <k-icon type="arrow-right-blod" direction="left"></k-icon>
-        </button>
-      </div>
-      <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border rounded">
-        <div class="grid grid-cols-[auto,1fr,auto] gap-x-10px items-center bg-gray-100 p-8px">
-          <input v-model="usedOptionsAllSelected" type="checkbox" :indeterminate="usedOptionsIndeterminate">
-            Used Options
-            <div>{{selectedUsedOptions.length}}/{{usedOptions.length}}</div>
-        </div>
-        <div class="command-args__search"></div>
-        <div class="grid gap-y-10px p-8px content-start">
-          <label v-for="(o, index) in usedOptions" :key="index" class="grid grid-cols-[auto,1fr] gap-x-10px items-center select-none">
-            <input v-model="selectedUsedOptions" type="checkbox" :value="o">
-            <!-- eslint-disable-next-line vue/v-on-event-hyphenation -->
-            <command-option v-bind="o" @update:modelValue="handleOptionChange(o, $event)"></command-option>
-          </label>
-          <div v-for="(o, index) in customValue" :key="index" class="grid grid-cols-[1fr,auto] items-center">
-            <custom-option v-model="customValue[index]"></custom-option>
-            <k-icon type="close" class="cursor-pointer" @click="removeCustomArg(index)"></k-icon>
+  <div ref="commandArgsRef" class="command-args" @click="togglePopper">
+    <div class="command-args__label">
+      <label v-if="label">
+        {{ label }}
+        <sup v-if="required" class="k-form-item--required">*</sup>
+      </label>
+      <k-tooltip v-if="desc">
+        <k-icon type="prompt"></k-icon>
+        <template #popover>{{ desc }}</template>
+      </k-tooltip>
+    </div>
+    <div class="command-args__trigger">
+      {{ modelValue }}
+    </div>
+    <k-icon type="arrow-right-blod" class="command-args__suffix" direction="down"></k-icon>
+    <teleport to="body">
+      <div
+        v-if="!readonly || show"
+        ref="commandOptionsRef"
+        class="absolute bg-white z-$popper-z-index shadow max-h90vh overflow-auto"
+        :class="[show ? 'block' : 'hidden']"
+        @click.stop="handlePopperClick"
+      >
+        <div class="grid grid-cols-[1fr,auto,1fr] gap-x-10px min-h-200px max-w-80vw">
+          <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border rounded">
+            <div class="grid grid-cols-[auto,1fr,auto] gap-x-10px items-center bg-gray-100 p-8px">
+              <input v-model="optionsAllSelected" type="checkbox" :indeterminate="optionsIndeterminate" />
+              Available Options
+              <div>{{ selectedOptions.length }}/{{ options.length }}</div>
+            </div>
+            <div class="command-args__search"></div>
+            <div class="grid gap-y-10px p-8px content-start">
+              <label
+                v-for="(o, index) in options"
+                :key="index"
+                class="grid grid-cols-[auto,1fr] gap-x-10px items-center select-none"
+              >
+                <input v-model="selectedOptions" type="checkbox" :value="o" />
+                <command-option v-bind="o" v-model="o.modelValue"></command-option>
+              </label>
+            </div>
+            <div class="command-args__footer"></div>
+          </div>
+          <div class="grid self-center gap-y-10px content-start">
+            <button class="btn btn-sm role-primary" :disabled="selectedOptions.length === 0" @click="addOptions">
+              <k-icon type="arrow-right-blod"></k-icon>
+            </button>
+            <button class="btn btn-sm role-primary" :disabled="selectedUsedOptions.length === 0" @click="removeOptions">
+              <k-icon type="arrow-right-blod" direction="left"></k-icon>
+            </button>
+          </div>
+          <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border rounded">
+            <div class="grid grid-cols-[auto,1fr,auto] gap-x-10px items-center bg-gray-100 p-8px">
+              <input v-model="usedOptionsAllSelected" type="checkbox" :indeterminate="usedOptionsIndeterminate" />
+              Used Options
+              <div>{{ selectedUsedOptions.length }}/{{ usedOptions.length }}</div>
+            </div>
+            <div class="command-args__search"></div>
+            <div class="grid gap-y-10px p-8px content-start">
+              <label
+                v-for="(o, index) in usedOptions"
+                :key="index"
+                class="grid grid-cols-[auto,1fr] gap-x-10px items-center select-none"
+              >
+                <input v-model="selectedUsedOptions" type="checkbox" :value="o" />
+                <!-- eslint-disable-next-line vue/v-on-event-hyphenation -->
+                <command-option v-bind="o" @update:modelValue="handleOptionChange(o, $event)"></command-option>
+              </label>
+              <div v-for="(o, index) in customValue" :key="index" class="grid grid-cols-[1fr,auto] items-center">
+                <custom-option v-model="customValue[index]"></custom-option>
+                <k-icon type="close" class="cursor-pointer" @click="removeCustomArg(index)"></k-icon>
+              </div>
+            </div>
+            <div class="command-args__footer mx-[-1px]">
+              <k-input
+                v-model.trim="customCommandArgs"
+                label="Add Custom Args(must start with '-' or '--')"
+                @keyup.enter="addCustemArg"
+              >
+                <template #suffix>
+                  <button class="btn btn-sm role-primary" :disabled="addCustomArgDisabled" @click="addCustemArg">
+                    Add
+                  </button>
+                </template>
+              </k-input>
+            </div>
           </div>
         </div>
-        <div class="command-args__footer mx-[-1px]">
-          <k-input v-model.trim="customCommandArgs" label="Add Custom Args(must start with '-' or '--')" @keyup.enter="addCustemArg">
-            <template #suffix>
-              <button
-                class="btn btn-sm role-primary"
-                :disabled="addCustomArgDisabled"
-                @click="addCustemArg">Add</button>
-            </template>
-          </k-input>
-        </div>
       </div>
-    </div>
+    </teleport>
   </div>
-</teleport>
-</div>
 </template>
 <script>
 const useMinWithModifier = (minWith = '200px') => {
@@ -88,11 +104,11 @@ const useMinWithModifier = (minWith = '200px') => {
   }
 }
 export default {
-  name: 'CommandArgs',
+  name: 'CommandArgs'
 }
 </script>
 <script setup>
-import {computed, watchEffect, ref, watch, nextTick} from 'vue'
+import { computed, watchEffect, ref, watch, nextTick } from 'vue'
 import CommandOption from './CommandOption.vue'
 import CustomOption from './CustomOption.vue'
 import usePopper from '@/composables/usePopper.js'
@@ -101,11 +117,11 @@ import { onClickOutside } from '@vueuse/core'
 const props = defineProps({
   readonly: {
     type: Boolean,
-    default: false,
+    default: false
   },
   required: {
     type: Boolean,
-    default: false,
+    default: false
   },
   label: {
     type: String,
@@ -113,7 +129,7 @@ const props = defineProps({
   },
   desc: {
     type: String,
-    default: '',
+    default: ''
   },
   args: {
     type: Array,
@@ -122,7 +138,7 @@ const props = defineProps({
   modelValue: {
     type: [String, Number, Boolean],
     default: ''
-  },
+  }
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -141,10 +157,10 @@ const popperOption = {
     {
       name: 'offset',
       options: {
-        offset: [ 0, 8],
-      },
+        offset: [0, 8]
+      }
     },
-    minWithModifier,
+    minWithModifier
   ],
   placement: 'bottom-start'
 }
@@ -169,7 +185,7 @@ watch(show, () => {
 const usedOptions = ref([])
 const customValue = ref([])
 const options = computed(() => {
-  return props.args.filter((a) => !usedOptions.value.some((o) => a.long ? a.long === o.long : a.short === o.short))
+  return props.args.filter((a) => !usedOptions.value.some((o) => (a.long ? a.long === o.long : a.short === o.short)))
 })
 
 const selectedOptions = ref([])
@@ -223,7 +239,8 @@ const usedOptionsStr = computed(() => {
   return usedOptions.value
     .filter((o) => !(o.flag && o.modelValue === false))
     .filter((o) => !(o.multiple && !o.modelValue))
-    .map((o) => `${o.long ?? o.short} ${o.flag && o.modelValue === true ? '' : o.modelValue ?? ''}`.trim()).join(' ')
+    .map((o) => `${o.long ?? o.short} ${o.flag && o.modelValue === true ? '' : o.modelValue ?? ''}`.trim())
+    .join(' ')
 })
 const initOptions = () => {
   var reg = /\s+--?/
@@ -231,7 +248,7 @@ const initOptions = () => {
   var str = props.modelValue.trim()
   var index = str.search(reg)
 
-  while(index > -1) {
+  while (index > -1) {
     options.push(str.slice(0, index))
     str = str.substr(index).trim()
     index = str.search(reg)
@@ -248,7 +265,7 @@ const initOptions = () => {
       const v = o.slice(1).join('')
       args.push({
         ...arg,
-        modelValue: arg.flag ? true : v,
+        modelValue: arg.flag ? true : v
       })
       return
     }
@@ -257,13 +274,17 @@ const initOptions = () => {
   usedOptions.value = args
   customValue.value = customArgs
 }
-watch(()=> props.modelValue, (v) => {
-  if (v !== `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim()) {
+watch(
+  () => props.modelValue,
+  (v) => {
+    if (v !== `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim()) {
       initOptions()
+    }
+  },
+  {
+    immediate: true
   }
-}, {
-  immediate: true
-})
+)
 const removeCustomArg = (index) => {
   customValue.value.splice(index, 1)
   emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
@@ -303,7 +324,7 @@ const removeOptions = () => {
 const addOptions = () => {
   usedOptions.value.push(...selectedOptions.value)
   emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
-  selectedOptions.value=[]
+  selectedOptions.value = []
 }
 
 const handlePopperClick = () => {
@@ -316,7 +337,7 @@ const togglePopper = () => {
   show.value = !show.value
 }
 const handleOptionChange = (option, v) => {
-  const o = usedOptions.value.find((o) => o.long ? o.long === option.long : o.short === option.short)
+  const o = usedOptions.value.find((o) => (o.long ? o.long === option.long : o.short === option.short))
   if (o) {
     o.modelValue = v
     emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
@@ -326,8 +347,9 @@ const handleOptionChange = (option, v) => {
 <style>
 .command-args {
   display: grid;
-  grid-template-areas: "label label"
-                       "select suffix";
+  grid-template-areas:
+    'label label'
+    'select suffix';
   grid-template-columns: 1fr auto;
   column-gap: 10px;
   align-items: center;

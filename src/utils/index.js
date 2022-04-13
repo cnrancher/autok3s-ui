@@ -4,21 +4,21 @@ export function cloneDeep(source) {
     return source
   }
 
-  return JSON.parse(JSON.stringify(source));
+  return JSON.parse(JSON.stringify(source))
 }
 export function parseSchemaDefaultValue(field) {
   if (field?.default !== undefined) {
-    return typeof field.default === 'object' ? JSON.parse(JSON.stringify(field.default)) : field.default;
+    return typeof field.default === 'object' ? JSON.parse(JSON.stringify(field.default)) : field.default
   }
   if (field.type === 'string') {
-    return '';
+    return ''
   }
   if (field.type === 'bool') {
-    return false;
+    return false
   }
   return ''
 }
-export function overwriteSchemaDefaultValue (schema, defaultVal, excludeKeys) {
+export function overwriteSchemaDefaultValue(schema, defaultVal, excludeKeys) {
   const newSchema = schema ? JSON.parse(JSON.stringify(schema)) : {}
   if (!defaultVal) {
     return newSchema
@@ -30,28 +30,32 @@ export function overwriteSchemaDefaultValue (schema, defaultVal, excludeKeys) {
     excludeOptionsKeys = excludeKeys.filter((k) => k.startsWith('options.')).map((k) => k.substr(8))
   }
   Object.entries(newSchema.config)
-    .filter(([k, v]) => !excludeConfigKeys.includes(k) && (v.default !== undefined || defaultVal.config[k] !== undefined))
+    .filter(
+      ([k, v]) => !excludeConfigKeys.includes(k) && (v.default !== undefined || defaultVal.config[k] !== undefined)
+    )
     .forEach(([k, v]) => {
       v.default = defaultVal.config[k]
     })
   Object.entries(newSchema.options)
-    .filter(([k, v]) => !excludeOptionsKeys.includes(k) && (v.default !== undefined || defaultVal.options[k] !== undefined))
+    .filter(
+      ([k, v]) => !excludeOptionsKeys.includes(k) && (v.default !== undefined || defaultVal.options[k] !== undefined)
+    )
     .forEach(([k, v]) => {
       v.default = defaultVal.options[k]
     })
-    if (!newSchema.config['k3s-install-script']?.default) {
-      if (!newSchema.config['k3s-install-script']) {
-        newSchema.config['k3s-install-script'] = {}
-      }
-      newSchema.config['k3s-install-script'].default = 'https://get.k3s.io'
+  if (!newSchema.config['k3s-install-script']?.default) {
+    if (!newSchema.config['k3s-install-script']) {
+      newSchema.config['k3s-install-script'] = {}
     }
-    return newSchema
+    newSchema.config['k3s-install-script'].default = 'https://get.k3s.io'
+  }
+  return newSchema
 }
 
-export function convertSchemaToFormAndDesc (schema) {
+export function convertSchemaToFormAndDesc(schema) {
   const form = {
     config: {},
-    options: {},
+    options: {}
   }
   const desc = {
     config: {},
@@ -81,11 +85,11 @@ export function convertSchemaToFormAndDesc (schema) {
   desc.options = optionsDesc
   return {
     form,
-    desc,
+    desc
   }
 }
 
-export function convertSchemaToDesc (schema) {
+export function convertSchemaToDesc(schema) {
   const desc = {
     config: {},
     options: {}
@@ -104,7 +108,7 @@ export function convertSchemaToDesc (schema) {
   desc.config = configDesc
   desc.options = optionsDesc
   return {
-    desc,
+    desc
   }
 }
 
@@ -143,7 +147,7 @@ export function removeCreatingCluster(id) {
 
 export function param(obj) {
   return Object.entries(obj)
-    .map(([k, v]) => [undefined, null].includes(v) ? `${k}` : `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .map(([k, v]) => ([undefined, null].includes(v) ? `${k}` : `${encodeURIComponent(k)}=${encodeURIComponent(v)}`))
     .join('&')
 }
 export function addParams(url, params) {
@@ -154,7 +158,7 @@ export function getBasePath() {
   if (window.__basePath__) {
     return window.__basePath__
   }
-  const baseUrl =  document.querySelector("head > base").href
+  const baseUrl = document.querySelector('head > base').href
   const basePath = `${baseUrl.replace(window.location.origin, '')}`
   window.__basePath__ = basePath
   return window.__basePath__

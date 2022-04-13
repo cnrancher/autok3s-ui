@@ -1,4 +1,4 @@
-import { computed, ref, unref } from "vue"
+import { computed, ref, unref } from 'vue'
 
 export default function usePagination(data) {
   const pageSize = ref(20)
@@ -8,7 +8,7 @@ export default function usePagination(data) {
     if (pageSize.value <= 0 || total.value === 0) {
       return 1
     }
-    return Math.ceil(total.value/pageSize.value)
+    return Math.ceil(total.value / pageSize.value)
   })
   const nextPage = () => {
     if (currentPage.value >= total.value) {
@@ -25,7 +25,7 @@ export default function usePagination(data) {
     return currentPage
   }
   const goToPage = (p) => {
-    if (p<=1 && p >= total.value) {
+    if (p <= 1 && p >= total.value) {
       currentPage.value = p
     }
   }

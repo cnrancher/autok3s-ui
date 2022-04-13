@@ -1,31 +1,31 @@
 @keyframes rotating {
   0% {
-      transform: rotate(0deg)
+    transform: rotate(0deg);
   }
 
   to {
-      transform: rotate(1turn)
+    transform: rotate(1turn);
   }
 }
 @keyframes loading-rotate {
   to {
-      transform: rotate(1turn)
+    transform: rotate(1turn);
   }
 }
 
 .k-icon {
-    width: 1em;
-    height: 1em;
-    mask-repeat: no-repeat;
-    -webkit-mask-repeat: no-repeat;
-    mask-size: cover;
-    -webkit-mask-size: cover;
-    mask-position: center;
-    -webkit-mask-position: center;
-    /* background-color: var(--body-text); */
-    background-color: currentColor;
-    display: inline-block;
-    vertical-align: middle;
+  width: 1em;
+  height: 1em;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: cover;
+  -webkit-mask-size: cover;
+  mask-position: center;
+  -webkit-mask-position: center;
+  /* background-color: var(--body-text); */
+  background-color: currentColor;
+  display: inline-block;
+  vertical-align: middle;
 }
 .k-rotate-up {
   transform: rotate(-90deg);

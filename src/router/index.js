@@ -13,7 +13,7 @@ export const constantRoutes = [
     hidden: true
   },
   clusterExplorerRouter,
-  { path: '/:pathMatch(.*)*', name: 'not-found', hidden: true, component: NotFound },
+  { path: '/:pathMatch(.*)*', name: 'not-found', hidden: true, component: NotFound }
 ]
 
 if (!import.meta.env.PROD) {
@@ -22,7 +22,7 @@ if (!import.meta.env.PROD) {
 
 const router = createRouter({
   history: createWebHistory(getBasePath()),
-  routes: constantRoutes,
+  routes: constantRoutes
 })
 
 export default router

@@ -1,12 +1,12 @@
-import { fetchById } from '@/api/template.js';
-import {reactive, toRefs, watchEffect} from 'vue'
-import {stringify} from '@/utils/error.js'
+import { fetchById } from '@/api/template.js'
+import { reactive, toRefs, watchEffect } from 'vue'
+import { stringify } from '@/utils/error.js'
 
-export default function useCluster (templateId) {
+export default function useCluster(templateId) {
   const state = reactive({
     template: null,
     error: '',
-    loading: false,
+    loading: false
   })
   const fetchTemplate = async () => {
     state.loading = true
@@ -26,6 +26,6 @@ export default function useCluster (templateId) {
   })
   return {
     ...toRefs(state),
-    fetchTemplate,
+    fetchTemplate
   }
 }

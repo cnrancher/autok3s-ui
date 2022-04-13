@@ -1,8 +1,18 @@
 <template>
-  <div ref="toggleRef" class="inline-block relative" :class="{'cursor-not-allowed': disabled}" @[trigger]="toggleDropDown">
+  <div
+    ref="toggleRef"
+    class="inline-block relative"
+    :class="{ 'cursor-not-allowed': disabled }"
+    @[trigger]="toggleDropDown"
+  >
     <slot></slot>
     <teleport to="body" :disabled="!appendToBody">
-      <div v-if="!lazy || show" ref="contentRef" class="absolute z-$popper-z-index border rounded bg-white shadow min-w-160px" :class="{'block': show, 'hidden': !show}">
+      <div
+        v-if="!lazy || show"
+        ref="contentRef"
+        class="absolute z-$popper-z-index border rounded bg-white shadow min-w-160px"
+        :class="{ block: show, hidden: !show }"
+      >
         <slot name="content"></slot>
       </div>
     </teleport>
@@ -10,7 +20,7 @@
 </template>
 <script>
 export default {
-  name: 'KDropdown',
+  name: 'KDropdown'
 }
 </script>
 <script setup>
@@ -29,7 +39,7 @@ const props = defineProps({
   },
   disabled: {
     type: Boolean,
-    default: false,
+    default: false
   },
   appendToBody: {
     type: Boolean,
@@ -61,9 +71,13 @@ const createPopper = () => {
   create()
   update()
 }
-onClickOutside(toggleRef, () => {
-  show.value = false
-}, { event: 'click' })
+onClickOutside(
+  toggleRef,
+  () => {
+    show.value = false
+  },
+  { event: 'click' }
+)
 watch(show, () => {
   if (show.value) {
     nextTick(() => {

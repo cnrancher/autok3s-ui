@@ -1,13 +1,16 @@
 <template>
-  <div
-class="cursor-pointer flex justify-center items-center"
-    @click="goToPrevPage">
-    <span v-if="prevText ">{{ prevText }}</span><k-icon type="arrow-right" direction="left" :class="[prevDisabled ? 'cursor-not-allowed text-gray-300' : '']"></k-icon>
+  <div class="cursor-pointer flex justify-center items-center" @click="goToPrevPage">
+    <span v-if="prevText">{{ prevText }}</span>
+    <k-icon
+      type="arrow-right"
+      direction="left"
+      :class="[prevDisabled ? 'cursor-not-allowed text-gray-300' : '']"
+    ></k-icon>
   </div>
 </template>
 <script>
 export default {
-  name: 'KPrev',
+  name: 'KPrev'
 }
 </script>
 <script setup>
@@ -17,12 +20,12 @@ import { computed } from 'vue'
 const props = defineProps({
   currentPage: {
     type: Number,
-    default: 1,
+    default: 1
   },
   prevText: {
     type: String,
-    default: '',
-  },
+    default: ''
+  }
 })
 
 const emit = defineEmits(['change-current-page'])

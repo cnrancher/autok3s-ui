@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { fetchList } from '@/api/explorer.js'
-import {stringify} from '@/utils/error.js'
+import { stringify } from '@/utils/error.js'
 
 const useExplorerStore = defineStore('explorerStore', {
   state: () => {
@@ -22,7 +22,7 @@ const useExplorerStore = defineStore('explorerStore', {
     async loadData() {
       this.loading = true
       try {
-        const {data} = await fetchList()
+        const { data } = await fetchList()
         this.data = data
         this.error = null
       } catch (err) {
@@ -56,5 +56,3 @@ const useExplorerStore = defineStore('explorerStore', {
 })
 
 export default useExplorerStore
-
-

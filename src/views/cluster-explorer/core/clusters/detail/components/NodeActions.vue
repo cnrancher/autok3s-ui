@@ -2,13 +2,13 @@
   <k-dropdown>
     <button class="btn btn-xs role-tertiary"><k-icon type="ellipsis" direction="down"></k-icon></button>
     <template #content>
-      <div v-if="actions.length === 0"> No Actions </div>
+      <div v-if="actions.length === 0">No Actions</div>
       <k-dropdown-menu v-else>
-          <k-dropdown-menu-item v-for="a in actions" :key="a.command" @click="handleCommand(a.command)">
-            <!-- <k-icon :type="a.icon" color="var(--k-dropdown-text)"></k-icon> -->
-            {{a.label}}
-          </k-dropdown-menu-item>
-        </k-dropdown-menu>
+        <k-dropdown-menu-item v-for="a in actions" :key="a.command" @click="handleCommand(a.command)">
+          <!-- <k-icon :type="a.icon" color="var(--k-dropdown-text)"></k-icon> -->
+          {{ a.label }}
+        </k-dropdown-menu-item>
+      </k-dropdown-menu>
     </template>
   </k-dropdown>
 </template>
@@ -24,30 +24,33 @@ export default {
     },
     cluster: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
   emits: ['exec-command'],
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const actions = computed(() => {
-      if ((props.node['instance-status']?.toLowerCase() === 'running' || props.cluster.provider === 'native') && props.node.standalone !== true) {
+      if (
+        (props.node['instance-status']?.toLowerCase() === 'running' || props.cluster.provider === 'native') &&
+        props.node.standalone !== true
+      ) {
         return [
           {
             label: 'Execute Shell',
             icon: 'terminal',
-            command: 'exec-shell',
-          },
+            command: 'exec-shell'
+          }
         ]
       }
       return []
     })
     const handleCommand = (command) => {
-      emit('exec-command', {command, node: cloneDeep(props.node), cluster: cloneDeep(props.cluster)})
+      emit('exec-command', { command, node: cloneDeep(props.node), cluster: cloneDeep(props.cluster) })
     }
     return {
       actions,
-      handleCommand,
+      handleCommand
     }
-  },
+  }
 }
 </script>

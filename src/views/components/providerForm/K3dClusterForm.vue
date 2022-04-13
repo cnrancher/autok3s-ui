@@ -38,14 +38,14 @@
           </div>
         </template>
       </form-group>
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <k3d-options-form
         :visible="acitiveTab === 'k3s'"
         :form="form"
         :desc="desc"
-        :readonly="readonly">
-      </k3d-options-form>
-      <hr class="section-divider">
+        :readonly="readonly"
+      ></k3d-options-form>
+      <hr class="section-divider" />
       <form-group v-model="visible" :closable="true">
         <template #title>Advance</template>
         <template #default>
@@ -120,9 +120,12 @@
               :readonly="readonly"
             />
           </div>
-          <hr class="section-divider">
+          <hr class="section-divider" />
           <k-alert type="warning">
-            Registry will only work with K3s >= v0.10.0, secure registry need bind mount the TLS file to the K3d container, <a href="https://k3d.io/usage/guides/registries/#secure-registries" target="_blank">more details</a>.
+            Registry will only work with K3s >= v0.10.0, secure registry need bind mount the TLS file to the K3d
+            container,
+            <a href="https://k3d.io/usage/guides/registries/#secure-registries" target="_blank">more details</a>
+            .
           </k-alert>
           <string-form
             v-model.trim="form.config['registry']"
@@ -130,7 +133,7 @@
             :desc="desc.config['registry']"
             :readonly="readonly"
             type="textarea"
-            :style="{resize: 'vertical'}"
+            :style="{ resize: 'vertical' }"
           />
         </template>
       </form-group>
@@ -138,7 +141,7 @@
   </k-tabs>
 </template>
 <script setup>
-import {ref, provide} from 'vue'
+import { ref, provide } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3dOptionsForm from '../baseForm/K3dOptionsForm.vue'
@@ -150,19 +153,19 @@ import { cloneDeep } from '@/utils'
 const props = defineProps({
   schema: {
     type: Object,
-    required: true,
+    required: true
   },
   readonly: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 })
 
 const envs = ref(null)
 const labels = ref(null)
 const volumes = ref(null)
 const ports = ref(null)
-const { form, desc }= useFormFromSchema(props.schema)
+const { form, desc } = useFormFromSchema(props.schema)
 const getForm = () => {
   const f = cloneDeep(form)
   const e = envs.value.getForm()
@@ -182,5 +185,4 @@ const visible = ref(false)
 provide('parentVisible', visible)
 
 defineExpose({ getForm })
-
 </script>

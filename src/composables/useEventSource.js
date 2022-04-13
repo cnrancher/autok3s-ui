@@ -19,7 +19,7 @@ export default function useEventSource(url, eventCallback) {
     eventCallback?.message?.(e)
   }
   const onOpen = (e) => {
-    readyState.value=CONNECTED
+    readyState.value = CONNECTED
     console.log(`EventSource open: ${url}`)
     eventCallback?.open?.(e)
   }

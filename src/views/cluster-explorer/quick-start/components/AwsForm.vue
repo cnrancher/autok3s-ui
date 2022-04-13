@@ -1,15 +1,7 @@
 <template>
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-20px">
-    <string-form
-      v-model.trim="form.config['master']"
-      label="Master"
-      :desc="desc.config['master']"
-    />
-    <string-form
-      v-model.trim="form.config['worker']"
-      label="Worker"
-      :desc="desc.config['worker']"
-    />
+    <string-form v-model.trim="form.config['master']" label="Master" :desc="desc.config['master']" />
+    <string-form v-model.trim="form.config['worker']" label="Worker" :desc="desc.config['worker']" />
     <k-password-input
       v-show="showKeyForm"
       v-model.trim="form.options['access-key']"
@@ -24,22 +16,12 @@
       :desc="desc.options['secret-key']"
       required
     />
-    <string-form
-      v-model.trim="form.options.region"
-      label="Region"
-      :desc="desc.options.region"
-      disabled
-    />
-    <string-form
-      v-model.trim="form.options.zone"
-      label="Zone"
-      :desc="desc.options.zone"
-      disabled
-    />
+    <string-form v-model.trim="form.options.region" label="Region" :desc="desc.options.region" disabled />
+    <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" disabled />
   </div>
 </template>
 <script setup>
-import {computed} from 'vue'
+import { computed } from 'vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
 import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
@@ -47,15 +29,15 @@ import { cloneDeep } from '@/utils'
 const props = defineProps({
   schema: {
     type: Object,
-    required: true,
+    required: true
   },
   hasError: {
     type: Boolean,
-    default: false,
+    default: false
   }
 })
 
-const { form, desc }= useFormFromSchema(props.schema)
+const { form, desc } = useFormFromSchema(props.schema)
 const showKeyForm = computed(() => {
   return props.hasError || !props.schema.options['access-key']?.default || !props.schema.options['secret-key']?.default
 })
@@ -64,5 +46,4 @@ const getForm = () => {
 }
 
 defineExpose({ getForm })
-
 </script>

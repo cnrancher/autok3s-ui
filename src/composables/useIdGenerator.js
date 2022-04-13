@@ -8,6 +8,6 @@ export default function useIdGnerator(start = 0) {
   }
   return {
     next,
-    reset,
+    reset
   }
 }

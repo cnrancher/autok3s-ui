@@ -1,21 +1,13 @@
 <template>
-  <label
-    class="k-radio"
-    :class="{disabled: isDisabled}">
-    <input
-      ref="radioRef"
-      v-model="model"
-      type="radio"
-      :value="label"
-      :name="name"
-      :disabled="isDisabled"
-      > &nbsp;
-    <slot>{{label}}</slot>
+  <label class="k-radio" :class="{ disabled: isDisabled }">
+    <input ref="radioRef" v-model="model" type="radio" :value="label" :name="name" :disabled="isDisabled" />
+    &nbsp;
+    <slot>{{ label }}</slot>
   </label>
 </template>
 <script>
 export default {
-  name: 'KRadio',
+  name: 'KRadio'
 }
 </script>
 <script setup>
@@ -24,17 +16,17 @@ import { computed, inject, ref } from 'vue'
 const props = defineProps({
   modelValue: {
     type: [String, Number, Boolean],
-    default: '',
+    default: ''
   },
   label: {
     type: [String, Number, Boolean],
-    default: '',
+    default: ''
   },
   disabled: Boolean,
   name: {
     type: String,
-    default: '',
-  },
+    default: ''
+  }
 })
 
 const emit = defineEmits(['update:modelValue'])

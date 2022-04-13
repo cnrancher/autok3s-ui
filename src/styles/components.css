@@ -1,7 +1,10 @@
 @layer components {
-  .disabled, [disabled] {
+  .disabled,
+  [disabled] {
     @apply !bg-gray-200 cursor-not-allowed text-gray-500;
-    & label, & input, & select {
+    & label,
+    & input,
+    & select {
       @apply cursor-not-allowed;
     }
   }

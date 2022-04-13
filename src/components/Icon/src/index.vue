@@ -3,7 +3,7 @@
 </template>
 <script>
 export default {
-  name: 'KIcon',
+  name: 'KIcon'
 }
 </script>
 <script setup>
@@ -12,7 +12,7 @@ import { computed } from 'vue'
 const props = defineProps({
   type: {
     type: String,
-    required: true,
+    required: true
   },
   color: {
     type: String,
@@ -20,17 +20,15 @@ const props = defineProps({
   },
   size: {
     type: Number,
-    default: -1,
+    default: -1
   },
   direction: {
     type: String,
     default: ''
-  },
+  }
 })
 const cssClass = computed(() => {
-  const c = [
-    `k-icon-${props.type}`,
-  ]
+  const c = [`k-icon-${props.type}`]
   if (props.direction) {
     c.push(`k-rotate-${props.direction}`)
   }

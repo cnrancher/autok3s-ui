@@ -1,19 +1,18 @@
 <template>
-<teleport to="body">
-  <div class="bg-white fixed grid gap-10px z-$notification-z-index" :class="positionClass">
-    <div v-for="item in events" :key="item.id">
-      <slot name="body" :event="item">
-        <div class="k-notification__content" :class="[`k-notification--${item.type}`]">
-          <div class="k-notification__title">{{item.title}}</div>
-          <k-icon class="k-notification__close" type="close" @click="removeEvent(item.id, group)"></k-icon>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <div class="k-notification__message" v-html="DOMPurify.sanitize(item.content)">
+  <teleport to="body">
+    <div class="bg-white fixed grid gap-10px z-$notification-z-index" :class="positionClass">
+      <div v-for="item in events" :key="item.id">
+        <slot name="body" :event="item">
+          <div class="k-notification__content" :class="[`k-notification--${item.type}`]">
+            <div class="k-notification__title">{{ item.title }}</div>
+            <k-icon class="k-notification__close" type="close" @click="removeEvent(item.id, group)"></k-icon>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div class="k-notification__message" v-html="DOMPurify.sanitize(item.content)"></div>
           </div>
-        </div>
-      </slot>
+        </slot>
+      </div>
     </div>
-  </div>
-</teleport>
+  </teleport>
 </template>
 <script>
 export default {
@@ -24,7 +23,7 @@ export default {
 import { computed } from 'vue'
 import KIcon from '@/components/Icon'
 import useNotificationStore from '@/store/useNotificationStore.js'
-import DOMPurify from 'dompurify';
+import DOMPurify from 'dompurify'
 
 const props = defineProps({
   position: {
@@ -33,11 +32,11 @@ const props = defineProps({
   },
   closeOnClick: {
     type: Boolean,
-    default: true,
+    default: true
   },
   group: {
     type: String,
-    default: 'default',
+    default: 'default'
   }
 })
 const positionClass = computed(() => {
@@ -88,8 +87,9 @@ const removeEvent = (id, group) => {
 }
 .k-notification__content {
   display: grid;
-  grid-template-areas: "title close"
-                       "content content";
+  grid-template-areas:
+    'title close'
+    'content content';
   grid-template-columns: 1fr auto;
   row-gap: 10px;
   padding: 10px 10px;
@@ -110,7 +110,8 @@ const removeEvent = (id, group) => {
 .k-notification__message {
   grid-area: content;
 }
-.k-notification--warn, .k-notification--warning{
+.k-notification--warn,
+.k-notification--warning {
   @apply bg-$warning-banner-bg border-l-4px border-$warning;
 }
 .k-notification--success {

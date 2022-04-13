@@ -32,9 +32,9 @@
               :desc="desc.options['disk-size']"
               :readonly="readonly"
             >
-            <template #suffix>Gi</template>
+              <template #suffix>Gi</template>
             </string-form>
-             <string-form
+            <string-form
               v-model.number="form.options['disk-bus']"
               label="Disk Bus"
               :desc="desc.options['disk-bus']"
@@ -46,15 +46,15 @@
               :desc="desc.options['image-name']"
               :readonly="readonly"
             />
-            
+
             <string-form
               v-model.number="form.options['keypair-name']"
               label="Keypair Name"
               :desc="desc.options['keypair-name']"
               :readonly="readonly"
             />
-            
-             <string-form
+
+            <string-form
               v-model.number="form.options['vm-namespace']"
               label="VM Namespace"
               :desc="desc.options['vm-namespace']"
@@ -65,25 +65,23 @@
               class="col-span-1 sm:col-span-2"
               label="Kubeconfig"
               :desc="desc.options['kubeconfig-content']"
-              :options="{readOnly: readonly}"
+              :options="{ readOnly: readonly }"
               :visible="instanceTabVisible"
             />
-             <yaml-config-form
+            <yaml-config-form
               v-model="form.options['user-data']"
               class="col-span-1 sm:col-span-2"
               label="User Data"
               :desc="desc.options['user-data']"
-              :options="{readOnly: readonly}"
+              :options="{ readOnly: readonly }"
               :visible="instanceTabVisible"
             />
           </div>
         </template>
       </form-group>
-      <hr class="section-divider">
-      <form-group v-model="networkConfigVisible" :closable="true" >
-        <template #title>
-          Network
-        </template>
+      <hr class="section-divider" />
+      <form-group v-model="networkConfigVisible" :closable="true">
+        <template #title>Network</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <string-form
@@ -118,13 +116,13 @@
               class="col-span-1 sm:col-span-2"
               label="Network Data"
               :desc="desc.options['network-data']"
-              :options="{readOnly: readonly}"
+              :options="{ readOnly: readonly }"
               :visible="networkConfigVisible"
             />
           </div>
         </template>
       </form-group>
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <form-group>
         <template #title>SSH</template>
         <template #default>
@@ -147,9 +145,12 @@
               :desc="desc.config['ssh-key-path']"
               :readonly="readonly"
             />
-            <div class="cursor-pointer grid grid-cols-[auto,auto,1fr] gap-x-10px items-end justify-end" @click="toggleVisible">
+            <div
+              class="cursor-pointer grid grid-cols-[auto,auto,1fr] gap-x-10px items-end justify-end"
+              @click="toggleVisible"
+            >
               <div>Advance</div>
-              <a class="text-$link">{{visible ? 'Hide':'Show'}}</a>
+              <a class="text-$link">{{ visible ? 'Hide' : 'Show' }}</a>
               <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
             </div>
             <div v-show="visible" class="contents">
@@ -187,8 +188,8 @@
         :visible="acitiveTab === 'k3s'"
         :form="form"
         :desc="desc"
-        :readonly="readonly">
-      </k3s-options-form>
+        :readonly="readonly"
+      ></k3s-options-form>
     </k-tab-pane>
     <k-tab-pane label="Additional Options" name="additional">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
@@ -214,7 +215,7 @@
   </k-tabs>
 </template>
 <script setup>
-import { ref, computed, watch} from 'vue'
+import { ref, computed, watch } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
@@ -230,30 +231,34 @@ const needDecodeOptionKeys = ['kubeconfig-content', 'network-data', 'user-data']
 const props = defineProps({
   schema: {
     type: Object,
-    required: true,
+    required: true
   },
   readonly: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 })
 
 const { form, desc } = useFormFromSchema(props.schema)
 // decode options
-watch(() => form.options, () => {
-  needDecodeOptionKeys.forEach((k) => {
-    const v = form.options[k]
-    if (v) {
-      form.options[k] = Base64.decode(v)
-    }
-  })
-}, {
-  immediate: true,
-})
+watch(
+  () => form.options,
+  () => {
+    needDecodeOptionKeys.forEach((k) => {
+      const v = form.options[k]
+      if (v) {
+        form.options[k] = Base64.decode(v)
+      }
+    })
+  },
+  {
+    immediate: true
+  }
+)
 
 const diskSize = computed({
   get() {
-    return parseSi(form.options['disk-size'], { increment: 1024 }) / (1024 ** 3)
+    return parseSi(form.options['disk-size'], { increment: 1024 }) / 1024 ** 3
   },
   set(v) {
     form.options['disk-size'] = `${v}Gi`
@@ -261,7 +266,7 @@ const diskSize = computed({
 })
 const memorySize = computed({
   get() {
-    return parseSi(form.options['memory-size'], { increment: 1024 }) / (1024 ** 3)
+    return parseSi(form.options['memory-size'], { increment: 1024 }) / 1024 ** 3
   },
   set(v) {
     form.options['memory-size'] = `${v}Gi`
@@ -283,7 +288,7 @@ const uiOptions = computed({
 })
 const getForm = () => {
   const f = cloneDeep(form)
-  
+
   return f
 }
 const acitiveTab = ref('instance')
@@ -298,5 +303,4 @@ const instanceTabVisible = computed(() => {
 })
 
 defineExpose({ getForm })
-
 </script>

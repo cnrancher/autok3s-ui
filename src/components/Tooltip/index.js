@@ -3,5 +3,5 @@ import tooltip from './src/index.vue'
 
 const Tooltip = withInstall(tooltip)
 
-export {Tooltip}
+export { Tooltip }
 export default Tooltip

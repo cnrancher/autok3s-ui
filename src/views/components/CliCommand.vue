@@ -1,13 +1,11 @@
 <template>
   <k-modal v-model="modalVisible">
-      <template #title>Create Cluster Command</template>
-      <template #default>
-        <div v-if="registryContent">
-          <div class="grid grid-cols-1 gap-y-10px mb-10px">
-            <div>
-             1. You are using registry config, please save the following content as a file.
-            </div>
-            <pre class="relative bg-gray-100 p-10px">
+    <template #title>Create Cluster Command</template>
+    <template #default>
+      <div v-if="registryContent">
+        <div class="grid grid-cols-1 gap-y-10px mb-10px">
+          <div>1. You are using registry config, please save the following content as a file.</div>
+          <pre class="relative bg-gray-100 p-10px">
 {{registryContent}}
 <div class="absolute top-0 right-0 grid grid-flow-col gap-x-10px items-center">
   <k-tooltip append-to-body :delay="0">
@@ -19,40 +17,46 @@
     <template #popover>Copy Regisrty Content</template>
   </k-tooltip>
 </div></pre>
-          </div>
         </div>
-        <div class="max-w-80vw grid grid-cols-1 gap-y-10px">
-          <div v-if="registryContent">
-          2. Please replace the following <span class="text-red-500">{{registryPlaceholder}}</span> as a real file path that you have saved at first step.
-          </div>
-          <code class="p-10px rounded border bg-gray-100 m-5px relative">
-            <div class="absolute top-0 right-0 grid grid-flow-col gap-x-10px items-center">
-              <k-tooltip append-to-body :delay="0">
-                <k-icon type="clone" class="cursor-pointer" @click="copyCmd"></k-icon>
-                <template #popover>Copy CLI Command</template>
-              </k-tooltip>
-            </div>
-            <span class="text-purple-700">autok3s</span>&nbsp;<span class="cli-command__sub-cmd">create</span>
-            <template v-for="(o, index) in cmdOptions" :key="index">
-              <span class="text-blue-700">&nbsp;{{o.option}}</span>
-              <span v-if="o.value" class="cli-command__value break-all" :class="optionValueClass(o.value)">&nbsp;{{o.value}}</span>
-            </template>
-            <template v-if="registryContent">
-              <span class="text-blue-700">&nbsp;--registry </span>
-              <span class="cli-command__value break-all text-red-500">{{registryPlaceholder}}</span>
-            </template>
-          </code>
-          <!-- <code>{{createCmd}} <span class="text-red-500" v-if="registryContent">--registry {{registryPlaceholder}}</span></code> -->
+      </div>
+      <div class="max-w-80vw grid grid-cols-1 gap-y-10px">
+        <div v-if="registryContent">
+          2. Please replace the following
+          <span class="text-red-500">{{ registryPlaceholder }}</span>
+          as a real file path that you have saved at first step.
         </div>
-      </template>
-      <template #footer>
-        <k-button class="role-secondary" @click="hideModal">Cancel</k-button>
-        <!-- <button class="btn bg-primary" @click="copyCmd">Copy</button> -->
-      </template>
-    </k-modal>
+        <code class="p-10px rounded border bg-gray-100 m-5px relative">
+          <div class="absolute top-0 right-0 grid grid-flow-col gap-x-10px items-center">
+            <k-tooltip append-to-body :delay="0">
+              <k-icon type="clone" class="cursor-pointer" @click="copyCmd"></k-icon>
+              <template #popover>Copy CLI Command</template>
+            </k-tooltip>
+          </div>
+          <span class="text-purple-700">autok3s</span>
+          &nbsp;
+          <span class="cli-command__sub-cmd">create</span>
+          <template v-for="(o, index) in cmdOptions" :key="index">
+            <span class="text-blue-700">&nbsp;{{ o.option }}</span>
+            <span v-if="o.value" class="cli-command__value break-all" :class="optionValueClass(o.value)">
+              &nbsp;{{ o.value }}
+            </span>
+          </template>
+          <template v-if="registryContent">
+            <span class="text-blue-700">&nbsp;--registry</span>
+            <span class="cli-command__value break-all text-red-500">{{ registryPlaceholder }}</span>
+          </template>
+        </code>
+        <!-- <code>{{createCmd}} <span class="text-red-500" v-if="registryContent">--registry {{registryPlaceholder}}</span></code> -->
+      </div>
+    </template>
+    <template #footer>
+      <k-button class="role-secondary" @click="hideModal">Cancel</k-button>
+      <!-- <button class="btn bg-primary" @click="copyCmd">Copy</button> -->
+    </template>
+  </k-modal>
 </template>
 <script setup>
-import {computed} from 'vue'
+import { computed } from 'vue'
 import Clipboard from 'clipboard'
 import { Base64 } from 'js-base64'
 import useNotificationStore from '@/store/useNotificationStore.js'
@@ -135,7 +139,7 @@ const cmdOptions = computed(() => {
   let optionEntries = Object.entries(props.clusterForm.options)
   // encode kubeconfig-content, network-data, user-data to base64 for harvester provider
   if (props.clusterForm.provider === 'harvester') {
-    ['kubeconfig-content', 'network-data', 'user-data'].forEach((k) => {
+    ;['kubeconfig-content', 'network-data', 'user-data'].forEach((k) => {
       const e = optionEntries.find(([key]) => key === k)
       const value = e[1]
       if (value) {
@@ -143,7 +147,7 @@ const cmdOptions = computed(() => {
       }
     })
   }
-  const options = [ ['--provider', provider], ...configEntries, ...optionEntries]
+  const options = [['--provider', provider], ...configEntries, ...optionEntries]
     .filter(([k, v]) => filterArgs(k, v))
     .reduce((t, [k, v]) => {
       if (arrayArgs.includes(k)) {
@@ -171,10 +175,12 @@ const cmdOptions = computed(() => {
 })
 
 const createCmd = computed(() => {
-  const options = cmdOptions.value.reduce((t, {option, value}) => {
-    t.push(`${option} ${value}`.trim())
-    return t
-  }, []).join(' ')
+  const options = cmdOptions.value
+    .reduce((t, { option, value }) => {
+      t.push(`${option} ${value}`.trim())
+      return t
+    }, [])
+    .join(' ')
 
   return `autok3s create ${options}`.trim()
 })
@@ -189,12 +195,12 @@ const optionValueClass = (v) => {
 
 const copyCmd = async () => {
   try {
-    await toClipboard(`${createCmd.value}${registryContent.value ? ` --registry ${registryPlaceholder}`:''}`)
+    await toClipboard(`${createCmd.value}${registryContent.value ? ` --registry ${registryPlaceholder}` : ''}`)
     notificationStore.notify({
       type: 'success',
-      title: 'CLI Command Copied',
+      title: 'CLI Command Copied'
     })
-  } catch(e) {
+  } catch (e) {
     notificationStore.notify({
       type: 'error',
       title: 'CLI Command Copy Failed',
@@ -204,13 +210,13 @@ const copyCmd = async () => {
 }
 
 const copyRegistryContent = async () => {
-    try {
+  try {
     await toClipboard(registryContent.value)
-      notificationStore.notify({
+    notificationStore.notify({
       type: 'success',
-      title: 'Registry Content Copied',
+      title: 'Registry Content Copied'
     })
-  } catch(e) {
+  } catch (e) {
     notificationStore.notify({
       type: 'error',
       title: 'Registry Content Copy Failed',
@@ -227,7 +233,7 @@ function toClipboard(text, action = 'copy', appendToBody = false) {
     const fakeElement = document.createElement('button')
     const clipboard = new Clipboard(fakeElement, {
       text: () => text,
-      action: () => action,
+      action: () => action
     })
     clipboard.on('success', (e) => {
       clipboard.destroy()
@@ -248,8 +254,8 @@ function toClipboard(text, action = 'copy', appendToBody = false) {
   })
 }
 
-function downloadFile (content, fileName) {
-  const blob = new Blob([content], { type: 'text/plain' });
+function downloadFile(content, fileName) {
+  const blob = new Blob([content], { type: 'text/plain' })
   const a = document.createElement('a')
   const objUrl = window.URL.createObjectURL(blob)
   a.setAttribute('download', fileName)
@@ -262,6 +268,4 @@ function downloadFile (content, fileName) {
 .cli-command__number {
   color: #164;
 }
-
-
 </style>

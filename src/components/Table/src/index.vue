@@ -8,25 +8,28 @@
       :state="state"
       @order-change="onOrderChange"
       @selection-change="onSelectionChange"
-      >
+    >
       <template #default>
         <slot></slot>
       </template>
       <template v-if="$slots.group" #group="p">
-        <slot name="group" v-bind="p">
-        </slot>
+        <slot name="group" v-bind="p"></slot>
       </template>
       <template v-if="$slots.error" #state-error>
-        <slot name="error">
-        </slot>
+        <slot name="error"></slot>
       </template>
     </base-table>
-    <pagination v-if="showPagination" v-model:current-page="currentPage" :total="total" :page-size="pageSize"></pagination>
+    <pagination
+      v-if="showPagination"
+      v-model:current-page="currentPage"
+      :total="total"
+      :page-size="pageSize"
+    ></pagination>
   </div>
 </template>
 <script>
 export default {
-  name: 'KTable',
+  name: 'KTable'
 }
 </script>
 <script setup>
@@ -40,11 +43,11 @@ import { toRefs, computed } from 'vue'
 const props = defineProps({
   caption: {
     type: String,
-    default: '',
+    default: ''
   },
   showHeader: {
     type: Boolean,
-    default: true,
+    default: true
   },
   data: {
     type: Array,
@@ -61,13 +64,13 @@ const props = defineProps({
   showPagination: {
     type: Boolean,
     default: true
-  },
+  }
 })
 
 const emit = defineEmits(['selection-change'])
 
-const {data} = toRefs(props)
-const {fields, orders, dataOrder} = useDataOrder(data)
+const { data } = toRefs(props)
+const { fields, orders, dataOrder } = useDataOrder(data)
 const onOrderChange = (column, order) => {
   if (props.groupBy) {
     fields.value = [props.groupBy, column.field]
@@ -81,7 +84,7 @@ const onSelectionChange = (rows) => {
   emit('selection-change', rows)
 }
 
-const {pageData, currentPage, total, pageSize } = usePagination(dataOrder)
+const { pageData, currentPage, total, pageSize } = usePagination(dataOrder)
 
 const tableData = computed(() => {
   if (props.showPagination) {

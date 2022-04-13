@@ -1,6 +1,6 @@
 import { unref } from 'vue'
-import { createPopper } from '@popperjs/core';
-import { onBeforeUnmount } from 'vue';
+import { createPopper } from '@popperjs/core'
+import { onBeforeUnmount } from 'vue'
 // import { createPopper } from '@popperjs/core/lib/popper-lite'
 // import {
 //   popperGenerator,
@@ -32,6 +32,6 @@ export default function usePopper(target, content, option = { placement: 'bottom
   return {
     remove,
     update,
-    create,
+    create
   }
 }

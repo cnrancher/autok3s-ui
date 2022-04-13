@@ -1,18 +1,19 @@
 <template>
   <dropdown-menu-item
     :class="[currentValue.includes(value) ? 'text-white bg-warm-gray-400' : 'text-light-blue-500']"
-    @click="setValue">
-    {{label ?? value}}
+    @click="setValue"
+  >
+    {{ label ?? value }}
   </dropdown-menu-item>
 </template>
 <script>
 export default {
-  name: 'KOption',
+  name: 'KOption'
 }
 </script>
 <script setup>
 import { inject, getCurrentInstance, onBeforeUnmount, computed } from 'vue'
-import { DropdownMenuItem }from '@/components/Dropdown'
+import { DropdownMenuItem } from '@/components/Dropdown'
 
 defineProps({
   label: {
@@ -60,7 +61,5 @@ const setValue = (e) => {
     selectEmit('change', currentOption.value)
     selectEmit('update:modelValue', currentOption.value)
   }
-  
 }
-
 </script>

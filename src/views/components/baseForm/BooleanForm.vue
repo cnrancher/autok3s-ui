@@ -1,16 +1,10 @@
 <template>
   <k-select v-bind="$attrs" :disabled="readonly">
-    <k-option
-      v-for=" option in options"
-      :key="option.value"
-      :label="option.label"
-      :value="option.value"
-    >
-    </k-option>
+    <k-option v-for="option in options" :key="option.value" :label="option.label" :value="option.value"></k-option>
   </k-select>
 </template>
 <script>
-import {defineComponent} from 'vue'
+import { defineComponent } from 'vue'
 import { computed } from 'vue'
 export default defineComponent({
   name: 'BooleanForm',
@@ -21,7 +15,7 @@ export default defineComponent({
     },
     trueValue: {
       type: [String, Boolean],
-      default: true,
+      default: true
     },
     falseLabel: {
       type: String,
@@ -29,7 +23,7 @@ export default defineComponent({
     },
     falseValue: {
       type: [String, Boolean],
-      default: false,
+      default: false
     },
     readonly: {
       type: Boolean,
@@ -38,17 +32,20 @@ export default defineComponent({
   },
   setup(props) {
     const options = computed(() => {
-      return [{
-        label: props.trueLabel,
-        value: props.trueValue
-      },{
-        label: props.falseLabel,
-        value: props.falseValue
-      }]
+      return [
+        {
+          label: props.trueLabel,
+          value: props.trueValue
+        },
+        {
+          label: props.falseLabel,
+          value: props.falseValue
+        }
+      ]
     })
     return {
       options
     }
-  },
+  }
 })
 </script>

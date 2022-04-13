@@ -12,5 +12,4 @@
 <script setup>
 import CredentialTable from './components/CredentialTable.vue'
 // import PageHeader from '@/views/components/PageHeader.vue'
-
 </script>

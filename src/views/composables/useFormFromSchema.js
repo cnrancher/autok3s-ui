@@ -1,14 +1,14 @@
-import { reactive, watchEffect } from "vue"
+import { reactive, watchEffect } from 'vue'
 
 function parseSchemaDefaultValue(field) {
   if (field?.default !== undefined) {
-    return typeof field.default === 'object' ? JSON.parse(JSON.stringify(field.default)) : field.default;
+    return typeof field.default === 'object' ? JSON.parse(JSON.stringify(field.default)) : field.default
   }
   if (field.type === 'string') {
-    return '';
+    return ''
   }
   if (field.type === 'bool') {
-    return false;
+    return false
   }
   if (field.type === 'map') {
     return {}
@@ -23,7 +23,7 @@ export default function useFormFromSchema(schema) {
   const form = reactive({
     provider: '',
     config: {},
-    options: {},
+    options: {}
   })
   const desc = reactive({
     provider: '',
@@ -58,7 +58,7 @@ export default function useFormFromSchema(schema) {
   })
   return {
     form,
-    desc,
+    desc
   }
 }
 
@@ -84,6 +84,6 @@ export function useDescFromSchema(schema) {
     desc.options = optionsDesc
   })
   return {
-    desc,
+    desc
   }
 }

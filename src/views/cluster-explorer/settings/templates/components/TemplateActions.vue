@@ -2,13 +2,13 @@
   <k-dropdown>
     <button class="btn btn-xs role-tertiary"><k-icon type="ellipsis" :size="16" direction="down"></k-icon></button>
     <template #content>
-      <div v-if="actions.length === 0"> No Actions </div>
+      <div v-if="actions.length === 0">No Actions</div>
       <k-dropdown-menu v-else>
-          <k-dropdown-menu-item v-for="a in actions" :key="a.command" @click="handleCommand(a.command)">
-            <!-- <k-icon :type="a.icon" color="var(--dropdown-text)"></k-icon> -->
-            {{a.label}}
-          </k-dropdown-menu-item>
-        </k-dropdown-menu>
+        <k-dropdown-menu-item v-for="a in actions" :key="a.command" @click="handleCommand(a.command)">
+          <!-- <k-icon :type="a.icon" color="var(--dropdown-text)"></k-icon> -->
+          {{ a.label }}
+        </k-dropdown-menu-item>
+      </k-dropdown-menu>
     </template>
   </k-dropdown>
 </template>
@@ -24,7 +24,7 @@ export default {
     }
   },
   emits: ['exec-command'],
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const actions = computed(() => {
       const actions = [
         {
@@ -46,7 +46,7 @@ export default {
           label: 'Edit',
           icon: 'editor',
           command: 'edit'
-        },
+        }
       ]
       if (props.template['status']) {
         actions.splice(1, 1)
@@ -64,17 +64,16 @@ export default {
           command: 'setDefault'
         })
       }
-      
+
       return actions
     })
     const handleCommand = (command) => {
-      emit('exec-command', {command, data: [cloneDeep(props.template)]})
+      emit('exec-command', { command, data: [cloneDeep(props.template)] })
     }
     return {
       actions,
-      handleCommand,
+      handleCommand
     }
-  },
+  }
 }
 </script>
-
