@@ -8,6 +8,18 @@ platform:
   arch: amd64
 
 steps:
+- name: lint
+  image: node:lts
+  commands:
+  - npm install
+  - npm run lint
+  when:
+    branch:
+    - main
+    event:
+    - push
+    - pull_request
+
 - name: build
   image: node:lts
   commands:
