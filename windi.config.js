@@ -1,6 +1,6 @@
 import { defineConfig } from 'windicss/helpers'
 // import formsPlugin from 'windicss/plugin/forms'
-import plugin from 'windicss/plugin'
+// import plugin from 'windicss/plugin'
 
 export default defineConfig({
   theme: {

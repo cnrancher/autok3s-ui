@@ -1,8 +1,9 @@
 import vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import WindiCSS from 'vite-plugin-windicss'
 import { loadEnv } from 'vite'
-import { resolve } from 'path'
+import { fileURLToPath, URL } from 'url'
 
 /**
  * @type {import('vite').UserConfig}
@@ -15,6 +16,7 @@ export default ({ command, mode }) => {
   return {
     plugins: [
       vue(),
+      vueJsx(),
       WindiCSS(),
       createHtmlPlugin({
         inject: {
@@ -27,7 +29,9 @@ export default ({ command, mode }) => {
       })
     ],
     resolve: {
-      alias: [{ find: '@', replacement: resolve(__dirname, './src') }]
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url))
+      }
     },
     define: {
       __VERSION__: JSON.stringify(packageVersion)
