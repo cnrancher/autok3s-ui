@@ -1,11 +1,11 @@
 <template>
-  <teleport to="body">
+  <teleport to="body" :disabled="teleportDisabled">
     <div
       v-if="visible"
-      class="grid items-center justify-center z-$modal-z-index overflow-auto absolute top-0 left-0 bottom-0 right-0 bg-[rgba(0,0,0,.5)]"
+      class="bg-[rgba(0,0,0,.5)] z-$modal-z-index grid top-0 right-0 bottom-0 left-0 items-center justify-center overflow-auto absolute"
     >
-      <div class="min-w-1/3 bg-white">
-        <div class="flex justify-between items-center pt-20px pb-10px px-20px">
+      <div class="bg-white min-w-1/3 max-w-95vw">
+        <div class="flex px-20px pt-20px pb-10px justify-between items-center">
           <div class="text-18px">
             <slot name="title">
               <span>{{ title }}</span>
@@ -17,7 +17,7 @@
         <div class="py-30px px-20px">
           <slot></slot>
         </div>
-        <div class="py-10px px-20px grid grid-flow-col gap-10px items-center justify-end">
+        <div class="grid grid-flow-col py-10px px-20px gap-10px items-center justify-end">
           <slot name="footer"></slot>
         </div>
       </div>
@@ -39,6 +39,10 @@ const props = defineProps({
     required: true
   },
   showClose: {
+    type: Boolean,
+    default: false
+  },
+  teleportDisabled: {
     type: Boolean,
     default: false
   }

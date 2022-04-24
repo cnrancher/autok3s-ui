@@ -18,7 +18,7 @@
         v-model="searchQuery"
         type="search"
         placeholder="Filter"
-        class="cluster-table__search focus-visible:outline-none px-12px rounded border hover:bg-gray-100"
+        class="border rounded px-12px cluster-table__search hover:bg-gray-100 focus-visible:outline-none"
       />
     </div>
     <k-grouped-table :data="groupData" :group-by="groupBy" @selection-change="handleSelectionChange">
@@ -52,7 +52,7 @@
         </template>
       </k-table-column>
       <template #error="error">
-        <div class="justify-center flex-col items-center">
+        <div class="flex-col justify-center items-center">
           <div>
             Load
             <span class="text-error">{{ error.group }}</span>
@@ -92,16 +92,6 @@
         <k-button class="role-danger" @click="deleteClusters(commandParams)">Delete</k-button>
       </template>
     </k-modal>
-    <join-node-modal
-      v-if="joinNodeModalVisible"
-      v-model="joinNodeModalVisible"
-      :cluster-id="clusterId"
-    ></join-node-modal>
-    <cli-command
-      v-if="clusterForm && cliModalVisible"
-      v-model:visible="cliModalVisible"
-      :cluster-form="clusterForm"
-    ></cli-command>
   </div>
 </template>
 <script setup>
@@ -112,6 +102,7 @@ import ClusterBulkActions from './ClusterBulkActions.vue'
 import ClusterStateTag from './ClusterStateTag.vue'
 import ExplorerLink from './ExplorerLink.vue'
 import JoinNodeModal from './JoinNodeModal.vue'
+import ViewKubeconfigModal from './ViewKubeconfigModal.vue'
 import { RadioGroup, RadioButton } from '@/components/Radio'
 import CliCommand from '@/views/components/CliCommand.vue'
 import useDataSearch from '@/composables/useDataSearch.js'
@@ -124,6 +115,7 @@ import { computed, ref, watchEffect } from 'vue'
 import { GroupedTable as KGroupedTable } from '@/components/Table'
 import useNotificationStore from '@/store/useNotificationStore.js'
 import useWindownManagerStore from '@/store/useWindowManagerStore.js'
+import useModal from '@/composables/useModal.js'
 
 const router = useRouter()
 const providerClusterStores = useProviderClusterStores()
@@ -250,11 +242,6 @@ const groupData = computed(() => {
 const notificationStore = useNotificationStore()
 const wmStore = useWindownManagerStore()
 
-const joinNodeModalVisible = ref(false)
-// generate cli command
-const cliModalVisible = ref(false)
-const clusterForm = ref(null)
-
 const selectedClusters = ref([])
 const handleSelectionChange = (rows) => {
   selectedClusters.value = rows
@@ -264,11 +251,15 @@ const groupBy = ref('provider')
 
 const commandParams = ref([])
 
-// join node
-const clusterId = ref('')
-
 // delete cluster
 const confirmModalVisible = ref(false)
+// join node
+const { show: showJoinNode } = useModal(JoinNodeModal)
+// generate cli command
+const { show: showCliCommand } = useModal(CliCommand)
+// show kubeconfig
+const { show: showKubeconfig } = useModal(ViewKubeconfigModal)
+
 const handleCommand = ({ command, data }) => {
   const [cluster] = data
   switch (command) {
@@ -289,8 +280,8 @@ const handleCommand = ({ command, data }) => {
       })
       break
     case 'joinNode':
-      clusterId.value = cluster.id
-      joinNodeModalVisible.value = true
+      showJoinNode({ clusterId: cluster.id })
+
       break
     case 'clone':
     case 'edit':
@@ -323,8 +314,7 @@ const handleCommand = ({ command, data }) => {
 
           const schema = overwriteSchemaDefaultValue(provider, defaultVal)
           const { form } = useFormFromSchema(schema)
-          clusterForm.value = form
-          cliModalVisible.value = true
+          showCliCommand({ clusterForm: form })
         })
         .catch((err) => {
           if (err) {
@@ -365,6 +355,9 @@ const handleCommand = ({ command, data }) => {
             })
           }
         })
+      break
+    case 'downloadKubeConfig':
+      showKubeconfig({ clusterId: cluster.id })
       break
   }
 }

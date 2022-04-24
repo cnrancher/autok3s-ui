@@ -78,6 +78,12 @@ export default {
           })
         }
 
+        actions.push({
+          label: 'Download KubeConfig',
+          icon: 'terminal',
+          command: 'downloadKubeConfig'
+        })
+
         return actions
       }
       if (['upgrading', 'creating'].includes(status)) {

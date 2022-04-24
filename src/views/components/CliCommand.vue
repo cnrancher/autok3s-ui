@@ -3,11 +3,11 @@
     <template #title>Create Cluster Command</template>
     <template #default>
       <div v-if="registryContent">
-        <div class="grid grid-cols-1 gap-y-10px mb-10px">
+        <div class="mb-10px grid gap-y-10px grid-cols-1">
           <div>1. You are using registry config, please save the following content as a file.</div>
-          <pre class="relative bg-gray-100 p-10px">
+          <pre class="bg-gray-100 p-10px relative">
 {{registryContent}}
-<div class="absolute top-0 right-0 grid grid-flow-col gap-x-10px items-center">
+<div class="grid grid-flow-col top-0 right-0 gap-x-10px absolute items-center">
   <k-tooltip append-to-body :delay="0">
     <k-icon type="download" @click="downloadRegistryContent"></k-icon>
     <template #popover>Download Regisrty Content</template>
@@ -19,14 +19,14 @@
 </div></pre>
         </div>
       </div>
-      <div class="max-w-80vw grid grid-cols-1 gap-y-10px">
+      <div class="max-w-80vw grid gap-y-10px grid-cols-1">
         <div v-if="registryContent">
           2. Please replace the following
           <span class="text-red-500">{{ registryPlaceholder }}</span>
           as a real file path that you have saved at first step.
         </div>
-        <code class="p-10px rounded border bg-gray-100 m-5px relative">
-          <div class="absolute top-0 right-0 grid grid-flow-col gap-x-10px items-center">
+        <code class="border rounded bg-gray-100 m-5px p-10px relative">
+          <div class="grid grid-flow-col top-0 right-0 gap-x-10px absolute items-center">
             <k-tooltip append-to-body :delay="0">
               <k-icon type="clone" class="cursor-pointer" @click="copyCmd"></k-icon>
               <template #popover>Copy CLI Command</template>
@@ -43,7 +43,7 @@
           </template>
           <template v-if="registryContent">
             <span class="text-blue-700">&nbsp;--registry</span>
-            <span class="cli-command__value break-all text-red-500">{{ registryPlaceholder }}</span>
+            <span class="text-red-500 cli-command__value break-all">{{ registryPlaceholder }}</span>
           </template>
         </code>
         <!-- <code>{{createCmd}} <span class="text-red-500" v-if="registryContent">--registry {{registryPlaceholder}}</span></code> -->
@@ -51,7 +51,7 @@
     </template>
     <template #footer>
       <k-button class="role-secondary" @click="hideModal">Cancel</k-button>
-      <!-- <button class="btn bg-primary" @click="copyCmd">Copy</button> -->
+      <!-- <button class="bg-primary btn" @click="copyCmd">Copy</button> -->
     </template>
   </k-modal>
 </template>
@@ -72,7 +72,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:visible'])
+const emit = defineEmits(['update:visible', 'close'])
 
 const notificationStore = useNotificationStore()
 const registryPlaceholder = '<registry-path>'
@@ -187,6 +187,7 @@ const createCmd = computed(() => {
 
 const hideModal = () => {
   emit('update:visible', false)
+  emit('close')
 }
 
 const optionValueClass = (v) => {

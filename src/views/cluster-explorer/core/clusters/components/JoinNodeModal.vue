@@ -3,7 +3,7 @@
     <template #title>Join Node</template>
     <template #default>
       <k-loading :loading="loading">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
+        <div class="grid gap-10px grid-cols-1 sm:grid-cols-2">
           <div>Desired Master Nodes: {{ desiredNodes.master }}</div>
           <div>Desired Worker Nodes: {{ desiredNodes.worker }}</div>
           <template v-if="provider === 'native'">
@@ -35,7 +35,7 @@
               :desc="nativeProviderSchema?.config?.['ssh-key-path']?.description"
             />
             <div
-              class="cursor-pointer grid grid-cols-[auto,auto,1fr] gap-x-10px items-center justify-items-end"
+              class="cursor-pointer grid gap-x-10px grid-cols-[auto,auto,1fr] items-center justify-items-end"
               @click="sshAdvanceVisible = !sshAdvanceVisible"
             >
               <div>Advance</div>
@@ -76,7 +76,7 @@
       </k-loading>
     </template>
     <template #footer>
-      <k-button class="role-secondary" @click="visible = false">Cancel</k-button>
+      <k-button class="role-secondary" @click="close">Cancel</k-button>
       <k-button class="role-primary" :loading="loading" @click="save">Save</k-button>
     </template>
   </k-modal>
@@ -122,7 +122,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'close'])
 
 const notificationStore = useNotificationStore()
 const sshAdvanceVisible = ref(false)
@@ -251,7 +251,10 @@ const validate = () => {
   }
   return errors.length === 0
 }
-
+const close = () => {
+  visible.value = false
+  emit('close')
+}
 const save = async () => {
   if (!validate()) {
     return

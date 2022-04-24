@@ -68,3 +68,11 @@ export function enableExplorer(data) {
     data
   })
 }
+
+export function fetchKubeconfig(data) {
+  return request({
+    url: `/clusters/${data.id}?action=download-kubeconfig`,
+    method: 'post',
+    data
+  })
+}
