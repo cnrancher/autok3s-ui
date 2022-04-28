@@ -34,13 +34,7 @@ function removeOption(state) {
 
 function setValue(state) {
   return (value) => {
-    const option = state.options.find((item) => item.value === value)
-    if (option) {
-      state.value = value
-      return true
-    }
-    state.value = null
-    return false
+    state.value = value
   }
 }
 function setValues(state) {
@@ -50,14 +44,9 @@ function setValues(state) {
     }
     if (values.length === 0) {
       state.values = []
-      return true
-    }
-    const option = values.every((item) => state.options.find((o) => o.value === item))
-    if (option) {
+    } else {
       state.values = [...values]
-      return true
     }
-    return false
   }
 }
 

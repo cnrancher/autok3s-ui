@@ -3,7 +3,7 @@
     <div class="k-select__label">
       <label v-if="label" :for="inputId">
         {{ label }}
-        <sup v-if="required" class="text-red-500 top-0">*</sup>
+        <sup v-if="required" class="top-0 text-red-500">*</sup>
       </label>
       <tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
@@ -14,7 +14,7 @@
       <slot name="prefix">{{ prefix }}</slot>
     </div>
     <dropdown
-      class="k-select__trigger"
+      class="k-select__trigger group"
       :option="popperOption"
       :append-to-body="false"
       :disabled="disabled"
@@ -24,7 +24,7 @@
       <div v-if="multiple" class="flex">
         <span v-if="selectdOptions.length === 0" class="text-warm-gray-400">{{ placeholder }}</span>
         <template v-else>
-          <k-tag v-for="o in selectdOptions" :key="o.value" class="flex items-center m-r-2px" type="info">
+          <k-tag v-for="o in selectdOptions" :key="o.value" class="flex m-r-2px items-center" type="info">
             {{ o.label }}
             <k-icon v-if="!disabled" type="close" class="cursor-pointer" @click.stop="removeOption(o.value)"></k-icon>
           </k-tag>
@@ -36,14 +36,22 @@
         autocomplete="off"
         readonly
         :disabled="disabled || loading"
-        class="cursor-pointer overflow-ellipsis focus-visible:outline-none bg-transparent"
+        class="bg-transparent cursor-pointer overflow-ellipsis focus-visible:outline-none"
         :class="[!label ? 'py-10.5px px-0' : '', visible ? 'text-warm-gray-400' : '']"
         v-bind="$attrs"
         :value="selectedOption?.label"
         :placeholder="placeholder"
       />
       <k-icon v-if="loading" type="loading"></k-icon>
-      <k-icon v-else type="arrow-right-blod" direction="down"></k-icon>
+      <template v-else>
+        <k-icon type="arrow-right-blod" :class="[clearable ? 'group-hover:hidden' : '']" direction="down"></k-icon>
+        <k-icon
+          type="close"
+          class="hidden"
+          :class="[clearable ? 'group-hover:inline-block' : '']"
+          @click.stop="clear"
+        ></k-icon>
+      </template>
       <template #content>
         <slot></slot>
       </template>
@@ -120,6 +128,10 @@ const props = defineProps({
   desc: {
     type: String,
     default: ''
+  },
+  clearable: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -131,12 +143,35 @@ provide('multiple', props.multiple)
 provide('selectEmit', emit)
 const inputId = getId()
 const selectdOptions = computed(() => {
-  return selectStore.getter.activeOptions
+  const v = props.modelValue
+  const selected = selectStore.getter.activeOptions
+  if (v && selected) {
+    return selected
+  }
+  if (v) {
+    return v.map((item) => ({
+      label: `${item}(No Option Matched)`
+    }))
+  }
+  return selected
 })
 const selectedOption = computed(() => {
-  return selectStore.getter.activeOption
+  const selected = selectStore.getter.activeOption
+  if (selected) {
+    return selected
+  }
+  const v = props.modelValue
+  if (v) {
+    return {
+      label: v
+    }
+  }
+  return selected
 })
-
+const clear = () => {
+  emit('update:modelValue', '')
+  emit('change', '')
+}
 watch(
   [() => props.modelValue, () => props.loading],
   ([modelValue, loading]) => {
@@ -151,6 +186,7 @@ watch(
         }
         return
       }
+
       if (modelValue !== selectStore.state.value) {
         selectStore.action.setValue(modelValue)
         return
@@ -196,7 +232,7 @@ const handleVisibleChange = (v) => {
     'prefix select suffix';
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
-  @apply p-8px rounded border;
+  @apply border rounded p-8px;
 }
 .k-select:not(.disabled):hover {
   @apply bg-gray-100;
@@ -204,7 +240,7 @@ const handleVisibleChange = (v) => {
 
 .k-select__label {
   grid-area: label;
-  @apply grid gap-x-10px items-center grid-cols-[max-content,auto] text-warm-gray-500;
+  @apply grid grid-cols-[max-content,auto] text-warm-gray-500 gap-x-10px items-center;
   width: fit-content;
 }
 .k-select__prefix {
@@ -213,7 +249,7 @@ const handleVisibleChange = (v) => {
 }
 .k-select__suffix {
   grid-area: suffix;
-  @apply flex items-center text-warm-gray-500 pl-8px border-l border-warm-gray-600 leading-1 font-400;
+  @apply border-l flex border-warm-gray-600 font-400 pl-8px text-warm-gray-500 leading-1 items-center;
 }
 .k-select__trigger {
   grid-area: select;

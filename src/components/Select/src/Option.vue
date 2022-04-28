@@ -58,8 +58,10 @@ const setValue = (e) => {
       selectEmit('update:modelValue', v)
     }
   } else {
-    selectEmit('change', currentOption.value)
-    selectEmit('update:modelValue', currentOption.value)
+    if (currentValue.value[0] !== currentOption.value) {
+      selectEmit('change', currentOption.value)
+      selectEmit('update:modelValue', currentOption.value)
+    }
   }
 }
 </script>
