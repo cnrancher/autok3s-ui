@@ -77,7 +77,7 @@ export default defineComponent({
     )
     const templateMessageHandler = useDebounceMessage(
       handleWebsocketMessage({
-        'resource.change': useTemplateStore.update,
+        'resource.change': templateStore.update,
         'resource.create': templateStore.add,
         'resource.remove': (t) => {
           templateStore.remove(t?.id)
