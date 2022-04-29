@@ -30,7 +30,7 @@ export default function usePagination(data) {
     }
   }
   const pageData = computed(() => {
-    return unref(data).slice(currentPage.value * pageSize.value - 1, currentPage.value * pageSize.value)
+    return unref(data).slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
   })
   return {
     goToPage,
