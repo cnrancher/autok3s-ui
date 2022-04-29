@@ -56,7 +56,6 @@ export default defineComponent({
         return Math.min(props.currentPage, pageCount.value)
       },
       set(page) {
-        console.log(page)
         emit('update:current-page', page)
         emit('current-change', page)
       }
