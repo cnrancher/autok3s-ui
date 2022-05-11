@@ -27,7 +27,8 @@ const props = defineProps({
 
 defineEmits(['close', 'select'])
 const data = toRef(props.imageInfo, 'data')
-const { arch: defaultArch = ['x86_64'], query = '' } = toRef(props, 'imageInfo')
+// eslint-disable-next-line
+const { arch: defaultArch = ['x86_64'], query = '' } = props.imageInfo
 const { pageData, currentPage, total, pageSize } = usePagination(data)
 pageSize.value = 10
 const searchQuery = ref(query)

@@ -67,7 +67,7 @@
               label="Instance Type"
               :desc="desc.options['instance-type']"
               :disabled="readonly"
-              :loading="instanceTypeInfo.loading"
+              :loading="instanceTypeInfo.loading || imageDetail.loading"
               clearable
             >
               <KOption v-for="t in instanceTypeInfo.data" :key="t.value" :value="t.value" :label="t.label"></KOption>
@@ -98,6 +98,8 @@
                       fetchImages,
                       onSelect: (e) => {
                         form.options['ami'] = e.ImageId
+                        // form.options['instance-type'] = ''
+                        fetchInstanceTypes('', form.options.region, [e.Architecture])
                       }
                     })
                   "
@@ -221,12 +223,23 @@
         <template #subtitle>Params used to login to instance via ssh, e.g. key-pair, ssh user, ssh port</template>
         <template #default>
           <div class="grid gap-10px grid-cols-1 sm:grid-cols-2">
-            <string-form
+            <!-- <string-form
               v-model.trim="form.options['keypair-name']"
               label="Keypair Name"
               :desc="desc.options['keypair-name']"
               :readonly="readonly"
-            />
+            /> -->
+            <KSelect
+              v-model="form.options['keypair-name']"
+              label="Keypair Name"
+              placeholder="Select a key pair ..."
+              :desc="desc.options['keypair-name']"
+              :disabled="readonly"
+              :loading="keyPairInfo.loading"
+              clearable
+            >
+              <KOption v-for="v in keyPairInfo.data" :key="v.value" :value="v.value" :label="v.label"></KOption>
+            </KSelect>
             <string-form
               v-model.trim="form.config['ssh-user']"
               label="SSH User"
@@ -385,7 +398,6 @@ defineExpose({
 
 // aws sdk
 const { show: showSearchImageModal } = useModal(AwsImagesSearchModalVue)
-
 const {
   defaultRegions,
   volumeTypes,
@@ -396,6 +408,8 @@ const {
   subnetInfo,
   securityGroupInfo,
   imageInfo,
+  imageDetail,
+  keyPairInfo,
   validateKeys,
   fetchZones,
   fetchInstanceTypes,
@@ -405,7 +419,9 @@ const {
   resetAll,
   resetSubnetInfo,
   resetSecurityGroupInfo,
-  fetchImages
+  fetchImages,
+  fetchImageById,
+  fetchKeyPairs
 } = useAwsSdk()
 
 const validateCredentials = () => {
@@ -414,16 +430,43 @@ const validateCredentials = () => {
 
 const errors = computed(() => {
   return [
-    ...new Set([zoneInfo.error, instanceTypeInfo.error, vpcInfo.error, subnetInfo.error, securityGroupInfo.error])
+    ...new Set([
+      zoneInfo.error,
+      instanceTypeInfo.error,
+      vpcInfo.error,
+      subnetInfo.error,
+      securityGroupInfo.error,
+      imageDetail.error
+    ])
   ].filter((e) => e)
 })
 
-const loadInstanceTypes = () => {
-  if (instanceTypeInfo.loading) {
+const loadInstanceTypes = async () => {
+  if (instanceTypeInfo.loading || imageDetail.loading) {
     return
   }
-  fetchInstanceTypes(instanceTypeInfo.nextToken, form.options.region)
+
+  if (imageDetail.data?.ImageId === form.options['ami']) {
+    fetchInstanceTypes(instanceTypeInfo.nextToken, form.options.region, [imageDetail.data?.Architecture])
+  } else {
+    await fetchImageById(form.options.region, form.options['ami'])
+    if (!imageDetail.error) {
+      fetchInstanceTypes(instanceTypeInfo.nextToken, form.options.region, [imageDetail.data?.Architecture])
+    }
+  }
 }
+
+const reLoadInstanceTypes = async (region) => {
+  if (imageDetail.data?.ImageId === form.options['ami']) {
+    fetchInstanceTypes('', region, [imageDetail.data?.Architecture])
+  } else {
+    await fetchImageById(region, form.options['ami'])
+    if (!imageDetail.error) {
+      fetchInstanceTypes('', region, [imageDetail.data?.Architecture])
+    }
+  }
+}
+
 const loadVpcs = () => {
   if (vpcInfo.loading) {
     return
@@ -486,7 +529,7 @@ watch(
   ([tab, readonly], [oldTab]) => {
     if (
       readonly === false &&
-      (!oldTab || oldTab !== 'credential') &&
+      (!oldTab || tab !== 'credential') &&
       (keyInfo.accessKey !== form.options['access-key'] ||
         keyInfo.secretKey !== form.options['secret-key'] ||
         keyInfo.region !== form.options.region)
@@ -499,14 +542,16 @@ watch(
 
 watch(
   () => keyInfo.valid,
-  (valid) => {
+  async (valid) => {
     if (valid) {
       const region = form.options.region
       const zone = form.options.zone
       const vpcId = form.options['vpc-id']
+
       if (region) {
+        fetchKeyPairs(region)
         fetchZones(region)
-        fetchInstanceTypes('', region)
+        reLoadInstanceTypes(region)
         fetchVpcs('', region)
       }
       if (region && vpcId) {
