@@ -6,7 +6,8 @@ import {
   DescribeVpcsCommand,
   DescribeSubnetsCommand,
   DescribeSecurityGroupsCommand,
-  DescribeImagesCommand
+  DescribeImagesCommand,
+  DescribeKeyPairsCommand
   // DescribeFastLaunchImagesCommand
   // DescribeAccountAttributesCommand
 } from '@aws-sdk/client-ec2'
@@ -88,6 +89,7 @@ export default function useAwsSdk() {
     region: '',
     loading: false,
     loaded: false,
+    arch: ['arm64', 'i386', 'x86_64'],
     nextToken: '',
     data: []
   })
@@ -124,6 +126,23 @@ export default function useAwsSdk() {
     volumeTypes: [],
     arch: ['x86_64'],
     query: '',
+    loading: false,
+    loaded: true,
+    error: null,
+    data: []
+  })
+
+  const imageDetail = reactive({
+    region: '',
+    imageId: '',
+    loading: false,
+    loaded: true,
+    error: null,
+    data: null
+  })
+
+  const keyPairInfo = reactive({
+    region: '',
     loading: false,
     loaded: true,
     error: null,
@@ -206,27 +225,39 @@ export default function useAwsSdk() {
     zoneInfo.loading = false
     zoneInfo.loaded = true
   }
-  const fetchInstanceTypes = async (nextToken, r) => {
+  const fetchInstanceTypes = async (nextToken, r, arch = ['arm64', 'i386', 'x86_64']) => {
     const tmpRegion = r ?? region.value
+
     if (nextToken && instanceTypeInfo.region !== tmpRegion) {
       instanceTypeInfo.error = 'Region has changed, no further instance types information is available'
       return false
     }
+    if (
+      nextToken &&
+      (arch.length !== instanceTypeInfo.arch.length || arch.some((item) => !instanceTypeInfo.arch.includes(item)))
+    ) {
+      instanceTypeInfo.error = 'Architecture has changed, no further instance types information is available'
+      return false
+    }
     instanceTypeInfo.region = tmpRegion
+    instanceTypeInfo.arch = arch
 
     const ec2client = new EC2Client({
       credentials: credentials.value,
       region: instanceTypeInfo.region
     })
-    const input = {}
+
+    instanceTypeInfo.loading = true
+    instanceTypeInfo.loaded = false
+
+    const input = { Filters: [{ Name: 'processor-info.supported-architecture', Values: [...arch] }] }
     if (nextToken) {
       input.NextToken = nextToken
     } else {
       instanceTypeInfo.data = []
       instanceTypeInfo.nextToken = ''
     }
-    instanceTypeInfo.loading = true
-    instanceTypeInfo.loaded = false
+
     try {
       const data = await ec2client.send(new DescribeInstanceTypesCommand(input))
       const d = data.InstanceTypes.map((t) => ({
@@ -385,6 +416,46 @@ export default function useAwsSdk() {
     securityGroupInfo.loaded = true
   }
 
+  const fetchImageById = async (r, imageId) => {
+    if (imageDetail.data?.ImageId === imageId) {
+      return
+    }
+    const tmpRegion = r ?? region.value
+
+    const ec2client = new EC2Client({
+      credentials: credentials.value,
+      region: tmpRegion
+    })
+
+    const filters = [
+      {
+        Name: 'image-id',
+        Values: [imageId]
+      }
+    ]
+    const input = {
+      IncludeDeprecated: false,
+      Filters: filters
+    }
+    imageDetail.data = null
+    imageDetail.loading = true
+    imageDetail.loaded = false
+    try {
+      const data = await ec2client.send(new DescribeImagesCommand(input))
+
+      if (data.Images?.length === 0) {
+        imageDetail.error = `Not found image by id(${imageId})`
+        imageDetail.data = null
+      } else {
+        imageDetail.data = data.Images[0]
+      }
+    } catch (err) {
+      imageDetail.error = err?.message ?? err
+    }
+    imageDetail.loading = false
+    imageDetail.loaded = true
+  }
+
   const fetchImages = async (r, volumeTypes = [], arch = [], query = '') => {
     const tmpRegion = r ?? region.value
     imageInfo.region = tmpRegion
@@ -485,9 +556,37 @@ export default function useAwsSdk() {
     imageInfo.loaded = true
   }
 
+  const fetchKeyPairs = async (r) => {
+    const tmpRegion = r ?? region.value
+
+    keyPairInfo.region = tmpRegion
+    keyPairInfo.data = []
+
+    const ec2client = new EC2Client({
+      credentials: credentials.value,
+      region: keyPairInfo.region
+    })
+
+    const input = {}
+    keyPairInfo.loading = true
+    keyPairInfo.loaded = false
+    try {
+      const data = await ec2client.send(new DescribeKeyPairsCommand(input))
+      keyPairInfo.data = data.KeyPairs.map((item) => ({
+        label: item.KeyName,
+        value: item.KeyName
+      }))
+    } catch (err) {
+      keyPairInfo.error = err?.message ?? err
+    }
+    keyPairInfo.loading = false
+    keyPairInfo.loaded = true
+  }
+
   const fetchAll = async (r, z, vpcId) => {
-    return await Promise.allSettled([
+    return await Promise.all([
       fetchZones(r),
+      fetchKeyPairs(r),
       fetchInstanceTypes('', r),
       fetchVpcs('', r),
       fetchSubnets('', r, z, vpcId),
@@ -514,6 +613,7 @@ export default function useAwsSdk() {
     resetSubnetInfo()
     resetSecurityGroupInfo()
     resetImageInfo()
+    resetKeyPairInfo()
   }
 
   const resetZoneInfo = () => {
@@ -569,6 +669,13 @@ export default function useAwsSdk() {
     imageInfo.data = []
   }
 
+  const resetKeyPairInfo = () => {
+    keyPairInfo.region = ''
+    keyPairInfo.loaded = false
+    keyPairInfo.loading = false
+    keyPairInfo.data = []
+  }
+
   return {
     accessKey,
     secretKey,
@@ -585,6 +692,8 @@ export default function useAwsSdk() {
     subnetInfo: readonly(subnetInfo),
     securityGroupInfo: readonly(securityGroupInfo),
     imageInfo: readonly(imageInfo),
+    imageDetail: readonly(imageDetail),
+    keyPairInfo: readonly(keyPairInfo),
     validateKeys,
     fetchRegions,
     fetchZones,
@@ -592,6 +701,7 @@ export default function useAwsSdk() {
     fetchVpcs,
     fetchSubnets,
     fetchSecrityGroups,
+    fetchKeyPairs,
     fetchAll,
     resetAll,
     resetZoneInfo,
@@ -600,6 +710,8 @@ export default function useAwsSdk() {
     resetSubnetInfo,
     resetSecurityGroupInfo,
     resetImageInfo,
-    fetchImages
+    resetKeyPairInfo,
+    fetchImages,
+    fetchImageById
   }
 }
