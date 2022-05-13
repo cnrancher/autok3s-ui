@@ -1,6 +1,5 @@
 <template>
-  <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
-  <input style="display: none" autocomplete="new-password" type="password" />
+  <KAlert v-for="e in errors" :key="e" type="error" :title="e"></KAlert>
   <k-tabs v-model="acitiveTab" tab-position="left">
     <k-tab-pane label="Instance Options" name="instance">
       <form-group>
@@ -17,14 +16,16 @@
               label="CPU Count"
               :desc="desc.options['cpu-count']"
               :readonly="readonly"
-            />
+            >
+              <template #suffix>C</template>
+            </string-form>
             <string-form
               v-model.number="memorySize"
               label="Memory Size"
               :desc="desc.options['memory-size']"
               :readonly="readonly"
             >
-              <template #suffix>Gi</template>
+              <template #suffix>GiB</template>
             </string-form>
             <string-form
               v-model.number="diskSize"
@@ -32,34 +33,72 @@
               :desc="desc.options['disk-size']"
               :readonly="readonly"
             >
-              <template #suffix>Gi</template>
+              <template #suffix>GiB</template>
             </string-form>
-            <string-form
-              v-model.number="form.options['disk-bus']"
+            <!-- <string-form
+              v-model.trim="form.options['disk-bus']"
               label="Disk Bus"
               :desc="desc.options['disk-bus']"
               :readonly="readonly"
-            />
-            <string-form
+            /> -->
+            <KSelect
+              v-model="form.options['disk-bus']"
+              label="Disk Bus"
+              :desc="desc.options['disk-bus']"
+              :disabled="readonly"
+              clearable
+            >
+              <KOption v-for="o in interfaceOption" :key="o.value" :value="o.value" :label="o.label"></KOption>
+            </KSelect>
+            <!-- <string-form
               v-model.number="form.options['image-name']"
               label="Image Name"
               :desc="desc.options['image-name']"
               :readonly="readonly"
-            />
+            /> -->
 
-            <string-form
-              v-model.number="form.options['keypair-name']"
+            <k-combo-box
+              v-model.trim="form.options['image-name']"
+              label="Image Name"
+              :desc="desc.options['image-name']"
+              :disabled="readonly"
+              :options="imageInfo.data"
+              :loading="imageInfo.loading"
+              placeholder="Please Select Or Input..."
+            ></k-combo-box>
+
+            <!-- <string-form
+              v-model.trim="form.options['keypair-name']"
               label="Keypair Name"
               :desc="desc.options['keypair-name']"
               :readonly="readonly"
-            />
+            /> -->
 
-            <string-form
-              v-model.number="form.options['vm-namespace']"
+            <k-combo-box
+              v-model.trim="form.options['keypair-name']"
+              label="Keypair Name"
+              :desc="desc.options['keypair-name']"
+              :disabled="readonly"
+              :options="keyPairInfo.data"
+              :loading="keyPairInfo.loading"
+              placeholder="Please Select Or Input..."
+            ></k-combo-box>
+
+            <!-- <string-form
+              v-model.trim="form.options['vm-namespace']"
               label="VM Namespace"
               :desc="desc.options['vm-namespace']"
               :readonly="readonly"
-            />
+            /> -->
+            <k-combo-box
+              v-model.trim="form.options['vm-namespace']"
+              label="VM Namespace"
+              :desc="desc.options['vm-namespace']"
+              :disabled="readonly"
+              :options="namespaceInfo.data"
+              :loading="namespaceInfo.loading"
+              placeholder="Please Select Or Input..."
+            ></k-combo-box>
             <yaml-config-form
               v-model="form.options['kubeconfig-content']"
               class="col-span-1 sm:col-span-2"
@@ -75,7 +114,21 @@
               :desc="desc.options['user-data']"
               :options="{ readOnly: readonly }"
               :visible="instanceTabVisible"
-            />
+              @clear="userDataTemplate = ''"
+            >
+              <template v-if="userData.length > 0" #default>
+                <KSelect
+                  v-model="userDataTemplate"
+                  placeholder="Select a template..."
+                  label="User Data Template"
+                  :disabled="readonly"
+                  clearable
+                  @change="userDataTemplateChange($event)"
+                >
+                  <KOption v-for="o in userData" :key="o.value" :value="o.value" :label="o.label"></KOption>
+                </KSelect>
+              </template>
+            </yaml-config-form>
           </div>
         </template>
       </form-group>
@@ -85,32 +138,42 @@
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <string-form
-              v-model.number="form.options['network-name']"
+              v-model.trim="form.options['network-name']"
               label="Network Name"
               :desc="desc.options['network-name']"
               :readonly="readonly"
             />
-            <string-form
+            <!-- <string-form
               v-model.number="form.options['network-model']"
               label="Network Model"
               :desc="desc.options['network-model']"
               :readonly="readonly"
-            />
+            /> -->
+            <KSelect
+              v-model="form.options['network-model']"
+              label="Network Model"
+              :desc="desc.options['network-model']"
+              :disabled="readonly"
+              clearable
+            >
+              <KOption v-for="o in networkMode" :key="o.value" :value="o.value" :label="o.label"></KOption>
+            </KSelect>
             <string-form
               v-model.number="form.options['network-type']"
               label="Network Type"
               :desc="desc.options['network-type']"
               :readonly="readonly"
             />
-            <k-select
+            <KSelect
               v-model="form.options['interface-type']"
               :desc="desc.options['interface-type']"
               label="Interface Type"
               :disabled="readonly"
             >
-              <k-option value="bridge" label="bridge"></k-option>
-              <k-option value="masquerade" label="masquerade"></k-option>
-            </k-select>
+              <!-- <k-option value="bridge" label="bridge"></k-option>
+              <k-option value="masquerade" label="masquerade"></k-option> -->
+              <KOption v-for="o in interfaceType" :key="o.value" :value="o.value" :label="o.label"></KOption>
+            </KSelect>
             <yaml-config-form
               v-model="form.options['network-data']"
               class="col-span-1 sm:col-span-2"
@@ -118,7 +181,21 @@
               :desc="desc.options['network-data']"
               :options="{ readOnly: readonly }"
               :visible="networkConfigVisible"
-            />
+              @clear="networkDataTemplate = ''"
+            >
+              <template v-if="networkData.length > 0" #default>
+                <KSelect
+                  v-model="networkDataTemplate"
+                  placeholder="Select a template..."
+                  label="Network Data Template"
+                  :disabled="readonly"
+                  clearable
+                  @change="networkDataTemplateChange($event)"
+                >
+                  <KOption v-for="o in networkData" :key="o.value" :value="o.value" :label="o.label"></KOption>
+                </KSelect>
+              </template>
+            </yaml-config-form>
           </div>
         </template>
       </form-group>
@@ -215,7 +292,7 @@
   </k-tabs>
 </template>
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
@@ -225,6 +302,7 @@ import useFormFromSchema from '../../composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
 import { parseSi } from '@/utils/units'
 import { Base64 } from 'js-base64'
+import useHarvesterSdk from './hooks/useHarvesterSdk.js'
 
 const needDecodeOptionKeys = ['kubeconfig-content', 'network-data', 'user-data']
 
@@ -286,6 +364,58 @@ const uiOptions = computed({
     form.config.enable = v
   }
 })
+const interfaceOption = ref([
+  {
+    label: 'VirtIO',
+    value: 'virtio'
+  },
+  {
+    label: 'SATA',
+    value: 'sata'
+  },
+  {
+    label: 'SCSI',
+    value: 'scsi'
+  }
+])
+const networkMode = ref([
+  {
+    label: 'virtio',
+    value: 'virtio'
+  },
+  {
+    label: 'e1000',
+    value: 'e1000'
+  },
+  {
+    label: 'e1000e',
+    value: 'e1000e'
+  },
+  {
+    label: 'ne2k_pci',
+    value: 'ne2k_pci'
+  },
+  {
+    label: 'pcnet',
+    value: 'pcnet'
+  },
+  {
+    label: 'rtl8139',
+    value: 'rtl8139'
+  }
+])
+
+const interfaceType = ref([
+  {
+    label: 'masquerade',
+    value: 'masquerade'
+  },
+  {
+    label: 'bridge',
+    value: 'bridge'
+  }
+])
+
 const getForm = () => {
   const f = cloneDeep(form)
 
@@ -303,4 +433,63 @@ const instanceTabVisible = computed(() => {
 })
 
 defineExpose({ getForm })
+
+// use harvester sdk
+const userDataTemplate = ref('')
+const networkDataTemplate = ref('')
+const {
+  whitelistInfo,
+  configInfo,
+  isConfigValid,
+  namespaceInfo,
+  imageInfo,
+  keyPairInfo,
+  userData,
+  networkData,
+  fetchData,
+  resetAll
+} = useHarvesterSdk()
+const errors = computed(() => {
+  return [
+    ...new Set([whitelistInfo.error, configInfo.error, namespaceInfo.error, imageInfo.error, keyPairInfo.error])
+  ].filter((e) => e)
+})
+
+watch(
+  [() => form.options['kubeconfig-content'], () => props.readonly],
+  ([v, readonly]) => {
+    if (readonly) {
+      return
+    }
+    configInfo.value = v
+    userDataTemplate.value = ''
+    networkDataTemplate.value = ''
+    nextTick(() => {
+      if (isConfigValid.value) {
+        fetchData()
+      } else {
+        resetAll()
+      }
+    })
+  },
+  { immediate: true }
+)
+const userDataTemplateChange = (v) => {
+  if (!v) {
+    return
+  }
+  const d = userData.value.find((item) => item.value === v)
+  if (d) {
+    form.options['user-data'] = d.data.data?.cloudInit ?? ''
+  }
+}
+const networkDataTemplateChange = (v) => {
+  if (!v) {
+    return
+  }
+  const d = networkData.value.find((item) => item.value === v)
+  if (d) {
+    form.options['network-data'] = d.data.data?.cloudInit ?? ''
+  }
+}
 </script>
