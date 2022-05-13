@@ -10,7 +10,8 @@
         <template #popover>{{ desc }}</template>
       </k-tooltip>
     </div>
-    <div v-if="!options?.readOnly" class="grid justify-self-end grid-flow-col gap-x-10px">
+    <div v-if="!options?.readOnly" class="grid justify-self-end grid-flow-col gap-x-10px items-center">
+      <div v-if="$slots.default"><slot></slot></div>
       <k-button type="input" class="btn-sm role-primary justify-self-end" @click="clearContent">Clear</k-button>
       <k-button type="input" class="btn-sm role-primary" @click.stop.prevent="triggerSelectFile">
         <k-icon type="upload"></k-icon>
@@ -90,7 +91,7 @@ export default defineComponent({
       default: true
     }
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'clear'],
   setup(props, { emit }) {
     const themeStore = useThemeStore()
     const notificationStore = useNotificationStore()
@@ -200,6 +201,7 @@ export default defineComponent({
 
     const clearContent = () => {
       emit('update:modelValue', '')
+      emit('clear')
       nextTick(() => {
         codemirror?.focus()
       })

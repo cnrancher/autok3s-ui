@@ -43,6 +43,9 @@ export default ({ command, mode }) => {
         '/v1': {
           target: 'http://localhost:8080',
           ws: true
+        },
+        '/meta/proxy': {
+          target: 'http://localhost:8080'
         }
       }
     },

@@ -44,6 +44,7 @@
           :desc="desc.config['k3s-install-script']"
           :disabled="readonly"
           :options="installScriptOptions"
+          placeholder="Please Select Or Input..."
         ></k-combo-box>
       </div>
     </template>

@@ -41,10 +41,10 @@
             v-for="(v, index) in options"
             :key="index"
             class="k-combo-box__option"
-            :class="[modelValue === v ? 'text-white bg-warm-gray-400' : '']"
-            @click="setValue(v)"
+            :class="[modelValue === v?.value ?? v ? 'text-white bg-warm-gray-400' : '']"
+            @click="setValue(v?.value ?? v)"
           >
-            {{ v }}
+            {{ v?.label ?? v }}
           </dropdown-menu-item>
         </div>
       </template>
