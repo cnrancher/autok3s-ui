@@ -150,14 +150,18 @@ export default function useHarvesterSdk() {
         signal
       })
       const values = data.value.split(',').map((v) => v.trim())
-      values.push(domain)
-      data.value = [...new Set(values)].filter((v) => v).join(',')
-      const resp = await request({
-        url: '/settings/whitelist-domain',
-        method: 'put',
-        data
-      })
-      whitelist = resp.value.split(',').map((v) => v.trim())
+      if (values.includes(domain)) {
+        whitelist = values
+      } else {
+        values.push(domain)
+        data.value = [...new Set(values)].filter((v) => v).join(',')
+        const resp = await request({
+          url: '/settings/whitelist-domain',
+          method: 'put',
+          data
+        })
+        whitelist = resp.value.split(',').map((v) => v.trim())
+      }
     } catch (err) {
       whitelistInfo.error = err
     }
