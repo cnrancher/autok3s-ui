@@ -92,6 +92,13 @@ watch(
           <KAlert v-for="e in errors" :key="e" type="error" :title="e"></KAlert>
         </div>
         <div v-else class="grid gap-10px">
+          <KComboBox
+            v-model="form['k3s-install-script']"
+            label="K3s Install Script"
+            :desc="provider?.config?.['k3s-install-script']?.description"
+            :options="installScriptOptions"
+            placeholder="Please Select Or Input..."
+          ></KComboBox>
           <k-select
             v-model="form['k3s-channel']"
             :desc="provider?.config?.['k3s-channel']?.description"
@@ -106,13 +113,6 @@ watch(
             label="K3s Version"
             :desc="provider?.config?.['k3s-version']?.description"
           />
-          <KComboBox
-            v-model="form['k3s-install-script']"
-            label="K3s Install Script"
-            :desc="provider?.config?.['k3s-install-script']?.description"
-            :options="installScriptOptions"
-            placeholder="Please Select Or Input..."
-          ></KComboBox>
         </div>
         <KAlert v-if="saveError" type="error" :title="saveError"></KAlert>
       </KLoading>
