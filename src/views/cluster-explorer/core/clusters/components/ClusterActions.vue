@@ -85,7 +85,7 @@ export default {
         })
 
         if (props.cluster.actions.upgrade) {
-          actions.push({
+          actions.splice(1, 0, {
             label: 'Upgrade',
             icon: 'terminal',
             command: 'upgrade'
