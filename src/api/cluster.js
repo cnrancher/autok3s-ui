@@ -76,3 +76,12 @@ export function fetchKubeconfig(data) {
     data
   })
 }
+
+export function upgrade(id, data, signal) {
+  return request({
+    url: `/clusters/${id}?action=upgrade`,
+    method: 'post',
+    data,
+    signal
+  })
+}

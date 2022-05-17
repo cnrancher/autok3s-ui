@@ -25,11 +25,17 @@ export default function useRequest(req, options = {}) {
       //req method: last param is consotroll signal
       const resp = await req(controller.signal)
       data.value = resp
+      if (options.afterFetch) {
+        options.afterFetch(resp)
+      }
     } catch (err) {
       if (err.name === 'AbortError' && options.ignoreAbortError) {
         // do nothing
       } else {
         error.value = err
+        if (options.onFetchError) {
+          options.onFetchError(err)
+        }
       }
     }
     loading.value = false

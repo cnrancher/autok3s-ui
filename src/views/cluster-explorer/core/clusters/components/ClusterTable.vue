@@ -103,6 +103,7 @@ import ClusterStateTag from './ClusterStateTag.vue'
 import ExplorerLink from './ExplorerLink.vue'
 import JoinNodeModal from './JoinNodeModal.vue'
 import ViewKubeconfigModal from './ViewKubeconfigModal.vue'
+import UpgradeModal from './UpgradeModal.vue'
 import { RadioGroup, RadioButton } from '@/components/Radio'
 import CliCommand from '@/views/components/CliCommand.vue'
 import useDataSearch from '@/composables/useDataSearch.js'
@@ -259,6 +260,8 @@ const { show: showJoinNode } = useModal(JoinNodeModal)
 const { show: showCliCommand } = useModal(CliCommand)
 // show kubeconfig
 const { show: showKubeconfig } = useModal(ViewKubeconfigModal)
+// upgrade cluster
+const { show: showUpgrade } = useModal(UpgradeModal)
 
 const handleCommand = ({ command, data }) => {
   const [cluster] = data
@@ -358,6 +361,9 @@ const handleCommand = ({ command, data }) => {
       break
     case 'downloadKubeConfig':
       showKubeconfig({ clusterId: cluster.id })
+      break
+    case 'upgrade':
+      showUpgrade({ clusterId: cluster.id, providerId: cluster.provider })
       break
   }
 }
