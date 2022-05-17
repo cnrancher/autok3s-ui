@@ -1,5 +1,5 @@
 <template>
-  <k-alert v-if="keyInfo.valid === true && !keyInfo.error" type="success" title="Credentails validity"></k-alert>
+  <k-alert v-if="keyInfo.valid === true && !keyInfo.error" type="success" title="Credentails are valid"></k-alert>
   <k-alert v-else-if="keyInfo.valid === false && keyInfo.error" type="error" :title="keyInfo.error"></k-alert>
   <KAlert v-for="e in errors" :key="e" type="error" :title="e"></KAlert>
   <k-tabs v-model="acitiveTab" tab-position="left">
