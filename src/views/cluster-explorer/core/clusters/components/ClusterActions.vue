@@ -84,6 +84,14 @@ export default {
           command: 'downloadKubeConfig'
         })
 
+        if (props.cluster.actions.upgrade) {
+          actions.push({
+            label: 'Upgrade',
+            icon: 'terminal',
+            command: 'upgrade'
+          })
+        }
+
         return actions
       }
       if (['upgrading', 'creating'].includes(status)) {

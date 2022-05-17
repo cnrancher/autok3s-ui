@@ -4,7 +4,7 @@
       v-if="visible"
       class="bg-[rgba(0,0,0,.5)] z-$modal-z-index grid top-0 right-0 bottom-0 left-0 items-center justify-center overflow-auto absolute"
     >
-      <div class="bg-white min-w-1/3 max-w-95vw">
+      <div class="bg-white min-w-30vw max-w-95vw">
         <div class="flex px-20px pt-20px pb-10px justify-between items-center">
           <div class="text-18px">
             <slot name="title">
