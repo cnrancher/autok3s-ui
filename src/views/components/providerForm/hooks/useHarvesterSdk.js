@@ -1,6 +1,7 @@
 import jsyaml from 'js-yaml'
-import { computed, reactive, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import request from '@/utils/request'
+import { Base64 } from 'js-base64'
 
 const SYSTEM_NAMESPACES = [
   'cattle-dashboards',
@@ -20,6 +21,7 @@ const SYSTEM_NAMESPACE = 'management.cattle.io/system-namespace'
 const FLEET_MANAGED = 'fleet.cattle.io/managed'
 
 const HCI_LABELS_CLOUD_INIT = 'harvesterhci.io/cloud-init-template'
+const PROXY_PRE = '/k8s/proxy/'
 
 const filterNamespace = (namespaces = [], systemNamespaces = []) => {
   return namespaces.filter((ns) => {
@@ -39,33 +41,15 @@ const parseKubeConfigFile = (data) => {
   return jsyaml.load(data, 'utf8')
 }
 
-const getCurrentContext = (config) => {
-  const currentContext = config?.['current-context']
-  return config?.['contexts'].find((c) => c.name === currentContext)
-}
-
-const getTokenFromConfig = (config) => {
-  const context = getCurrentContext(config)
-  const userName = context?.context?.user
-  const user = config?.['users']?.find((u) => u.name === userName)
-
-  return user?.user?.token
-}
-const getClusterEndpoint = (config) => {
-  const context = getCurrentContext(config)
-  const clusterName = context?.context.cluster
-  const cluster = config?.['clusters']?.find((c) => c.name === clusterName)
-
-  return cluster?.cluster?.server
-}
-
 export default function useHarvesterSdk() {
   let controller = null
-  let whitelist = []
+  let validController = null
+  // let whitelist = []
   const configInfo = reactive({
     error: null,
     data: null,
-    value: null
+    value: null,
+    base64Data: null
   })
 
   const namespaceInfo = reactive({
@@ -99,12 +83,15 @@ export default function useHarvesterSdk() {
     error: null,
     data: []
   })
-  const whitelistInfo = reactive({
-    loading: false,
-    loaded: false,
-    error: null,
-    data: []
-  })
+  // const whitelistInfo = reactive({
+  //   loading: false,
+  //   loaded: false,
+  //   error: null,
+  //   data: []
+  // })
+
+  const isConfigValid = ref(false)
+
   const parseConfig = (data) => {
     if (!data) {
       configInfo.error = 'KubeConfig is required'
@@ -121,6 +108,7 @@ export default function useHarvesterSdk() {
         config?.['current-context']
       ) {
         configInfo.data = config
+        configInfo.base64Data = Base64.encode(data.trim())
       } else {
         configInfo.error = 'KubeConfig missing some props (clusters, users, contexts, current-context)'
       }
@@ -129,63 +117,71 @@ export default function useHarvesterSdk() {
       configInfo.data = null
     }
   }
+
+  const validate = async () => {
+    validController?.abort()
+    validController = new AbortController()
+    const target = 'api'
+    isConfigValid.value = false
+    configInfo.error = null
+    try {
+      await request({
+        baseURL: '/',
+        url: `${PROXY_PRE}${target}`,
+        method: 'get',
+        signal: validController.signal,
+        headers: {
+          config: configInfo.base64Data
+        }
+      })
+      isConfigValid.value = true
+    } catch (err) {
+      configInfo.error = `Validate kubeconfig file failed: ${err?.response.data ?? err}`
+    }
+  }
+
   watch(
     () => configInfo.value,
     (v) => {
       parseConfig(v)
+      if (!configInfo.error) {
+        validate()
+      }
     }
   )
 
-  const updateWhitelist = async (domain, signal) => {
-    if (whitelist.includes(domain)) {
-      return
-    }
-    try {
-      whitelistInfo.error = null
-      whitelistInfo.loaded = false
-      whitelistInfo.loading = true
-      const data = await request({
-        url: '/settings/whitelist-domain',
-        method: 'get',
-        signal
-      })
-      const values = data.value.split(',').map((v) => v.trim())
-      if (values.includes(domain)) {
-        whitelist = values
-      } else {
-        values.push(domain)
-        data.value = [...new Set(values)].filter((v) => v).join(',')
-        const resp = await request({
-          url: '/settings/whitelist-domain',
-          method: 'put',
-          data
-        })
-        whitelist = resp.value.split(',').map((v) => v.trim())
-      }
-    } catch (err) {
-      whitelistInfo.error = err
-    }
-    whitelistInfo.loaded = true
-    whitelistInfo.loading = false
-  }
-
-  const token = computed(() => {
-    return getTokenFromConfig(configInfo.data)
-  })
-  const endpoint = computed(() => {
-    return getClusterEndpoint(configInfo.data)?.replaceAll('//', '/')
-  })
-  const hostname = computed(() => {
-    if (!endpoint.value) {
-      return ''
-    }
-    const url = new URL(endpoint.value)
-    return url.hostname
-  })
-
-  const isConfigValid = computed(() => {
-    return token.value && endpoint.value && hostname.value
-  })
+  // const updateWhitelist = async (domain, signal) => {
+  //   if (whitelist.includes(domain)) {
+  //     return
+  //   }
+  //   try {
+  //     whitelistInfo.error = null
+  //     whitelistInfo.loaded = false
+  //     whitelistInfo.loading = true
+  //     const data = await request({
+  //       url: '/settings/whitelist-domain',
+  //       method: 'get',
+  //       signal
+  //     })
+  //     const values = data.value.split(',').map((v) => v.trim())
+  //     if (values.includes(domain)) {
+  //       whitelist = values
+  //     } else {
+  //       values.push(domain)
+  //       data.value = [...new Set(values)].filter((v) => v).join(',')
+  //       const resp = await request({
+  //         url: '/settings/whitelist-domain',
+  //         method: 'put',
+  //         data
+  //       })
+  //       whitelist = resp.value.split(',').map((v) => v.trim())
+  //     }
+  //   } catch (err) {
+  //     whitelistInfo.error = err
+  //   }
+  //   whitelistInfo.loaded = true
+  //   whitelistInfo.loading = false
+  // }
 
   const userData = computed(() => {
     return configMapInfo.data
@@ -210,7 +206,7 @@ export default function useHarvesterSdk() {
   const fetchData = async () => {
     controller?.abort()
     controller = new AbortController()
-    await updateWhitelist(hostname.value, controller.signal)
+    // await updateWhitelist(hostname.value, controller.signal)
 
     await Promise.all([
       fetchSystemNamespaces(controller.signal),
@@ -229,31 +225,24 @@ export default function useHarvesterSdk() {
     })
     namespaceInfo.data = []
     try {
-      const auth = `Bearer ${token.value}`
-      const targetSysNs =
-        import.meta.env.MODE === 'production'
-          ? `${endpoint.value}/v1/management.cattle.io.settings/system-namespaces`
-          : encodeURIComponent(`${endpoint.value}/v1/management.cattle.io.settings/system-namespaces`)
+      const targetSysNs = 'v1/management.cattle.io.settings/system-namespaces'
       const systemNamespaces = request({
         baseURL: '/',
-        url: `/meta/proxy/${targetSysNs}`,
+        url: `${PROXY_PRE}${targetSysNs}`,
         method: 'get',
         signal: signal,
         headers: {
-          Authorization: auth
+          config: configInfo.base64Data
         }
       })
-      const targetAllNs =
-        import.meta.env.MODE === 'production'
-          ? `${endpoint.value}/v1/namespaces`
-          : encodeURIComponent(`${endpoint.value}/v1/namespaces`)
+      const targetAllNs = 'v1/namespaces'
       const allNamespaces = request({
         baseURL: '/',
-        url: `/meta/proxy/${targetAllNs}`,
+        url: `${PROXY_PRE}${targetAllNs}`,
         method: 'get',
         signal: signal,
         headers: {
-          Authorization: auth
+          config: configInfo.base64Data
         }
       })
       const [sysNs, allNs] = await Promise.all([systemNamespaces, allNamespaces])
@@ -285,18 +274,14 @@ export default function useHarvesterSdk() {
     })
     imageInfo.data = []
     try {
-      const auth = `Bearer ${token.value}`
-      const target =
-        import.meta.env.MODE === 'production'
-          ? `${endpoint.value}/v1/harvester/harvesterhci.io.virtualmachineimages`
-          : encodeURIComponent(`${endpoint.value}/v1/harvester/harvesterhci.io.virtualmachineimages`)
+      const target = 'v1/harvester/harvesterhci.io.virtualmachineimages'
       const images = await request({
         baseURL: '/',
-        url: `/meta/proxy/${target}`,
+        url: `${PROXY_PRE}${target}`,
         method: 'get',
         signal: signal,
         headers: {
-          Authorization: auth
+          config: configInfo.base64Data
         }
       })
 
@@ -324,18 +309,14 @@ export default function useHarvesterSdk() {
     })
     configMapInfo.data = []
     try {
-      const auth = `Bearer ${token.value}`
-      const target =
-        import.meta.env.MODE === 'production'
-          ? `${endpoint.value}/v1/harvester/configmaps`
-          : encodeURIComponent(`${endpoint.value}/v1/harvester/configmaps`)
+      const target = 'v1/harvester/configmaps'
       const configMaps = await request({
         baseURL: '/',
-        url: `/meta/proxy/${target}`,
+        url: `${PROXY_PRE}${target}`,
         method: 'get',
         signal: signal,
         headers: {
-          Authorization: auth
+          config: configInfo.base64Data
         }
       })
 
@@ -360,18 +341,14 @@ export default function useHarvesterSdk() {
     })
     keyPairInfo.data = []
     try {
-      const auth = `Bearer ${token.value}`
-      const target =
-        import.meta.env.MODE === 'production'
-          ? `${endpoint.value}/v1/harvester/harvesterhci.io.keypairs`
-          : encodeURIComponent(`${endpoint.value}/v1/harvester/harvesterhci.io.keypairs`)
+      const target = 'v1/harvester/harvesterhci.io.keypairs'
       const keyPairs = await request({
         baseURL: '/',
-        url: `/meta/proxy/${target}`,
+        url: `${PROXY_PRE}${target}`,
         method: 'get',
         signal: signal,
         headers: {
-          Authorization: auth
+          config: configInfo.base64Data
         }
       })
 
@@ -416,7 +393,7 @@ export default function useHarvesterSdk() {
   }
 
   return {
-    whitelistInfo,
+    // whitelistInfo,
     configInfo,
     namespaceInfo,
     imageInfo,

@@ -292,7 +292,7 @@
   </k-tabs>
 </template>
 <script setup>
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
@@ -303,6 +303,7 @@ import { cloneDeep } from '@/utils'
 import { parseSi } from '@/utils/units'
 import { Base64 } from 'js-base64'
 import useHarvesterSdk from './hooks/useHarvesterSdk.js'
+import { useDebounceFn } from '@vueuse/core'
 
 const needDecodeOptionKeys = ['kubeconfig-content', 'network-data', 'user-data']
 
@@ -437,23 +438,18 @@ defineExpose({ getForm })
 // use harvester sdk
 const userDataTemplate = ref('')
 const networkDataTemplate = ref('')
-const {
-  whitelistInfo,
-  configInfo,
-  isConfigValid,
-  namespaceInfo,
-  imageInfo,
-  keyPairInfo,
-  userData,
-  networkData,
-  fetchData,
-  resetAll
-} = useHarvesterSdk()
+const { configInfo, isConfigValid, namespaceInfo, imageInfo, keyPairInfo, userData, networkData, fetchData, resetAll } =
+  useHarvesterSdk()
 const errors = computed(() => {
-  return [
-    ...new Set([whitelistInfo.error, configInfo.error, namespaceInfo.error, imageInfo.error, keyPairInfo.error])
-  ].filter((e) => e)
+  return [...new Set([configInfo.error, namespaceInfo.error, imageInfo.error, keyPairInfo.error])].filter((e) => e)
 })
+
+const debouncedFn = useDebounceFn((v) => {
+  configInfo.value = v
+  userDataTemplate.value = ''
+  networkDataTemplate.value = ''
+  resetAll()
+}, 1000)
 
 watch(
   [() => form.options['kubeconfig-content'], () => props.readonly],
@@ -461,19 +457,17 @@ watch(
     if (readonly) {
       return
     }
-    configInfo.value = v
-    userDataTemplate.value = ''
-    networkDataTemplate.value = ''
-    nextTick(() => {
-      if (isConfigValid.value) {
-        fetchData()
-      } else {
-        resetAll()
-      }
-    })
+    debouncedFn(v)
   },
   { immediate: true }
 )
+watch(isConfigValid, (valid) => {
+  if (valid) {
+    fetchData()
+  } else {
+    resetAll()
+  }
+})
 const userDataTemplateChange = (v) => {
   if (!v) {
     return
