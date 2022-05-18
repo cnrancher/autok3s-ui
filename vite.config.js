@@ -46,6 +46,9 @@ export default ({ command, mode }) => {
         },
         '/meta/proxy': {
           target: 'http://localhost:8080'
+        },
+        '/k8s/proxy': {
+          target: 'http://localhost:8080'
         }
       }
     },
