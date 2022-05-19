@@ -89,9 +89,9 @@ import IpAddressPoolForm from '@/views/components/baseForm/IpAddressPoolForm.vue
 import BooleanForm from '@/views/components/baseForm/BooleanForm.vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
 import { joinNode } from '@/api/cluster.js'
-import { saveCreatingCluster } from '@/utils'
 import { stringify } from '@/utils/error.js'
 import useNotificationStore from '@/store/useNotificationStore.js'
+import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 
 const formDefaultValue = {
   worker: '0',
@@ -125,6 +125,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'close'])
 
 const notificationStore = useNotificationStore()
+const wmStore = useWindownManagerStore()
 const sshAdvanceVisible = ref(false)
 const masterIps = ref(null)
 const workerIps = ref(null)
@@ -273,8 +274,18 @@ const save = async () => {
     }
 
     const data = Object.assign({}, cluster.value, formData)
+    const { name, id } = cluster.value
     await joinNode(data)
-    saveCreatingCluster(data.id)
+    // view logs
+    wmStore.addTab({
+      id: `log_${id}`,
+      component: 'ClusterLogs',
+      label: `log: ${name}`,
+      icon: 'log',
+      attrs: {
+        cluster: id
+      }
+    })
   } catch (err) {
     notificationStore.notify({
       type: 'error',

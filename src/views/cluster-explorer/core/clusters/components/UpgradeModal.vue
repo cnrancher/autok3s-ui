@@ -5,6 +5,7 @@ import { fetchById as fetchProvider } from '@/api/provider.js'
 import useRequest from '@/composables/useRequest.js'
 import { stringify } from '@/utils/error.js'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
+import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 
 const props = defineProps({
   visible: {
@@ -15,12 +16,17 @@ const props = defineProps({
     type: String,
     required: true
   },
+  clusterName: {
+    type: String,
+    required: true
+  },
   providerId: {
     type: String,
     required: true
   }
 })
 const emit = defineEmits(['close'])
+const wmStore = useWindownManagerStore()
 
 const close = () => {
   emit('close')
@@ -54,6 +60,16 @@ const {
     immediate: false,
     afterFetch: () => {
       close()
+      // view create logs
+      wmStore.addTab({
+        id: `log_${props.clusterId}`,
+        component: 'ClusterLogs',
+        label: `log: ${props.clusterName}`,
+        icon: 'log',
+        attrs: {
+          cluster: props.clusterId
+        }
+      })
     }
   }
 )

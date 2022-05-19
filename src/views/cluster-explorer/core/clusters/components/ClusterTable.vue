@@ -110,7 +110,7 @@ import useDataSearch from '@/composables/useDataSearch.js'
 import useProviders from '@/composables/useProviders.js'
 import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import { stringify } from '@/utils/error.js'
-import { removeCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
+import { overwriteSchemaDefaultValue } from '@/utils'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
 import { computed, ref, watchEffect } from 'vue'
 import { GroupedTable as KGroupedTable } from '@/components/Table'
@@ -271,7 +271,6 @@ const handleCommand = ({ command, data }) => {
       confirmModalVisible.value = true
       break
     case 'viewLog':
-      removeCreatingCluster(cluster.id)
       wmStore.addTab({
         id: `log_${cluster.id}`,
         component: 'ClusterLogs',
@@ -363,7 +362,7 @@ const handleCommand = ({ command, data }) => {
       showKubeconfig({ clusterId: cluster.id })
       break
     case 'upgrade':
-      showUpgrade({ clusterId: cluster.id, providerId: cluster.provider })
+      showUpgrade({ clusterId: cluster.id, clusterName: cluster.name, providerId: cluster.provider })
       break
   }
 }

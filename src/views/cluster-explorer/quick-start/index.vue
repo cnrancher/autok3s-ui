@@ -66,7 +66,7 @@ import NativeForm from './components/NativeForm.vue'
 import clustcerIcon from '@/assets/images/cluster-single.svg'
 import useProviders from '@/composables/useProviders.js'
 import { createCluster } from '@/api/cluster.js'
-import { cloneDeep, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
+import { cloneDeep, overwriteSchemaDefaultValue } from '@/utils'
 import { capitalize } from 'lodash-es'
 import { stringify } from '@/utils/error.js'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
@@ -317,8 +317,7 @@ export default defineComponent({
       }
       creating.value = true
       try {
-        const { id = '' } = await createCluster(formData)
-        saveCreatingCluster(id)
+        await createCluster(formData)
         // if (formData.provider === 'native') {
         //   wmStore.action.addTab({
         //     id: `log_${id}`,

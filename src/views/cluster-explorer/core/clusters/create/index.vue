@@ -68,7 +68,7 @@ import useCluster from '@/composables/useCluster.js'
 import { createCluster } from '@/api/cluster.js'
 import { capitalize } from 'lodash-es'
 import { stringify } from '@/utils/error.js'
-import { cloneDeep, saveCreatingCluster, overwriteSchemaDefaultValue } from '@/utils'
+import { cloneDeep, overwriteSchemaDefaultValue } from '@/utils'
 import { Base64 } from 'js-base64'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
 import useTemplateStore from '@/store/useTemplateStore.js'
@@ -352,20 +352,16 @@ export default defineComponent({
       }
       creating.value = true
       try {
-        const { id = '' } = await createCluster(formData)
-        saveCreatingCluster(id)
-        if (formData.provider === 'native') {
-          wmStore.addTab({
-            id: `log_${id}`,
-            component: 'ClusterLogs',
-            label: `log: ${formData.name}`,
-            icon: 'log',
-            attrs: {
-              cluster: id,
-              provider: formData.provider
-            }
-          })
-        }
+        const { id, name } = await createCluster(formData)
+        wmStore.addTab({
+          id: `log_${id}`,
+          component: 'ClusterLogs',
+          label: `log: ${name ?? id}`,
+          icon: 'log',
+          attrs: {
+            cluster: id
+          }
+        })
         goBack()
       } catch (err) {
         formErrors.value = [stringify(err)]
