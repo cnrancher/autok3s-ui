@@ -118,7 +118,7 @@ watch(
       </KLoading>
     </template>
     <template #footer>
-      <k-button class="role-primary" :disabled="saving" @click="save">Upgrade</k-button>
+      <k-button class="role-primary" :disabled="loadingState || saving" @click="save">Upgrade</k-button>
       <k-button class="role-secondary" @click="close">Cancel</k-button>
     </template>
   </k-modal>
