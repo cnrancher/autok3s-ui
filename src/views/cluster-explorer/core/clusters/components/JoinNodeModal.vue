@@ -1,5 +1,5 @@
 <template>
-  <k-modal v-model="visible">
+  <k-modal :model-value="visible">
     <template #title>Join Node</template>
     <template #default>
       <k-loading :loading="loading">
@@ -77,7 +77,7 @@
     </template>
     <template #footer>
       <k-button class="role-secondary" @click="close">Cancel</k-button>
-      <k-button class="role-primary" :loading="loading" @click="save">Save</k-button>
+      <k-button class="role-primary" :loading="loading || saving" @click="save">Save</k-button>
     </template>
   </k-modal>
 </template>
@@ -116,7 +116,7 @@ const props = defineProps({
     type: String,
     required: true
   },
-  modelValue: {
+  visible: {
     type: Boolean,
     default: false
   }
@@ -160,14 +160,6 @@ watch(loading, (l) => {
       .forEach((k) => {
         nativeForm[k] = cluster.value?.[k] ?? nativeProviderSchema.value?.config?.[k]?.default ?? ''
       })
-  }
-})
-const visible = computed({
-  get() {
-    return props.modelValue
-  },
-  set(v) {
-    emit('update:modelValue', v)
   }
 })
 const provider = computed(() => {
@@ -252,13 +244,14 @@ const validate = () => {
   return errors.length === 0
 }
 const close = () => {
-  visible.value = false
   emit('close')
 }
+const saving = ref(false)
 const save = async () => {
   if (!validate()) {
     return
   }
+  saving.value = true
   try {
     let formData
     if (provider.value === 'native') {
@@ -289,6 +282,7 @@ const save = async () => {
       content: stringify(err)
     })
   }
-  visible.value = false
+  saving.value = false
+  close()
 }
 </script>
