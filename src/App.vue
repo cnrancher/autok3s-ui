@@ -10,7 +10,7 @@ import { watchEffect, defineComponent } from 'vue'
 import useThemeStore from '@/store/useThemeStore.js'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
 import useTemplateStore from '@/store/useTemplateStore.js'
-import useWindownManagerStore from '@/store/useWindowManagerStore.js'
+// import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 import useExplorerStore from '@/store/useExplorerStore.js'
 import useResourceChangeSocket from '@/composables/useResourceChangeSocket.js'
 export default defineComponent({
@@ -26,7 +26,7 @@ export default defineComponent({
       document.body.classList.add(themeStore.theme)
     })
 
-    const wmStore = useWindownManagerStore()
+    // const wmStore = useWindownManagerStore()
 
     const explorerStore = useExplorerStore()
 
@@ -41,15 +41,15 @@ export default defineComponent({
           const provider = cluster?.provider
           providerClusterStores[provider]?.add(cluster)
           // view create logs
-          wmStore.addTab({
-            id: `log_${cluster.id}`,
-            component: 'ClusterLogs',
-            label: `log: ${cluster.name}`,
-            icon: 'log',
-            attrs: {
-              cluster: cluster.id
-            }
-          })
+          // wmStore.addTab({
+          //   id: `log_${cluster.id}`,
+          //   component: 'ClusterLogs',
+          //   label: `log: ${cluster.name}`,
+          //   icon: 'log',
+          //   attrs: {
+          //     cluster: cluster.id
+          //   }
+          // })
         },
         'resource.remove': (cluster) => {
           const provider = cluster?.provider
