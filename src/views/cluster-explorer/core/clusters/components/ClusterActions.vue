@@ -84,7 +84,7 @@ export default {
           command: 'downloadKubeConfig'
         })
 
-        if (props.cluster.actions.upgrade) {
+        if (props.cluster.actions.upgrade && props.cluster.provider !== 'k3d') {
           actions.splice(1, 0, {
             label: 'Upgrade',
             icon: 'terminal',
