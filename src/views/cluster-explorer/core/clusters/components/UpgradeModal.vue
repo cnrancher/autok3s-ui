@@ -130,7 +130,7 @@ watch(
             :desc="provider?.config?.['k3s-version']?.description"
           />
         </div>
-        <KAlert v-if="saveError" type="error" :title="saveError"></KAlert>
+        <KAlert v-if="saveError" type="error" :title="stringify(saveError)"></KAlert>
       </KLoading>
     </template>
     <template #footer>
