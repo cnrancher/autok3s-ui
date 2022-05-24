@@ -137,12 +137,21 @@
         <template #title>Network</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <string-form
+            <!-- <string-form
               v-model.trim="form.options['network-name']"
               label="Network Name"
               :desc="desc.options['network-name']"
               :readonly="readonly"
-            />
+            /> -->
+            <k-combo-box
+              v-model.trim="form.options['network-name']"
+              label="Network Name"
+              :desc="desc.options['network-name']"
+              :disabled="readonly"
+              :options="networkNameInfo.data"
+              :loading="networkNameInfo.loading"
+              placeholder="Please Select Or Input..."
+            ></k-combo-box>
             <!-- <string-form
               v-model.number="form.options['network-model']"
               label="Network Model"
@@ -438,10 +447,22 @@ defineExpose({ getForm })
 // use harvester sdk
 const userDataTemplate = ref('')
 const networkDataTemplate = ref('')
-const { configInfo, isConfigValid, namespaceInfo, imageInfo, keyPairInfo, userData, networkData, fetchData, resetAll } =
-  useHarvesterSdk()
+const {
+  configInfo,
+  isConfigValid,
+  namespaceInfo,
+  imageInfo,
+  keyPairInfo,
+  networkNameInfo,
+  userData,
+  networkData,
+  fetchData,
+  resetAll
+} = useHarvesterSdk()
 const errors = computed(() => {
-  return [...new Set([configInfo.error, namespaceInfo.error, imageInfo.error, keyPairInfo.error])].filter((e) => e)
+  return [
+    ...new Set([configInfo.error, namespaceInfo.error, imageInfo.error, keyPairInfo.error, networkNameInfo.error])
+  ].filter((e) => e)
 })
 
 const debouncedFn = useDebounceFn((v) => {
