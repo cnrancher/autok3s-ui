@@ -83,6 +83,14 @@ export default function useHarvesterSdk() {
     error: null,
     data: []
   })
+
+  const networkNameInfo = reactive({
+    controller: null,
+    loading: false,
+    loaded: false,
+    error: null,
+    data: []
+  })
   // const whitelistInfo = reactive({
   //   loading: false,
   //   loaded: false,
@@ -212,7 +220,8 @@ export default function useHarvesterSdk() {
       fetchSystemNamespaces(controller.signal),
       fetchImageInfo(controller.signal),
       fetchConfigMapInfo(controller.signal),
-      fetchKeyPairInfo(controller.signal)
+      fetchKeyPairInfo(controller.signal),
+      fetchNetworkNameInfo(controller.signal)
     ])
   }
 
@@ -367,6 +376,41 @@ export default function useHarvesterSdk() {
     keyPairInfo.loaded = true
   }
 
+  const fetchNetworkNameInfo = async (signal) => {
+    networkNameInfo.loading = true
+    networkNameInfo.loaded = false
+    signal.addEventListener('abort', () => {
+      networkNameInfo.loading = false
+      networkNameInfo.loaded = false
+    })
+    networkNameInfo.data = []
+    try {
+      const target = 'v1/harvester/k8s.cni.cncf.io.network-attachment-definitions'
+      const networkNames = await request({
+        baseURL: '/',
+        url: `${PROXY_PRE}${target}`,
+        method: 'get',
+        signal: signal,
+        headers: {
+          config: configInfo.base64Data
+        }
+      })
+
+      networkNameInfo.data = networkNames.data.map((item) => ({
+        label: item.id,
+        value: item.id
+      }))
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        // do nothing
+      } else {
+        networkNameInfo.error = err
+      }
+    }
+    networkNameInfo.loading = false
+    networkNameInfo.loaded = true
+  }
+
   const resetAll = () => {
     controller?.abort()
     controller = null
@@ -390,6 +434,11 @@ export default function useHarvesterSdk() {
     configMapInfo.error = null
     configMapInfo.loaded = false
     configMapInfo.loading = false
+
+    networkNameInfo.data = []
+    networkNameInfo.error = null
+    networkNameInfo.loaded = false
+    networkNameInfo.loading = false
   }
 
   return {
@@ -398,6 +447,7 @@ export default function useHarvesterSdk() {
     namespaceInfo,
     imageInfo,
     keyPairInfo,
+    networkNameInfo,
     isConfigValid,
     userData,
     networkData,
