@@ -27,8 +27,11 @@ const props = defineProps({
 
 defineEmits(['close', 'select'])
 const data = toRef(props.imageInfo, 'data')
-// eslint-disable-next-line
-const { arch: defaultArch = ['x86_64'], query = '' } = props.imageInfo
+const defaultArch = props.imageInfo.arch ?? ref(['x86_64'])
+const query = ref(props.imageInfo.query) ?? ref('')
+const owners = ref([...props.imageInfo.owners]) ?? ref(['self', 'amazon', 'aws-marketplace'])
+const field = ref(props.imageInfo.field) ?? ref('name')
+const fields = ref(['name', 'description', 'image-id'])
 const { pageData, currentPage, total, pageSize } = usePagination(data)
 pageSize.value = 10
 const searchQuery = ref(query)
@@ -39,22 +42,25 @@ const arch = ref([...defaultArch])
     <template #title>Search Amazon Machine Images (AMI)</template>
     <template #default>
       <KLoading :loading="imageInfo.loading" class="w-60vw min-h-60vh">
-        <div class="grid grid-cols-[400px,max-content] grid-rows-[40px,40px] gap-4 place-content-center">
+        <div class="grid grid-cols-[400px,auto,max-content] grid-rows-[40px,auto,auto] gap-2 place-content-center mb-2">
           <input
             v-model="searchQuery"
             type="search"
-            placeholder="Filter name or description (case sensitive)"
+            placeholder="Filter name, description or image-id (case sensitive)"
             class="border rounded px-12px hover:bg-gray-100 focus-visible:outline-none"
             @keyup.enter="fetchImages(region, [volumeType], arch, searchQuery)"
           />
+          <select v-model="field" class="border rounded focus-visible:outline-none">
+            <option v-for="f in fields" :key="f" :value="f">{{ f }}</option>
+          </select>
           <KButton
             :disabled="imageInfo.loading"
-            class="role-primary row-span-2 self-start"
-            @click="fetchImages(region, [volumeType], arch, searchQuery)"
+            class="role-primary self-start"
+            @click="fetchImages(region, [volumeType], arch, searchQuery, owners, field)"
           >
             Query
           </KButton>
-          <div class="grid gap-4 grid-cols-4 justify-self-start">
+          <div class="col-span-3 grid gap-4 grid-cols-[auto,auto,auto,1fr] justify-self-start">
             Architecture:
             <label>
               <input v-model="arch" type="checkbox" value="i386" />
@@ -69,6 +75,21 @@ const arch = ref([...defaultArch])
               arm64
             </label>
           </div>
+          <div class="col-span-3 grid gap-4 grid-cols-[auto,auto,auto,1fr] justify-self-start">
+            Owners:
+            <label>
+              <input v-model="owners" type="checkbox" value="self" />
+              Self
+            </label>
+            <label>
+              <input v-model="owners" type="checkbox" value="amazon" />
+              Amazon
+            </label>
+            <label>
+              <input v-model="owners" type="checkbox" value="aws-marketplace" />
+              AWS Marketplace
+            </label>
+          </div>
         </div>
         <div v-if="imageInfo.error">{{ imageInfo.error }}</div>
         <div class="grid gap-4">
@@ -79,6 +100,7 @@ const arch = ref([...defaultArch])
           >
             <div>
               <div>Image ID: {{ d.ImageId }}</div>
+              <div>Name: {{ d.Name }}</div>
               <div>Description: {{ d.Description }}</div>
               <div>Architecture: {{ d.Architecture }}</div>
             </div>

@@ -126,6 +126,8 @@ export default function useAwsSdk() {
     volumeTypes: [],
     arch: ['x86_64'],
     query: '',
+    owners: ['self', 'amazon', 'aws-marketplace'],
+    field: 'name',
     loading: false,
     loaded: true,
     error: null,
@@ -456,12 +458,21 @@ export default function useAwsSdk() {
     imageDetail.loaded = true
   }
 
-  const fetchImages = async (r, volumeTypes = [], arch = [], query = '') => {
+  const fetchImages = async (
+    r,
+    volumeTypes = [],
+    arch = [],
+    query = '',
+    owners = ['self', 'amazon', 'aws-marketplace'],
+    field = 'name'
+  ) => {
     const tmpRegion = r ?? region.value
     imageInfo.region = tmpRegion
     imageInfo.volumeTypes = volumeTypes
     imageInfo.arch = arch
     imageInfo.query = query
+    imageInfo.owners = owners
+    imageInfo.field = field
 
     const ec2client = new EC2Client({
       credentials: credentials.value,
@@ -518,16 +529,10 @@ export default function useAwsSdk() {
       if (!query.includes('*')) {
         query = `*${query}*`
       }
-      filters.push(
-        {
-          Name: 'name',
-          Values: [query]
-        },
-        {
-          Name: 'description',
-          Values: [query]
-        }
-      )
+      filters.push({
+        Name: field,
+        Values: [query]
+      })
     }
 
     if (volumeTypes.length > 0) {
@@ -538,7 +543,7 @@ export default function useAwsSdk() {
     }
 
     const input = {
-      Owners: ['self', 'amazon', 'aws-marketplace'],
+      Owners: owners,
       IncludeDeprecated: false,
       Filters: filters
     }
