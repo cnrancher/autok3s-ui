@@ -70,7 +70,36 @@
               :loading="instanceTypeInfo.loading || imageDetail.loading"
               clearable
             >
-              <KOption v-for="t in instanceTypeInfo.data" :key="t.value" :value="t.value" :label="t.label"></KOption>
+              <div class="p-1" @click.stop="toggleSeries">
+                <div class="cursor-pointer flex items-center justify-between">
+                  <div>Filter: {{ typeSeries ? typeSeries : 'All Instance Type Series' }}</div>
+                  <k-icon type="arrow-right" :direction="showSeriesSelection ? 'down' : ''"></k-icon>
+                </div>
+                <div v-show="showSeriesSelection" class="flex gap-2 flex-wrap p-1">
+                  <div
+                    :class="['cursor-pointer', typeSeries === '' ? 'bg-warm-gray-400' : '']"
+                    class="p-1"
+                    @click="chooseSeries('')"
+                  >
+                    All Instance Type Series
+                  </div>
+                  <div
+                    v-for="s in instanceTypeSeries"
+                    :key="s"
+                    :class="[typeSeries && typeSeries === s ? 'bg-warm-gray-400' : '']"
+                    class="cursor-pointer p-1"
+                    @click="chooseSeries(s)"
+                  >
+                    {{ s }}
+                  </div>
+                </div>
+              </div>
+              <hr />
+              <template v-if="instanceTypeInfo.data.length > 0">
+                <KOption v-for="t in instanceTypeInfo.data" :key="t.value" :value="t.value" :label="t.label"></KOption>
+              </template>
+              <template v-else-if="instanceTypeInfo.loading || imageDetail.loading">Loading...</template>
+              <template v-else>No Data</template>
               <div
                 v-if="instanceTypeInfo.nextToken"
                 class="text-center cursor-pointer"
@@ -410,6 +439,7 @@ const {
   imageInfo,
   imageDetail,
   keyPairInfo,
+  instanceTypeSeries,
   validateKeys,
   fetchZones,
   fetchInstanceTypes,
@@ -428,6 +458,15 @@ const validateCredentials = () => {
   validateKeys(form.options['access-key'], form.options['secret-key'], form.options.region)
 }
 
+const typeSeries = ref('')
+const showSeriesSelection = ref(false)
+const toggleSeries = () => {
+  showSeriesSelection.value = !showSeriesSelection.value
+}
+const chooseSeries = (s) => {
+  typeSeries.value = s
+  loadInstanceTypes()
+}
 const errors = computed(() => {
   return [
     ...new Set([
@@ -447,22 +486,26 @@ const loadInstanceTypes = async () => {
   }
 
   if (imageDetail.data?.ImageId === form.options['ami']) {
-    fetchInstanceTypes(instanceTypeInfo.nextToken, form.options.region, [imageDetail.data?.Architecture])
+    const series = typeSeries.value ? [typeSeries.value] : []
+    fetchInstanceTypes(instanceTypeInfo.nextToken, form.options.region, [imageDetail.data?.Architecture], series)
   } else {
     await fetchImageById(form.options.region, form.options['ami'])
     if (!imageDetail.error) {
-      fetchInstanceTypes(instanceTypeInfo.nextToken, form.options.region, [imageDetail.data?.Architecture])
+      const series = typeSeries.value ? [typeSeries.value] : []
+      fetchInstanceTypes(instanceTypeInfo.nextToken, form.options.region, [imageDetail.data?.Architecture], series)
     }
   }
 }
 
 const reLoadInstanceTypes = async (region) => {
   if (imageDetail.data?.ImageId === form.options['ami']) {
-    fetchInstanceTypes('', region, [imageDetail.data?.Architecture])
+    const series = typeSeries.value ? [typeSeries.value] : []
+    fetchInstanceTypes('', region, imageDetail.data?.Architecture ? [imageDetail.data?.Architecture] : [], series)
   } else {
     await fetchImageById(region, form.options['ami'])
     if (!imageDetail.error) {
-      fetchInstanceTypes('', region, [imageDetail.data?.Architecture])
+      const series = typeSeries.value ? [typeSeries.value] : []
+      fetchInstanceTypes('', region, imageDetail.data?.Architecture ? [imageDetail.data?.Architecture] : [], series)
     }
   }
 }

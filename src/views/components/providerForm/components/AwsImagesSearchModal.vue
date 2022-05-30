@@ -1,5 +1,5 @@
 <script setup>
-import { ref, toRef } from 'vue'
+import { ref, toRef, watch } from 'vue'
 import usePagination from '@/composables/usePagination.js'
 import Pagination from '@/components/Pagination'
 const props = defineProps({
@@ -32,34 +32,57 @@ const query = ref(props.imageInfo.query) ?? ref('')
 const owners = ref([...props.imageInfo.owners]) ?? ref(['self', 'amazon', 'aws-marketplace'])
 const field = ref(props.imageInfo.field) ?? ref('name')
 const fields = ref(['name', 'description', 'image-id'])
+
 const { pageData, currentPage, total, pageSize } = usePagination(data)
 pageSize.value = 10
 const searchQuery = ref(query)
 const arch = ref([...defaultArch])
+const virtualizationType = ref([...props.imageInfo.virtualizationType])
+// const platform = ref([...props.imageInfo.platform])
+// const allLinusOrUnixPlatforms = ref(['linux'])
+// const allWindowsPlatforms = ref(['windows'])
+
+const searchImages = () => {
+  props.fetchImages(props.region, {
+    volumeTypes: [props.volumeType],
+    arch: [...arch.value],
+    query: searchQuery.value,
+    owners: [...owners.value],
+    field: field.value,
+    virtualizationType: [...virtualizationType.value]
+    // platform: [...platform.value]
+  })
+}
+
+watch(
+  field,
+  (v) => {
+    if (v === 'image-id') {
+      owners.value = []
+      arch.value = []
+    }
+  },
+  { immediate: true }
+)
 </script>
 <template>
   <KModal :model-value="visible">
     <template #title>Search Amazon Machine Images (AMI)</template>
     <template #default>
       <KLoading :loading="imageInfo.loading" class="w-60vw min-h-60vh">
-        <div class="grid grid-cols-[400px,auto,max-content] grid-rows-[40px,auto,auto] gap-2 place-content-center mb-2">
+        <div class="grid grid-cols-[auto,400px,max-content] grid-rows-[40px,auto,auto] gap-2 place-content-center mb-2">
+          <select v-model="field" class="border rounded focus-visible:outline-none px-12px">
+            <option v-for="f in fields" :key="f" :value="f">{{ f }}</option>
+          </select>
           <input
             v-model="searchQuery"
             type="search"
             placeholder="Filter name, description or image-id (case sensitive)"
             class="border rounded px-12px hover:bg-gray-100 focus-visible:outline-none"
-            @keyup.enter="fetchImages(region, [volumeType], arch, searchQuery)"
+            @keyup.enter="searchImages"
           />
-          <select v-model="field" class="border rounded focus-visible:outline-none">
-            <option v-for="f in fields" :key="f" :value="f">{{ f }}</option>
-          </select>
-          <KButton
-            :disabled="imageInfo.loading"
-            class="role-primary self-start"
-            @click="fetchImages(region, [volumeType], arch, searchQuery, owners, field)"
-          >
-            Query
-          </KButton>
+
+          <KButton :disabled="imageInfo.loading" class="role-primary self-start" @click="searchImages">Query</KButton>
           <div class="col-span-3 grid gap-4 grid-cols-[auto,auto,auto,1fr] justify-self-start">
             Architecture:
             <label>
@@ -90,6 +113,31 @@ const arch = ref([...defaultArch])
               AWS Marketplace
             </label>
           </div>
+          <div class="col-span-3 grid gap-y-2 gap-x-4 grid-cols-[auto,auto,auto,1fr] justify-self-start">
+            Virtualization Type
+            <label>
+              <input v-model="virtualizationType" type="checkbox" value="hvm" />
+              HVM
+            </label>
+            <label>
+              <input v-model="virtualizationType" type="checkbox" value="paravirtual" />
+              Paravirtual
+            </label>
+          </div>
+          <!-- <div class="col-span-3 grid gap-y-2 gap-x-4 grid-cols-[auto,auto,auto,1fr] justify-self-start">
+            System OS(Linux/Unix)
+            <label v-for="p in allLinusOrUnixPlatforms" :key="p">
+              <input v-model="platform" type="checkbox" :value="p" />
+              {{ p }}
+            </label>
+          </div>
+          <div class="col-span-3 grid gap-y-2 gap-x-4 grid-cols-[auto,auto,auto,1fr] justify-self-start">
+            System OS(Windows)
+            <label v-for="p in allWindowsPlatforms" :key="p">
+              <input v-model="platform" type="checkbox" :value="p" />
+              {{ p }}
+            </label>
+          </div> -->
         </div>
         <div v-if="imageInfo.error">{{ imageInfo.error }}</div>
         <div class="grid gap-4">
