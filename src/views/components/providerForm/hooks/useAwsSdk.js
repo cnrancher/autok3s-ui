@@ -46,6 +46,89 @@ const defaultRegions = [
 
 const volumeTypes = ['gp2', 'gp3', 'io1', 'io2', 'sc1', 'st1', 'standard']
 
+// https://aws.amazon.com/cn/ec2/instance-types/
+const instanceTypeSeries = [
+  'mac1',
+  't4g',
+  't3',
+  't3a',
+  't2',
+  'm6g',
+  'm6gd',
+  'm6i',
+  'm6a',
+  'm5',
+  'm5d',
+  'm5a',
+  'm5ad',
+  'm5n',
+  'm5dn',
+  'm5zn',
+  'm4',
+  'a1',
+  'c7g',
+  'c6g',
+  'c6gd',
+  'c6gn',
+  'c6i',
+  'c6a',
+  'Hpc6a',
+  'c5',
+  'c5d',
+  'c5a',
+  'c5ad',
+  'c5n',
+  'c4',
+  'r6g',
+  'r6gd',
+  'r6i',
+  'r5',
+  'r5d',
+  'r5a',
+  'r5ad',
+  'r5b',
+  'r5n',
+  'r5dn',
+  'r4',
+  'x2gd',
+  'x2idn',
+  'x2iedn',
+  'x2iezn',
+  'x1e',
+  'x1',
+  'u-3tb1',
+  'u-6tb1',
+  'u-9tb1',
+  'u-12tb1',
+  'u-18tb1',
+  'u-24tb1',
+  'z1d',
+  'p4d',
+  'p3',
+  'p3dn',
+  'p2',
+  'dl1',
+  'trn1',
+  'inf1',
+  'g5',
+  'g5g',
+  'g4dn',
+  'g4ad',
+  'g3s',
+  'g3',
+  'f1',
+  'vt1',
+  'Im4gn',
+  'Is4gen',
+  'i4i',
+  'i3',
+  'i3en',
+  'd2',
+  'd3',
+  'd3en',
+  'h1'
+]
+
 const enCollator = new Intl.Collator('en')
 
 export default function useAwsSdk() {
@@ -128,6 +211,8 @@ export default function useAwsSdk() {
     query: '',
     owners: ['self', 'amazon', 'aws-marketplace'],
     field: 'name',
+    virtualizationType: ['hvm'],
+    // platform: [],
     loading: false,
     loaded: true,
     error: null,
@@ -227,7 +312,7 @@ export default function useAwsSdk() {
     zoneInfo.loading = false
     zoneInfo.loaded = true
   }
-  const fetchInstanceTypes = async (nextToken, r, arch = ['arm64', 'i386', 'x86_64']) => {
+  const fetchInstanceTypes = async (nextToken, r, arch = ['arm64', 'i386', 'x86_64'], series = []) => {
     const tmpRegion = r ?? region.value
 
     if (nextToken && instanceTypeInfo.region !== tmpRegion) {
@@ -252,7 +337,15 @@ export default function useAwsSdk() {
     instanceTypeInfo.loading = true
     instanceTypeInfo.loaded = false
 
-    const input = { Filters: [{ Name: 'processor-info.supported-architecture', Values: [...arch] }] }
+    const filters = []
+
+    if (arch.length > 0) {
+      filters.push({ Name: 'processor-info.supported-architecture', Values: [...arch] })
+    }
+    if (series.length > 0) {
+      filters.push({ Name: 'instance-type', Values: [...series.map((s) => `${s}.*`)] })
+    }
+    const input = { Filters: filters, MaxResults: 100 }
     if (nextToken) {
       input.NextToken = nextToken
     } else {
@@ -264,7 +357,7 @@ export default function useAwsSdk() {
       const data = await ec2client.send(new DescribeInstanceTypesCommand(input))
       const d = data.InstanceTypes.map((t) => ({
         value: t.InstanceType,
-        label: t.InstanceType,
+        label: `${t.InstanceType} (vCPU: ${t.VCpuInfo?.DefaultVCpus}, Memory: ${t.MemoryInfo?.SizeInMiB / 1024} GiB)`,
         group: t.InstanceType.split('.')[0]
       }))
       d.sort((a, b) => {
@@ -276,6 +369,9 @@ export default function useAwsSdk() {
       })
       instanceTypeInfo.data.push(...d)
       instanceTypeInfo.nextToken = data.NextToken
+      if (d.length < 100 && data.NextToken) {
+        instanceTypeInfo.nextToken = ''
+      }
     } catch (err) {
       instanceTypeInfo.error = err.message ?? err
     }
@@ -306,10 +402,13 @@ export default function useAwsSdk() {
 
     try {
       const data = await ec2client.send(new DescribeVpcsCommand(input))
-      const d = data.Vpcs.map((v) => ({
-        label: `${v.VpcId}${v.IsDefault ? '(default)' : ''}`,
-        value: v.VpcId
-      }))
+      const d = data.Vpcs.map((v) => {
+        const nameTagValue = v.Tags?.find((t) => t.Key === 'Name')?.Value
+        return {
+          label: `${v.VpcId}${nameTagValue ? ` (${nameTagValue})` : ''}`,
+          value: v.VpcId
+        }
+      })
       vpcInfo.data.push(...d)
       vpcInfo.nextToken = data.NextToken
     } catch (err) {
@@ -406,7 +505,7 @@ export default function useAwsSdk() {
     try {
       const data = await ec2client.send(new DescribeSecurityGroupsCommand(input))
       const d = data.SecurityGroups.map((sg) => ({
-        label: `${sg.GroupId}(${sg.GroupName} | ${sg.Description})`,
+        label: `${sg.GroupName} (${sg.GroupId})`,
         value: sg.GroupId
       }))
       securityGroupInfo.data.push(...d)
@@ -458,14 +557,17 @@ export default function useAwsSdk() {
     imageDetail.loaded = true
   }
 
-  const fetchImages = async (
-    r,
-    volumeTypes = [],
-    arch = [],
-    query = '',
-    owners = ['self', 'amazon', 'aws-marketplace'],
-    field = 'name'
-  ) => {
+  const fetchImages = async (r, options = {}) => {
+    let {
+      volumeTypes = [],
+      arch = [],
+      query = '',
+      owners = [],
+      field = 'name',
+      virtualizationType = []
+      // platform = []
+    } = options
+
     const tmpRegion = r ?? region.value
     imageInfo.region = tmpRegion
     imageInfo.volumeTypes = volumeTypes
@@ -473,6 +575,8 @@ export default function useAwsSdk() {
     imageInfo.query = query
     imageInfo.owners = owners
     imageInfo.field = field
+    imageInfo.virtualizationType = virtualizationType
+    // imageInfo.platform = platform
 
     const ec2client = new EC2Client({
       credentials: credentials.value,
@@ -541,6 +645,20 @@ export default function useAwsSdk() {
         Values: volumeTypes // io1 | io2 | gp2 | gp3 | sc1 | st1 | standard
       })
     }
+
+    if (virtualizationType.length > 0) {
+      filters.push({
+        Name: 'virtualization-type',
+        Values: virtualizationType
+      })
+    }
+
+    // if (platform.length > 0) {
+    //   filters.push({
+    //     Name: 'platform',
+    //     Values: platform
+    //   })
+    // }
 
     const input = {
       Owners: owners,
@@ -699,6 +817,7 @@ export default function useAwsSdk() {
     imageInfo: readonly(imageInfo),
     imageDetail: readonly(imageDetail),
     keyPairInfo: readonly(keyPairInfo),
+    instanceTypeSeries: readonly(instanceTypeSeries),
     validateKeys,
     fetchRegions,
     fetchZones,
