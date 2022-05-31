@@ -129,7 +129,7 @@ const instanceTypeSeries = [
   'h1'
 ]
 
-const enCollator = new Intl.Collator('en')
+// const enCollator = new Intl.Collator('en')
 
 export default function useAwsSdk() {
   const accessKey = ref('')
@@ -358,20 +358,18 @@ export default function useAwsSdk() {
       const d = data.InstanceTypes.map((t) => ({
         value: t.InstanceType,
         label: `${t.InstanceType} (vCPU: ${t.VCpuInfo?.DefaultVCpus}, Memory: ${t.MemoryInfo?.SizeInMiB / 1024} GiB)`,
-        group: t.InstanceType.split('.')[0]
+        group: t.InstanceType.split('.')[0],
+        raw: t
       }))
-      d.sort((a, b) => {
-        const result = enCollator.compare(a.group, b.group)
-        if (result === 0) {
-          return enCollator.compare(a.label, b.label)
-        }
-        return result
-      })
+      // d.sort((a, b) => {
+      //   const result = enCollator.compare(a.group, b.group)
+      //   if (result === 0) {
+      //     return enCollator.compare(a.label, b.label)
+      //   }
+      //   return result
+      // })
       instanceTypeInfo.data.push(...d)
       instanceTypeInfo.nextToken = data.NextToken
-      if (d.length < 100 && data.NextToken) {
-        instanceTypeInfo.nextToken = ''
-      }
     } catch (err) {
       instanceTypeInfo.error = err.message ?? err
     }
