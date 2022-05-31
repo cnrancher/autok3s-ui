@@ -3,10 +3,10 @@ import { ref, toRef, watch } from 'vue'
 import usePagination from '@/composables/usePagination.js'
 import Pagination from '@/components/Pagination'
 const props = defineProps({
-  volumeType: {
-    type: String,
-    default: 'gp2' // io1 | io2 | gp2 | gp3 | sc1 | st1 | standard
-  },
+  // volumeType: {
+  //   type: String,
+  //   default: 'gp2' // io1 | io2 | gp2 | gp3 | sc1 | st1 | standard
+  // },
   region: {
     type: String,
     required: true
@@ -44,7 +44,7 @@ const virtualizationType = ref([...props.imageInfo.virtualizationType])
 
 const searchImages = () => {
   props.fetchImages(props.region, {
-    volumeTypes: [props.volumeType],
+    // volumeTypes: [props.volumeType],
     arch: [...arch.value],
     query: searchQuery.value,
     owners: [...owners.value],
@@ -60,6 +60,7 @@ watch(
     if (v === 'image-id') {
       owners.value = []
       arch.value = []
+      virtualizationType.value = []
     }
   },
   { immediate: true }

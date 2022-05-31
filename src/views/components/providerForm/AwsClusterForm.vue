@@ -112,13 +112,13 @@
                   @click="
                     showSearchImageModal({
                       region: form.options.region,
-                      volumeType: form.options['volume-type'],
+                      // volumeType: form.options['volume-type'],
                       imageInfo,
                       fetchImages,
                       onSelect: (e) => {
                         form.options['ami'] = e.ImageId
+                        updateImageDetail(cloneDeep(e))
                         // form.options['instance-type'] = ''
-                        fetchInstanceTypes('', form.options.region, [e.Architecture])
                       }
                     })
                   "
@@ -446,7 +446,8 @@ const {
   resetSecurityGroupInfo,
   fetchImages,
   fetchImageById,
-  fetchKeyPairs
+  fetchKeyPairs,
+  updateImageDetail
 } = useAwsSdk()
 
 const validateCredentials = () => {

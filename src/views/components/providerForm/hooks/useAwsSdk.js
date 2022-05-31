@@ -557,7 +557,7 @@ export default function useAwsSdk() {
 
   const fetchImages = async (r, options = {}) => {
     let {
-      volumeTypes = [],
+      // volumeTypes = [],
       arch = [],
       query = '',
       owners = [],
@@ -568,7 +568,7 @@ export default function useAwsSdk() {
 
     const tmpRegion = r ?? region.value
     imageInfo.region = tmpRegion
-    imageInfo.volumeTypes = volumeTypes
+    // imageInfo.volumeTypes = volumeTypes
     imageInfo.arch = arch
     imageInfo.query = query
     imageInfo.owners = owners
@@ -637,12 +637,12 @@ export default function useAwsSdk() {
       })
     }
 
-    if (volumeTypes.length > 0) {
-      filters.push({
-        Name: 'block-device-mapping.volume-type',
-        Values: volumeTypes // io1 | io2 | gp2 | gp3 | sc1 | st1 | standard
-      })
-    }
+    // if (volumeTypes.length > 0) {
+    //   filters.push({
+    //     Name: 'block-device-mapping.volume-type',
+    //     Values: volumeTypes // io1 | io2 | gp2 | gp3 | sc1 | st1 | standard
+    //   })
+    // }
 
     if (virtualizationType.length > 0) {
       filters.push({
@@ -713,6 +713,10 @@ export default function useAwsSdk() {
       fetchSubnets('', r, z, vpcId),
       fetchSecrityGroups('', r, vpcId)
     ])
+  }
+
+  const updateImageDetail = (image) => {
+    imageDetail.data = image
   }
 
   const resetAll = () => {
@@ -834,6 +838,7 @@ export default function useAwsSdk() {
     resetImageInfo,
     resetKeyPairInfo,
     fetchImages,
-    fetchImageById
+    fetchImageById,
+    updateImageDetail
   }
 }
