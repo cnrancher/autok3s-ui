@@ -14,7 +14,7 @@
       <slot name="prefix">{{ prefix }}</slot>
     </div>
     <dropdown
-      class="k-combo-box__trigger"
+      class="k-combo-box__trigger group"
       :option="popperOption"
       :append-to-body="false"
       :disabled="disabled"
@@ -30,23 +30,36 @@
         v-bind="$attrs"
         :placeholder="placeholder"
         @input="$emit('update:modelValue', $event.target.value)"
+        @change="$emit('change', $event.target.value)"
       />
       <k-icon v-if="loading" type="loading"></k-icon>
-      <k-icon v-else type="arrow-right-blod" direction="down"></k-icon>
+      <template v-else>
+        <k-icon type="arrow-right-blod" :class="[clearable ? 'group-hover:hidden' : '']" direction="down"></k-icon>
+        <k-icon
+          type="close"
+          class="hidden"
+          :class="[clearable ? 'group-hover:inline-block' : '']"
+          @click.stop="clear"
+        ></k-icon>
+      </template>
       <template #content>
+        <slot name="header"></slot>
         <div v-if="loading">Loading ...</div>
         <div v-else-if="options.length === 0">No Data</div>
         <div v-else>
           <dropdown-menu-item
             v-for="(v, index) in options"
-            :key="index"
+            :key="`${index}_${v.value ?? v}`"
             class="k-combo-box__option"
             :class="[modelValue === v?.value ?? v ? 'text-white bg-warm-gray-400' : '']"
             @click="setValue(v?.value ?? v)"
           >
-            {{ v?.label ?? v }}
+            <slot>
+              {{ v?.label ?? v }}
+            </slot>
           </dropdown-menu-item>
         </div>
+        <slot name="footer"></slot>
       </template>
     </dropdown>
     <div v-if="$slots.suffix" class="k-combo-box__suffix">
@@ -80,10 +93,10 @@ import { Dropdown, DropdownMenuItem } from '@/components/Dropdown'
 import Tooltip from '@/components/Tooltip'
 import KIcon from '@/components/Icon'
 
-defineProps({
+const props = defineProps({
   placeholder: {
     type: String,
-    default: 'Please Select...'
+    default: 'Please Input Or Select...'
   },
   label: {
     type: String,
@@ -113,6 +126,10 @@ defineProps({
     type: String,
     default: ''
   },
+  clearable: {
+    type: Boolean,
+    default: false
+  },
   options: {
     type: Array,
     default() {
@@ -121,11 +138,18 @@ defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'change'])
 const slots = useSlots()
 const inputId = getId()
 const setValue = (v) => {
   emit('update:modelValue', v)
+  if (v !== props.modelValue) {
+    emit('change', v)
+  }
+}
+const clear = () => {
+  emit('update:modelValue', '')
+  emit('change', '')
 }
 const minWithModifier = useMinWithModifier()
 const popperOption = {
