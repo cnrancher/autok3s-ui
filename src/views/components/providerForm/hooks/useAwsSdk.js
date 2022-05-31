@@ -404,7 +404,8 @@ export default function useAwsSdk() {
         const nameTagValue = v.Tags?.find((t) => t.Key === 'Name')?.Value
         return {
           label: `${v.VpcId}${nameTagValue ? ` (${nameTagValue})` : ''}`,
-          value: v.VpcId
+          value: v.VpcId,
+          raw: v
         }
       })
       vpcInfo.data.push(...d)
