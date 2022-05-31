@@ -95,18 +95,18 @@
                 </div>
               </div>
               <hr />
-              <template v-if="instanceTypeInfo.data.length > 0">
-                <KOption v-for="t in instanceTypeInfo.data" :key="t.value" :value="t.value" :label="t.label"></KOption>
+              <template v-if="instanceTypeOptions.length > 0">
+                <KOption v-for="t in instanceTypeOptions" :key="t.value" :value="t.value" :label="t.label"></KOption>
               </template>
               <template v-else-if="instanceTypeInfo.loading || imageDetail.loading">Loading...</template>
               <template v-else>No Data</template>
-              <div
+              <!-- <div
                 v-if="instanceTypeInfo.nextToken"
                 class="text-center cursor-pointer"
                 @click.stop="loadInstanceTypes()"
               >
                 Load More {{ instanceTypeInfo.loading ? '(Loading ...)' : '' }}
-              </div>
+              </div> -->
             </KSelect>
             <string-form
               v-model.trim="form.options['ami']"
@@ -465,7 +465,7 @@ const toggleSeries = () => {
 }
 const chooseSeries = (s) => {
   typeSeries.value = s
-  loadInstanceTypes()
+  // loadInstanceTypes()
 }
 const errors = computed(() => {
   return [
@@ -480,33 +480,60 @@ const errors = computed(() => {
   ].filter((e) => e)
 })
 
-const loadInstanceTypes = async () => {
-  if (instanceTypeInfo.loading || imageDetail.loading) {
-    return
-  }
+const instanceTypeOptions = computed(() => {
+  const arch = imageDetail.data?.Architecture
+  const types = instanceTypeInfo.data
+  const series = typeSeries.value
 
-  if (imageDetail.data?.ImageId === form.options['ami']) {
-    const series = typeSeries.value ? [typeSeries.value] : []
-    fetchInstanceTypes(instanceTypeInfo.nextToken, form.options.region, [imageDetail.data?.Architecture], series)
-  } else {
-    await fetchImageById(form.options.region, form.options['ami'])
-    if (!imageDetail.error) {
-      const series = typeSeries.value ? [typeSeries.value] : []
-      fetchInstanceTypes(instanceTypeInfo.nextToken, form.options.region, [imageDetail.data?.Architecture], series)
-    }
-  }
-}
+  return types
+    .filter((t) => {
+      if (arch) {
+        return t.raw?.ProcessorInfo?.SupportedArchitectures?.includes(arch)
+      }
+      return true
+    })
+    .filter((t) => {
+      if (series) {
+        return t.group === series
+      }
+      return true
+    })
+})
 
-const reLoadInstanceTypes = async (region) => {
-  if (imageDetail.data?.ImageId === form.options['ami']) {
-    const series = typeSeries.value ? [typeSeries.value] : []
-    fetchInstanceTypes('', region, imageDetail.data?.Architecture ? [imageDetail.data?.Architecture] : [], series)
-  } else {
-    await fetchImageById(region, form.options['ami'])
-    if (!imageDetail.error) {
-      const series = typeSeries.value ? [typeSeries.value] : []
-      fetchInstanceTypes('', region, imageDetail.data?.Architecture ? [imageDetail.data?.Architecture] : [], series)
-    }
+// const loadInstanceTypes = async () => {
+//   if (instanceTypeInfo.loading || imageDetail.loading) {
+//     return
+//   }
+
+//   if (imageDetail.data?.ImageId === form.options['ami']) {
+//     const series = typeSeries.value ? [typeSeries.value] : []
+//     fetchInstanceTypes(instanceTypeInfo.nextToken, form.options.region, [imageDetail.data?.Architecture], series)
+//   } else {
+//     await fetchImageById(form.options.region, form.options['ami'])
+//     if (!imageDetail.error) {
+//       const series = typeSeries.value ? [typeSeries.value] : []
+//       fetchInstanceTypes(instanceTypeInfo.nextToken, form.options.region, [imageDetail.data?.Architecture], series)
+//     }
+//   }
+// }
+
+// const reLoadInstanceTypes = async (region) => {
+//   if (imageDetail.data?.ImageId === form.options['ami']) {
+//     const series = typeSeries.value ? [typeSeries.value] : []
+//     await fetchInstanceTypes('', region, imageDetail.data?.Architecture ? [imageDetail.data?.Architecture] : [], series)
+//   } else {
+//     await fetchImageById(region, form.options['ami'])
+//     if (!imageDetail.error) {
+//       const series = typeSeries.value ? [typeSeries.value] : []
+//       fetchInstanceTypes('', region, imageDetail.data?.Architecture ? [imageDetail.data?.Architecture] : [], series)
+//     }
+//   }
+// }
+
+const loadAllInstanceTypes = async (region) => {
+  await fetchInstanceTypes(instanceTypeInfo.nextToken, region, [], [])
+  if (instanceTypeInfo.nextToken) {
+    await loadAllInstanceTypes(region)
   }
 }
 
@@ -594,7 +621,7 @@ watch(
       if (region) {
         fetchKeyPairs(region)
         fetchZones(region)
-        reLoadInstanceTypes(region)
+        loadAllInstanceTypes(region)
         fetchVpcs('', region)
       }
       if (region && vpcId) {
@@ -608,4 +635,10 @@ watch(
     }
   }
 )
+
+watch([() => keyInfo.valid, () => form.options['ami']], ([valid, imageId]) => {
+  if (valid && imageId !== imageDetail.imageId) {
+    fetchImageById(form.options.region, form.options['ami'])
+  }
+})
 </script>
