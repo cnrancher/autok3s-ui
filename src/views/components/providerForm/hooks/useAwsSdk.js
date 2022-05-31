@@ -132,6 +132,7 @@ const instanceTypeSeries = [
 // const enCollator = new Intl.Collator('en')
 
 export default function useAwsSdk() {
+  let abortController = null
   const accessKey = ref('')
   const secretKey = ref('')
   const region = ref('')
@@ -168,7 +169,7 @@ export default function useAwsSdk() {
     error: null,
     data: []
   })
-  const instanceTypeInfo = reactive({
+  const instanceTypeInfo = shallowReactive({
     region: '',
     loading: false,
     loaded: false,
@@ -271,14 +272,19 @@ export default function useAwsSdk() {
     keyInfo.error = null
     keyInfo.valid = false
     regionInfo.data = []
+    abortController?.abort()
+    abortController = new AbortController()
+    const abortSignal = abortController.signal
     try {
-      const data = await ec2client.send(new DescribeRegionsCommand({}))
+      const data = await ec2client.send(new DescribeRegionsCommand({}), { abortSignal })
       regionInfo.data = data.Regions
       keyInfo.valid = true
     } catch (err) {
-      regionInfo.error = err.message ?? err
-      keyInfo.error = err.message ?? err
-      keyInfo.valid = false
+      if (err.name !== 'AbortError') {
+        regionInfo.error = err.message ?? err
+        keyInfo.error = err.message ?? err
+        keyInfo.valid = false
+      }
     }
     regionInfo.loading = false
     regionInfo.loaded = true
@@ -301,13 +307,17 @@ export default function useAwsSdk() {
     zoneInfo.loading = true
     zoneInfo.loaded = false
     zoneInfo.data = []
+    const abortSignal = abortController.signal
     try {
       const data = await ec2client.send(
-        new DescribeAvailabilityZonesCommand({ Filters: [{ Name: 'region-name', Values: [zoneInfo.region] }] })
+        new DescribeAvailabilityZonesCommand({ Filters: [{ Name: 'region-name', Values: [zoneInfo.region] }] }),
+        { abortSignal }
       )
       zoneInfo.data = data.AvailabilityZones.map((z) => ({ label: z.ZoneName, value: z.ZoneName }))
     } catch (err) {
-      zoneInfo.error = err.message ?? err
+      if (err.name !== 'AbortError') {
+        zoneInfo.error = err.message ?? err
+      }
     }
     zoneInfo.loading = false
     zoneInfo.loaded = true
@@ -352,9 +362,9 @@ export default function useAwsSdk() {
       instanceTypeInfo.data = []
       instanceTypeInfo.nextToken = ''
     }
-
+    const abortSignal = abortController.signal
     try {
-      const data = await ec2client.send(new DescribeInstanceTypesCommand(input))
+      const data = await ec2client.send(new DescribeInstanceTypesCommand(input), { abortSignal })
       const d = data.InstanceTypes.map((t) => ({
         value: t.InstanceType,
         label: `${t.InstanceType} (vCPU: ${t.VCpuInfo?.DefaultVCpus}, Memory: ${t.MemoryInfo?.SizeInMiB / 1024} GiB)`,
@@ -368,10 +378,12 @@ export default function useAwsSdk() {
       //   }
       //   return result
       // })
-      instanceTypeInfo.data.push(...d)
+      instanceTypeInfo.data = [...instanceTypeInfo.data, ...d]
       instanceTypeInfo.nextToken = data.NextToken
     } catch (err) {
-      instanceTypeInfo.error = err.message ?? err
+      if (err.name !== 'AbortError') {
+        instanceTypeInfo.error = err.message ?? err
+      }
     }
     instanceTypeInfo.loading = false
     instanceTypeInfo.loaded = true
@@ -397,9 +409,9 @@ export default function useAwsSdk() {
     }
     vpcInfo.loading = true
     vpcInfo.loaded = false
-
+    const abortSignal = abortController.signal
     try {
-      const data = await ec2client.send(new DescribeVpcsCommand(input))
+      const data = await ec2client.send(new DescribeVpcsCommand(input), { abortSignal })
       const d = data.Vpcs.map((v) => {
         const nameTagValue = v.Tags?.find((t) => t.Key === 'Name')?.Value
         return {
@@ -411,7 +423,9 @@ export default function useAwsSdk() {
       vpcInfo.data.push(...d)
       vpcInfo.nextToken = data.NextToken
     } catch (err) {
-      vpcInfo.error = err.message ?? err
+      if (err.name !== 'AbortError') {
+        vpcInfo.error = err.message ?? err
+      }
     }
     vpcInfo.loading = false
     vpcInfo.loaded = true
@@ -457,16 +471,18 @@ export default function useAwsSdk() {
     }
     subnetInfo.loading = true
     subnetInfo.loaded = false
-
+    const abortSignal = abortController.signal
     try {
-      const data = await ec2client.send(new DescribeSubnetsCommand(input))
+      const data = await ec2client.send(new DescribeSubnetsCommand(input), { abortSignal })
       const d = data.Subnets.map((s) => ({
         label: s.SubnetId,
         value: s.SubnetId
       }))
       subnetInfo.data.push(...d)
     } catch (err) {
-      subnetInfo.error = err.message ?? err
+      if (err.name !== 'AbortError') {
+        subnetInfo.error = err.message ?? err
+      }
     }
     subnetInfo.loading = false
     subnetInfo.loaded = true
@@ -501,8 +517,9 @@ export default function useAwsSdk() {
 
     securityGroupInfo.loading = true
     securityGroupInfo.loaded = false
+    const abortSignal = abortController.signal
     try {
-      const data = await ec2client.send(new DescribeSecurityGroupsCommand(input))
+      const data = await ec2client.send(new DescribeSecurityGroupsCommand(input), { abortSignal })
       const d = data.SecurityGroups.map((sg) => ({
         label: `${sg.GroupName} (${sg.GroupId})`,
         value: sg.GroupId
@@ -510,7 +527,9 @@ export default function useAwsSdk() {
       securityGroupInfo.data.push(...d)
       securityGroupInfo.nextToken = data.NextToken
     } catch (err) {
-      securityGroupInfo.error = err.message ?? err
+      if (err.name !== 'AbortError') {
+        securityGroupInfo.error = err.message ?? err
+      }
     }
     securityGroupInfo.loading = false
     securityGroupInfo.loaded = true
@@ -540,8 +559,9 @@ export default function useAwsSdk() {
     imageDetail.data = null
     imageDetail.loading = true
     imageDetail.loaded = false
+    const abortSignal = abortController.signal
     try {
-      const data = await ec2client.send(new DescribeImagesCommand(input))
+      const data = await ec2client.send(new DescribeImagesCommand(input), { abortSignal })
 
       if (data.Images?.length === 0) {
         imageDetail.error = `Not found image by id(${imageId})`
@@ -550,7 +570,9 @@ export default function useAwsSdk() {
         imageDetail.data = data.Images[0]
       }
     } catch (err) {
-      imageDetail.error = err?.message ?? err
+      if (err.name !== 'AbortError') {
+        imageDetail.error = err?.message ?? err
+      }
     }
     imageDetail.loading = false
     imageDetail.loaded = true
@@ -668,11 +690,14 @@ export default function useAwsSdk() {
     imageInfo.loading = true
     imageInfo.loaded = false
     imageInfo.data = []
+    const abortSignal = abortController.signal
     try {
-      const data = await ec2client.send(new DescribeImagesCommand(input))
+      const data = await ec2client.send(new DescribeImagesCommand(input), { abortSignal })
       imageInfo.data = data.Images
     } catch (err) {
-      imageInfo.error = err?.message ?? err
+      if (err.name !== 'AbortError') {
+        imageInfo.error = err?.message ?? err
+      }
     }
     imageInfo.loading = false
     imageInfo.loaded = true
@@ -692,14 +717,17 @@ export default function useAwsSdk() {
     const input = {}
     keyPairInfo.loading = true
     keyPairInfo.loaded = false
+    const abortSignal = abortController.signal
     try {
-      const data = await ec2client.send(new DescribeKeyPairsCommand(input))
+      const data = await ec2client.send(new DescribeKeyPairsCommand(input), { abortSignal })
       keyPairInfo.data = data.KeyPairs.map((item) => ({
         label: item.KeyName,
         value: item.KeyName
       }))
     } catch (err) {
-      keyPairInfo.error = err?.message ?? err
+      if (err.name !== 'AbortError') {
+        keyPairInfo.error = err?.message ?? err
+      }
     }
     keyPairInfo.loading = false
     keyPairInfo.loaded = true

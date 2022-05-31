@@ -621,7 +621,7 @@ watch(
 
 watch(
   () => keyInfo.valid,
-  async (valid) => {
+  (valid) => {
     if (valid) {
       const region = form.options.region
       const zone = form.options.zone
