@@ -209,7 +209,7 @@ export default function useAwsSdk() {
     volumeTypes: [],
     arch: ['x86_64'],
     query: '',
-    owners: ['self', 'amazon', 'aws-marketplace'],
+    owners: ['amazon'],
     field: 'name',
     virtualizationType: ['hvm'],
     // platform: [],
