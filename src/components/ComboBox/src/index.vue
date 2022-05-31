@@ -54,7 +54,7 @@
             :class="[modelValue === v?.value ?? v ? 'text-white bg-warm-gray-400' : '']"
             @click="setValue(v?.value ?? v)"
           >
-            <slot>
+            <slot :option="v">
               {{ v?.label ?? v }}
             </slot>
           </dropdown-menu-item>
