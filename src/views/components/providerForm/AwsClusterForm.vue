@@ -45,69 +45,59 @@
           <div class="grid gap-10px grid-cols-1 sm:grid-cols-2">
             <string-form v-model.trim="form.options.region" label="Region" :desc="desc.options.region" disabled />
             <!-- <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" :readonly="readonly" /> -->
-            <KSelect
+            <KComboBox
               v-model="form.options.zone"
               label="Zone"
               :desc="desc.options.zone"
               :disabled="readonly"
               :loading="zoneInfo.loading"
+              :options="zoneInfo.data"
               clearable
               @change="zoneChange($event)"
-            >
-              <KOption v-for="z in zoneInfo.data" :key="z.value" :value="z.value" :label="z.label"></KOption>
-            </KSelect>
+            ></KComboBox>
             <!-- <string-form
               v-model.trim="form.options['instance-type']"
               label="Instance Type"
               :desc="desc.options['instance-type']"
               :readonly="readonly"
             /> -->
-            <KSelect
+            <KComboBox
               v-model="form.options['instance-type']"
               label="Instance Type"
               :desc="desc.options['instance-type']"
               :disabled="readonly"
               :loading="instanceTypeInfo.loading || imageDetail.loading"
+              :options="instanceTypeOptions"
               clearable
             >
-              <div class="p-1" @click.stop="toggleSeries">
-                <div class="cursor-pointer flex items-center justify-between">
-                  <div>Filter: {{ typeSeries ? typeSeries : 'All Instance Type Series' }}</div>
-                  <k-icon type="arrow-right" :direction="showSeriesSelection ? 'down' : ''"></k-icon>
-                </div>
-                <div v-show="showSeriesSelection" class="flex gap-2 flex-wrap p-1">
-                  <div
-                    :class="['cursor-pointer', typeSeries === '' ? 'bg-warm-gray-400' : '']"
-                    class="p-1"
-                    @click="chooseSeries('')"
-                  >
-                    All Instance Type Series
+              <template #header>
+                <div class="p-1 sticky top-0 bg-white" @click.stop="toggleSeries">
+                  <div class="cursor-pointer flex items-center justify-between">
+                    <div>Filter: {{ typeSeries ? typeSeries : 'All Instance Type Series' }}</div>
+                    <k-icon type="arrow-right" :direction="showSeriesSelection ? 'down' : ''"></k-icon>
                   </div>
-                  <div
-                    v-for="s in instanceTypeSeries"
-                    :key="s"
-                    :class="[typeSeries && typeSeries === s ? 'bg-warm-gray-400' : '']"
-                    class="cursor-pointer p-1"
-                    @click="chooseSeries(s)"
-                  >
-                    {{ s }}
+                  <div v-show="showSeriesSelection" class="flex gap-2 flex-wrap p-1">
+                    <div
+                      :class="['cursor-pointer', typeSeries === '' ? 'bg-warm-gray-400' : '']"
+                      class="p-1"
+                      @click="chooseSeries('')"
+                    >
+                      All Instance Type Series
+                    </div>
+                    <div
+                      v-for="s in instanceTypeSeries"
+                      :key="s"
+                      :class="[typeSeries && typeSeries === s ? 'bg-warm-gray-400' : '']"
+                      class="cursor-pointer p-1"
+                      @click="chooseSeries(s)"
+                    >
+                      {{ s }}
+                    </div>
                   </div>
+                  <hr />
                 </div>
-              </div>
-              <hr />
-              <template v-if="instanceTypeOptions.length > 0">
-                <KOption v-for="t in instanceTypeOptions" :key="t.value" :value="t.value" :label="t.label"></KOption>
               </template>
-              <template v-else-if="instanceTypeInfo.loading || imageDetail.loading">Loading...</template>
-              <template v-else>No Data</template>
-              <!-- <div
-                v-if="instanceTypeInfo.nextToken"
-                class="text-center cursor-pointer"
-                @click.stop="loadInstanceTypes()"
-              >
-                Load More {{ instanceTypeInfo.loading ? '(Loading ...)' : '' }}
-              </div> -->
-            </KSelect>
+            </KComboBox>
             <string-form
               v-model.trim="form.options['ami']"
               label="AMI"
@@ -184,65 +174,71 @@
               :desc="desc.options['vpc-id']"
               :readonly="readonly"
             /> -->
-            <KSelect
+            <KComboBox
               v-model="form.options['vpc-id']"
               label="VPC ID"
               placeholder="Select a VPC ..."
               :desc="desc.options['vpc-id']"
               :disabled="readonly"
               :loading="vpcInfo.loading"
+              :options="vpcInfo.data"
               clearable
               @change="vpcChange($event)"
             >
-              <KOption v-for="v in vpcInfo.data" :key="v.value" :value="v.value" :label="v.label"></KOption>
-              <div v-if="vpcInfo.nextToken" class="text-center cursor-pointer" @click.stop="loadVpcs()">
-                Load More {{ vpcInfo.loading ? '(Loading ...)' : '' }}
-              </div>
-            </KSelect>
+              <template #footer>
+                <div v-if="vpcInfo.nextToken" class="text-center cursor-pointer" @click.stop="loadVpcs()">
+                  Load More {{ vpcInfo.loading ? '(Loading ...)' : '' }}
+                </div>
+              </template>
+            </KComboBox>
             <!-- <string-form
               v-model.trim="form.options['subnet-id']"
               label="Subnet ID"
               :desc="desc.options['subnet-id']"
               :readonly="readonly"
             /> -->
-            <KSelect
+            <KComboBox
               v-model="form.options['subnet-id']"
               label="Subnet ID"
               placeholder="Select a subnet ..."
               :desc="desc.options['subnet-id']"
               :disabled="readonly"
               :loading="subnetInfo.loading"
+              :options="subnetInfo.data"
               clearable
             >
-              <KOption v-for="v in subnetInfo.data" :key="v.value" :value="v.value" :label="v.label"></KOption>
-              <div v-if="subnetInfo.nextToken" class="text-center cursor-pointer" @click.stop="loadSubnets()">
-                Load More {{ subnetInfo.loading ? '(Loading ...)' : '' }}
-              </div>
-            </KSelect>
+              <template #footer>
+                <div v-if="subnetInfo.nextToken" class="text-center cursor-pointer" @click.stop="loadSubnets()">
+                  Load More {{ subnetInfo.loading ? '(Loading ...)' : '' }}
+                </div>
+              </template>
+            </KComboBox>
             <!-- <string-form
               v-model.trim="form.options['security-group']"
               label="Security Group"
               :desc="desc.options['security-group']"
               :readonly="readonly"
             /> -->
-            <KSelect
+            <KComboBox
               v-model="form.options['security-group']"
               label="Security Group"
               placeholder="Select a security group ..."
               :desc="desc.options['security-group']"
               :disabled="readonly"
               :loading="securityGroupInfo.loading"
+              :options="securityGroupInfo.data"
               clearable
             >
-              <KOption v-for="v in securityGroupInfo.data" :key="v.value" :value="v.value" :label="v.label"></KOption>
-              <div
-                v-if="securityGroupInfo.nextToken"
-                class="text-center cursor-pointer"
-                @click.stop="loadSecurityGroups()"
-              >
-                Load More {{ securityGroupInfo.loading ? '(Loading ...)' : '' }}
-              </div>
-            </KSelect>
+              <template #footer>
+                <div
+                  v-if="securityGroupInfo.nextToken"
+                  class="text-center cursor-pointer"
+                  @click.stop="loadSecurityGroups()"
+                >
+                  Load More {{ securityGroupInfo.loading ? '(Loading ...)' : '' }}
+                </div>
+              </template>
+            </KComboBox>
           </div>
         </template>
       </form-group>
@@ -258,17 +254,16 @@
               :desc="desc.options['keypair-name']"
               :readonly="readonly"
             /> -->
-            <KSelect
+            <KComboBox
               v-model="form.options['keypair-name']"
               label="Keypair Name"
               placeholder="Select a key pair ..."
               :desc="desc.options['keypair-name']"
               :disabled="readonly"
               :loading="keyPairInfo.loading"
+              :options="keyPairInfo.data"
               clearable
-            >
-              <KOption v-for="v in keyPairInfo.data" :key="v.value" :value="v.value" :label="v.label"></KOption>
-            </KSelect>
+            ></KComboBox>
             <string-form
               v-model.trim="form.config['ssh-user']"
               label="SSH User"
