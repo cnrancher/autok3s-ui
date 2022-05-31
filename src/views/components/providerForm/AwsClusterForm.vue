@@ -185,6 +185,19 @@
               clearable
               @change="vpcChange($event)"
             >
+              <template #default="{ option }">
+                <div class="grid grid-cols-[1fr,auto] w-full">
+                  <div>
+                    {{ option.label }}
+                  </div>
+                  <div>
+                    {{ option.raw.IsDefault ? 'Default' : '' }}
+                  </div>
+                  <div class="col-span-2 text-sm text-gray-500">
+                    {{ option.raw.CidrBlock }}
+                  </div>
+                </div>
+              </template>
               <template #footer>
                 <div v-if="vpcInfo.nextToken" class="text-center cursor-pointer" @click.stop="loadVpcs()">
                   Load More {{ vpcInfo.loading ? '(Loading ...)' : '' }}
