@@ -104,7 +104,7 @@
               class="col-span-1 sm:col-span-2"
               label="Kubeconfig"
               :desc="desc.options['kubeconfig-content']"
-              :options="{ readOnly: readonly }"
+              :options="readonlyOption"
               :visible="instanceTabVisible"
             />
             <yaml-config-form
@@ -112,7 +112,7 @@
               class="col-span-1 sm:col-span-2"
               label="User Data"
               :desc="desc.options['user-data']"
-              :options="{ readOnly: readonly }"
+              :options="readonlyOption"
               :visible="instanceTabVisible"
               @clear="userDataTemplate = ''"
             >
@@ -188,7 +188,7 @@
               class="col-span-1 sm:col-span-2"
               label="Network Data"
               :desc="desc.options['network-data']"
-              :options="{ readOnly: readonly }"
+              :options="readonlyOption"
               :visible="networkConfigVisible"
               @clear="networkDataTemplate = ''"
             >
@@ -453,6 +453,10 @@ const toggleVisible = () => {
 const networkConfigVisible = ref(false)
 const instanceTabVisible = computed(() => {
   return acitiveTab.value === 'instance'
+})
+
+const readonlyOption = computed(() => {
+  return { readOnly: props.readonly }
 })
 
 defineExpose({ getForm })
