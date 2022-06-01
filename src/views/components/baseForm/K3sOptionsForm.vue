@@ -135,14 +135,14 @@
           class="col-span-1 sm:col-span-2"
           label="Registry"
           :desc="desc.config['registry-content']"
-          :options="{ readOnly: readonly }"
+          :options="readonlyOption"
         />
       </div>
     </template>
   </form-group>
 </template>
 <script setup>
-import { provide, toRef, watch } from 'vue'
+import { provide, toRef, watch, computed } from 'vue'
 import StringForm from './StringForm.vue'
 import BooleanForm from './BooleanForm.vue'
 import RegistryConfigForm from './RegistryConfigForm.vue'
@@ -170,6 +170,9 @@ const props = defineProps({
 })
 
 const visible = toRef(props, 'visible')
+const readonlyOption = computed(() => {
+  return { readOnly: props.readonly }
+})
 provide('parentVisible', visible)
 const installScriptOptions = ['https://get.k3s.io', 'https://rancher-mirror.rancher.cn/k3s/k3s-install.sh']
 watch(
