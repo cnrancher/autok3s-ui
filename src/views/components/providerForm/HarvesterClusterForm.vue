@@ -148,7 +148,7 @@
               label="Network Name"
               :desc="desc.options['network-name']"
               :disabled="readonly"
-              :options="networkNameInfo.data"
+              :options="networkNameOptions"
               :loading="networkNameInfo.loading"
               placeholder="Please Select Or Input..."
             ></k-combo-box>
@@ -315,6 +315,7 @@ import useHarvesterSdk from './hooks/useHarvesterSdk.js'
 import { useDebounceFn } from '@vueuse/core'
 
 const needDecodeOptionKeys = ['kubeconfig-content', 'network-data', 'user-data']
+const MANAGEMENT_NETWORK = 'management Network'
 
 const props = defineProps({
   schema: {
@@ -415,16 +416,28 @@ const networkMode = ref([
   }
 ])
 
-const interfaceType = ref([
-  {
-    label: 'masquerade',
-    value: 'masquerade'
-  },
-  {
-    label: 'bridge',
-    value: 'bridge'
+const interfaceType = computed(() => {
+  const types = [
+    {
+      label: 'masquerade',
+      value: 'masquerade'
+    },
+    {
+      label: 'bridge',
+      value: 'bridge'
+    }
+  ]
+  const otherTypes = [
+    {
+      label: 'bridge',
+      value: 'bridge'
+    }
+  ]
+  if (form.options['network-name'] === MANAGEMENT_NETWORK) {
+    return types
   }
-])
+  return otherTypes
+})
 
 const getForm = () => {
   const f = cloneDeep(form)
@@ -443,6 +456,17 @@ const instanceTabVisible = computed(() => {
 })
 
 defineExpose({ getForm })
+
+watch([() => form.options['network-name'], () => props.readonly], ([networkName, readonly]) => {
+  if (readonly) {
+    return
+  }
+  if (networkName === MANAGEMENT_NETWORK) {
+    form.options['interface-type'] = 'masquerade'
+  } else {
+    form.options['interface-type'] = 'bridge'
+  }
+})
 
 // use harvester sdk
 const userDataTemplate = ref('')
@@ -463,6 +487,16 @@ const errors = computed(() => {
   return [
     ...new Set([configInfo.error, namespaceInfo.error, imageInfo.error, keyPairInfo.error, networkNameInfo.error])
   ].filter((e) => e)
+})
+
+const networkNameOptions = computed(() => {
+  return [
+    {
+      label: MANAGEMENT_NETWORK,
+      value: MANAGEMENT_NETWORK
+    },
+    ...networkNameInfo.data
+  ]
 })
 
 const debouncedFn = useDebounceFn((v) => {
