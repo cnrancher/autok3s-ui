@@ -820,6 +820,7 @@ export default function useAwsSdk() {
     imageInfo.region = ''
     imageInfo.loaded = false
     imageInfo.loading = false
+    imageInfo.error = null
     imageInfo.data = []
   }
 
@@ -827,6 +828,7 @@ export default function useAwsSdk() {
     keyPairInfo.region = ''
     keyPairInfo.loaded = false
     keyPairInfo.loading = false
+    keyPairInfo.error = null
     keyPairInfo.data = []
   }
 
