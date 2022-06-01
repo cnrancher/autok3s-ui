@@ -17,7 +17,13 @@
         <k-icon type="upload"></k-icon>
         &nbsp; Read from a file
       </k-button>
-      <input ref="file" class="hidden" type="file" accept=".yaml,.yml" @change="handleFileChange" />
+      <input
+        ref="file"
+        class="hidden"
+        type="file"
+        accept=".yaml,.yml,.sh,text/x-shellscript,text/cloud-config"
+        @change="handleFileChange"
+      />
     </div>
     <div v-else></div>
     <div
@@ -56,6 +62,36 @@ import 'codemirror/addon/edit/matchbrackets.js'
 
 // Codemirrror yaml plugin expects to find it in window/globals.
 window.jsyaml = window.jsyaml ?? jsyaml
+
+const checkMode = (str) => {
+  if (str?.startsWith('#cloud-config')) {
+    return 'yaml'
+  }
+
+  if (str?.startsWith('#!') && str?.slice(0, str?.indexOf('\n'))?.endsWith('sh')) {
+    return 'shell'
+  }
+
+  return 'none'
+}
+
+const modeOptionMap = {
+  yaml: {
+    mode: 'yaml',
+    matchBrackets: false,
+    lint: true
+  },
+  shell: {
+    mode: 'shell',
+    matchBrackets: true,
+    lint: false
+  },
+  none: {
+    mode: null,
+    matchBrackets: true,
+    lint: false
+  }
+}
 
 export default defineComponent({
   name: 'UserDataConfigForm',
@@ -100,10 +136,8 @@ export default defineComponent({
     const textarea = ref(null)
     const file = ref(null)
     let codemirror = null
-    const mode = ref('yaml')
-    if (props.modelValue?.startsWith('#!')) {
-      mode.value = 'shell'
-    }
+    const mode = ref('none')
+    mode.value = checkMode(props.modelValue)
     const options = computed(() => {
       const theme = themeStore.theme.split('-')[1]
       const defaluOptions = {
@@ -120,19 +154,10 @@ export default defineComponent({
         gutters: ['CodeMirror-lint-markers'],
         dragDrop: false
       }
-      const defaultYamlOptions = {
-        mode: 'yaml',
-        matchBrackets: false,
-        lint: true
-      }
-      const defaultShellOptions = {
-        mode: 'shell',
-        matchBrackets: true,
-        lint: false
-      }
+
       return {
         ...defaluOptions,
-        ...(mode.value === 'shell' ? defaultShellOptions : defaultYamlOptions),
+        ...modeOptionMap[mode.value],
         ...props.options
       }
     })
@@ -154,11 +179,7 @@ export default defineComponent({
       if (!codemirror) {
         return
       }
-      if (newVal?.startsWith('#!')) {
-        mode.value = 'shell'
-      } else {
-        mode.value = 'yaml'
-      }
+      mode.value = checkMode(newVal)
       const value = codemirror.getValue()
       if (newVal === value) {
         return
@@ -168,14 +189,14 @@ export default defineComponent({
       codemirror.scrollTo(scrollInfo.left, scrollInfo.top)
     }
     const validateFile = (file) => {
-      if (!file.type.endsWith('yaml')) {
-        notificationStore.notify({
-          type: 'error',
-          title: 'File Type Error',
-          content: 'The selected file is not yaml type'
-        })
-        return false
-      }
+      // if (!file.type.endsWith('yaml') || !file.type.endsWith('sh')) {
+      //   notificationStore.notify({
+      //     type: 'error',
+      //     title: 'File Type Error',
+      //     content: 'The selected file is not yaml or sh type'
+      //   })
+      //   return false
+      // }
       if (file.size > 2 * 1024 * 1024) {
         notificationStore.notify({
           type: 'error',

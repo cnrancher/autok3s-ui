@@ -126,7 +126,7 @@
         </template>
       </form-group>
       <hr class="section-divider" />
-      <form-group :closable="true">
+      <form-group v-model="advanceConfigVisible" :closable="true">
         <template #title>Advance</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
@@ -140,6 +140,13 @@
               action-label="Add Tag"
             ></cluster-tags-form>
           </div>
+          <UserDataForm
+            v-model="form.options['user-data-content']"
+            label="User Data"
+            :desc="desc.options['user-data-content']"
+            :options="readonlyOption"
+            :visible="advanceConfigVisible"
+          ></UserDataForm>
         </template>
       </form-group>
     </k-tab-pane>
@@ -192,15 +199,19 @@
 </template>
 <script setup>
 import { cloneDeep } from '@/utils'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
+import UserDataForm from '../baseForm/UserDataForm.vue'
 import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import ClusterTagsForm from '../baseForm/ArrayListForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
+import { Base64 } from 'js-base64'
 
 import useFormFromSchema from '../../composables/useFormFromSchema.js'
+
+const needDecodeOptionKeys = ['user-data-content']
 
 const props = defineProps({
   schema: {
@@ -214,6 +225,23 @@ const props = defineProps({
 })
 
 const { form, desc } = useFormFromSchema(props.schema)
+// decode options
+watch(
+  () => form.options,
+  () => {
+    needDecodeOptionKeys.forEach((k) => {
+      const v = form.options[k]
+      if (v) {
+        form.options[k] = Base64.decode(v)
+      }
+    })
+  },
+  {
+    immediate: true
+  }
+)
+
+const advanceConfigVisible = ref(false)
 const acitiveTab = ref('instance')
 const uiOptions = computed({
   get() {
@@ -228,6 +256,9 @@ const uiOptions = computed({
   set(v) {
     form.config.enable = v
   }
+})
+const readonlyOption = computed(() => {
+  return { readOnly: props.readonly }
 })
 const updateActiveTab = () => {
   if (!form.options['access-key'] || !form.options['access-secret']) {

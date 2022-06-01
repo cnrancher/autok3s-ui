@@ -147,8 +147,17 @@ const cmdOptions = computed(() => {
       }
     })
   }
-  if (props.clusterForm.provider === 'aws') {
+  if (['aws', 'alibaba', 'tencent'].includes(props.clusterForm.provider)) {
     ;['user-data-content'].forEach((k) => {
+      const e = optionEntries.find(([key]) => key === k)
+      const value = e[1]
+      if (value) {
+        e[1] = Base64.encode(value)
+      }
+    })
+  }
+  if (['google'].includes(props.clusterForm.provider)) {
+    ;['startup-script-content'].forEach((k) => {
       const e = optionEntries.find(([key]) => key === k)
       const value = e[1]
       if (value) {
