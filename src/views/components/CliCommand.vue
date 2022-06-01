@@ -147,6 +147,15 @@ const cmdOptions = computed(() => {
       }
     })
   }
+  if (props.clusterForm.provider === 'aws') {
+    ;['user-data-content'].forEach((k) => {
+      const e = optionEntries.find(([key]) => key === k)
+      const value = e[1]
+      if (value) {
+        e[1] = Base64.encode(value)
+      }
+    })
+  }
   const options = [['--provider', provider], ...configEntries, ...optionEntries]
     .filter(([k, v]) => filterArgs(k, v))
     .reduce((t, [k, v]) => {

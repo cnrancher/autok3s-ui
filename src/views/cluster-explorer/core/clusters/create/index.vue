@@ -325,6 +325,14 @@ export default defineComponent({
           errors.push(err)
         }
       }
+
+      if (form.provider === 'aws') {
+        const userData = form.options['user-data-content']
+        if (userData && Base64.encode(userData).length > 16 * 1024) {
+          errors.push('User data length over 16KB')
+        }
+      }
+
       formErrors.value = errors
       return errors.length === 0
     }
@@ -344,6 +352,14 @@ export default defineComponent({
       // encode kubeconfig-content, network-data, user-data to base64 for harvester provider
       if (formData.provider === 'harvester') {
         ;['kubeconfig-content', 'network-data', 'user-data'].forEach((k) => {
+          const v = formData.options[k]
+          if (v) {
+            formData.options[k] = Base64.encode(v)
+          }
+        })
+      }
+      if (formData.provider === 'aws') {
+        ;['user-data-content'].forEach((k) => {
           const v = formData.options[k]
           if (v) {
             formData.options[k] = Base64.encode(v)
