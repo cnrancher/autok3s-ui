@@ -11,7 +11,7 @@ import {
   // DescribeFastLaunchImagesCommand
   // DescribeAccountAttributesCommand
 } from '@aws-sdk/client-ec2'
-// import { IAMClient, ListAccessKeysCommand } from '@aws-sdk/client-iam'
+import { IAMClient, ListInstanceProfilesCommand } from '@aws-sdk/client-iam'
 import { reactive, ref, readonly, computed, shallowReactive } from 'vue'
 //
 const defaultRegions = [
@@ -233,6 +233,16 @@ export default function useAwsSdk() {
     region: '',
     loading: false,
     loaded: true,
+    error: null,
+    data: []
+  })
+
+  const instanceProfileInfo = shallowReactive({
+    region: '',
+    loading: false,
+    loaded: true,
+    isTruncated: false,
+    marker: null,
     error: null,
     data: []
   })
@@ -733,6 +743,53 @@ export default function useAwsSdk() {
     keyPairInfo.loaded = true
   }
 
+  const fetchInstanceProfiles = async (marker, r) => {
+    const tmpRegion = r ?? region.value
+
+    if (marker && instanceProfileInfo.region !== tmpRegion) {
+      instanceProfileInfo.error = 'Region has changed, no further instance profiles information is available'
+      return false
+    }
+
+    instanceProfileInfo.region = tmpRegion
+
+    const client = new IAMClient({
+      credentials: credentials.value,
+      region: keyPairInfo.region
+    })
+    const input = {
+      MaxItems: 100
+    }
+
+    if (marker) {
+      input.Marker = marker
+    } else {
+      instanceProfileInfo.data = []
+    }
+    instanceProfileInfo.loading = true
+    instanceProfileInfo.loaded = false
+    const abortSignal = abortController.signal
+    try {
+      const data = await client.send(new ListInstanceProfilesCommand(input), { abortSignal })
+      if (data.IsTruncated && data.Marker) {
+        instanceProfileInfo.isTruncated = true
+        instanceProfileInfo.marker = data.Marker
+      }
+      const d = data.InstanceProfiles.map((p) => ({
+        label: p.InstanceProfileName,
+        value: p.InstanceProfileName,
+        raw: p
+      }))
+      instanceProfileInfo.data = [...instanceProfileInfo.data, ...d]
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        instanceProfileInfo.error = err?.message ?? err
+      }
+    }
+    instanceProfileInfo.loading = false
+    instanceProfileInfo.loaded = true
+  }
+
   const fetchAll = async (r, z, vpcId) => {
     return await Promise.all([
       fetchZones(r),
@@ -740,7 +797,8 @@ export default function useAwsSdk() {
       fetchInstanceTypes('', r),
       fetchVpcs('', r),
       fetchSubnets('', r, z, vpcId),
-      fetchSecrityGroups('', r, vpcId)
+      fetchSecrityGroups('', r, vpcId),
+      fetchInstanceProfiles('', r)
     ])
   }
 
@@ -768,6 +826,7 @@ export default function useAwsSdk() {
     resetSecurityGroupInfo()
     resetImageInfo()
     resetKeyPairInfo()
+    resetInstanceProfileInfo()
   }
 
   const resetZoneInfo = () => {
@@ -832,6 +891,14 @@ export default function useAwsSdk() {
     keyPairInfo.data = []
   }
 
+  const resetInstanceProfileInfo = () => {
+    instanceProfileInfo.region = ''
+    instanceProfileInfo.loaded = false
+    instanceProfileInfo.loading = false
+    instanceProfileInfo.error = null
+    instanceProfileInfo.data = []
+  }
+
   return {
     accessKey,
     secretKey,
@@ -851,6 +918,7 @@ export default function useAwsSdk() {
     imageDetail: readonly(imageDetail),
     keyPairInfo: readonly(keyPairInfo),
     instanceTypeSeries: readonly(instanceTypeSeries),
+    instanceProfileInfo: readonly(instanceProfileInfo),
     validateKeys,
     fetchRegions,
     fetchZones,
@@ -870,6 +938,7 @@ export default function useAwsSdk() {
     resetKeyPairInfo,
     fetchImages,
     fetchImageById,
+    fetchInstanceProfiles,
     updateImageDetail
   }
 }

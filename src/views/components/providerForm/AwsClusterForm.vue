@@ -353,20 +353,81 @@
           :desc="desc.options['cloud-controller-manager']"
           :readonly="readonly"
         />
-        <string-form
+        <!-- <string-form
           v-show="form.options['cloud-controller-manager']"
           v-model.trim="form.options['iam-instance-profile-control']"
           label="IAM Instance Profile Control"
           :desc="desc.options['iam-instance-profile-control']"
           :readonly="readonly"
-        />
-        <string-form
+        /> -->
+        <KComboBox
+          v-show="form.options['cloud-controller-manager']"
+          v-model.trim="form.options['iam-instance-profile-control']"
+          label="IAM Instance Profile Control"
+          :desc="desc.options['iam-instance-profile-control']"
+          :disabled="readonly"
+          :loading="instanceProfileInfo.loading"
+          :options="instanceProfileInfo.data"
+          clearable
+        >
+          <template #default="{ option }">
+            <div>
+              <div>
+                {{ option.label }}
+              </div>
+              <div class="col-span-2 text-sm text-gray-500">
+                {{ option.raw.Arn }}
+              </div>
+            </div>
+          </template>
+          <template #footer>
+            <div
+              v-if="instanceProfileInfo.isTruncated && instanceProfileInfo.marker"
+              class="text-center cursor-pointer"
+              @click.stop="loadInstanceProfiles()"
+            >
+              Load More {{ instanceProfileInfo.loading ? '(Loading ...)' : '' }}
+            </div>
+          </template>
+        </KComboBox>
+
+        <!-- <string-form
           v-show="form.options['cloud-controller-manager']"
           v-model.trim="form.options['iam-instance-profile-worker']"
           label="IAM Instance Profile Worker"
           :desc="desc.options['iam-instance-profile-worker']"
           :readonly="readonly"
-        />
+        /> -->
+        <KComboBox
+          v-show="form.options['cloud-controller-manager']"
+          v-model.trim="form.options['iam-instance-profile-worker']"
+          label="IAM Instance Profile Worker"
+          :desc="desc.options['iam-instance-profile-worker']"
+          :disabled="readonly"
+          :loading="instanceProfileInfo.loading"
+          :options="instanceProfileInfo.data"
+          clearable
+        >
+          <template #default="{ option }">
+            <div>
+              <div>
+                {{ option.label }}
+              </div>
+              <div class="col-span-2 text-sm text-gray-500">
+                {{ option.raw.Arn }}
+              </div>
+            </div>
+          </template>
+          <template #footer>
+            <div
+              v-if="instanceProfileInfo.isTruncated && instanceProfileInfo.marker"
+              class="text-center cursor-pointer"
+              @click.stop="loadInstanceProfiles()"
+            >
+              Load More {{ instanceProfileInfo.loading ? '(Loading ...)' : '' }}
+            </div>
+          </template>
+        </KComboBox>
       </div>
     </k-tab-pane>
   </k-tabs>
@@ -448,6 +509,7 @@ const {
   imageDetail,
   keyPairInfo,
   instanceTypeSeries,
+  instanceProfileInfo,
   validateKeys,
   fetchZones,
   fetchInstanceTypes,
@@ -460,6 +522,7 @@ const {
   fetchImages,
   fetchImageById,
   fetchKeyPairs,
+  fetchInstanceProfiles,
   updateImageDetail
 } = useAwsSdk()
 
@@ -565,6 +628,13 @@ const loadSecurityGroups = () => {
   fetchSecrityGroups(securityGroupInfo.nextToken, form.options.region, form.options['vpc-id'])
 }
 
+const loadInstanceProfiles = () => {
+  if (instanceProfileInfo.loading) {
+    return
+  }
+  fetchInstanceProfiles(instanceProfileInfo.marker, form.options.region)
+}
+
 const reginChange = (region) => {
   if (region === form.options.region) {
     return
@@ -632,6 +702,7 @@ watch(
         fetchZones(region)
         loadAllInstanceTypes(region)
         fetchVpcs('', region)
+        fetchInstanceProfiles('', region)
       }
       if (region && vpcId) {
         fetchSecrityGroups('', region, vpcId)
