@@ -177,7 +177,7 @@
           </div>
           <UserDataForm
             v-model="form.options['startup-script-content']"
-            label="Startup Script Content"
+            label="Startup Script"
             :desc="desc.options['startup-script-content']"
             :options="readonlyOption"
             :visible="advanceConfigVisible"
