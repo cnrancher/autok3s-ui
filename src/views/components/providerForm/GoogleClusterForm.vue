@@ -167,7 +167,7 @@
               action-label="Add Tag"
             ></array-list-form>
           </div>
-          <div class="mt-10px grid grid-cols-1 sm:grid-cols-2 gap-10px">
+          <!-- <div class="mt-10px grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <string-form
               v-model.trim="form.options['startup-script-url']"
               label="Startup Script URL"
@@ -181,7 +181,7 @@
             :desc="desc.options['startup-script-content']"
             :options="readonlyOption"
             :visible="advanceConfigVisible"
-          ></UserDataForm>
+          ></UserDataForm> -->
         </template>
       </form-group>
     </k-tab-pane>
@@ -242,7 +242,7 @@ import { ref, computed, watch } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
-import UserDataForm from '../baseForm/UserDataForm.vue'
+// import UserDataForm from '../baseForm/UserDataForm.vue'
 import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import ArrayListForm from '../baseForm/ArrayListForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
@@ -293,9 +293,9 @@ const uiOptions = computed({
     form.config.enable = v
   }
 })
-const readonlyOption = computed(() => {
-  return { readOnly: props.readonly }
-})
+// const readonlyOption = computed(() => {
+//   return { readOnly: props.readonly }
+// })
 const updateActiveTab = () => {
   if (!form.options['service-account'] || !form.options['service-account-file']) {
     acitiveTab.value = 'credential'
