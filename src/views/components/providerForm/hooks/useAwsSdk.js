@@ -12,7 +12,7 @@ import {
   // DescribeAccountAttributesCommand
 } from '@aws-sdk/client-ec2'
 import { IAMClient, ListInstanceProfilesCommand } from '@aws-sdk/client-iam'
-import { reactive, ref, readonly, computed, shallowReactive } from 'vue'
+import { reactive, ref, readonly, computed, shallowReactive, onBeforeUnmount } from 'vue'
 //
 const defaultRegions = [
   'af-south-1',
@@ -138,7 +138,9 @@ export default function useAwsSdk() {
   const region = ref('')
   const zone = ref('')
   const vpc = ref('')
-
+  onBeforeUnmount(() => {
+    abortController?.abort()
+  })
   const credentials = computed(() => {
     return {
       accessKeyId: keyInfo.accessKey,
