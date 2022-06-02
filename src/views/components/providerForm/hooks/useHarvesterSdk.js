@@ -1,5 +1,5 @@
 import jsyaml from 'js-yaml'
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch, onBeforeUnmount } from 'vue'
 import request from '@/utils/request'
 import { Base64 } from 'js-base64'
 
@@ -44,6 +44,10 @@ const parseKubeConfigFile = (data) => {
 export default function useHarvesterSdk() {
   let controller = null
   let validController = null
+  onBeforeUnmount(() => {
+    controller?.abort()
+    validController?.abort()
+  })
   // let whitelist = []
   const configInfo = reactive({
     error: null,
