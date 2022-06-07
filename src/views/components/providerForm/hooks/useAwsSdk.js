@@ -175,7 +175,7 @@ export default function useAwsSdk() {
     region: '',
     loading: false,
     loaded: false,
-    arch: ['arm64', 'i386', 'x86_64'],
+    arch: [], // 'arm64', 'i386', 'x86_64'
     nextToken: '',
     data: []
   })
@@ -334,7 +334,7 @@ export default function useAwsSdk() {
     zoneInfo.loading = false
     zoneInfo.loaded = true
   }
-  const fetchInstanceTypes = async (nextToken, r, arch = ['arm64', 'i386', 'x86_64'], series = []) => {
+  const fetchInstanceTypes = async (nextToken, r, arch = [], series = []) => {
     const tmpRegion = r ?? region.value
 
     if (nextToken && instanceTypeInfo.region !== tmpRegion) {
@@ -383,23 +383,87 @@ export default function useAwsSdk() {
         group: t.InstanceType.split('.')[0],
         raw: t
       }))
-      // d.sort((a, b) => {
-      //   const result = enCollator.compare(a.group, b.group)
-      //   if (result === 0) {
-      //     return enCollator.compare(a.label, b.label)
-      //   }
-      //   return result
-      // })
       instanceTypeInfo.data = [...instanceTypeInfo.data, ...d]
       instanceTypeInfo.nextToken = data.NextToken
     } catch (err) {
       if (err.name !== 'AbortError') {
         instanceTypeInfo.error = err.message ?? err
+        instanceTypeInfo.nextToken = ''
+      } else {
+        resetInstanceTypeInfo()
       }
     }
     instanceTypeInfo.loading = false
     instanceTypeInfo.loaded = true
   }
+
+  const fetchAllInstanceTypes = async (r, arch = [], series = []) => {
+    const tmpRegion = r ?? region.value
+    if (instanceTypeInfo.region && instanceTypeInfo.region !== tmpRegion) {
+      instanceTypeInfo.error = 'Region has changed, no further instance types information is available'
+      return false
+    }
+    if (arch.length !== instanceTypeInfo.arch.length || arch.some((item) => !instanceTypeInfo.arch.includes(item))) {
+      instanceTypeInfo.error = 'Architecture has changed, no further instance types information is available'
+      return false
+    }
+    instanceTypeInfo.region = tmpRegion
+    instanceTypeInfo.arch = arch
+
+    const ec2client = new EC2Client({
+      credentials: credentials.value,
+      region: instanceTypeInfo.region
+    })
+
+    instanceTypeInfo.loading = true
+    instanceTypeInfo.loaded = false
+
+    const filters = []
+
+    if (arch.length > 0) {
+      filters.push({ Name: 'processor-info.supported-architecture', Values: [...arch] })
+    }
+    if (series.length > 0) {
+      filters.push({ Name: 'instance-type', Values: [...series.map((s) => `${s}.*`)] })
+    }
+    const input = { Filters: filters, MaxResults: 100 }
+
+    instanceTypeInfo.data = []
+    instanceTypeInfo.nextToken = ''
+    const abortSignal = abortController.signal
+
+    const loadData = async (nextToken = '') => {
+      if (nextToken) {
+        input.NextToken = nextToken
+      } else {
+        input.NextToken = null
+      }
+
+      try {
+        const data = await ec2client.send(new DescribeInstanceTypesCommand(input), { abortSignal })
+        const d = data.InstanceTypes.map((t) => ({
+          value: t.InstanceType,
+          label: `${t.InstanceType} (vCPU: ${t.VCpuInfo?.DefaultVCpus}, Memory: ${t.MemoryInfo?.SizeInMiB / 1024} GiB)`,
+          group: t.InstanceType.split('.')[0],
+          raw: t
+        }))
+        instanceTypeInfo.data = [...instanceTypeInfo.data, ...d]
+        if (data.NextToken) {
+          await loadData(data.NextToken)
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          instanceTypeInfo.error = err.message ?? err
+        } else {
+          resetInstanceTypeInfo()
+        }
+      }
+    }
+    await loadData()
+    instanceTypeInfo.loading = false
+    instanceTypeInfo.loaded = true
+  }
+
   const fetchVpcs = async (nextToken, r) => {
     const tmpRegion = r ?? region.value
     if (nextToken && vpcInfo.region !== tmpRegion) {
@@ -437,6 +501,9 @@ export default function useAwsSdk() {
     } catch (err) {
       if (err.name !== 'AbortError') {
         vpcInfo.error = err.message ?? err
+        vpcInfo.nextToken = ''
+      } else {
+        resetVpcInfo()
       }
     }
     vpcInfo.loading = false
@@ -491,9 +558,13 @@ export default function useAwsSdk() {
         value: s.SubnetId
       }))
       subnetInfo.data.push(...d)
+      subnetInfo.nextToken = data.NextToken
     } catch (err) {
       if (err.name !== 'AbortError') {
         subnetInfo.error = err.message ?? err
+        subnetInfo.nextToken = ''
+      } else {
+        resetSubnetInfo()
       }
     }
     subnetInfo.loading = false
@@ -541,6 +612,9 @@ export default function useAwsSdk() {
     } catch (err) {
       if (err.name !== 'AbortError') {
         securityGroupInfo.error = err.message ?? err
+        securityGroupInfo.nextToken = ''
+      } else {
+        resetSecurityGroupInfo()
       }
     }
     securityGroupInfo.loading = false
@@ -786,6 +860,9 @@ export default function useAwsSdk() {
     } catch (err) {
       if (err.name !== 'AbortError') {
         instanceProfileInfo.error = err?.message ?? err
+        instanceProfileInfo.marker = ''
+      } else {
+        resetInstanceProfileInfo()
       }
     }
     instanceProfileInfo.loading = false
@@ -925,6 +1002,7 @@ export default function useAwsSdk() {
     fetchRegions,
     fetchZones,
     fetchInstanceTypes,
+    fetchAllInstanceTypes,
     fetchVpcs,
     fetchSubnets,
     fetchSecrityGroups,

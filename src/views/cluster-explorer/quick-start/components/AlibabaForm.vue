@@ -21,13 +21,17 @@
   </div>
 </template>
 <script setup>
-import { computed } from 'vue'
+import { computed, watch, reactive } from 'vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
-import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
+import useFormRegist from '@/composables/useFormRegist.js'
 
 const props = defineProps({
-  schema: {
+  initValue: {
+    type: Object,
+    required: true
+  },
+  desc: {
     type: Object,
     required: true
   },
@@ -37,15 +41,23 @@ const props = defineProps({
   }
 })
 
-const { form, desc } = useFormFromSchema(props.schema)
+const form = reactive(cloneDeep(props.initValue))
+watch(
+  () => props.initValue,
+  () => {
+    ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
+  }
+)
 const showKeyForm = computed(() => {
-  return (
-    props.hasError || !props.schema.options['access-key']?.default || !props.schema.options['access-secret']?.default
-  )
+  return props.hasError || !form.options['access-key'] || !form.options['access-secret']
 })
 const getForm = () => {
-  return cloneDeep(form)
+  const f = cloneDeep(form)
+  return [
+    { path: 'config', value: f.config },
+    { path: 'options', value: f.options }
+  ]
 }
 
-defineExpose({ getForm })
+useFormRegist(getForm)
 </script>

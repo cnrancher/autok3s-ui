@@ -159,7 +159,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <array-list-form
               ref="tags"
-              v-model="form.options.tags"
+              :init-value="form.options.tags"
               :desc="desc.options['tags']"
               :readonly="readonly"
               label="Tags"
@@ -188,7 +188,7 @@
     <k-tab-pane label="K3s Options" name="k3s">
       <k3s-options-form
         :visible="acitiveTab === 'k3s'"
-        :form="form"
+        :init-value="form"
         :desc="desc"
         :readonly="readonly"
       ></k3s-options-form>
@@ -238,7 +238,7 @@
 </template>
 <script setup>
 import { cloneDeep } from '@/utils'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, reactive } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
@@ -246,37 +246,41 @@ import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
 import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import ArrayListForm from '../baseForm/ArrayListForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
-import useFormFromSchema from '../../composables/useFormFromSchema.js'
 import { Base64 } from 'js-base64'
+import useFormManage from '@/composables/useFormManage.js'
+import useFormRegist from '@/composables/useFormRegist.js'
 
 const needDecodeOptionKeys = ['startup-script-content']
 
 const props = defineProps({
-  schema: {
+  desc: {
     type: Object,
     required: true
   },
   readonly: {
     type: Boolean,
     default: false
+  },
+  initValue: {
+    type: Object,
+    required: true
   }
 })
-const { form, desc } = useFormFromSchema(props.schema)
+const form = reactive(cloneDeep(props.initValue))
 // decode options
 watch(
-  () => form.options,
+  () => props.initValue,
   () => {
+    ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
     needDecodeOptionKeys.forEach((k) => {
       const v = form.options[k]
       if (v) {
         form.options[k] = Base64.decode(v)
       }
     })
-  },
-  {
-    immediate: true
   }
 )
+const { getForm: getK3sOptionsForm } = useFormManage()
 const advanceConfigVisible = ref(false)
 const acitiveTab = ref('instance')
 const uiOptions = computed({
@@ -308,13 +312,21 @@ updateActiveTab()
 const tags = ref(null)
 const ports = ref(null)
 const getForm = () => {
-  const f = cloneDeep(form)
-  const tagValues = tags.value.getForm()
-  const portValues = ports.value.getForm()
+  const f = getK3sOptionsForm(form)
+  const tagValues = tags.value.getValue()
+  const portValues = ports.value.getValue()
   f.options.tags = tagValues ? tagValues.filter((v) => v) : tagValues
   f.options['open-ports'] = portValues ? portValues.filter((v) => v) : portValues
-  return f
+  needDecodeOptionKeys.forEach((k) => {
+    const v = f.options[k]?.trim()
+    if (v) {
+      f.options[k] = Base64.encode(v)
+    }
+  })
+  return [
+    { path: 'config', value: f.config },
+    { path: 'options', value: f.options }
+  ]
 }
-
-defineExpose({ getForm })
+useFormRegist(getForm)
 </script>

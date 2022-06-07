@@ -272,7 +272,7 @@
     <k-tab-pane label="K3s Options" name="k3s">
       <k3s-options-form
         :visible="acitiveTab === 'k3s'"
-        :form="form"
+        :init-value="form"
         :desc="desc"
         :readonly="readonly"
       ></k3s-options-form>
@@ -301,50 +301,53 @@
   </k-tabs>
 </template>
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, reactive } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
 import YamlConfigForm from '../baseForm/YamlConfigForm.vue'
-import useFormFromSchema from '../../composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
 import { parseSi } from '@/utils/units'
 import { Base64 } from 'js-base64'
 import useHarvesterSdk from './hooks/useHarvesterSdk.js'
 import { useDebounceFn } from '@vueuse/core'
+import useFormManage from '@/composables/useFormManage.js'
+import useFormRegist from '@/composables/useFormRegist.js'
 
 const needDecodeOptionKeys = ['kubeconfig-content', 'network-data', 'user-data']
 const MANAGEMENT_NETWORK = 'management Network'
 
 const props = defineProps({
-  schema: {
+  desc: {
     type: Object,
     required: true
   },
   readonly: {
     type: Boolean,
     default: false
+  },
+  initValue: {
+    type: Object,
+    required: true
   }
 })
 
-const { form, desc } = useFormFromSchema(props.schema)
+const form = reactive(cloneDeep(props.initValue))
 // decode options
 watch(
-  () => form.options,
+  () => props.initValue,
   () => {
+    ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
     needDecodeOptionKeys.forEach((k) => {
       const v = form.options[k]
       if (v) {
         form.options[k] = Base64.decode(v)
       }
     })
-  },
-  {
-    immediate: true
   }
 )
-
+const { getForm: getK3sOptionsForm } = useFormManage()
 const diskSize = computed({
   get() {
     return parseSi(form.options['disk-size'], { increment: 1024 }) / 1024 ** 3
@@ -440,10 +443,19 @@ const interfaceType = computed(() => {
 })
 
 const getForm = () => {
-  const f = cloneDeep(form)
-
-  return f
+  const f = getK3sOptionsForm(form)
+  needDecodeOptionKeys.forEach((k) => {
+    const v = f.options[k]?.trim()
+    if (v) {
+      f.options[k] = Base64.encode(v)
+    }
+  })
+  return [
+    { path: 'config', value: f.config },
+    { path: 'options', value: f.options }
+  ]
 }
+useFormRegist(getForm)
 const acitiveTab = ref('instance')
 const visible = ref(false)
 const toggleVisible = () => {
@@ -458,8 +470,6 @@ const instanceTabVisible = computed(() => {
 const readonlyOption = computed(() => {
   return { readOnly: props.readonly }
 })
-
-defineExpose({ getForm })
 
 watch([() => form.options['network-name'], () => props.readonly], ([networkName, readonly]) => {
   if (readonly) {

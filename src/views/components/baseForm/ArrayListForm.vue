@@ -20,7 +20,6 @@
         v-model.trim="item.value"
         :readonly="readonly"
         :placeholder="placeholder"
-        @input="debounceUpdate"
       ></k-input>
       <k-icon v-if="!readonly" class="cursor-pointer" type="ashbin" :size="20" @click="remove(index)"></k-icon>
       <div v-else></div>
@@ -32,11 +31,10 @@
   </div>
 </template>
 <script setup>
-import { ref, onBeforeUpdate, nextTick } from 'vue'
-import { debounce } from 'lodash-es'
+import { ref, onBeforeUpdate, nextTick, watch } from 'vue'
 
 const props = defineProps({
-  modelValue: {
+  initValue: {
     type: Array,
     default() {
       return []
@@ -68,37 +66,38 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const items = ref([])
+watch(
+  () => props.initValue,
+  () => {
+    items.value = (props.initValue ?? []).map((v) => ({ value: v }))
+  },
+  {
+    immediate: true
+  }
+)
 
-const items = ref((props.modelValue ?? []).map((v) => ({ value: v })))
 const inputs = ref([])
 onBeforeUpdate(() => {
   inputs.value = []
 })
-const update = () => {
-  emit(
-    'update:modelValue',
-    items.value.map((item) => item.value)
-  )
-}
-const debounceUpdate = debounce(update, 300)
+
 const remove = (index) => {
   items.value.splice(index, 1)
-  debounceUpdate()
 }
 const add = () => {
   items.value.push({ value: '' })
-  debounceUpdate()
   nextTick(() => {
     inputs.value[inputs.value.length - 1]?.focus()
   })
 }
-const getForm = () => {
+
+const getValue = () => {
   if (items.value.length === 0) {
     return null
   }
   return items.value.map((item) => item.value)
 }
 
-defineExpose({ getForm })
+defineExpose({ getValue })
 </script>

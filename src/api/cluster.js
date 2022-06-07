@@ -10,10 +10,11 @@ export function fetchList(provider) {
   })
 }
 
-export function fetchById(id) {
+export function fetchById(id, signal) {
   return request({
     url: `/clusters/${id}`,
-    method: 'get'
+    method: 'get',
+    signal
   })
 }
 

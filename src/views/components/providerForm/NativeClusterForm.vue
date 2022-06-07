@@ -88,7 +88,7 @@
     <k-tab-pane label="K3s Options" name="k3s">
       <k3s-options-form
         :visible="acitiveTab === 'k3s'"
-        :form="form"
+        :init-value="form"
         :desc="desc"
         :readonly="readonly"
       ></k3s-options-form>
@@ -117,29 +117,41 @@
   </k-tabs>
 </template>
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, reactive, watch } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import IpAddressPoolForm from '../baseForm/IpAddressPoolForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
-import useFormFromSchema from '../../composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
+import useFormManage from '@/composables/useFormManage.js'
+import useFormRegist from '@/composables/useFormRegist.js'
 
 const props = defineProps({
-  schema: {
+  desc: {
     type: Object,
     required: true
   },
   readonly: {
     type: Boolean,
     default: false
+  },
+  initValue: {
+    type: Object,
+    required: true
   }
 })
 
 const masterIps = ref(null)
 const workerIps = ref(null)
-const { form, desc } = useFormFromSchema(props.schema)
+const form = reactive(cloneDeep(props.initValue))
+
+watch(
+  () => props.initValue,
+  () => {
+    ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
+  }
+)
 const uiOptions = computed({
   get() {
     if (form.config.enable) {
@@ -154,23 +166,26 @@ const uiOptions = computed({
     form.config.enable = v
   }
 })
+const { getForm: getK3sOptionsForm } = useFormManage()
 const getForm = () => {
-  const f = cloneDeep(form)
+  const f = getK3sOptionsForm(form)
   f.options['master-ips'] = masterIps.value
-    .getForm()
+    .getValue()
     .filter((v) => v)
     .join(',')
   f.options['worker-ips'] = workerIps.value
-    .getForm()
+    .getValue()
     .filter((v) => v)
     .join(',')
-  return f
+  return [
+    { path: 'config', value: f.config },
+    { path: 'options', value: f.options }
+  ]
 }
 const acitiveTab = ref('instance')
 const visible = ref(false)
 const toggleVisible = () => {
   visible.value = !visible.value
 }
-
-defineExpose({ getForm })
+useFormRegist(getForm)
 </script>

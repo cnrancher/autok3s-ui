@@ -79,9 +79,9 @@ const add = () => {
     inputs.value[inputs.value.length - 1]?.focus()
   })
 }
-const getForm = () => {
+const getValue = () => {
   return ips.value.map((ip) => ip.value)
 }
 
-defineExpose({ getForm })
+defineExpose({ getValue })
 </script>

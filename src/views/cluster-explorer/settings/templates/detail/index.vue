@@ -7,7 +7,7 @@
       </template>
       <template #actions>
         <router-link
-          v-if="!warning"
+          v-if="!template?.status"
           :to="{ name: 'ClusterExplorerCoreClustersCreate', query: { templateId } }"
           class="btn role-secondary"
         >
@@ -23,190 +23,103 @@
     </page-header>
     <k-loading :loading="loading">
       <k-alert
-        v-if="currentProvider === 'native'"
+        v-if="template?.provider === 'native'"
         type="warning"
         title="Native provider only supports create K3s cluster and join K3s nodes."
       ></k-alert>
       <k-alert
-        v-if="currentProvider === 'k3d'"
+        v-if="template?.provider === 'k3d'"
         type="warning"
         title="Highly recommended that K3d provider run in a Linux / Unix environment, do not run K3d provider in MacOS container environment."
       ></k-alert>
-      <k-alert v-if="warning" type="warning" :title="warning"></k-alert>
+      <k-alert v-if="template?.status" type="warning" :title="template?.status"></k-alert>
       <form autocomplete="off">
         <div class="grid grid-cols-3 gap-10px pb-20px">
-          <k-select v-model="currentProvider" label="Provider" required :loading="loading" disabled>
+          <k-select :model-value="template?.provider" label="Provider" required :loading="loading" disabled>
             <k-option v-for="p in providers" :key="p.id" :value="p.id" :label="p.name"></k-option>
           </k-select>
-          <string-form v-model.trim="name" label="Name" placeholder="e.g. test" required readonly />
+          <string-form :model-value="template?.name" label="Name" placeholder="e.g. test" required readonly />
           <boolean-form
-            v-model="isDefault"
+            :model-value="template?.['is-default']"
             label="Default Template"
             true-label="True"
             false-label="False"
             readonly
           ></boolean-form>
         </div>
-        <component
-          :is="clusterFormComponent"
-          v-if="providerSchema.config && providerSchema.options && providerSchema.id === currentProvider"
-          ref="formRef"
-          readonly
-          :schema="providerSchema"
-        ></component>
+        <template v-if="!loading">
+          <EditFromTemplate
+            v-if="templateId && template && templateProvider"
+            :provider="templateProvider"
+            :template="template"
+            :readonly="true"
+          ></EditFromTemplate>
+        </template>
         <footer-actions>
           <router-link :to="{ name: 'ClusterExplorerSettingsTemplates' }" class="btn role-secondary">
             Go Back
           </router-link>
         </footer-actions>
-        <k-alert v-for="(e, index) in formErrors" :key="index" type="error" :title="e"></k-alert>
         <k-alert v-for="(e, index) in errors" :key="index" type="error" :title="e"></k-alert>
       </form>
     </k-loading>
   </div>
 </template>
-<script>
-import { computed, defineComponent, reactive, ref, toRef, watch } from 'vue'
-import { useRouter } from 'vue-router'
+<script setup>
+import { computed, ref } from 'vue'
 import PageHeader from '@/views/components/PageHeader.vue'
 import FooterActions from '@/views/components/FooterActions.vue'
-import AwsClusterCreateForm from '@/views/components/providerForm/AwsClusterForm.vue'
-import AlibabaClusterCreateForm from '@/views/components/providerForm/AlibabaClusterForm.vue'
-import TencentClusterCreateForm from '@/views/components/providerForm/TencentClusterForm.vue'
-import K3dClusterCreateForm from '@/views/components/providerForm/K3dClusterForm.vue'
-import NativeClusterCreateForm from '@/views/components/providerForm/NativeClusterForm.vue'
-import GoogleClusterCreateForm from '@/views/components/providerForm/GoogleClusterForm.vue'
-import HarvesterClusterCreateForm from '@/views/components/providerForm/HarvesterClusterForm.vue'
+import EditFromTemplate from '@/views/components/providerForm/EditFromTemplate.vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
 import BooleanForm from '@/views/components/baseForm/BooleanForm.vue'
 import useProviders from '@/composables/useProviders.js'
-import { overwriteSchemaDefaultValue } from '@/utils/index.js'
-import { capitalize } from 'lodash-es'
-import { cloneDeep } from '@/utils'
 import useTemplateStore from '@/store/useTemplateStore.js'
 import { storeToRefs } from 'pinia'
 
-export default defineComponent({
-  name: 'TemplateDetail',
-  components: {
-    PageHeader,
-    FooterActions,
-    AwsClusterCreateForm,
-    AlibabaClusterCreateForm,
-    TencentClusterCreateForm,
-    K3dClusterCreateForm,
-    NativeClusterCreateForm,
-    GoogleClusterCreateForm,
-    HarvesterClusterCreateForm,
-    StringForm,
-    BooleanForm
-  },
-  props: {
-    templateId: {
-      type: String,
-      default: ''
+const props = defineProps({
+  templateId: {
+    type: String,
+    default: ''
+  }
+})
+const templateStore = useTemplateStore()
+const name = ref('')
+const { loading: providersLoading, providers, error: loadProviderError } = useProviders()
+const { loading: templateLoading, error: loadTemplateError, data: templates } = storeToRefs(templateStore)
+const template = computed(() => {
+  if (props.templateId) {
+    return templates.value.find((t) => t.id === props.templateId)
+  }
+  return null
+})
+
+const templateProvider = computed(() => {
+  if (!template.value) {
+    return null
+  }
+  return providers.value.find((p) => p.id === template.value?.provider)
+})
+
+const loading = computed(() => {
+  return providersLoading.value || templateLoading.value
+})
+
+const errors = computed(() => {
+  const errors = []
+  if (loadProviderError.value) {
+    errors.push(loadProviderError.value)
+  }
+  if (loadTemplateError.value) {
+    errors.push(loadTemplateError.value)
+  }
+  if (!loading.value) {
+    if (props.templateId && !template.value?.id) {
+      errors.push(`Template (${props.templateId}) not found`)
     }
-  },
-  setup(props) {
-    const templateStore = useTemplateStore()
-    const router = useRouter()
-    const formRef = ref(null)
-    const name = ref('')
-    const currentProvider = ref('')
-    const isDefault = ref(false)
-    const warning = ref('')
-
-    const formErrors = ref([])
-    const providerSchema = reactive({
-      config: null,
-      options: null
-    })
-
-    const templateId = toRef(props, 'templateId')
-
-    const { loading: providersLoading, providers, error: loadProviderError } = useProviders()
-    const { loading: templateLoading, error: loadTemplateError, data: templates } = storeToRefs(templateStore)
-
-    const loading = computed(() => {
-      return providersLoading.value || templateLoading.value
-    })
-    const errors = computed(() => {
-      const errors = []
-      if (loadProviderError.value) {
-        errors.push(loadProviderError.value)
-      }
-      if (loadTemplateError.value) {
-        errors.push(loadTemplateError.value)
-      }
-      return errors
-    })
-
-    watch(
-      [templateId, providers, templates, loading],
-      () => {
-        if (loading.value) {
-          return
-        }
-        if (!templateId.value) {
-          formErrors.value = ['Template id is required']
-          return
-        }
-        const t = templates.value.find((t) => t.id === templateId.value)
-        if (!t) {
-          formErrors.value = [`Template (${templateId.value}) not found`]
-          return
-        }
-        const provider = providers.value.find((p) => p.id === t?.provider)
-        if (!provider) {
-          return
-        }
-        const template = cloneDeep(t)
-        isDefault.value = template['is-default']
-        warning.value = template.status ?? ''
-        const defaultVal = {
-          config: Object.keys(template)
-            .filter((k) => k != 'options')
-            .reduce((t, k) => {
-              t[k] = template[k]
-              return t
-            }, {}),
-          options: template.options
-        }
-        const schema = overwriteSchemaDefaultValue(provider, defaultVal)
-        name.value = schema.config.name.default
-        currentProvider.value = provider.id
-        providerSchema.id = provider.id
-        providerSchema.config = schema.config
-        providerSchema.options = schema.options
-        return
-      },
-      {
-        immediate: true
-      }
-    )
-
-    const clusterFormComponent = computed(() => {
-      const p = currentProvider.value
-      return `${capitalize(p)}ClusterCreateForm`
-    })
-
-    const goBack = () => {
-      router.push({ name: 'ClusterExplorerCoreClusters' })
-    }
-    return {
-      formRef,
-      providerSchema,
-      loading,
-      errors,
-      name,
-      currentProvider,
-      providers,
-      clusterFormComponent,
-      goBack,
-      isDefault,
-      formErrors,
-      warning
+    if (props.templateId && !templateProvider.value?.id) {
+      errors.push(`Provider (${template.value?.provider}) not found`)
     }
   }
+  return errors
 })
 </script>

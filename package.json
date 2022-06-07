@@ -17,8 +17,8 @@
     "format": "prettier . --write"
   },
   "dependencies": {
-    "@aws-sdk/client-ec2": "^3.78.0",
-    "@aws-sdk/client-iam": "^3.78.0",
+    "@aws-sdk/client-ec2": "^3.105.0",
+    "@aws-sdk/client-iam": "^3.105.0",
     "@popperjs/core": "^2.11.4",
     "@vueuse/core": "^8.2.5",
     "ansi_up": "^5.0.1",
