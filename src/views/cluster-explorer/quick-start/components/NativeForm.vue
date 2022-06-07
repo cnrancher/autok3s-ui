@@ -17,14 +17,18 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, reactive } from 'vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
-import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import IpAddressPoolForm from '@/views/components/baseForm/IpAddressPoolForm.vue'
 import { cloneDeep } from '@/utils'
+import useFormRegist from '@/composables/useFormRegist.js'
 
 const props = defineProps({
-  schema: {
+  initValue: {
+    type: Object,
+    required: true
+  },
+  desc: {
     type: Object,
     required: true
   },
@@ -34,22 +38,30 @@ const props = defineProps({
   }
 })
 
-const { form, desc } = useFormFromSchema(props.schema)
+const form = reactive(cloneDeep(props.initValue))
+watch(
+  () => props.initValue,
+  () => {
+    ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
+  }
+)
 const masterIps = ref(null)
 const workerIps = ref(null)
 
 const getForm = () => {
   const f = cloneDeep(form)
   f.options['master-ips'] = masterIps.value
-    .getForm()
+    .getValue()
     .filter((v) => v)
     .join(',')
   f.options['worker-ips'] = workerIps.value
-    .getForm()
+    .getValue()
     .filter((v) => v)
     .join(',')
-  return f
+  return [
+    { path: 'config', value: f.config },
+    { path: 'options', value: f.options }
+  ]
 }
-
-defineExpose({ getForm })
+useFormRegist(getForm)
 </script>

@@ -279,7 +279,7 @@ export default defineComponent({
       codemirror.setValue(props.modelValue)
       codemirror.on('change', handleChange)
       nextTick(() => {
-        codemirror.refresh()
+        codemirror?.refresh()
       })
     })
     onBeforeUnmount(() => {

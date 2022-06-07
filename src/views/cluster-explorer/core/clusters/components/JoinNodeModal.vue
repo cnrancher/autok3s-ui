@@ -198,11 +198,11 @@ const validate = () => {
       ...nativeForm,
       options: {
         'master-ips': masterIps.value
-          .getForm()
+          .getValue()
           .filter((v) => v)
           .join(','),
         'worker-ips': workerIps.value
-          .getForm()
+          .getValue()
           .filter((v) => v)
           .join(',')
       }

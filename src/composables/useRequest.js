@@ -23,7 +23,10 @@ export default function useRequest(req, options = {}) {
 
     try {
       //req method: last param is consotroll signal
-      const resp = await req(controller.signal)
+      let resp = await req(controller.signal)
+      if (options.afterFetch) {
+        ;({ data: resp } = await options.afterFetch({ data: resp }))
+      }
       data.value = resp
       if (options.afterFetch) {
         options.afterFetch(resp)

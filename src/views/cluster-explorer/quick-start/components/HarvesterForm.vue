@@ -41,16 +41,20 @@
   </div>
 </template>
 <script setup>
-import { computed } from 'vue'
+import { computed, watch, reactive } from 'vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
-import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
 import { parseSi } from '@/utils/units'
 import YamlConfigForm from '@/views/components/baseForm/YamlConfigForm.vue'
 import { Base64 } from 'js-base64'
+import useFormRegist from '@/composables/useFormRegist.js'
 
 const props = defineProps({
-  schema: {
+  initValue: {
+    type: Object,
+    required: true
+  },
+  desc: {
     type: Object,
     required: true
   },
@@ -60,10 +64,13 @@ const props = defineProps({
   }
 })
 
-const { form, desc } = useFormFromSchema(props.schema)
-// const showKeyForm = computed(() => {
-//   return props.hasError || !props.schema.options['access-key']?.default || !props.schema.options['secret-key']?.default
-// })
+const form = reactive(cloneDeep(props.initValue))
+watch(
+  () => props.initValue,
+  () => {
+    ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
+  }
+)
 const diskSize = computed({
   get() {
     return parseSi(form.options['disk-size'], { increment: 1024 }) / 1024 ** 3
@@ -89,5 +96,5 @@ const getForm = () => {
   return f
 }
 
-defineExpose({ getForm })
+useFormRegist(getForm)
 </script>

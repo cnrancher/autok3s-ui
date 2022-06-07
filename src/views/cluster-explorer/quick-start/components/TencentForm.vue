@@ -20,42 +20,43 @@
     <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" disabled />
   </div>
 </template>
-<script>
-import { computed, defineComponent } from 'vue'
+<script setup>
+import { computed, watch, reactive } from 'vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
-import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
+import useFormRegist from '@/composables/useFormRegist.js'
 
-export default defineComponent({
-  components: {
-    StringForm
+const props = defineProps({
+  initValue: {
+    type: Object,
+    required: true
   },
-  props: {
-    schema: {
-      type: Object,
-      required: true
-    },
-    hasError: {
-      type: Boolean,
-      default: false
-    }
+  desc: {
+    type: Object,
+    required: true
   },
-  setup(props) {
-    const { form, desc } = useFormFromSchema(props.schema)
-    const showKeyForm = computed(() => {
-      return (
-        props.hasError || !props.schema.options['secret-id']?.default || !props.schema.options['secret-key']?.default
-      )
-    })
-    const getForm = () => {
-      return cloneDeep(form)
-    }
-    return {
-      form,
-      desc,
-      showKeyForm,
-      getForm
-    }
+  hasError: {
+    type: Boolean,
+    default: false
   }
 })
+
+const form = reactive(cloneDeep(props.initValue))
+watch(
+  () => props.initValue,
+  () => {
+    ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
+  }
+)
+const showKeyForm = computed(() => {
+  return props.hasError || !form.options['secret-id'] || !form.options['secret-key']
+})
+const getForm = () => {
+  const f = cloneDeep(form)
+  return [
+    { path: 'config', value: f.config },
+    { path: 'options', value: f.options }
+  ]
+}
+useFormRegist(getForm)
 </script>

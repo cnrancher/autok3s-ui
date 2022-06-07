@@ -41,7 +41,7 @@
       <hr class="section-divider" />
       <k3d-options-form
         :visible="acitiveTab === 'k3s'"
-        :form="form"
+        :init-value="form"
         :desc="desc"
         :readonly="readonly"
       ></k3d-options-form>
@@ -85,7 +85,7 @@
             <div></div>
             <array-list-form
               ref="labels"
-              v-model="form.options['labels']"
+              :init-value="form.options['labels']"
               label="Labels"
               placeholder="e.g. my.label@agent:0,1"
               action-label="Add Label"
@@ -94,7 +94,7 @@
             ></array-list-form>
             <array-list-form
               ref="envs"
-              v-model="form.options['envs']"
+              :init-value="form.options['envs']"
               label="Environment Variables"
               placeholder="e.g. HTTP_PROXY=my.proxy.com@server:0"
               action-label="Add Variable"
@@ -103,7 +103,7 @@
             ></array-list-form>
             <array-list-form
               ref="volumes"
-              v-model="form.options['volumes']"
+              :init-value="form.options['volumes']"
               label="Volumes"
               placeholder="e.g. /my/path@agent:0,1"
               action-label="Mount Volume"
@@ -112,7 +112,7 @@
             />
             <array-list-form
               ref="ports"
-              v-model="form.options['ports']"
+              :init-value="form.options['ports']"
               label="Ports"
               placeholder="e.g. 8080:80@agent:0"
               action-label="Add Port"
@@ -141,23 +141,27 @@
   </k-tabs>
 </template>
 <script setup>
-import { ref, provide } from 'vue'
+import { ref, provide, reactive, watch } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3dOptionsForm from '../baseForm/K3dOptionsForm.vue'
 import ArrayListForm from '../baseForm/ArrayListForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
-import useFormFromSchema from '../../composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
+import useFormRegist from '@/composables/useFormRegist.js'
 
 const props = defineProps({
-  schema: {
+  desc: {
     type: Object,
     required: true
   },
   readonly: {
     type: Boolean,
     default: false
+  },
+  initValue: {
+    type: Object,
+    required: true
   }
 })
 
@@ -165,24 +169,33 @@ const envs = ref(null)
 const labels = ref(null)
 const volumes = ref(null)
 const ports = ref(null)
-const { form, desc } = useFormFromSchema(props.schema)
+const form = reactive(cloneDeep(props.initValue))
+watch(
+  () => props.initValue,
+  () => {
+    ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
+  }
+)
 const getForm = () => {
   const f = cloneDeep(form)
-  const e = envs.value.getForm()
-  const l = labels.value.getForm()
-  const v = volumes.value.getForm()
-  const p = ports.value.getForm()
+  const e = envs.value.getValue()
+  const l = labels.value.getValue()
+  const v = volumes.value.getValue()
+  const p = ports.value.getValue()
 
   f.options['envs'] = e ? e.filter((item) => item) : e
   f.options['labels'] = l ? l.filter((item) => item) : l
   f.options['volumes'] = v ? v.filter((item) => item) : v
   f.options['ports'] = p ? p.filter((item) => item) : p
 
-  return f
+  return [
+    { path: 'config', value: f.config },
+    { path: 'options', value: f.options }
+  ]
 }
+useFormRegist(getForm)
+
 const acitiveTab = ref('instance')
 const visible = ref(false)
 provide('parentVisible', visible)
-
-defineExpose({ getForm })
 </script>

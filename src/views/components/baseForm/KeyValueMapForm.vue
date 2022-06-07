@@ -8,20 +8,8 @@
       </k-tooltip>
     </div>
     <template v-for="(t, index) in tags" :key="index">
-      <k-input
-        v-model.trim="t.label"
-        :label="keyLabel"
-        :readonly="readonly"
-        placeholder="e.g. foo"
-        @change="debounceUpdate"
-      ></k-input>
-      <k-input
-        v-model.trim="t.value"
-        :label="valueLabel"
-        :readonly="readonly"
-        placeholder="e.g. bar"
-        @change="debounceUpdate"
-      ></k-input>
+      <k-input v-model.trim="t.label" :label="keyLabel" :readonly="readonly" placeholder="e.g. foo"></k-input>
+      <k-input v-model.trim="t.value" :label="valueLabel" :readonly="readonly" placeholder="e.g. bar"></k-input>
       <k-icon v-if="!readonly" class="cursor-pointer" type="ashbin" :size="20" @click="remove(index)"></k-icon>
       <div v-else></div>
     </template>
@@ -33,7 +21,6 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import { debounce } from 'lodash-es'
 
 const props = defineProps({
   modelValue: {
@@ -68,28 +55,20 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
-
 const tags = ref(
   Object.entries(props.modelValue ?? {}).map(([label, value]) => ({
     label,
     value
   }))
 )
-const update = () => {
-  emit('update:modelValue', getForm())
-}
 
-const debounceUpdate = debounce(update, 500)
 const remove = (index) => {
   tags.value.splice(index, 1)
-  debounceUpdate()
 }
 const add = () => {
   tags.value.push({ label: '', value: '' })
-  debounceUpdate()
 }
-const getForm = () => {
+const getValue = () => {
   const f = tags.value
     .filter((t) => t.label)
     .reduce((t, c) => {
@@ -102,5 +81,5 @@ const getForm = () => {
   return f
 }
 
-defineExpose({ getForm })
+defineExpose({ getValue })
 </script>

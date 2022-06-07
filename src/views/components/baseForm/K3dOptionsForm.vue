@@ -5,14 +5,14 @@
     <template #default>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
         <string-form
-          v-if="form.provider !== 'native'"
-          v-model.trim="form.config['master']"
+          v-if="initValue.provider !== 'native'"
+          v-model.trim="config['master']"
           label="Master"
           :desc="desc.config['master']"
           :readonly="readonly"
         />
         <command-args
-          v-model="form.config['master-extra-args']"
+          v-model="config['master-extra-args']"
           :args="masterExtraArgs"
           label="Master Extra Args"
           :desc="desc.config['master-extra-args']"
@@ -27,14 +27,14 @@
     <template #default>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
         <string-form
-          v-if="form.provider !== 'native'"
-          v-model.trim="form.config['worker']"
+          v-if="initValue.provider !== 'native'"
+          v-model.trim="config['worker']"
           label="Worker"
           :desc="desc.config['worker']"
           :readonly="readonly"
         />
         <string-form
-          v-model.trim="form.config['worker-extra-args']"
+          v-model.trim="config['worker-extra-args']"
           label="Worker Extra Args"
           :desc="desc.config['worker-extra-args']"
           :readonly="readonly"
@@ -45,13 +45,14 @@
   </form-group>
 </template>
 <script setup>
-import { provide, toRef } from 'vue'
+import { provide, toRef, reactive, watch } from 'vue'
 import StringForm from './StringForm.vue'
 import FormGroup from './FormGroup.vue'
 import CommandArgs from './CommandArgs/index.vue'
+import useFormRegist from '@/composables/useFormRegist.js'
 
 const props = defineProps({
-  form: {
+  initValue: {
     type: Object,
     required: true
   },
@@ -71,6 +72,32 @@ const props = defineProps({
 
 const visible = toRef(props, 'visible')
 provide('parentVisible', visible)
+const config = reactive({})
+const configFields = ['master', 'master-extra-args', 'worker', 'worker-extra-args']
+
+watch(
+  configFields.map((k) => {
+    return () => props.initValue.config[k]
+  }),
+  () => {
+    configFields.forEach((k) => {
+      config[k] = props.initValue.config[k]
+    })
+  },
+  { immediate: true }
+)
+
+const getForm = () => {
+  return configFields.map((k) => {
+    let value = config[k]
+    return {
+      path: ['config', k],
+      value
+    }
+  })
+}
+useFormRegist(getForm)
+
 const masterExtraArgs = [
   {
     long: '--no-deploy',

@@ -4,14 +4,8 @@
     <template #title>Basic</template>
     <template #default>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-        <!-- <string-form
-          v-model.trim="form.config['k3s-channel']"
-          label="K3s Channel"
-          :desc="desc.config['k3s-channel']"
-          :readonly="readonly"
-        /> -->
         <k-select
-          v-model="form.config['k3s-channel']"
+          v-model="config['k3s-channel']"
           :desc="desc.config['k3s-channel']"
           label="K3s Channel"
           :disabled="readonly"
@@ -21,25 +15,20 @@
           <k-option value="testing" label="testing"></k-option>
         </k-select>
         <string-form
-          v-model.trim="form.config['k3s-version']"
+          v-model.trim="config['k3s-version']"
           label="K3s Version"
           :desc="desc.config['k3s-version']"
           :readonly="readonly"
         />
-        <boolean-form
-          v-model="form.config['cluster']"
-          label="Cluster"
-          :desc="desc.config['cluster']"
-          :readonly="readonly"
-        />
+        <boolean-form v-model="config['cluster']" label="Cluster" :desc="desc.config['cluster']" :readonly="readonly" />
         <string-form
-          v-model.trim="form.config['datastore']"
+          v-model.trim="config['datastore']"
           label="Datastore"
           :desc="desc.config['datastore']"
           :readonly="readonly"
         />
         <k-combo-box
-          v-model="form.config['k3s-install-script']"
+          v-model="config['k3s-install-script']"
           label="K3s Install Script"
           :desc="desc.config['k3s-install-script']"
           :disabled="readonly"
@@ -55,20 +44,20 @@
     <template #default>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-start">
         <string-form
-          v-if="form.provider !== 'native'"
-          v-model.trim="form.config['master']"
+          v-if="initValue.provider !== 'native'"
+          v-model.trim="config['master']"
           label="Master"
           :desc="desc.config['master']"
           :readonly="readonly"
         />
         <!-- <string-form
-          v-model.trim="form.config['master-extra-args']"
+          v-model.trim="config['master-extra-args']"
           label="Master Extra Args"
           :desc="desc.config['master-extra-args']"
           :readonly="readonly"
         /> -->
         <command-args
-          v-model="form.config['master-extra-args']"
+          v-model="config['master-extra-args']"
           :args="masterExtraArgs"
           label="Master Extra Args"
           :desc="desc.config['master-extra-args']"
@@ -83,20 +72,20 @@
     <template #default>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-start">
         <string-form
-          v-if="form.provider !== 'native'"
-          v-model.trim="form.config['worker']"
+          v-if="initValue.provider !== 'native'"
+          v-model.trim="config['worker']"
           label="Worker"
           :desc="desc.config['worker']"
           :readonly="readonly"
         />
         <!-- <string-form
-          v-model.trim="form.config['worker-extra-args']"
+          v-model.trim="config['worker-extra-args']"
           label="Worker Extra Args"
           :desc="desc.config['worker-extra-args']"
           :readonly="readonly"
         /> -->
         <command-args
-          v-model="form.config['worker-extra-args']"
+          v-model="config['worker-extra-args']"
           :args="workExtraArgs"
           label="Worker Extra Args"
           :desc="desc.config['worker-extra-args']"
@@ -110,20 +99,16 @@
     <template #title>Advance</template>
     <template #default>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
+        <string-form v-model.trim="config['token']" label="Token" :desc="desc.config['token']" :readonly="readonly" />
         <string-form
-          v-model.trim="form.config['token']"
-          label="Token"
-          :desc="desc.config['token']"
-          :readonly="readonly"
-        />
-        <string-form
-          v-model.trim="form.config['manifests']"
+          v-model.trim="config['manifests']"
           label="Manifests"
           :desc="desc.config['manifests']"
           :readonly="readonly"
         />
         <array-list-form
-          v-model="form.config['tls-sans']"
+          ref="tlsSansRef"
+          :init-value="config['tls-sans']"
           label="TLS Sans"
           placeholder="e.g. 192.168.1.10"
           action-label="Add IP/Hostname"
@@ -131,7 +116,7 @@
           :readonly="readonly"
         />
         <registry-config-form
-          v-model="form.config['registry-content']"
+          v-model="config['registry-content']"
           class="col-span-1 sm:col-span-2"
           label="Registry"
           :desc="desc.config['registry-content']"
@@ -142,16 +127,17 @@
   </form-group>
 </template>
 <script setup>
-import { provide, toRef, watch, computed } from 'vue'
+import { provide, toRef, watch, computed, ref, reactive } from 'vue'
 import StringForm from './StringForm.vue'
 import BooleanForm from './BooleanForm.vue'
 import RegistryConfigForm from './RegistryConfigForm.vue'
 import FormGroup from './FormGroup.vue'
 import CommandArgs from './CommandArgs/index.vue'
 import ArrayListForm from '../baseForm/ArrayListForm.vue'
+import useFormRegist from '@/composables/useFormRegist.js'
 
 const props = defineProps({
-  form: {
+  initValue: {
     type: Object,
     required: true
   },
@@ -174,16 +160,63 @@ const readonlyOption = computed(() => {
   return { readOnly: props.readonly }
 })
 provide('parentVisible', visible)
+
+const tlsSansRef = ref(null)
+
+const config = reactive({})
+const configFields = [
+  'k3s-channel',
+  'k3s-version',
+  'cluster',
+  'datastore',
+  'k3s-install-script',
+  'master',
+  'master-extra-args',
+  'worker',
+  'worker-extra-args',
+  'token',
+  'manifests',
+  'tls-sans',
+  'registry-content',
+  'k3s-install-mirror'
+]
+watch(
+  configFields.map((k) => {
+    return () => props.initValue.config[k]
+  }),
+  () => {
+    configFields.forEach((k) => {
+      config[k] = props.initValue.config[k]
+    })
+  },
+  { immediate: true }
+)
+
+const getForm = () => {
+  return configFields.map((k) => {
+    let value = config[k]
+    if (k === 'tls-sans') {
+      value = tlsSansRef.value.getValue()
+    }
+    return {
+      path: ['config', k],
+      value
+    }
+  })
+}
+
+useFormRegist(getForm)
+
 const installScriptOptions = ['https://get.k3s.io', 'https://rancher-mirror.rancher.cn/k3s/k3s-install.sh']
 watch(
-  () => props.form.config['k3s-install-script'],
+  () => config['k3s-install-script'],
   (installScript) => {
     if (installScript === installScriptOptions[1]) {
       // eslint-disable-next-line vue/no-mutating-props
-      props.form.config['k3s-install-mirror'] = 'INSTALL_K3S_MIRROR=cn'
-    } else if (props.form.config['k3s-install-mirror']) {
+      config['k3s-install-mirror'] = 'INSTALL_K3S_MIRROR=cn'
+    } else if (config['k3s-install-mirror']) {
       // eslint-disable-next-line vue/no-mutating-props
-      props.form.config['k3s-install-mirror'] = ''
+      config['k3s-install-mirror'] = ''
     }
   },
   {
