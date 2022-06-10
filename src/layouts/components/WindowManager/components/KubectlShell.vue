@@ -4,7 +4,10 @@
       <div ref="xterm" class="h-full overflow-hidden"></div>
     </template>
     <template #footer>
-      <k-button class="btn-sm role-primary" @click="clear">Clear</k-button>
+      <div class="flex items-center gap-2">
+        <k-button class="btn-sm role-primary" @click="clear">Clear</k-button>
+        <InputInteger v-model="fontSize" label="Font Size"></InputInteger>
+      </div>
       <div class="capitalize" :class="stateToClassMap[status]">{{ readyState }}</div>
     </template>
   </WindowContainer>
@@ -33,6 +36,7 @@ export default {
 import WindowContainer from './WindowContainer.vue'
 import { computed, nextTick, ref, watchEffect, watch } from 'vue'
 import KButton from '@/components/Button'
+import InputInteger from './InputInteger.vue'
 import useTerminal from '@/composables/useTerminal.js'
 import { useResizeObserver } from '@vueuse/core'
 import { DONE } from '@/composables/useTerminal.js'
@@ -58,6 +62,7 @@ const props = defineProps({
 const wmStore = useWindownManagerStore()
 const notificationStore = useNotificationStore()
 const xterm = ref(null)
+const fontSize = ref(12)
 const url = `${location.protocol.replace('http', 'ws')}//${location.host}${import.meta.env.VITE_APP_BASE_API}/config/${
   props.contextId
 }`
@@ -67,6 +72,7 @@ const {
   focus,
   write,
   fit,
+  setFontSize,
   readyState: xtermReadyState
 } = useTerminal(
   xterm,
@@ -175,4 +181,8 @@ watch(
     }
   }
 )
+watch(fontSize, (s) => {
+  setFontSize(s)
+  fit()
+})
 </script>

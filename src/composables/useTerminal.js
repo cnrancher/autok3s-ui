@@ -71,11 +71,18 @@ export default function useTerminal(domRef, onDataCallback, xtermConfig = {}) {
     terminal?.dispose()
   })
 
+  const setFontSize = (size) => {
+    if (terminal?.options) {
+      terminal.options.fontSize = size
+    }
+  }
+
   return {
     clear,
     focus,
     write,
     fit,
+    setFontSize,
     readyState: readonly(readyState)
   }
 }
