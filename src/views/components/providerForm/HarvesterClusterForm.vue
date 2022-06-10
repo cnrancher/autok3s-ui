@@ -347,7 +347,7 @@ watch(
     })
   }
 )
-const { getForm: getK3sOptionsForm } = useFormManage()
+const { getForm: getSubform } = useFormManage()
 const diskSize = computed({
   get() {
     return parseSi(form.options['disk-size'], { increment: 1024 }) / 1024 ** 3
@@ -443,7 +443,7 @@ const interfaceType = computed(() => {
 })
 
 const getForm = () => {
-  const f = getK3sOptionsForm(form)
+  const f = getSubform(form)
   needDecodeOptionKeys.forEach((k) => {
     const v = f.options[k]?.trim()
     if (v) {

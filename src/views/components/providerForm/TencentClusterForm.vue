@@ -59,6 +59,12 @@
               :desc="desc.options['disk-size']"
               :readonly="readonly"
             />
+            <boolean-form
+              v-model="form.options['spot']"
+              label="Spot"
+              :desc="desc.options['spot']"
+              :readonly="readonly"
+            />
           </div>
         </template>
       </form-group>
@@ -246,7 +252,7 @@ watch(
     })
   }
 )
-const { getForm: getK3sOptionsForm } = useFormManage()
+const { getForm: getSubform } = useFormManage()
 const advanceConfigVisible = ref(false)
 const acitiveTab = ref('instance')
 const updateActiveTab = () => {
@@ -277,7 +283,7 @@ updateActiveTab()
 
 const tags = ref(null)
 const getForm = () => {
-  const f = getK3sOptionsForm(form)
+  const f = getSubform(form)
   const values = tags.value.getValue()
   f.options.tags = values ? values.filter((v) => v) : values
   needDecodeOptionKeys.forEach((k) => {

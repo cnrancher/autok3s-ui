@@ -280,7 +280,7 @@ watch(
     })
   }
 )
-const { getForm: getK3sOptionsForm } = useFormManage()
+const { getForm: getSubform } = useFormManage()
 const advanceConfigVisible = ref(false)
 const acitiveTab = ref('instance')
 const uiOptions = computed({
@@ -312,7 +312,7 @@ updateActiveTab()
 const tags = ref(null)
 const ports = ref(null)
 const getForm = () => {
-  const f = getK3sOptionsForm(form)
+  const f = getSubform(form)
   const tagValues = tags.value.getValue()
   const portValues = ports.value.getValue()
   f.options.tags = tagValues ? tagValues.filter((v) => v) : tagValues

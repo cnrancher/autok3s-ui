@@ -166,9 +166,9 @@ const uiOptions = computed({
     form.config.enable = v
   }
 })
-const { getForm: getK3sOptionsForm } = useFormManage()
+const { getForm: getSubform } = useFormManage()
 const getForm = () => {
-  const f = getK3sOptionsForm(form)
+  const f = getSubform(form)
   f.options['master-ips'] = masterIps.value
     .getValue()
     .filter((v) => v)
