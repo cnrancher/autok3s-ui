@@ -59,6 +59,7 @@
               :desc="desc.options['disk-size']"
               :readonly="readonly"
             />
+            <AlibabaSpotInstanceVue :init-value="form" :desc="desc" :readonly="readonly"></AlibabaSpotInstanceVue>
           </div>
         </template>
       </form-group>
@@ -212,6 +213,7 @@ import UserDataForm from '../baseForm/UserDataForm.vue'
 import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import ClusterTagsForm from '../baseForm/ArrayListForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
+import AlibabaSpotInstanceVue from './components/AlibabaSpotInstance.vue'
 import { Base64 } from 'js-base64'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
@@ -247,7 +249,7 @@ watch(
     })
   }
 )
-const { getForm: getK3sOptionsForm } = useFormManage()
+const { getForm: getSubform } = useFormManage()
 const advanceConfigVisible = ref(false)
 const acitiveTab = ref('instance')
 const uiOptions = computed({
@@ -278,7 +280,7 @@ updateActiveTab()
 
 const tags = ref(null)
 const getForm = () => {
-  const f = getK3sOptionsForm(form)
+  const f = getSubform(form)
   const values = tags.value.getValue()
   f.options.tags = values ? values.filter((v) => v) : values
   needDecodeOptionKeys.forEach((k) => {
