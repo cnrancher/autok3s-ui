@@ -69,8 +69,8 @@ useFormRegist(getForm)
     placeholder="No Spot"
   >
     <KOption value="NoSpot" label="No Spot"></KOption>
-    <KOption value="SpotWithPriceLimit" label="Spot With Price Limit"></KOption>
     <KOption value="SpotAsPriceGo" label="Spot As Price Go"></KOption>
+    <KOption value="SpotWithPriceLimit" label="Spot With Price Limit"></KOption>
   </KSelect>
   <NumberForm
     v-show="showDuration"
