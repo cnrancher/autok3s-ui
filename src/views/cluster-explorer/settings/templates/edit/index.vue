@@ -6,7 +6,7 @@
         Edit {{ template?.name }}
       </template>
     </page-header>
-    <k-loading :loading="loading || updating">
+    <k-loading :loading="loading || updating || formLoading">
       <k-alert
         v-if="template?.provider === 'native'"
         type="warning"
@@ -49,7 +49,7 @@
   </div>
 </template>
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, provide } from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/views/components/PageHeader.vue'
 import FooterActions from '@/views/components/FooterActions.vue'
@@ -76,6 +76,16 @@ const templateStore = useTemplateStore()
 const router = useRouter()
 const updating = ref(false)
 const formErrors = ref([])
+const formLoading = ref(false)
+
+provide('formLoading', {
+  showLoading: () => {
+    formLoading.value = true
+  },
+  hideLoading: () => {
+    formLoading.value = false
+  }
+})
 
 const { loading: providersLoading, providers, error: loadProviderError } = useProviders()
 const { loading: templateLoading, error: loadTemplateError, data: templates } = storeToRefs(templateStore)
