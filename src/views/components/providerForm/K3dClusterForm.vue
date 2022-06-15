@@ -169,12 +169,16 @@ const envs = ref(null)
 const labels = ref(null)
 const volumes = ref(null)
 const ports = ref(null)
-const form = reactive(cloneDeep(props.initValue))
+const form = reactive({
+  config: {},
+  options: {}
+})
 watch(
   () => props.initValue,
   () => {
     ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
-  }
+  },
+  { immediate: true }
 )
 const getForm = () => {
   const f = cloneDeep(form)

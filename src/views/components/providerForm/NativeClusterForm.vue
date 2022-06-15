@@ -144,13 +144,17 @@ const props = defineProps({
 
 const masterIps = ref(null)
 const workerIps = ref(null)
-const form = reactive(cloneDeep(props.initValue))
+const form = reactive({
+  config: {},
+  options: {}
+})
 
 watch(
   () => props.initValue,
   () => {
     ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
-  }
+  },
+  { immediate: true }
 )
 const uiOptions = computed({
   get() {
