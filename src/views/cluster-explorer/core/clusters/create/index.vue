@@ -13,7 +13,7 @@
         ></template-filter>
       </template>
     </page-header>
-    <k-loading :loading="loading || creating">
+    <k-loading :loading="loading || creating || formLoading">
       <k-alert
         v-if="currentProviderId === 'native'"
         type="warning"
@@ -63,7 +63,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, provide } from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/views/components/PageHeader.vue'
 import TemplateFilter from '@/views/components/TemplateFilter/index.vue'
@@ -115,6 +115,16 @@ const name = ref('')
 
 const creating = ref(false)
 const formErrors = ref([])
+const formLoading = ref(false)
+
+provide('formLoading', {
+  showLoading: () => {
+    formLoading.value = true
+  },
+  hideLoading: () => {
+    formLoading.value = false
+  }
+})
 
 const { loading: providersLoading, providers, error: loadProviderError } = useProviders()
 const { loading: templateLoading, error: loadTemplateError, data: templates } = storeToRefs(templateStore)
