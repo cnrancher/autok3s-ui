@@ -238,7 +238,10 @@ const props = defineProps({
   }
 })
 
-const form = reactive(cloneDeep(props.initValue))
+const form = reactive({
+  config: {},
+  options: {}
+})
 // decode options
 watch(
   () => props.initValue,
@@ -250,7 +253,8 @@ watch(
         form.options[k] = Base64.decode(v)
       }
     })
-  }
+  },
+  { immediate: true }
 )
 const { getForm: getSubform } = useFormManage()
 const advanceConfigVisible = ref(false)
