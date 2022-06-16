@@ -7,7 +7,10 @@
     <div>
       <k-tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
-        <template #popover>{{ desc }}</template>
+        <template #popover>
+          <span v-if="rawDesc" v-html="desc"></span>
+          <span v-else>{{ desc }}</span>
+        </template>
       </k-tooltip>
     </div>
     <div v-if="!options.readOnly" class="grid justify-self-end grid-flow-col gap-x-10px">
@@ -101,6 +104,10 @@ export default defineComponent({
     desc: {
       type: String,
       default: ''
+    },
+    rawDesc: {
+      type: Boolean,
+      default: true
     }
   },
   emits: ['update:modelValue'],

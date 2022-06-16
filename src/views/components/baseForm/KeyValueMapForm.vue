@@ -4,7 +4,10 @@
       {{ label }}
       <k-tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
-        <template #popover>{{ desc }}</template>
+        <template #popover>
+          <span v-if="rawDesc" v-html="desc"></span>
+          <span v-else>{{ desc }}</span>
+        </template>
       </k-tooltip>
     </div>
     <template v-for="(t, index) in tags" :key="index">
@@ -36,6 +39,10 @@ const props = defineProps({
   desc: {
     type: String,
     default: ''
+  },
+  rawDesc: {
+    type: Boolean,
+    default: true
   },
   keyLabel: {
     type: String,

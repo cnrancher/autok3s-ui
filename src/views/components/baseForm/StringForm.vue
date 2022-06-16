@@ -1,5 +1,5 @@
 <template>
-  <k-input v-bind="$attrs">
+  <k-input v-bind="$attrs" :raw-desc="true">
     <template v-if="$slots.suffix" #suffix>
       <slot name="suffix"></slot>
     </template>

@@ -1,5 +1,5 @@
 <template>
-  <k-input :max="max" :min="min" type="number" :model-value="displayValue" @input="handleInput" @change="handleChange">
+  <k-input :max="max" :min="min" type="number" :raw-desc="true" :model-value="displayValue" @input="handleInput" @change="handleChange">
     <template v-if="$slots.suffix" #suffix>
       <slot name="suffix"></slot>
     </template>

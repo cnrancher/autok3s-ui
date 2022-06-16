@@ -143,4 +143,7 @@ const hideTooltip = () => {
 .k-tooltip[data-popper-placement^='right'] > .k-tooltip__arrow {
   left: -4px;
 }
+.k-tooltip a {
+  @apply text-light-blue-500;
+}
 </style>

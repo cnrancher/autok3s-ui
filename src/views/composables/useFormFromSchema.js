@@ -19,6 +19,15 @@ function parseSchemaDefaultValue(field) {
   return ''
 }
 
+const linkReg = /(https:\/\/[^\s]+)/g
+const replacer = (a, b) => {
+  let link  = b
+  if (b.endsWith('.') ) {
+    link = b.substring(0, b.length-1)
+  }
+ return `<a target="_blank" href="${link}">${a}</a>`
+}
+
 export default function useFormFromSchema(schema) {
   const form = reactive({
     provider: '',
@@ -37,7 +46,7 @@ export default function useFormFromSchema(schema) {
       return t
     }, {})
     const configDesc = configEntries.reduce((t, [k, v]) => {
-      t[k] = v?.description ?? ''
+      t[k] = (v?.description ?? '').replace(linkReg, replacer)
       return t
     }, {})
     const optionsEntries = Object.entries(schema.options)
@@ -46,7 +55,7 @@ export default function useFormFromSchema(schema) {
       return t
     }, {})
     const optionsDesc = optionsEntries.reduce((t, [k, v]) => {
-      t[k] = v?.description ?? ''
+      t[k] = (v?.description ?? '').replace(linkReg, replacer)
       return t
     }, {})
     form.provider = schema.id
@@ -70,13 +79,13 @@ export function useDescFromSchema(schema) {
   watchEffect(() => {
     const configEntries = Object.entries(schema.config)
     const configDesc = configEntries.reduce((t, [k, v]) => {
-      t[k] = v?.description ?? ''
+      t[k] = (v?.description ?? '').replace(linkReg, replacer)
       return t
     }, {})
 
     const optionsEntries = Object.entries(schema.options)
     const optionsDesc = optionsEntries.reduce((t, [k, v]) => {
-      t[k] = v?.description ?? ''
+      t[k] = (v?.description ?? '').replace(linkReg, replacer)
       return t
     }, {})
     desc.provider = schema.id
