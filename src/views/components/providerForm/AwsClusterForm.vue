@@ -708,31 +708,32 @@ const reginChange = (region) => {
   form.options['subnet-id'] = ''
   form.options['security-group'] = ''
   form.options['instance-type'] = ''
+  form.options['keypair-name'] = ''
   resetAll()
 }
 
 const vpcChange = (vpcId) => {
+  form.options['subnet-id'] = ''
   if (form.options.region && form.options.zone && vpcId) {
     fetchSubnets('', form.options.region, form.options.zone, vpcId)
   } else {
     resetSubnetInfo()
-    form.options['subnet-id'] = ''
   }
+  form.options['security-group'] = ''
   if (form.options.region && vpcId) {
     fetchSecrityGroups('', form.options.region, vpcId)
   } else {
     resetSecurityGroupInfo()
-    form.options['security-group'] = ''
   }
 }
 
 const zoneChange = (zone) => {
   const vpcId = form.options['vpc-id']
+  form.options['subnet-id'] = ''
   if (form.options.region && zone && vpcId) {
     fetchSubnets('', form.options.region, zone, vpcId)
   } else {
     resetSubnetInfo()
-    form.options['subnet-id'] = ''
   }
 }
 
