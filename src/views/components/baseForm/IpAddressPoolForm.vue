@@ -5,7 +5,10 @@
       <sup v-if="required" class="text-red-500">*</sup>
       <k-tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
-        <template #popover>{{ desc }}</template>
+        <template #popover>
+          <span v-if="rawDesc" v-html="desc"></span>
+          <span v-else>{{ desc }}</span>
+        </template>
       </k-tooltip>
     </h3>
     <template v-for="(ip, index) in ips" :key="index">
@@ -49,6 +52,10 @@ const props = defineProps({
   desc: {
     type: String,
     default: ''
+  },
+  rawDesc: {
+    type: Boolean,
+    default: true
   },
   readonly: {
     type: Boolean,

@@ -7,7 +7,10 @@
       </label>
       <tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
-        <template #popover>{{ desc }}</template>
+        <template #popover>
+          <span v-if="rawDesc" v-html="desc"></span>
+          <span v-else>{{ desc }}</span>
+        </template>
       </tooltip>
     </div>
     <div v-if="$slots.prefix" class="k-input__prefix">
@@ -80,6 +83,10 @@ defineProps({
   desc: {
     type: String,
     default: ''
+  },
+  rawDesc: {
+    type: Boolean,
+    default: true
   },
   autocomplete: {
     type: String,

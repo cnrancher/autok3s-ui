@@ -1,5 +1,5 @@
 <template>
-  <k-select v-bind="$attrs" :disabled="readonly">
+  <k-select v-bind="$attrs" :disabled="readonly" :raw-desc="true">
     <k-option v-for="option in options" :key="option.value" :label="option.label" :value="option.value"></k-option>
   </k-select>
 </template>
