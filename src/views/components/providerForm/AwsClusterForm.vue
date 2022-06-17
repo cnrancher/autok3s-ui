@@ -700,6 +700,9 @@ const loadInstanceProfiles = () => {
 }
 
 const reginChange = (region) => {
+  if (!keyInfo.valid) {
+    return
+  }
   if (region === form.options.region) {
     return
   }
@@ -713,6 +716,9 @@ const reginChange = (region) => {
 }
 
 const vpcChange = (vpcId) => {
+  if (!keyInfo.valid) {
+    return
+  }
   form.options['subnet-id'] = ''
   if (form.options.region && form.options.zone && vpcId) {
     fetchSubnets('', form.options.region, form.options.zone, vpcId)
@@ -728,6 +734,9 @@ const vpcChange = (vpcId) => {
 }
 
 const zoneChange = (zone) => {
+  if (!keyInfo.valid) {
+    return
+  }
   const vpcId = form.options['vpc-id']
   form.options['subnet-id'] = ''
   if (form.options.region && zone && vpcId) {
