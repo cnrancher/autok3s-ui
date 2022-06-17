@@ -2,12 +2,16 @@ import { inject, onBeforeUnmount } from 'vue'
 import { FORM_MANAGE } from '@/utils/constants.js'
 
 export default function useValidateRegist(callback) {
-  const { registValidate, removeValidate } = inject(FORM_MANAGE, () => {
-    return {
-      registValidate() {},
-      removeValidate() {}
-    }
-  }, true)
+  const { registValidate, removeValidate } = inject(
+    FORM_MANAGE,
+    () => {
+      return {
+        registValidate() {},
+        removeValidate() {}
+      }
+    },
+    true
+  )
   const emptyArgs = [
     { arg: registValidate, name: 'registValidateCallback' },
     { arg: removeValidate, name: 'removeValidateCallback' },

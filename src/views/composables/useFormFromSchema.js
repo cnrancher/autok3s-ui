@@ -21,11 +21,11 @@ function parseSchemaDefaultValue(field) {
 
 const linkReg = /(https:\/\/[^\s]+)/g
 const replacer = (a, b) => {
-  let link  = b
-  if (b.endsWith('.') ) {
-    link = b.substring(0, b.length-1)
+  let link = b
+  if (b.endsWith('.')) {
+    link = b.substring(0, b.length - 1)
   }
- return `<a target="_blank" href="${link}">${a}</a>`
+  return `<a target="_blank" href="${link}">${a}</a>`
 }
 
 export default function useFormFromSchema(schema) {

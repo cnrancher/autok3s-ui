@@ -12,7 +12,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore",
-    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore ",
     "preview": "vite preview --port 5050",
     "format": "prettier . --write"
   },
