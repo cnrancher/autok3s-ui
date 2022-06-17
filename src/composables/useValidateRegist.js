@@ -7,7 +7,7 @@ export default function useValidateRegist(callback) {
       registValidate() {},
       removeValidate() {}
     }
-  })
+  }, true)
   const emptyArgs = [
     { arg: registValidate, name: 'registValidateCallback' },
     { arg: removeValidate, name: 'removeValidateCallback' },
