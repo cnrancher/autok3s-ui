@@ -9,12 +9,17 @@
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <k-password-input
-             v-model="form.options['access-key']"
-             label="Access Key"
-             :desc="desc.options['access-key']"
-             :readonly="readonly"></k-password-input>
-            <k-password-input v-model="form.options['access-secret']" label="Access Secret"
-              :desc="desc.options['access-secret']" :readonly="readonly"></k-password-input>
+              v-model="form.options['access-key']"
+              label="Access Key"
+              :desc="desc.options['access-key']"
+              :readonly="readonly"
+            ></k-password-input>
+            <k-password-input
+              v-model="form.options['access-secret']"
+              label="Access Secret"
+              :desc="desc.options['access-secret']"
+              :readonly="readonly"
+            ></k-password-input>
           </div>
         </template>
       </form-group>
@@ -31,17 +36,37 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <!-- <string-form v-model.trim="form.options.region" label="Region" :desc="desc.options.region"
               :readonly="readonly" /> -->
-            <KComboBox v-model="form.options.region" label="Region" :desc="desc.options.region" :disabled="readonly"
-              :loading="regionInfo.loading" :options="regionInfo.data" clearable @change="regionChange">
-            </KComboBox>
+            <KComboBox
+              v-model="form.options.region"
+              label="Region"
+              :desc="desc.options.region"
+              :disabled="readonly"
+              :loading="regionInfo.loading"
+              :options="regionInfo.data"
+              clearable
+              @change="regionChange"
+            ></KComboBox>
             <!-- <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" :readonly="readonly" /> -->
-            <KComboBox v-model="form.options.zone" label="Zone" :desc="desc.options.zone" :disabled="readonly"
-              :loading="zoneInfo.loading" :options="zoneInfo.data" clearable @change="zoneChange">
-            </KComboBox>
+            <KComboBox
+              v-model="form.options.zone"
+              label="Zone"
+              :desc="desc.options.zone"
+              :disabled="readonly"
+              :loading="zoneInfo.loading"
+              :options="zoneInfo.data"
+              clearable
+              @change="zoneChange"
+            ></KComboBox>
             <!-- <string-form v-model.trim="form.options['instance-type']" label="Instance Type"
               :desc="desc.options['instance-type']" :readonly="readonly" /> -->
-            <KComboBox v-model="form.options['instance-type']" label="Instance Type"
-              :desc="desc.options['instance-type']" :disabled="readonly" :options="instanceTypeOptions" clearable>
+            <KComboBox
+              v-model="form.options['instance-type']"
+              label="Instance Type"
+              :desc="desc.options['instance-type']"
+              :disabled="readonly"
+              :options="instanceTypeOptions"
+              clearable
+            >
               <template #header>
                 <div class="p-1 sticky top-0 bg-white" @click.stop="toggleSeries">
                   <div class="cursor-pointer flex items-center justify-between">
@@ -49,13 +74,20 @@
                     <k-icon type="arrow-right" :direction="showSeriesSelection ? 'down' : ''"></k-icon>
                   </div>
                   <div v-show="showSeriesSelection" class="flex gap-2 flex-wrap p-1">
-                    <div :class="['cursor-pointer', typeSeries === '' ? 'bg-warm-gray-400' : '']" class="p-1"
-                      @click="chooseSeries('')">
+                    <div
+                      :class="['cursor-pointer', typeSeries === '' ? 'bg-warm-gray-400' : '']"
+                      class="p-1"
+                      @click="chooseSeries('')"
+                    >
                       All Instance Type Families
                     </div>
-                    <div v-for="s in instanceTypeSeries" :key="s"
-                      :class="[typeSeries && typeSeries === s ? 'bg-warm-gray-400' : '']" class="cursor-pointer p-1"
-                      @click="chooseSeries(s)">
+                    <div
+                      v-for="s in instanceTypeSeries"
+                      :key="s"
+                      :class="[typeSeries && typeSeries === s ? 'bg-warm-gray-400' : '']"
+                      class="cursor-pointer p-1"
+                      @click="chooseSeries(s)"
+                    >
                       {{ s }}
                     </div>
                   </div>
@@ -63,15 +95,28 @@
                 </div>
               </template>
             </KComboBox>
-            <string-form v-model.trim="form.options['image']" label="Image" :desc="desc.options['image']"
-              :readonly="readonly" />
+            <string-form
+              v-model.trim="form.options['image']"
+              label="Image"
+              :desc="desc.options['image']"
+              :readonly="readonly"
+            />
             <!-- <string-form v-model.trim="form.options['disk-category']" label="Disk Category"
               :desc="desc.options['disk-category']" :readonly="readonly" /> -->
-            <KComboBox v-model="form.options['disk-category']" label="Disk Category"
-              :desc="desc.options['disk-category']" :disabled="readonly" :options="diskCategories" clearable>
-            </KComboBox>
-            <string-form v-model.trim="form.options['disk-size']" label="Disk Size" :desc="desc.options['disk-size']"
-              :readonly="readonly" />
+            <KComboBox
+              v-model="form.options['disk-category']"
+              label="Disk Category"
+              :desc="desc.options['disk-category']"
+              :disabled="readonly"
+              :options="diskCategories"
+              clearable
+            ></KComboBox>
+            <string-form
+              v-model.trim="form.options['disk-size']"
+              label="Disk Size"
+              :desc="desc.options['disk-size']"
+              :readonly="readonly"
+            />
             <AlibabaSpotInstanceVue :init-value="form" :desc="desc" :readonly="readonly"></AlibabaSpotInstanceVue>
           </div>
         </template>
@@ -81,8 +126,16 @@
         <template #title>Network</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <KComboBox v-if="!readonly" v-model="vpc" label="VPC" :disabled="readonly" :loading="vpcInfo.loading"
-              :options="vpcInfo.data" clearable @change="vpcChange">
+            <KComboBox
+              v-if="!readonly"
+              v-model="vpc"
+              label="VPC"
+              :disabled="readonly"
+              :loading="vpcInfo.loading"
+              :options="vpcInfo.data"
+              clearable
+              @change="vpcChange"
+            >
               <template #footer>
                 <div v-if="hasMoreVpcs" class="text-center cursor-pointer" @click.stop="loadVpcs()">
                   Load More {{ vpcInfo.loading ? '(Loading ...)' : '' }}
@@ -91,18 +144,32 @@
             </KComboBox>
             <!-- <string-form v-model.trim="form.options['v-switch']" label="V-Switch" :desc="desc.options['v-switch']"
               :readonly="readonly" /> -->
-            <KComboBox v-model="form.options['v-switch']" label="V-Switch" :disabled="readonly"
-              :loading="vSwitchInfo.loading" :options="vSwitchInfo.data" clearable>
+            <KComboBox
+              v-model="form.options['v-switch']"
+              label="V-Switch"
+              :disabled="readonly"
+              :loading="vSwitchInfo.loading"
+              :options="vSwitchInfo.data"
+              clearable
+            >
               <template #footer>
                 <div v-if="hasMoreVSwitches" class="text-center cursor-pointer" @click.stop="loadVSwitches()">
                   Load More {{ vSwitchInfo.loading ? '(Loading ...)' : '' }}
                 </div>
               </template>
             </KComboBox>
-            <string-form v-model.trim="form.options['internet-max-bandwidth-out']" label="Internet Max Bandwidth Out"
-              :desc="desc.options['internet-max-bandwidth-out']" :readonly="readonly" />
-            <string-form v-model.trim="form.options['security-group']" label="Security Group"
-              :desc="desc.options['security-group']" :readonly="readonly" />
+            <string-form
+              v-model.trim="form.options['internet-max-bandwidth-out']"
+              label="Internet Max Bandwidth Out"
+              :desc="desc.options['internet-max-bandwidth-out']"
+              :readonly="readonly"
+            />
+            <string-form
+              v-model.trim="form.options['security-group']"
+              label="Security Group"
+              :desc="desc.options['security-group']"
+              :readonly="readonly"
+            />
             <boolean-form v-model="form.options['eip']" label="EIP" :desc="desc.options['eip']" :readonly="readonly" />
           </div>
         </template>
@@ -113,12 +180,24 @@
         <template #subtitle>Params used to login to instance via ssh, e.g. key-pair, ssh user, ssh port</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <string-form v-model.trim="form.options['key-pair']" label="Key Pair" :desc="desc.options['key-pair']"
-              :readonly="readonly" />
-            <string-form v-model.trim="form.config['ssh-user']" label="SSH User" :desc="desc.config['ssh-user']"
-              :readonly="readonly" />
-            <string-form v-model.trim="form.config['ssh-port']" label="SSH Port" :desc="desc.config['ssh-port']"
-              :readonly="readonly" />
+            <string-form
+              v-model.trim="form.options['key-pair']"
+              label="Key Pair"
+              :desc="desc.options['key-pair']"
+              :readonly="readonly"
+            />
+            <string-form
+              v-model.trim="form.config['ssh-user']"
+              label="SSH User"
+              :desc="desc.config['ssh-user']"
+              :readonly="readonly"
+            />
+            <string-form
+              v-model.trim="form.config['ssh-port']"
+              label="SSH Port"
+              :desc="desc.config['ssh-port']"
+              :readonly="readonly"
+            />
           </div>
         </template>
       </form-group>
@@ -137,18 +216,33 @@
         <template #title>Advance</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <cluster-tags-form ref="tags" :init-value="form.options.tags" :desc="desc.options['tags']"
-              :readonly="readonly" label="Tags" placeholder="e.g. foo=bar" action-label="Add Tag"></cluster-tags-form>
+            <cluster-tags-form
+              ref="tags"
+              :init-value="form.options.tags"
+              :desc="desc.options['tags']"
+              :readonly="readonly"
+              label="Tags"
+              placeholder="e.g. foo=bar"
+              action-label="Add Tag"
+            ></cluster-tags-form>
           </div>
-          <UserDataForm v-model="form.options['user-data-content']" label="User Data"
-            :desc="desc.options['user-data-content']" :options="readonlyOption" :visible="advanceConfigVisible">
-          </UserDataForm>
+          <UserDataForm
+            v-model="form.options['user-data-content']"
+            label="User Data"
+            :desc="desc.options['user-data-content']"
+            :options="readonlyOption"
+            :visible="advanceConfigVisible"
+          ></UserDataForm>
         </template>
       </form-group>
     </k-tab-pane>
     <k-tab-pane label="K3s Options" name="k3s">
-      <k3s-options-form :visible="acitiveTab === 'k3s'" :init-value="form" :desc="desc" :readonly="readonly">
-      </k3s-options-form>
+      <k3s-options-form
+        :visible="acitiveTab === 'k3s'"
+        :init-value="form"
+        :desc="desc"
+        :readonly="readonly"
+      ></k3s-options-form>
     </k-tab-pane>
     <k-tab-pane label="Additional Options" name="additional">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
@@ -158,17 +252,38 @@
           :desc="desc.config['ui']"
           :readonly="readonly"
         /> -->
-        <k-select v-model="uiOptions" :desc="desc.config['enable']" label="UI" :disabled="readonly"
-          placeholder="Disable" multiple>
+        <k-select
+          v-model="uiOptions"
+          :desc="desc.config['enable']"
+          label="UI"
+          :disabled="readonly"
+          placeholder="Disable"
+          multiple
+        >
           <k-option value="explorer" label="explorer"></k-option>
           <k-option value="dashboard" label="dashboard"></k-option>
         </k-select>
-        <boolean-form v-model="form.options['cloud-controller-manager']" label="Cloud Controller Manager"
-          :desc="desc.options['cloud-controller-manager']" :readonly="readonly" />
-        <boolean-form v-model="form.options['terway']" label="Terway" :desc="desc.options['terway']" true-value="eni"
-          false-value="none" :readonly="readonly" />
-        <string-form v-show="form.options['terway'] === 'eni'" v-model="form.options['terway-max-pool-size']"
-          label="Terway Max Pool Size" type="number" :readonly="readonly"></string-form>
+        <boolean-form
+          v-model="form.options['cloud-controller-manager']"
+          label="Cloud Controller Manager"
+          :desc="desc.options['cloud-controller-manager']"
+          :readonly="readonly"
+        />
+        <boolean-form
+          v-model="form.options['terway']"
+          label="Terway"
+          :desc="desc.options['terway']"
+          true-value="eni"
+          false-value="none"
+          :readonly="readonly"
+        />
+        <string-form
+          v-show="form.options['terway'] === 'eni'"
+          v-model="form.options['terway-max-pool-size']"
+          label="Terway Max Pool Size"
+          type="number"
+          :readonly="readonly"
+        ></string-form>
       </div>
     </k-tab-pane>
   </k-tabs>
@@ -214,7 +329,7 @@ const form = reactive({
 watch(
   () => props.initValue,
   () => {
-    ; ({ config: form.config, options: form.options } = cloneDeep(props.initValue))
+    ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
     needDecodeOptionKeys.forEach((k) => {
       const v = form.options[k]
       if (v) {
@@ -290,21 +405,19 @@ const {
 const validateCredentials = () => {
   validateKeys(form.options['access-key'], form.options['access-secret'])
 }
-const { showLoading, hideLoading } = inject('formLoading', () => ({
-  showLoading() {},
-  hideLoading() {}
-}), true)
+const { showLoading, hideLoading } = inject(
+  'formLoading',
+  () => ({
+    showLoading() {},
+    hideLoading() {}
+  }),
+  true
+)
 const typeSeries = ref('')
 const showSeriesSelection = ref(false)
 const vpc = ref('')
 const errors = computed(() => {
-  return [
-    ...new Set([
-      zoneInfo.error,
-      vpcInfo.error,
-      vSwitchInfo.error
-    ])
-  ].filter((e) => e)
+  return [...new Set([zoneInfo.error, vpcInfo.error, vSwitchInfo.error])].filter((e) => e)
 })
 const loading = computed(() => {
   return keyInfo.loading || zoneInfo.loading || vpcInfo.loading || vSwitchInfo.loading
@@ -317,7 +430,7 @@ watch(loading, (l) => {
   hideLoading()
 })
 onBeforeUnmount(() => {
- hideLoading() 
+  hideLoading()
 })
 const hasMoreVpcs = computed(() => {
   const pageSize = vpcInfo.pageSize
@@ -346,9 +459,11 @@ const instanceTypes = computed(() => {
     return []
   }
 
-  return zoneInfo.data.find((z) => z.value === zone)
-    ?.raw?.AvailableInstanceTypes?.InstanceTypes
-    ?.map((t) => ({ label: t, value: t })) ?? []
+  return (
+    zoneInfo.data
+      .find((z) => z.value === zone)
+      ?.raw?.AvailableInstanceTypes?.InstanceTypes?.map((t) => ({ label: t, value: t })) ?? []
+  )
 })
 
 const instanceTypeOptions = computed(() => {
@@ -361,10 +476,12 @@ const instanceTypeOptions = computed(() => {
 })
 
 const instanceTypeSeries = computed(() => {
-  const types = instanceTypes.value.map((t) => t.value.substring(0, t.value.lastIndexOf('.'))).reduce((t, c) => {
-    t.add(c)
-    return t
-  }, new Set())
+  const types = instanceTypes.value
+    .map((t) => t.value.substring(0, t.value.lastIndexOf('.')))
+    .reduce((t, c) => {
+      t.add(c)
+      return t
+    }, new Set())
   return [...types]
 })
 
@@ -395,9 +512,11 @@ const diskCategories = computed(() => {
   if (!zone) {
     return []
   }
-  return zoneInfo.data.find((z) => z.value === zone)
-    ?.raw?.AvailableDiskCategories?.DiskCategories
-    ?.map((t) => ({ label: t, value: t })) ?? []
+  return (
+    zoneInfo.data
+      .find((z) => z.value === zone)
+      ?.raw?.AvailableDiskCategories?.DiskCategories?.map((t) => ({ label: t, value: t })) ?? []
+  )
 })
 
 const regionChange = (region) => {
@@ -430,7 +549,6 @@ const zoneChange = (zone) => {
   } else {
     resetVSwitchInfo()
   }
-
 }
 
 const vpcChange = (v) => {
@@ -451,49 +569,56 @@ const vpcChange = (v) => {
   } else {
     resetSecurityGroupInfo()
   }
-
 }
 
-watch([acitiveTab, () => props.readonly, () => props.initValue], ([tab, readonly], [oldTab]) => {
-  if (
-    readonly === false &&
-    (!oldTab || tab !== 'credential') &&
-    (keyInfo.accessKeyId !== form.options['access-key'] ||
-      keyInfo.secretAccessKey !== form.options['access-secret'])) {
-    validateCredentials()
+watch(
+  [acitiveTab, () => props.readonly, () => props.initValue],
+  ([tab, readonly], [oldTab]) => {
+    if (
+      readonly === false &&
+      (!oldTab || tab !== 'credential') &&
+      (keyInfo.accessKeyId !== form.options['access-key'] || keyInfo.secretAccessKey !== form.options['access-secret'])
+    ) {
+      validateCredentials()
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  () => keyInfo.valid,
+  (valid) => {
+    if (valid) {
+      const region = form.options.region
+      const zone = form.options.zone
+      const v = vpc.value
+      if (region) {
+        fetchZones(region)
+        fetchVpcs(region)
+      }
+      if (region && v) {
+        fetchSecurityGroups(region, v)
+      }
+      if (zone && v) {
+        fetchVSwitches(zone, v)
+      }
+      return
+    }
+    resetAll()
   }
+)
 
-}, { immediate: true })
+watch(
+  () => vpcInfo.data,
+  (vpcs) => {
+    const vSwitchId = form.options['v-switch']
 
-watch(() => keyInfo.valid, (valid) => {
-  if (valid) {
-    const region = form.options.region
-    const zone = form.options.zone
-    const v = vpc.value
-    if (region) {
-      fetchZones(region)
-      fetchVpcs(region)
-    }
-    if (region && v) {
-      fetchSecurityGroups(region, v)
-    }
-    if (zone && v) {
-      fetchVSwitches(zone, v)
-    }
-    return
-  }
-  resetAll()
-})
-
-watch(() => vpcInfo.data, (vpcs) => {
-  const vSwitchId = form.options['v-switch']
-
-  if (vSwitchId) {
-    const v = vpcs.find((v) => v.raw.VSwitchIds?.VSwitchId?.includes(vSwitchId))
-    if (v && !vpc.value) {
-      vpc.value = v.VpcId
+    if (vSwitchId) {
+      const v = vpcs.find((v) => v.raw.VSwitchIds?.VSwitchId?.includes(vSwitchId))
+      if (v && !vpc.value) {
+        vpc.value = v.VpcId
+      }
     }
   }
-})
-
+)
 </script>

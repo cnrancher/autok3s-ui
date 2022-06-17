@@ -6,6 +6,7 @@
       <k-tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
         <template #popover>
+          <!-- eslint-disable-next-line vue/no-v-html -->
           <span v-if="rawDesc" v-html="desc"></span>
           <span v-else>{{ desc }}</span>
         </template>

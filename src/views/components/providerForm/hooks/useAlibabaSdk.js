@@ -95,6 +95,7 @@ export default function useAlibabaSdk() {
     regionInfo.loading = true
     regionInfo.error = null
     regionInfo.data = []
+    // eslint-disable-next-line no-undef
     const ecs = new ALY.ECS(ecsOptions.value)
     ecs.describeRegions({}, (err, resp) => {
       keyInfo.loaded = true
@@ -123,6 +124,7 @@ export default function useAlibabaSdk() {
     zoneInfo.loaded = false
     zoneInfo.data = []
     zoneInfo.error = null
+    // eslint-disable-next-line no-undef
     const ecs = new ALY.ECS(ecsOptions.value)
     ecs.describeZones(
       {
@@ -162,7 +164,7 @@ export default function useAlibabaSdk() {
       }
     }
 
-    if (pageNumber !== vpcInfo.pageNumber ) {
+    if (pageNumber !== vpcInfo.pageNumber) {
       vpcInfo.pageNumber = pageNumber
     }
     if (pageNumber === 1) {
@@ -178,6 +180,7 @@ export default function useAlibabaSdk() {
       PageNumber: pageNumber,
       PageSize: vpcInfo.pageSize
     }
+    // eslint-disable-next-line no-undef
     const ecs = new ALY.ECS(ecsOptions.value)
     ecs.describeVpcs(p, (err, resp) => {
       vpcInfo.loading = false
@@ -238,6 +241,7 @@ export default function useAlibabaSdk() {
       PageNumber: pageNumber,
       PageSize: vSwitchInfo.pageSize
     }
+    // eslint-disable-next-line no-undef
     const ecs = new ALY.ECS(ecsOptions.value)
     ecs.describeVSwitches(p, (err, resp) => {
       vSwitchInfo.loading = false
@@ -264,6 +268,7 @@ export default function useAlibabaSdk() {
     const p = {
       VSwitchId: id
     }
+    // eslint-disable-next-line no-undef
     const ecs = new ALY.ECS(ecsOptions.value)
     ecs.describeVSwitchAttributes(p, (err, resp) => {
       vSwitchDetail.loading = false
@@ -284,7 +289,7 @@ export default function useAlibabaSdk() {
         securityGroupInfo.error = 'Region has changed, no further security group information is available'
         return false
       }
-      if (tmpZone !== securityGroupInfo.vpc) {
+      if (tmpVpc !== securityGroupInfo.vpc) {
         securityGroupInfo.error = 'VPC has changed, no further security group information is available'
         return false
       }
@@ -321,6 +326,7 @@ export default function useAlibabaSdk() {
       PageNumber: pageNumber,
       PageSize: securityGroupInfo.pageSize
     }
+    // eslint-disable-next-line no-undef
     const ecs = new ALY.ECS(ecsOptions.value)
     ecs.describeSecurityGroups(p, (err, resp) => {
       securityGroupInfo.loading = false
@@ -349,12 +355,12 @@ export default function useAlibabaSdk() {
     zoneInfo.error = null
     zoneInfo.region = ''
   }
-  const resetRegionInfo = () => {
-    regionInfo.data = []
-    regionInfo.loaded = false
-    regionInfo.loading = false
-    regionInfo.error = null
-  }
+  // const resetRegionInfo = () => {
+  //   regionInfo.data = []
+  //   regionInfo.loaded = false
+  //   regionInfo.loading = false
+  //   regionInfo.error = null
+  // }
   const resetVpcInfo = () => {
     vpcInfo.data = []
     vpcInfo.loaded = false
