@@ -27,8 +27,8 @@ const props = defineProps({
 
 defineEmits(['close', 'select'])
 const data = toRef(props.imageInfo, 'data')
-const defaultArch = props.imageInfo.arch ?? ref(['x86_64'])
-const query = ref(props.imageInfo.query) ?? ref('')
+const defaultArch = props.imageInfo.arch ?? ['x86_64']
+const query = props.imageInfo.query ?? ''
 const owners = ref([...props.imageInfo.owners]) ?? ref(['self', 'amazon', 'aws-marketplace'])
 const field = ref(props.imageInfo.field) ?? ref('name')
 const fields = ref(['name', 'description', 'image-id'])
