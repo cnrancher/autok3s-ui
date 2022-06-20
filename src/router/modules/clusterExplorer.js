@@ -82,7 +82,7 @@ const clusterExplorerRouter = {
           path: 'templates',
           component: () => import('@/views/cluster-explorer/settings/templates/index.vue'),
           name: 'ClusterExplorerSettingsTemplates',
-          meta: { title: 'Templates', icon: 'cluster' }
+          meta: { title: 'Templates', icon: 'clone' }
         },
         {
           path: 'templates/detail/:templateId',
