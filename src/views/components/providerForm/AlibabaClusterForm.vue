@@ -68,7 +68,7 @@
               clearable
             >
               <template #header>
-                <div class="p-1 sticky top-0 bg-white" @click.stop="toggleSeries">
+                <div class="p-1 bg-white" @click.stop="toggleSeries">
                   <div class="cursor-pointer flex items-center justify-between">
                     <div>Filter: {{ typeSeries ? typeSeries : 'All Instance Type Families' }}</div>
                     <k-icon type="arrow-right" :direction="showSeriesSelection ? 'down' : ''"></k-icon>
