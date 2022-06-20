@@ -186,13 +186,19 @@ export default function useAlibabaSdk() {
       vpcInfo.loading = false
       vpcInfo.loaded = true
       if (err) {
-        console.log(err)
         vpcInfo.error = err.message ?? err
         return
       }
       vpcInfo.totalCount = resp.TotalCount
       vpcInfo.pageNumber = pageNumber
-      vpcInfo.data = [...vpcInfo.data, ...resp.Vpcs.Vpc.map((v) => ({ label: v.VpcId, value: v.VpcId, raw: v }))]
+      vpcInfo.data = [
+        ...vpcInfo.data,
+        ...resp.Vpcs.Vpc.map((v) => ({
+          label: `${v.IsDefault ? '[Default]' : ''}${v.VpcName ? `${v.VpcName} / ${v.VpcId}` : v.VpcId}`,
+          value: v.VpcId,
+          raw: v
+        }))
+      ]
     })
   }
 
@@ -255,7 +261,11 @@ export default function useAlibabaSdk() {
       vSwitchInfo.pageNumber = pageNumber
       vSwitchInfo.data = [
         ...vSwitchInfo.data,
-        ...resp.VSwitches.VSwitch.map((s) => ({ label: s.VSwitchId, value: s.VSwitchId, raw: s }))
+        ...resp.VSwitches.VSwitch.map((s) => ({
+          label: `${s.IsDefault ? '[Default]' : ''}${s.VSwitchName ? `${s.VSwitchName} / ` : ''}${s.VSwitchId}`,
+          value: s.VSwitchId,
+          raw: s
+        }))
       ]
     })
   }
@@ -340,8 +350,8 @@ export default function useAlibabaSdk() {
       securityGroupInfo.data = [
         ...securityGroupInfo.data,
         ...resp.SecurityGroups.SecurityGroup.map((sg) => ({
-          label: sg.SecuryGroupId,
-          value: sg.SecuryGroupId,
+          label: `${sg.SecurityGroupName ? `${sg.SecurityGroupName} / ` : ''}${sg.SecurityGroupId}`,
+          value: sg.SecurityGroupId,
           raw: sg
         }))
       ]
