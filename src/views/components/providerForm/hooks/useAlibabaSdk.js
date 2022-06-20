@@ -1,4 +1,4 @@
-import { computed, reactive, ref, readonly } from 'vue'
+import { computed, reactive, ref, readonly, shallowReactive } from 'vue'
 
 export default function useAlibabaSdk() {
   const accessKeyId = ref('')
@@ -63,12 +63,37 @@ export default function useAlibabaSdk() {
     data: []
   })
 
+  const imageInfo = shallowReactive({
+    regionId: '',
+    imageName: '',
+    imageOwnerAlias: '', // system| self | others| marketplace, 默认值:无，表示返回 system+self+others 不设置该参数说明不使用该参数进行过滤条件
+    instanceType: '',
+    // OSType: 'linux', // windows | linux
+    architecture: '', // i386 | x86_64 | arm64
+    query: '',
+    loading: false,
+    loaded: false,
+    pageSize: 10,
+    pageNumber: 1,
+    totalCount: 0,
+    field: 'ImageName', // ImageName | ImageId
+    data: [],
+    error: null
+  })
+
   const vSwitchDetail = reactive({
     loading: false,
     loaded: false,
     data: null,
     error: null
   })
+
+  // watch([() => imageInfo.regionId, imageInfo.instanceType], () => {
+  //   imageInfo.data = []
+  //   imageInfo.totalCount = 0
+  //   imageInfo.error = null
+  //   imageInfo.pageNumber = 1
+  // })
 
   const ecsOptions = computed(() => {
     return {
@@ -358,6 +383,93 @@ export default function useAlibabaSdk() {
     })
   }
 
+  const fetchImages = (r, options = {}) => {
+    const tmpRegion = r ?? region.value
+    let {
+      imageOwnerAlias = '',
+      instanceType = '',
+      // OSType = 'linux',
+      architecture = 'x86_64',
+      pageNumber = 1,
+      pageSize = 10,
+      query = '',
+      field = 'ImageName'
+    } = options
+
+    if (pageNumber !== 1) {
+      if (tmpRegion !== imageInfo.regionId) {
+        imageInfo.error = 'Region has changed, no further image information is available'
+        return false
+      }
+      if (imageOwnerAlias !== imageInfo.imageOwnerAlias) {
+        imageInfo.error = 'ImageOwnerAlias has changed, no further imageOwnerAlias information is available'
+        return false
+      }
+      if (instanceType !== imageInfo.instanceType) {
+        imageInfo.error = 'InstanceType has changed, no further instanceType information is available'
+        return false
+      }
+      // if (OSType !== imageInfo.OSType) {
+      //   imageInfo.error = 'OSType has changed, no further OSType information is available'
+      //   return false
+      // }
+      if (architecture !== imageInfo.architecture) {
+        imageInfo.error = 'Architecture has changed, no further architecture information is available'
+        return false
+      }
+      if (pageSize === 0) {
+        return
+      }
+      const totalPage = Math.ceil(imageInfo.totalCount / pageSize)
+
+      if (pageNumber > totalPage) {
+        return
+      }
+    }
+
+    if (pageNumber !== imageInfo.pageNumber) {
+      imageInfo.pageNumber = pageNumber
+    }
+    if (pageNumber === 1) {
+      imageInfo.data = []
+    }
+    imageInfo.regionId = tmpRegion
+    imageInfo.loading = true
+    imageInfo.loaded = false
+    imageInfo.error = null
+
+    const p = { RegionId: imageInfo.regionId }
+    const excludeKeys = ['query', 'field']
+    Object.entries(options).forEach(([k, v]) => {
+      imageInfo[k] = v
+      const key = `${k[0].toUpperCase()}${k.substring(1)}`
+      if (v && !excludeKeys.includes(k)) {
+        p[key] = v
+      }
+    })
+
+    if (query) {
+      if (field === 'ImageId') {
+        p[field] = query
+      } else {
+        p[field] = `*${query}*`
+      }
+    }
+    // eslint-disable-next-line no-undef
+    const ecs = new ALY.ECS(ecsOptions.value)
+    ecs.describeImages(p, (err, resp) => {
+      imageInfo.loading = false
+      imageInfo.loaded = true
+      if (err) {
+        imageInfo.error = err.message ?? err
+        return
+      }
+      imageInfo.totalCount = resp.TotalCount
+      imageInfo.pageNumber = pageNumber
+      imageInfo.data = resp.Images.Image
+    })
+  }
+
   const resetZoneInfo = () => {
     zoneInfo.data = []
     zoneInfo.loaded = false
@@ -405,6 +517,21 @@ export default function useAlibabaSdk() {
     securityGroupInfo.pageNumber = 0
   }
 
+  const resetImageInfo = () => {
+    ;(imageInfo.regionId = ''), (imageInfo.imageName = '')
+    imageInfo.imageOwnerAlias = null
+    imageInfo.instanceType = ''
+    imageInfo.OSType = 'linux'
+    imageInfo.architecture = 'x86_64'
+    imageInfo.pageSize = 10
+    imageInfo.pageNumber = 1
+    imageInfo.totalCount = 0
+    imageInfo.data = []
+    imageInfo.error = null
+    imageInfo.loading = false
+    imageInfo.loaded = false
+  }
+
   const resetAll = () => {
     // keyInfo.loaded = false
     // keyInfo.loading = false
@@ -414,6 +541,7 @@ export default function useAlibabaSdk() {
     resetVpcInfo()
     resetVSwitchInfo()
     resetSecurityGroupInfo()
+    resetImageInfo()
   }
 
   return {
@@ -424,16 +552,19 @@ export default function useAlibabaSdk() {
     vpcInfo: readonly(vpcInfo),
     securityGroupInfo: readonly(securityGroupInfo),
     vSwitchDetail: readonly(vSwitchDetail),
+    imageInfo: readonly(imageInfo),
     resetZoneInfo,
     resetVpcInfo,
     resetVSwitchInfo,
     resetSecurityGroupInfo,
+    resetImageInfo,
     resetAll,
     validateKeys,
     fetchZones,
     fetchVpcs,
     fetchVSwitches,
     fetchSecurityGroups,
-    fetchVSwitchDetail
+    fetchVSwitchDetail,
+    fetchImages
   }
 }
