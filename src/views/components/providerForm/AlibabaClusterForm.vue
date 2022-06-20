@@ -150,6 +150,7 @@
               :disabled="readonly"
               :loading="vSwitchInfo.loading"
               :options="vSwitchInfo.data"
+              :desc="desc.options['v-switch']"
               clearable
             >
               <template #footer>
@@ -164,12 +165,27 @@
               :desc="desc.options['internet-max-bandwidth-out']"
               :readonly="readonly"
             />
-            <string-form
+            <!-- <string-form
               v-model.trim="form.options['security-group']"
               label="Security Group"
               :desc="desc.options['security-group']"
               :readonly="readonly"
-            />
+            /> -->
+            <KComboBox
+              v-model="form.options['security-group']"
+              label="Security Group"
+              :disabled="readonly"
+              :loading="securityGroupInfo.loading"
+              :options="securityGroupInfo.data"
+              :desc="desc.options['security-group']"
+              clearable
+            >
+              <template #footer>
+                <div v-if="hasMoreSecurityGroups" class="text-center cursor-pointer" @click.stop="loadSecurityGroups()">
+                  Load More {{ securityGroupInfo.loading ? '(Loading ...)' : '' }}
+                </div>
+              </template>
+            </KComboBox>
             <boolean-form v-model="form.options['eip']" label="EIP" :desc="desc.options['eip']" :readonly="readonly" />
           </div>
         </template>
@@ -400,7 +416,8 @@ const {
   regionInfo,
   zoneInfo,
   vpcInfo,
-  vSwitchInfo
+  vSwitchInfo,
+  securityGroupInfo
 } = useAlibabaSdk()
 const validateCredentials = () => {
   validateKeys(form.options['access-key'], form.options['access-secret'])
@@ -446,6 +463,16 @@ const hasMoreVSwitches = computed(() => {
   const pageSize = vSwitchInfo.pageSize
   const totalCount = vSwitchInfo.totalCount
   const pageNumber = vSwitchInfo.pageNumber
+  if (pageSize === 0 || totalCount === 0) {
+    return false
+  }
+  const totalPage = Math.ceil(totalCount / pageSize)
+  return pageNumber > totalPage
+})
+const hasMoreSecurityGroups = computed(() => {
+  const pageSize = securityGroupInfo.pageSize
+  const totalCount = securityGroupInfo.totalCount
+  const pageNumber = securityGroupInfo.pageNumber
   if (pageSize === 0 || totalCount === 0) {
     return false
   }
@@ -500,6 +527,16 @@ const loadVSwitches = () => {
   }
   fetchVSwitches(zone, v, vSwitchInfo.pageNumber + 1)
 }
+
+const loadSecurityGroups = () => {
+  const region = form.options.region
+  const v = vpc.value
+  if (!region || !v) {
+    return
+  }
+  fetchSecurityGroups(region, v, securityGroupInfo.pageNumber + 1)
+}
+
 const toggleSeries = () => {
   showSeriesSelection.value = !showSeriesSelection.value
 }
