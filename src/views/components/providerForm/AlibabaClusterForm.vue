@@ -100,7 +100,26 @@
               label="Image"
               :desc="desc.options['image']"
               :readonly="readonly"
-            />
+            >
+              <template v-if="keyInfo.valid" #suffix>
+                <KIcon
+                  type="search"
+                  :size="18"
+                  class="cursor-pointer"
+                  @click="
+                    showSearchImageModal({
+                      region: form.options.region,
+                      instanceType: form.options['instance-type'],
+                      imageInfo,
+                      fetchImages,
+                      onSelect: (e) => {
+                        form.options['image'] = e.ImageId
+                      }
+                    })
+                  "
+                ></KIcon>
+              </template>
+            </string-form>
             <!-- <string-form v-model.trim="form.options['disk-category']" label="Disk Category"
               :desc="desc.options['disk-category']" :readonly="readonly" /> -->
             <KComboBox
@@ -319,6 +338,8 @@ import { Base64 } from 'js-base64'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
 import useAlibabaSdk from './hooks/useAlibabaSdk.js'
+import useModal from '@/composables/useModal.js'
+import AlibabaImageSearchModal from './components/AlibabaImageSearchModal.vue'
 
 const needDecodeOptionKeys = ['user-data-content']
 
@@ -403,6 +424,7 @@ const getForm = () => {
 useFormRegist(getForm)
 
 // alibaba sdk
+
 const {
   validateKeys,
   resetAll,
@@ -412,6 +434,8 @@ const {
   fetchVpcs,
   fetchVSwitches,
   fetchSecurityGroups,
+  fetchImages,
+  imageInfo,
   keyInfo,
   regionInfo,
   zoneInfo,
@@ -430,6 +454,7 @@ const { showLoading, hideLoading } = inject(
   }),
   true
 )
+const { show: showSearchImageModal } = useModal(AlibabaImageSearchModal)
 const typeSeries = ref('')
 const showSeriesSelection = ref(false)
 const vpc = ref('')
@@ -555,6 +580,10 @@ const diskCategories = computed(() => {
       ?.raw?.AvailableDiskCategories?.DiskCategories?.map((t) => ({ label: t, value: t })) ?? []
   )
 })
+
+// const instanceTypeChange = (t) => {
+//   resetImageInfo()
+// }
 
 const regionChange = (region) => {
   if (!keyInfo.valid) {
