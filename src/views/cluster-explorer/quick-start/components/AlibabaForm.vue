@@ -49,7 +49,7 @@ watch(
   }
 )
 const showKeyForm = computed(() => {
-  return props.hasError || !form.options['access-key'] || !form.options['access-secret']
+  return props.hasError || !props.initValue.options['access-key'] || !props.initValue.options['access-secret']
 })
 const getForm = () => {
   const f = cloneDeep(form)
