@@ -52,22 +52,21 @@
         </template>
       </k-table-column>
       <template #error="error">
-        <div class="flex-col justify-center items-center">
-          <div>
-            Load
-            <span class="text-error">{{ error.group }}</span>
-            clusters failed: {{ error.error }}
+        <div class="mb-2">
+          <div class="cluster-table__group"><span class="cluster-table__group-by">provider: </span><span>{{ error.group }}</span></div>
+          <div class="bg-white p-2">
+            Cluster data load failed: <span class="text-error">{{ error.error }}</span>
           </div>
-          <div>
-            Please click
+          <div class="bg-white p-2">
+            Please click on the
             <button
-              class="btn btn-sm role-secondary"
+              class="text-$link"
               :disabled="error.state === 'loading'"
               @click="reload(error.group)"
             >
-              refresh
+            refresh
             </button>
-            button to reload cluster data
+            link to reload the cluster data
           </div>
         </div>
       </template>
@@ -400,5 +399,19 @@ const reload = (provider) => {
 }
 .cluster-table__search {
   grid-area: search;
+}
+.cluster-table__group {
+  @apply h-40px leading-40px py-0 px-10px rounded-t bg-white relative inline-block min-w-72px z-0;
+  &::after {
+    @apply h-40px w-70px rounded-t-5px bg-white absolute;
+    content: '';
+    right: -15px;
+    top: 0;
+    transform: skewX(40deg);
+    z-index: -1;
+  }
+}
+.cluster-table__group-by {
+  @apply capitalize text-gray-400;
 }
 </style>
