@@ -63,7 +63,7 @@ const clusterExplorerRouter = {
           path: 'credentials',
           component: () => import('@/views/cluster-explorer/settings/credentials/index.vue'),
           name: 'ClusterExplorerSettingsCredentials',
-          meta: { title: 'Credentials', icon: 'folder' }
+          meta: { title: 'Credentials', icon: 'key' }
         },
         {
           path: 'credentials/create',
