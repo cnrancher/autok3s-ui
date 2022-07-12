@@ -18,7 +18,6 @@
     </page-header>
     <div class="credential-table__header">
       <credential-bulk-actions
-        class="credential-table__actions"
         :credentials="selectedCredentials"
         @exec-command="handleCommand"
       ></credential-bulk-actions>
@@ -34,7 +33,7 @@
         v-model="searchQuery"
         type="search"
         placeholder="Filter"
-        class="credential-table__search focus-visible:outline-none px-12px rounded border hover:bg-gray-100"
+        class="focus-visible:outline-none px-12px rounded border hover:bg-gray-100"
       />
     </div>
     <k-table
@@ -169,16 +168,9 @@ watchEffect(() => {
 <style>
 .credential-table__header {
   display: grid;
-  grid-template-areas: 'actions btn search';
   grid-template-columns: 1fr auto minmax(min-content, 200px);
   padding: 0 0 20px;
   column-gap: 10px;
-}
-.credential-table__actions {
-  grid-area: actions;
-}
-.credential-table__search {
-  grid-area: search;
 }
 .credential-table__error {
   display: flex;

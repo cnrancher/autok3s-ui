@@ -2,7 +2,6 @@
   <div>
     <div class="template-table__header">
       <template-bulk-actions
-        class="template-table__actions"
         :templates="selectedTemplates"
         @exec-command="handleCommand"
       ></template-bulk-actions>
@@ -18,7 +17,7 @@
         v-model="searchQuery"
         type="search"
         placeholder="Filter"
-        class="template-table__search focus-visible:outline-none px-12px rounded border hover:bg-gray-100"
+        class="focus-visible:outline-none px-12px rounded border hover:bg-gray-100"
       />
     </div>
     <k-table :data="data" :state="state" :group-by="groupBy" @selection-change="handleSelectionChange">
@@ -210,15 +209,8 @@ watchEffect(() => {
 <style>
 .template-table__header {
   display: grid;
-  grid-template-areas: 'actions btn search';
   grid-template-columns: 1fr auto minmax(min-content, 200px);
   padding: 0 0 20px;
   column-gap: 10px;
-}
-.template-table__actions {
-  grid-area: actions;
-}
-.template-table__search {
-  grid-area: search;
 }
 </style>
