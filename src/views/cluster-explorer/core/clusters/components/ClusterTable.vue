@@ -2,7 +2,6 @@
   <div>
     <div class="cluster-table__header">
       <cluster-bulk-actions
-        class="cluster-table__actions"
         :clusters="selectedClusters"
         @exec-command="handleCommand"
       ></cluster-bulk-actions>
@@ -18,7 +17,7 @@
         v-model="searchQuery"
         type="search"
         placeholder="Filter"
-        class="border rounded px-12px cluster-table__search hover:bg-gray-100 focus-visible:outline-none"
+        class="border rounded px-12px hover:bg-gray-100 focus-visible:outline-none"
       />
     </div>
     <k-grouped-table :data="groupData" :group-by="groupBy" @selection-change="handleSelectionChange">
@@ -389,16 +388,9 @@ const reload = (provider) => {
 <style>
 .cluster-table__header {
   display: grid;
-  grid-template-areas: 'actions btn search';
   grid-template-columns: 1fr auto minmax(min-content, 200px);
   padding: 0 0 20px;
   column-gap: 10px;
-}
-.cluster-table__actions {
-  grid-area: actions;
-}
-.cluster-table__search {
-  grid-area: search;
 }
 .cluster-table__group {
   @apply h-40px leading-40px py-0 px-10px rounded-t bg-white relative inline-block min-w-72px z-0;
