@@ -479,7 +479,7 @@ const form = reactive({
 })
 // decode options
 watch(
-  () => props.initValues,
+  () => props.initValue,
   () => {
     ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
     needDecodeOptionKeys.forEach((k) => {
