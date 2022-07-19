@@ -38,7 +38,8 @@
     <k-table :data="nodes" :state="state">
       <k-table-column sortable label="State" field="instance-status">
         <template #default="{ row, column }">
-          <cluster-state-tag :status="row[column.field]"></cluster-state-tag>
+          <cluster-state-tag v-if="row[column.field] && row[column.field] !== '-'" :status="row[column.field]"></cluster-state-tag>
+          <div v-else>-</div>
         </template>
       </k-table-column>
       <k-table-column sortable label="Node Status" field="status">
