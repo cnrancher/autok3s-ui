@@ -25,6 +25,7 @@
     "axios": "^0.21.1",
     "clipboard": "^2.0.10",
     "codemirror": "^5.62.0",
+    "crypto-js": "^4.1.1",
     "dompurify": "^2.3.6",
     "file-saver": "^2.0.5",
     "js-base64": "^3.7.2",
