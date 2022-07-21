@@ -1,6 +1,7 @@
 <template>
-  <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
-  <input style="display: none" autocomplete="new-password" type="password" />
+  <KAlert v-if="keyInfo.valid === true && !keyInfo.error" type="success" title="Credentails are valid" />
+  <KAlert v-else-if="keyInfo.valid === false && keyInfo.error" type="error" :title="keyInfo.error" />
+  <KAlert v-for="e in errors" :key="e" type="error" :title="e"></KAlert>
   <k-tabs v-model="acitiveTab" tab-position="left">
     <k-tab-pane label="Credential Options" name="credential">
       <form-group>
@@ -22,37 +23,126 @@
           </div>
         </template>
       </form-group>
+      <div v-if="!readonly" class="mt-4 text-center">
+        <KButton class="role-secondary" :disabled="keyInfo.loading" @click="validateCredentials">
+          Validate Credentails
+        </KButton>
+      </div>
     </k-tab-pane>
     <k-tab-pane label="Instance Options" name="instance">
       <form-group>
         <template #title>Basic</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <string-form
+            <!-- <string-form
               v-model.trim="form.options.region"
               label="Region"
               :desc="desc.options.region"
               :readonly="readonly"
-            />
-            <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" :readonly="readonly" />
-            <string-form
+            /> -->
+            <KComboBox
+              v-model="form.options.region"
+              label="Region"
+              :desc="desc.options.region"
+              :disabled="readonly"
+              :loading="regionInfo.loading"
+              :options="regionInfo.data"
+              clearable
+              @change="regionChange($event)"
+            ></KComboBox>
+            <!-- <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" :readonly="readonly" /> -->
+            <KComboBox
+              v-model="form.options.zone"
+              label="Zone"
+              :desc="desc.options.zone"
+              :disabled="readonly"
+              :loading="zoneInfo.loading"
+              :options="zoneInfo.data"
+              clearable
+              @change="zoneChange($event)"
+            ></KComboBox>
+            <!-- <string-form
               v-model.trim="form.options['instance-type']"
               label="Instance Type"
               :desc="desc.options['instance-type']"
               :readonly="readonly"
-            />
+            /> -->
+            <KComboBox
+              v-model="form.options['instance-type']"
+              label="Instance Type"
+              :desc="desc.options['instance-type']"
+              :disabled="readonly"
+              :loading="instanceTypeInfo.loading"
+              :options="instanceTypeOptions"
+              clearable
+            >
+              <template #header>
+                <div class="p-1 bg-white" @click.stop="toggleSeries">
+                  <div class="cursor-pointer flex items-center justify-between">
+                    <div>Filter: {{ typeSeries ? typeSeries : 'All Instance Type Series' }}</div>
+                    <k-icon type="arrow-right" :direction="showSeriesSelection ? 'down' : ''"></k-icon>
+                  </div>
+                  <div v-show="showSeriesSelection" class="flex gap-2 flex-wrap p-1">
+                    <div
+                      :class="['cursor-pointer', typeSeries === '' ? 'bg-warm-gray-400' : '']"
+                      class="p-1"
+                      @click="chooseSeries('')"
+                    >
+                      All Instance Type Series
+                    </div>
+                    <div
+                      v-for="s in instanceTypeSeries"
+                      :key="s"
+                      :class="[typeSeries && typeSeries === s ? 'bg-warm-gray-400' : '']"
+                      class="cursor-pointer p-1"
+                      @click="chooseSeries(s)"
+                    >
+                      {{ s }}
+                    </div>
+                  </div>
+                  <hr />
+                </div>
+              </template>
+            </KComboBox>
             <string-form
               v-model.trim="form.options['image']"
               label="Image"
               :desc="desc.options['image']"
               :readonly="readonly"
-            />
-            <string-form
+            >
+              <template v-if="keyInfo.valid" #suffix>
+                <KIcon
+                  type="search"
+                  :size="18"
+                  class="cursor-pointer"
+                  @click="
+                    showSearchImageModal({
+                      region: form.options.region,
+                      instanceType: form.options['instance-type'],
+                      imageInfo,
+                      fetchImages,
+                      onSelect: (e) => {
+                        form.options['image'] = e.ImageId
+                      }
+                    })
+                  "
+                ></KIcon>
+              </template>
+            </string-form>
+            <!-- <string-form
               v-model.trim="form.options['disk-category']"
               label="Disk Category"
               :desc="desc.options['disk-category']"
               :readonly="readonly"
-            />
+            /> -->
+            <KComboBox
+              v-model="form.options['disk-category']"
+              label="Disk Category"
+              :desc="desc.options['disk-category']"
+              :disabled="readonly"
+              :options="diskTypes"
+              clearable
+            ></KComboBox>
             <string-form
               v-model.trim="form.options['disk-size']"
               label="Disk Size"
@@ -73,30 +163,58 @@
         <template #title>Network</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <string-form
+            <!-- <string-form
               v-model.trim="form.options['vpc']"
               label="VPC"
               :desc="desc.options['vpc']"
               :readonly="readonly"
-            />
-            <string-form
+            /> -->
+            <KComboBox
+              v-model="form.options['vpc']"
+              label="VPC"
+              :desc="desc.options['vpc']"
+              :disabled="readonly"
+              :loading="vpcInfo.loading"
+              :options="vpcInfo.data"
+              clearable
+              @change="vpcChange($event)"
+            ></KComboBox>
+            <!-- <string-form
               v-model.trim="form.options['subnet']"
               label="Subnet"
               :desc="desc.options['subnet']"
               :readonly="readonly"
-            />
+            /> -->
+            <KComboBox
+              v-model="form.options['subnet']"
+              label="Subnet"
+              :desc="desc.options['subnet']"
+              :disabled="readonly"
+              :loading="subnetInfo.loading"
+              :options="subnetInfo.data"
+              clearable
+            ></KComboBox>
             <string-form
               v-model.trim="form.options['internet-max-bandwidth-out']"
               label="Internet Max Bandwidth Out"
               :desc="desc.options['internet-max-bandwidth-out']"
               :readonly="readonly"
             />
-            <string-form
+            <!-- <string-form
               v-model.trim="form.options['security-group']"
               label="Security Group"
               :desc="desc.options['security-group']"
               :readonly="readonly"
-            />
+            /> -->
+            <KComboBox
+              v-model="form.options['security-group']"
+              label="Security Group"
+              :desc="desc.options['security-group']"
+              :disabled="readonly"
+              :loading="securityGroupInfo.loading"
+              :options="securityGroupInfo.data"
+              clearable
+            ></KComboBox>
             <boolean-form v-model="form.options['eip']" label="EIP" :desc="desc.options['eip']" :readonly="readonly" />
           </div>
         </template>
@@ -107,12 +225,21 @@
         <template #subtitle>Params used to login to instance via ssh, e.g. key-pair, ssh user, ssh port</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <string-form
+            <!-- <string-form
               v-model.trim="form.options['keypair-id']"
               label="Keypair Id"
               :desc="desc.options['keypair-id']"
               :readonly="readonly"
-            />
+            /> -->
+            <KComboBox
+              v-model="form.options['keypair-id']"
+              label="Keypair Id"
+              :desc="desc.options['keypair-id']"
+              :disabled="readonly"
+              :loading="keyPairInfo.loading"
+              :options="keyPairInfo.data"
+              clearable
+            ></KComboBox>
             <string-form
               v-model.trim="form.config['ssh-user']"
               label="SSH User"
@@ -220,6 +347,9 @@ import FormGroup from '../baseForm/FormGroup.vue'
 import { Base64 } from 'js-base64'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
+import useTencentSdk from './hooks/useTencentSdk.js'
+import TencentImageSearchModal from './components/TencentImageSearchModal.vue'
+import useModal from '@/composables/useModal.js'
 
 const needDecodeOptionKeys = ['user-data-content']
 
@@ -302,4 +432,176 @@ const getForm = () => {
   ]
 }
 useFormRegist(getForm)
+
+// use tencent sdk
+const {
+  validateKeys,
+  fetchZones,
+  fetchInstanceTypes,
+  fetchVpcs,
+  fetchSubnets,
+  fetchSecrityGroups,
+  fetchKeyPairs,
+  fetchImages,
+  restAll,
+  resetZoneInfo,
+  resetInstanceTypeInfo,
+  resetVpcInfo,
+  resetSubnetInfo,
+  resetSecurityGroupInfo,
+  resetKeyPairInfo,
+  resetImageInfo,
+  keyInfo,
+  regionInfo,
+  zoneInfo,
+  instanceTypeInfo,
+  diskTypes,
+  vpcInfo,
+  subnetInfo,
+  securityGroupInfo,
+  keyPairInfo,
+  imageInfo
+} = useTencentSdk()
+const validateCredentials = () => {
+  validateKeys(form.options['secret-id'], form.options['secret-key'])
+}
+const { show: showSearchImageModal } = useModal(TencentImageSearchModal)
+const typeSeries = ref('')
+const showSeriesSelection = ref(false)
+const toggleSeries = () => {
+  showSeriesSelection.value = !showSeriesSelection.value
+}
+const chooseSeries = (s) => {
+  typeSeries.value = s
+  // loadInstanceTypes()
+}
+
+const errors = computed(() => {
+  return [
+    ...new Set([
+      zoneInfo.error,
+      instanceTypeInfo.error,
+      vpcInfo.error,
+      subnetInfo.error,
+      securityGroupInfo.error,
+      keyPairInfo.error
+    ])
+  ].filter((e) => e)
+})
+
+const instanceTypeSeries = computed(() => {
+  const groups = instanceTypeInfo.data.reduce((t, c) => {
+    const g = c.raw.InstanceFamily
+    if (!t.includes(g)) {
+      t.push(g)
+    }
+    return t
+  }, [])
+  groups.sort()
+  return groups
+})
+const enCollator = new Intl.Collator('en')
+const instanceTypeOptions = computed(() => {
+  const series = typeSeries.value
+
+  if (!series) {
+    const options = [...instanceTypeInfo.data]
+    options.sort((a, b) => enCollator.compare(a.raw.InstanceFamily, b.raw.InstanceFamily))
+    return options
+  }
+  return instanceTypeInfo.data.filter((t) => t.raw.InstanceFamily === series)
+})
+
+const regionChange = (r) => {
+  if (!keyInfo.valid) {
+    return
+  }
+
+  form.options.zone = ''
+  form.options.vpc = ''
+  form.options['instance-type'] = ''
+  form.options['subnet'] = ''
+  form.options['security-group'] = ''
+  form.options['keypair-id'] = ''
+  if (r) {
+    fetchZones(r)
+    fetchVpcs(r)
+    fetchSecrityGroups(r)
+    fetchKeyPairs(r)
+  } else {
+    resetZoneInfo()
+    resetVpcInfo()
+    resetSecurityGroupInfo()
+    resetKeyPairInfo()
+  }
+  resetInstanceTypeInfo()
+  resetSubnetInfo()
+  resetImageInfo()
+}
+const zoneChange = (z) => {
+  if (!keyInfo.valid) {
+    return
+  }
+  const r = form.options.region
+  form.options['instance-type'] = ''
+  form.options['subnet'] = ''
+  if (r && z) {
+    fetchInstanceTypes(r, z)
+  } else {
+    resetInstanceTypeInfo()
+  }
+  resetSubnetInfo()
+}
+
+const vpcChange = (v) => {
+  if (!keyInfo.valid) {
+    return
+  }
+  form.options['subnet'] = ''
+  const r = form.options.region
+  const z = form.options.zone
+  if (r && z && v) {
+    fetchSubnets(r, z, v)
+  } else {
+    resetSubnetInfo()
+  }
+}
+
+watch(
+  [acitiveTab, () => props.readonly, () => props.initValue],
+  ([tab, readonly], [oldTab]) => {
+    if (
+      readonly === false &&
+      (!oldTab || tab !== 'credential') &&
+      (keyInfo.secretId !== form.options['secret-id'] || keyInfo.secretKey !== form.options['secret-key'])
+    ) {
+      validateCredentials()
+    }
+  },
+  { immediate: true }
+)
+watch(
+  () => keyInfo.valid,
+  (valid) => {
+    if (valid) {
+      const region = form.options.region
+      const zone = form.options.zone
+      const vpc = form.options.vpc
+      if (region) {
+        fetchZones(region)
+        fetchVpcs(region)
+        fetchSecrityGroups(region)
+        fetchKeyPairs(region)
+      }
+      if (region && zone) {
+        fetchInstanceTypes(region, zone)
+      }
+      if (region && zone && vpc) {
+        fetchSubnets(region, zone, vpc)
+      }
+    } else {
+      restAll()
+    }
+  }
+)
 </script>
