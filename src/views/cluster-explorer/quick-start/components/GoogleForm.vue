@@ -50,7 +50,9 @@ watch(
   }
 )
 const showKeyForm = computed(() => {
-  return props.hasError || !props.initValue.options['service-account'] || !props.initValue.options['service-account-file']
+  return (
+    props.hasError || !props.initValue.options['service-account'] || !props.initValue.options['service-account-file']
+  )
 })
 const getForm = () => {
   const f = cloneDeep(form)

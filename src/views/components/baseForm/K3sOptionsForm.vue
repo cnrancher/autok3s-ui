@@ -35,7 +35,7 @@
           :options="installScriptOptions"
           placeholder="Please Select Or Input..."
         ></k-combo-box>
-         <string-form
+        <string-form
           v-model.trim="config['system-default-registry']"
           label="System Default Registry"
           :desc="desc.config['system-default-registry']"

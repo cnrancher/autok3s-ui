@@ -1,10 +1,7 @@
 <template>
   <div>
     <div class="template-table__header">
-      <template-bulk-actions
-        :templates="selectedTemplates"
-        @exec-command="handleCommand"
-      ></template-bulk-actions>
+      <template-bulk-actions :templates="selectedTemplates" @exec-command="handleCommand"></template-bulk-actions>
       <k-radio-group v-model="groupBy">
         <k-radio-button label="">
           <k-icon type="category" :color="groupBy === '' ? '#fff' : ''"></k-icon>
