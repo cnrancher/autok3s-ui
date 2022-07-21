@@ -13,12 +13,14 @@
               label="Secret Id"
               :desc="desc.options['secret-id']"
               :readonly="readonly"
+              required
             ></k-password-input>
             <k-password-input
               v-model="form.options['secret-key']"
               label="Secret Key"
               :desc="desc.options['secret-key']"
               :readonly="readonly"
+              required
             ></k-password-input>
           </div>
         </template>
