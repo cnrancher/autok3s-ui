@@ -13,12 +13,14 @@
               label="Access Key"
               :desc="desc.options['access-key']"
               :readonly="readonly"
+              required
             ></k-password-input>
             <k-password-input
               v-model="form.options['access-secret']"
               label="Access Secret"
               :desc="desc.options['access-secret']"
               :readonly="readonly"
+              required
             ></k-password-input>
           </div>
         </template>

@@ -12,12 +12,14 @@
               label="Service Account"
               :desc="desc.options['service-account']"
               :readonly="readonly"
+              required
             ></string-form>
             <string-form
               v-model="form.options['service-account-file']"
               label="Service Account File"
               :desc="desc.options['service-account-file']"
               :readonly="readonly"
+              required
             ></string-form>
           </div>
         </template>
@@ -28,7 +30,12 @@
         <template #title>Basic</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <string-form v-model.trim="form.options['project']" label="Project" :desc="desc.options['project']" />
+            <string-form
+              v-model.trim="form.options['project']"
+              label="Project"
+              :desc="desc.options['project']"
+              required
+            />
             <string-form
               v-model.trim="form.options.region"
               label="Region"

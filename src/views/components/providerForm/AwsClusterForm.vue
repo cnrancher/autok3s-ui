@@ -13,12 +13,14 @@
               label="Access Key"
               :desc="desc.options['access-key']"
               :readonly="readonly"
+              required
             ></k-password-input>
             <k-password-input
               v-model="form.options['secret-key']"
               label="Secret Key"
               :desc="desc.options['secret-key']"
               :readonly="readonly"
+              required
             ></k-password-input>
             <KSelect
               v-model="form.options.region"
