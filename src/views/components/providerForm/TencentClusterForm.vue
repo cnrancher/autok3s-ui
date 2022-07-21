@@ -460,7 +460,8 @@ const {
   subnetInfo,
   securityGroupInfo,
   keyPairInfo,
-  imageInfo
+  imageInfo,
+  whitelistInfo
 } = useTencentSdk()
 const validateCredentials = () => {
   validateKeys(form.options['secret-id'], form.options['secret-key'])
@@ -484,7 +485,8 @@ const errors = computed(() => {
       vpcInfo.error,
       subnetInfo.error,
       securityGroupInfo.error,
-      keyPairInfo.error
+      keyPairInfo.error,
+      whitelistInfo.error
     ])
   ].filter((e) => e)
 })

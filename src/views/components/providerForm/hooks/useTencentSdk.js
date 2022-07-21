@@ -164,6 +164,12 @@ export default function useTencentSdk() {
     abortController?.abort()
   })
 
+  const whitelistInfo = reactive({
+    loading: false,
+    loaded: false,
+    error: null,
+    data: []
+  })
   const keyInfo = reactive({
     loading: false,
     loaded: false,
@@ -246,6 +252,40 @@ export default function useTencentSdk() {
     offset: 0
   })
 
+  let whitelist = []
+  const updateWhitelist = async (domains, signal) => {
+    if (domains.every((d) => whitelist.includes(d))) {
+      return
+    }
+    try {
+      whitelistInfo.error = null
+      whitelistInfo.loaded = false
+      whitelistInfo.loading = true
+      const data = await request({
+        url: '/settings/whitelist-domain',
+        method: 'get',
+        signal
+      })
+      const values = data.value.split(',').map((v) => v.trim())
+      if (domains.every((d) => values.includes(d))) {
+        whitelist = values
+      } else {
+        values.push(...domains)
+        data.value = [...new Set(values)].filter((v) => v).join(',')
+        const resp = await request({
+          url: '/settings/whitelist-domain',
+          method: 'put',
+          data
+        })
+        whitelist = resp.value.split(',').map((v) => v.trim())
+      }
+    } catch (err) {
+      whitelistInfo.error = err
+    }
+    whitelistInfo.loaded = true
+    whitelistInfo.loading = false
+  }
+
   const validateKeys = async (id, key) => {
     keyInfo.secretId = id ?? secretId.value
     keyInfo.secretKey = key ?? secretKey.value
@@ -261,6 +301,10 @@ export default function useTencentSdk() {
       keyInfo.error = errors.join('. ')
       return false
     }
+    abortController?.abort()
+    abortController = new AbortController()
+    const abortSignal = abortController.signal
+    await updateWhitelist(['cvm.tencentcloudapi.com', 'vpc.tencentcloudapi.com'], abortSignal)
     await fetchRegions()
   }
 
@@ -273,8 +317,6 @@ export default function useTencentSdk() {
     regionInfo.loading = true
     regionInfo.error = null
     regionInfo.data = []
-    abortController?.abort()
-    abortController = new AbortController()
     const abortSignal = abortController.signal
     try {
       const resp = await send(keyInfo.secretId, keyInfo.secretKey, 'DescribeRegions', '', {}, abortSignal)
@@ -822,6 +864,7 @@ export default function useTencentSdk() {
     subnetInfo: readonly(subnetInfo),
     securityGroupInfo: readonly(securityGroupInfo),
     keyPairInfo: readonly(keyPairInfo),
-    imageInfo: readonly(imageInfo)
+    imageInfo: readonly(imageInfo),
+    whitelistInfo: readonly(whitelistInfo)
   }
 }
