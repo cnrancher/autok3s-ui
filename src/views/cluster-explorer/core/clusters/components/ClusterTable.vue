@@ -1,10 +1,7 @@
 <template>
   <div>
     <div class="cluster-table__header">
-      <cluster-bulk-actions
-        :clusters="selectedClusters"
-        @exec-command="handleCommand"
-      ></cluster-bulk-actions>
+      <cluster-bulk-actions :clusters="selectedClusters" @exec-command="handleCommand"></cluster-bulk-actions>
       <radio-group v-model="groupBy">
         <radio-button label="">
           <k-icon type="category" :color="groupBy === '' ? '#fff' : ''"></k-icon>
@@ -52,18 +49,18 @@
       </k-table-column>
       <template #error="error">
         <div class="mb-2">
-          <div class="cluster-table__group"><span class="cluster-table__group-by">provider: </span><span>{{ error.group }}</span></div>
+          <div class="cluster-table__group">
+            <span class="cluster-table__group-by">provider:</span>
+            <span>{{ error.group }}</span>
+          </div>
           <div class="bg-white p-2">
-            Cluster data load failed: <span class="text-error">{{ error.error }}</span>
+            Cluster data load failed:
+            <span class="text-error">{{ error.error }}</span>
           </div>
           <div class="bg-white p-2">
             Please click on the
-            <button
-              class="text-$link"
-              :disabled="error.state === 'loading'"
-              @click="reload(error.group)"
-            >
-            refresh
+            <button class="text-$link" :disabled="error.state === 'loading'" @click="reload(error.group)">
+              refresh
             </button>
             link to reload the cluster data
           </div>
