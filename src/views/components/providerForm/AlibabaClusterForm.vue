@@ -304,7 +304,7 @@
           :desc="desc.options['cloud-controller-manager']"
           :readonly="readonly"
         />
-        <boolean-form
+        <!-- <boolean-form
           v-model="form.options['terway']"
           label="Terway"
           :desc="desc.options['terway']"
@@ -318,7 +318,7 @@
           label="Terway Max Pool Size"
           type="number"
           :readonly="readonly"
-        ></string-form>
+        ></string-form> -->
       </div>
     </k-tab-pane>
   </k-tabs>
