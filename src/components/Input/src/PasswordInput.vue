@@ -1,5 +1,5 @@
 <template>
-  <k-input :type="inputType" :autocomplete="autocomplete">
+  <k-input :type="inputType" autocomplete="off" autocapitalize="off">
     <template #suffix>
       <k-icon v-if="show" class="cursor-pointer" type="view" :size="18" @click="toggleShow"></k-icon>
       <k-icon v-else class="cursor-pointer" type="view-off" :size="18" @click="toggleShow"></k-icon>
@@ -15,13 +15,6 @@ export default {
 import { computed, onBeforeUnmount, ref } from 'vue'
 import KInput from './index.vue'
 import KIcon from '@/components/Icon'
-
-defineProps({
-  autocomplete: {
-    type: String,
-    default: 'new-password'
-  }
-})
 
 const show = ref(false)
 const inputType = computed(() => {
