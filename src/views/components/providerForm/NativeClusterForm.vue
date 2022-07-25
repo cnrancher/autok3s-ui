@@ -110,7 +110,6 @@
           multiple
         >
           <k-option value="explorer" label="explorer"></k-option>
-          <k-option value="dashboard" label="dashboard"></k-option>
         </k-select>
       </div>
     </k-tab-pane>
