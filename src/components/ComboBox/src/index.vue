@@ -187,6 +187,7 @@ const popperOption = {
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
   @apply p-8px rounded border;
+  min-height: 60px;
 }
 .k-combo-box:not(.disabled):hover {
   @apply bg-gray-100;

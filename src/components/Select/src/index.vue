@@ -241,6 +241,7 @@ const handleVisibleChange = (v) => {
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
   @apply border rounded p-8px;
+  min-height: 60px;
 }
 .k-select:not(.disabled):hover {
   @apply bg-gray-100;
