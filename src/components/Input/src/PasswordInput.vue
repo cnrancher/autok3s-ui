@@ -31,5 +31,4 @@ const inputStyle = computed(() => {
     fontSize: '12px'
   }
 })
-
 </script>
