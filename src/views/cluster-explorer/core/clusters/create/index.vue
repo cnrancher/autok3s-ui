@@ -306,6 +306,7 @@ const handleApplyTemplate = (templateId) => {
 const showCliModal = () => {
   const form = getForm()
   form.config.name = name.value
+  form.provider = currentProviderId.value
   showCliCommand({ clusterForm: form })
 }
 </script>

@@ -58,7 +58,6 @@
 <script setup>
 import { computed } from 'vue'
 import Clipboard from 'clipboard'
-import { Base64 } from 'js-base64'
 import useNotificationStore from '@/store/useNotificationStore.js'
 
 const props = defineProps({
@@ -137,34 +136,7 @@ const cmdOptions = computed(() => {
     configEntries = configEntries.filter(([k]) => !excludeConfigKeys.includes(k))
   }
   let optionEntries = Object.entries(props.clusterForm.options)
-  // encode kubeconfig-content, network-data, user-data to base64 for harvester provider
-  if (props.clusterForm.provider === 'harvester') {
-    ;['kubeconfig-content', 'network-data', 'user-data'].forEach((k) => {
-      const e = optionEntries.find(([key]) => key === k)
-      const value = e[1]
-      if (value) {
-        e[1] = Base64.encode(value)
-      }
-    })
-  }
-  if (['aws', 'alibaba', 'tencent'].includes(props.clusterForm.provider)) {
-    ;['user-data-content'].forEach((k) => {
-      const e = optionEntries.find(([key]) => key === k)
-      const value = e[1]
-      if (value) {
-        e[1] = Base64.encode(value)
-      }
-    })
-  }
-  if (['google'].includes(props.clusterForm.provider)) {
-    ;['startup-script-content'].forEach((k) => {
-      const e = optionEntries.find(([key]) => key === k)
-      const value = e[1]
-      if (value) {
-        e[1] = Base64.encode(value)
-      }
-    })
-  }
+
   const options = [['--provider', provider], ...configEntries, ...optionEntries]
     .filter(([k, v]) => filterArgs(k, v))
     .reduce((t, [k, v]) => {
