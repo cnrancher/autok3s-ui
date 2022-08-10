@@ -124,6 +124,7 @@ defineExpose({
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
   @apply p-8px rounded border border-gray-300;
+  min-height: 60px;
 }
 .k-input:not(.disabled):hover {
   @apply bg-gray-100;
