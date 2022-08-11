@@ -184,7 +184,8 @@ const configFields = [
   'manifests',
   'tls-sans',
   'registry-content',
-  'k3s-install-mirror'
+  'k3s-install-mirror',
+  'system-default-registry'
 ]
 watch(
   configFields.map((k) => {
