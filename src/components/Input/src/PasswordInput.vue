@@ -1,5 +1,5 @@
 <template>
-  <k-input type="text" autocomplete="off" autocapitalize="off" :style="inputStyle">
+  <k-input type="text" autocomplete="off" autocapitalize="off" spellcheck="false" :style="inputStyle">
     <template #suffix>
       <k-icon v-if="show" class="cursor-pointer" type="view" :size="18" @click="toggleShow"></k-icon>
       <k-icon v-else class="cursor-pointer" type="view-off" :size="18" @click="toggleShow"></k-icon>
