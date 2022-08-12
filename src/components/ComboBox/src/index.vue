@@ -38,18 +38,24 @@
       />
       <k-icon v-if="loading" type="loading"></k-icon>
       <template v-else>
-        <k-icon
-          type="arrow-right-blod"
-          :class="[clearable && !disabled ? 'group-hover:hidden' : '']"
-          direction="down"
-        ></k-icon>
-        <k-icon
+        <div class="flex">
+          <k-icon
           v-if="!disabled"
-          type="close"
-          class="hidden"
-          :class="[clearable ? 'group-hover:inline-block' : '']"
-          @click.stop="clear"
-        ></k-icon>
+            type="editor"
+          />
+          <k-icon
+            type="arrow-right-blod"
+            :class="[clearable && !disabled ? 'group-hover:hidden' : '']"
+            direction="down"
+          ></k-icon>
+          <k-icon
+            v-if="!disabled"
+            type="close"
+            class="hidden"
+            :class="[clearable ? 'group-hover:inline-block' : '']"
+            @click.stop="clear"
+          ></k-icon>
+        </div>
       </template>
       <template #content>
         <slot name="header"></slot>
