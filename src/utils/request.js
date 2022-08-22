@@ -6,7 +6,7 @@ const csrfKey = 'CSRF'
 
 const service = axios.create({
   baseURL: `${getRootPath()}${import.meta.env.VITE_APP_BASE_API}`,
-  timeout: 30000
+  timeout: 60000
 })
 service.defaults.headers.common.Accept = 'application/json'
 service.defaults.withCredentials = true
