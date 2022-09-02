@@ -28,7 +28,7 @@
         <k-select v-model="currentProviderId" label="Provider" required :loading="loading">
           <k-option v-for="p in providers" :key="p.id" :value="p.id" :label="p.name"></k-option>
         </k-select>
-        <string-form v-model.trim="name" label="Name" placeholder="e.g. test" required />
+        <string-form v-model.trim="name" label="Name" placeholder="e.g. test" required :error="nameRequired" />
         <boolean-form v-model="isDefault" label="Default Template" true-label="True" false-label="False"></boolean-form>
       </div>
       <template v-if="!loading">
@@ -162,6 +162,10 @@ const currentProviderId = computed({
     formErrors.value = []
     router.push({ name: 'ClusterExplorerSettingsTemplatesCreate', query: { defaultProvider: v } })
   }
+})
+
+const nameRequired = computed(() => {
+  return name.value ? '' : '"Name" is required'
 })
 
 watch(

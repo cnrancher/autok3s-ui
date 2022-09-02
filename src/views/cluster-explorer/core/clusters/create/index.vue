@@ -28,7 +28,7 @@
         <k-select v-model="currentProviderId" label="Provider" required :loading="loading">
           <k-option v-for="p in providers" :key="p.id" :value="p.id" :label="p.name"></k-option>
         </k-select>
-        <k-input v-model.trim="name" label="Name" placeholder="e.g. test" required />
+        <k-input v-model.trim="name" label="Name" placeholder="e.g. test" required :error="nameRequired" />
       </div>
 
       <template v-if="!loading">
@@ -189,6 +189,10 @@ const currentProviderId = computed({
     formErrors.value = []
     router.push({ name: 'ClusterExplorerCoreClustersCreate', query: { defaultProvider: v } })
   }
+})
+
+const nameRequired = computed(() => {
+  return name.value ? '' : '"Name" is required'
 })
 
 watch(
