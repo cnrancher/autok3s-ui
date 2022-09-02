@@ -13,6 +13,12 @@
           <span v-else>{{ desc }}</span>
         </template>
       </tooltip>
+      <tooltip v-if="error" class="justify-end">
+        <k-icon type="warning" class="text-red-500" :size="18"></k-icon>
+        <template #popover>
+          {{error}}
+        </template>
+      </tooltip>
     </div>
     <div v-if="$slots.prefix" class="k-input__prefix">
       <slot name="prefix">{{ prefix }}</slot>
@@ -100,6 +106,10 @@ defineProps({
   rows: {
     type: Number,
     default: 2
+  },
+  error: {
+    type: String,
+    default: ''
   }
 })
 
@@ -131,8 +141,7 @@ defineExpose({
 }
 .k-input__label {
   grid-area: label;
-  @apply grid gap-x-10px items-center grid-cols-[max-content,auto] text-warm-gray-500;
-  width: fit-content;
+  @apply grid gap-x-10px items-center grid-cols-[max-content,auto,auto] text-warm-gray-500;
 }
 .k-input__prefix {
   grid-area: prefix;

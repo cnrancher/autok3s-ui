@@ -33,11 +33,15 @@ const props = defineProps({
   lazy: {
     type: Boolean,
     default: false
+  },
+  error: {
+    type: Boolean,
+    default: false,
   }
 })
 
 const tabsStore = inject('tabsStore')
-const tab = ['disabled', 'name', 'closable', 'lazy', 'label'].reduce(
+const tab = ['disabled', 'name', 'closable', 'lazy', 'label', 'error'].reduce(
   (t, c) => {
     t[c] = toRef(props, c)
     return t
