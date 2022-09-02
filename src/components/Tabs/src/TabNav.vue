@@ -9,10 +9,8 @@
     >
       <div>{{ t.label }}</div>
       <Tooltip v-if="t.error">
-        <KIcon type="warning" :size="18" class="text-red-500"/>
-        <template #popover>
-          One or more fields in this tab contain a form validation error
-        </template>
+        <KIcon type="warning" :size="18" class="text-red-500" />
+        <template #popover>One or more fields in this tab contain a form validation error</template>
       </Tooltip>
       <k-icon v-if="t.closable || tabsClosable" type="close" @click="removeTab(t)"></k-icon>
     </div>

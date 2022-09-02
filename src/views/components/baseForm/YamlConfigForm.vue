@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-[max-content,auto,1fr] gap-10px p-8px items-center">
+  <div class="grid grid-cols-[max-content,auto,auto,1fr] gap-10px p-8px items-center">
     <label class="text-gray-500">
       {{ label }}
       <sup v-if="required" class="text-red-500">*</sup>
@@ -14,6 +14,14 @@
         </template>
       </k-tooltip>
     </div>
+    <div>
+      <k-tooltip v-if="error" class="justify-end">
+        <k-icon type="warning" class="text-red-500" :size="18"></k-icon>
+        <template #popover>
+          {{ error }}
+        </template>
+      </k-tooltip>
+    </div>
     <div v-if="!options?.readOnly" class="grid justify-self-end grid-flow-col gap-x-10px items-center">
       <div v-if="$slots.default"><slot></slot></div>
       <k-button type="input" class="btn-sm role-primary justify-self-end" @click="clearContent">Clear</k-button>
@@ -25,7 +33,7 @@
     </div>
     <div v-else></div>
     <div
-      class="yaml-config-form__content relative max-h-400px overflow-auto col-span-3"
+      class="yaml-config-form__content relative max-h-400px overflow-auto col-span-4"
       @dragenter="handleDrag"
       @dragover="handleDrag"
       @drop="handleDrop"
@@ -97,6 +105,10 @@ export default defineComponent({
     visible: {
       type: Boolean,
       default: true
+    },
+    error: {
+      type: String,
+      default: ''
     }
   },
   emits: ['update:modelValue', 'clear'],

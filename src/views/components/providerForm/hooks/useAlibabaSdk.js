@@ -1,8 +1,21 @@
 import { computed, reactive, ref, readonly, shallowReactive } from 'vue'
+import Schema from 'async-validator'
+const descriptor = {
+  accessKey: {
+    required: true,
+    message: '"Access Key" is required'
+  },
+  accessSecret: {
+    required: true,
+    message: '"Access Secret" is required'
+  }
+}
+
+const validator = new Schema(descriptor)
 
 export default function useAlibabaSdk() {
-  const accessKeyId = ref('')
-  const accessKeySecret = ref('')
+  const accessKey = ref('')
+  const accessSecret = ref('')
   const region = ref('')
   const zone = ref('')
   const vpc = ref('')
@@ -10,8 +23,8 @@ export default function useAlibabaSdk() {
   const keyInfo = reactive({
     loading: false,
     loaded: false,
-    accessKeyId: '',
-    secretAccessKey: '',
+    accessKey: '',
+    accessSecret: '',
     error: null,
     valid: false
   })
@@ -97,16 +110,24 @@ export default function useAlibabaSdk() {
 
   const ecsOptions = computed(() => {
     return {
-      accessKeyId: keyInfo.accessKeyId,
-      secretAccessKey: keyInfo.secretAccessKey,
+      accessKeyId: keyInfo.accessKey,
+      secretAccessKey: keyInfo.accessSecret,
       endpoint: 'https://ecs.aliyuncs.com',
       apiVersion: '2014-05-26'
     }
   })
 
   const validateKeys = async (access, secret) => {
-    keyInfo.accessKeyId = access ?? accessKeyId.value
-    keyInfo.secretAccessKey = secret ?? accessKeySecret.value
+    keyInfo.accessKey = access ?? accessKey.value
+    keyInfo.accessSecret = secret ?? accessSecret.value
+    try {
+      await validator.validate(keyInfo)
+    } catch ({ errors, fields }) {
+      keyInfo.error = errors.map((e) => e.message).join('. ')
+      keyInfo.valid = false
+      return false
+    }
+
     keyInfo.valid = false
     fetchRegions()
   }

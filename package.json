@@ -22,6 +22,7 @@
     "@popperjs/core": "^2.11.4",
     "@vueuse/core": "^8.2.5",
     "ansi_up": "^5.0.1",
+    "async-validator": "^4.2.5",
     "axios": "^0.21.1",
     "clipboard": "^2.0.10",
     "codemirror": "^5.62.0",
