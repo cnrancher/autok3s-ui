@@ -3,7 +3,7 @@
   <k-alert v-else-if="keyInfo.valid === false && keyInfo.error" type="error" :title="keyInfo.error"></k-alert>
   <KAlert v-for="e in errors" :key="e" type="error" :title="e"></KAlert>
   <k-tabs v-model="acitiveTab" tab-position="left">
-    <k-tab-pane label="Credential Options" name="credential">
+    <k-tab-pane label="Credential Options" name="credential" :error="credentialError">
       <form-group>
         <template #title>Credential Options</template>
         <template #default>
@@ -13,6 +13,7 @@
               label="Access Key"
               :desc="desc.options['access-key']"
               :readonly="readonly"
+              :error="accessKeyRequired"
               required
             ></k-password-input>
             <k-password-input
@@ -20,6 +21,7 @@
               label="Secret Key"
               :desc="desc.options['secret-key']"
               :readonly="readonly"
+              :error="secretKeyRequired"
               required
             ></k-password-input>
             <KSelect
@@ -511,6 +513,20 @@ const uiOptions = computed({
 })
 const readonlyOption = computed(() => {
   return { readOnly: props.readonly }
+})
+const credentialError = computed(() => {
+  const deps = [form.options['access-key'], form.options['secret-key'], keyInfo.valid]
+  const loading = keyInfo.loading
+  if (loading) {
+    return false
+  }
+  return deps.some((item) => !item)
+})
+const accessKeyRequired = computed(() => {
+  return form.options['access-key'] ? '' : '"Access Key" is required'
+})
+const secretKeyRequired = computed(() => {
+  return form.options['secret-key'] ? '' : '"Secret Key" is required'
 })
 const updateActiveTab = () => {
   if (!form.options['access-key'] || !form.options['secret-key']) {

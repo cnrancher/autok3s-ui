@@ -13,7 +13,23 @@ import {
 } from '@aws-sdk/client-ec2'
 import { IAMClient, ListInstanceProfilesCommand } from '@aws-sdk/client-iam'
 import { reactive, ref, readonly, computed, shallowReactive, onBeforeUnmount } from 'vue'
-//
+import Schema from 'async-validator'
+const descriptor = {
+  accessKey: {
+    required: true,
+    message: '"Access Key" is required'
+  },
+  secretKey: {
+    required: true,
+    message: '"Secret Key" is required'
+  },
+  region: {
+    required: true,
+    message: '"Region" is required'
+  }
+}
+const validator = new Schema(descriptor)
+
 const defaultRegions = [
   'af-south-1',
   'ap-east-1',
@@ -253,21 +269,14 @@ export default function useAwsSdk() {
     keyInfo.accessKey = access ?? accessKey.value
     keyInfo.secretKey = secret ?? secretKey.value
     keyInfo.region = r ?? region.value
-    const errors = []
-    if (!keyInfo.accessKey) {
-      errors.push('"Access Key" is required')
-    }
-    if (!keyInfo.secretKey) {
-      errors.push('"Secret Key" is required')
-    }
-    if (!keyInfo.region) {
-      errors.push('"Region" is required')
-    }
-
-    if (errors.length > 0) {
-      keyInfo.error = errors.join('. ')
+    try {
+      await validator.validate(keyInfo)
+    } catch ({ errors, fields }) {
+      keyInfo.error = errors.map((e) => e.message).join('. ')
+      keyInfo.valid = false
       return false
     }
+
     keyInfo.valid = false
     await fetchRegions(keyInfo.region)
   }
@@ -886,14 +895,13 @@ export default function useAwsSdk() {
   }
 
   const resetAll = () => {
-    keyInfo.loaded = false
-    keyInfo.loading = false
-    // keyInfo.region = ''
-    // keyInfo.accessKey = ''
-    // keyInfo.secretKey = ''
-    keyInfo.valid = false
-    keyInfo.error = null
-
+    // keyInfo.loaded = false
+    // keyInfo.loading = false
+    // keyInfo.error = null
+    // // keyInfo.region = ''
+    // // keyInfo.accessKey = ''
+    // // keyInfo.secretKey = ''
+    // keyInfo.valid = false
     regionInfo.loaded = false
     regionInfo.loading = false
     regionInfo.error = null

@@ -4,6 +4,18 @@ import Hex from 'crypto-js/enc-hex'
 
 import request from '@/utils/request'
 import { onBeforeUnmount, reactive, readonly, ref, shallowReactive } from 'vue'
+import Schema from 'async-validator'
+const descriptor = {
+  secretId: {
+    required: true,
+    message: '"Secret Id" is required'
+  },
+  secretKey: {
+    required: true,
+    message: '"Secret Key" is required'
+  }
+}
+const validator = new Schema(descriptor)
 
 const encodeHeaders = (headers = {}) => {
   const h = Object.entries(headers).reduce((t, [k, v]) => {
@@ -289,18 +301,15 @@ export default function useTencentSdk() {
   const validateKeys = async (id, key) => {
     keyInfo.secretId = id ?? secretId.value
     keyInfo.secretKey = key ?? secretKey.value
-    const errors = []
 
-    if (!keyInfo.secretId) {
-      errors.push('"Secret Id" is required')
-    }
-    if (!keyInfo.secretKey) {
-      errors.push('"Secret Key" is required')
-    }
-    if (errors.length > 0) {
-      keyInfo.error = errors.join('. ')
+    try {
+      await validator.validate(keyInfo)
+    } catch ({ errors, fields }) {
+      keyInfo.error = errors.map((e) => e.message).join('. ')
+      keyInfo.valid = false
       return false
     }
+
     abortController?.abort()
     abortController = new AbortController()
     const abortSignal = abortController.signal

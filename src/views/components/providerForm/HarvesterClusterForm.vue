@@ -1,7 +1,7 @@
 <template>
   <KAlert v-for="e in errors" :key="e" type="error" :title="e"></KAlert>
   <k-tabs v-model="acitiveTab" tab-position="left">
-    <k-tab-pane label="Instance Options" name="instance">
+    <k-tab-pane label="Instance Options" name="instance" :error="instanceError">
       <form-group>
         <template #title>Basic</template>
         <template #default>
@@ -106,6 +106,7 @@
               :desc="desc.options['kubeconfig-content']"
               :options="readonlyOption"
               :visible="instanceTabVisible"
+              :error="kubeConfigRequired"
             />
             <yaml-config-form
               v-model="form.options['user-data']"
@@ -472,6 +473,14 @@ const instanceTabVisible = computed(() => {
 
 const readonlyOption = computed(() => {
   return { readOnly: props.readonly }
+})
+
+const kubeConfigRequired = computed(() => {
+  return form.options['kubeconfig-content'] ? '' : '"KubeConfig" is required'
+})
+
+const instanceError = computed(() => {
+  return !form.options['kubeconfig-content']
 })
 
 watch([() => form.options['network-name'], () => props.readonly], ([networkName, readonly]) => {

@@ -2,7 +2,7 @@
   <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
   <input style="display: none" autocomplete="new-password" type="password" />
   <k-tabs v-model="acitiveTab" tab-position="left">
-    <k-tab-pane label="Credential Options" name="credential">
+    <k-tab-pane label="Credential Options" name="credential" :error="credentialError">
       <form-group>
         <template #title>Credential Options</template>
         <template #default>
@@ -12,6 +12,7 @@
               label="Service Account"
               :desc="desc.options['service-account']"
               :readonly="readonly"
+              :error="serviceAccountRequired"
               required
             ></string-form>
             <string-form
@@ -19,13 +20,14 @@
               label="Service Account File"
               :desc="desc.options['service-account-file']"
               :readonly="readonly"
+              :error="serviceAccountFileRequired"
               required
             ></string-form>
           </div>
         </template>
       </form-group>
     </k-tab-pane>
-    <k-tab-pane label="Instance Options" name="instance">
+    <k-tab-pane label="Instance Options" name="instance" :error="instanceError">
       <form-group>
         <template #title>Basic</template>
         <template #default>
@@ -34,6 +36,7 @@
               v-model.trim="form.options['project']"
               label="Project"
               :desc="desc.options['project']"
+              :error="projectRequired"
               required
             />
             <string-form
@@ -310,6 +313,29 @@ const uiOptions = computed({
 const readonlyOption = computed(() => {
   return { readOnly: props.readonly }
 })
+
+const credentialError = computed(() => {
+  const deps = [form.options['service-account'], form.options['service-account-file']]
+
+  return deps.some((item) => !item)
+})
+
+const instanceError = computed(() => {
+  return !form.options['project']
+})
+
+const serviceAccountRequired = computed(() => {
+  return form.options['service-account'] ? '' : '"Service Account" is required'
+})
+
+const serviceAccountFileRequired = computed(() => {
+  return form.options['service-account-file'] ? '' : '"Service Account File" is required'
+})
+
+const projectRequired = computed(() => {
+  return form.options['project'] ? '' : '"Project" is required'
+})
+
 const updateActiveTab = () => {
   if (!form.options['service-account'] || !form.options['service-account-file']) {
     acitiveTab.value = 'credential'
