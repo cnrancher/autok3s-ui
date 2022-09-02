@@ -7,7 +7,13 @@
       :class="{ 'k-tabs__item--active': t.id === activeTabId, 'cursor-not-allowed': t.disabled }"
       @click="setActiveTab(t)"
     >
-      {{ t.label }}&nbsp;
+      <div>{{ t.label }}</div>
+      <Tooltip v-if="t.error">
+        <KIcon type="warning" :size="18" class="text-red-500"/>
+        <template #popover>
+          One or more fields in this tab contain a form validation error
+        </template>
+      </Tooltip>
       <k-icon v-if="t.closable || tabsClosable" type="close" @click="removeTab(t)"></k-icon>
     </div>
   </div>
@@ -19,6 +25,7 @@ export default {
 </script>
 <script setup>
 import KIcon from '@/components/Icon'
+import Tooltip from '@/components/Tooltip'
 import { computed, inject } from 'vue'
 
 const props = defineProps({
@@ -67,6 +74,6 @@ const tabs = tabsStore.state.tabs
   }
 }
 .k-tabs__item {
-  @apply flex items-center text-light-blue-500 cursor-pointer;
+  @apply flex items-center text-light-blue-500 cursor-pointer gap-2;
 }
 </style>
