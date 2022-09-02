@@ -13,6 +13,7 @@
           <span v-else>{{ desc }}</span>
         </template>
       </tooltip>
+      <div v-else></div>
       <tooltip v-if="error" class="justify-end">
         <k-icon type="warning" class="text-red-500" :size="18"></k-icon>
         <template #popover>
