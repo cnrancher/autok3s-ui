@@ -39,10 +39,7 @@
       <k-icon v-if="loading" type="loading"></k-icon>
       <template v-else>
         <div class="flex">
-          <k-icon
-          v-if="!disabled"
-            type="editor"
-          />
+          <k-icon v-if="!disabled" type="editor" />
           <k-icon
             type="arrow-right-blod"
             :class="[clearable && !disabled ? 'group-hover:hidden' : '']"
