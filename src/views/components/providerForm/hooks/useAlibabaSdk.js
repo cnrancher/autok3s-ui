@@ -1,5 +1,10 @@
-import { computed, reactive, ref, readonly, shallowReactive } from 'vue'
+import { computed, reactive, ref, readonly, shallowReactive, onBeforeUnmount } from 'vue'
 import Schema from 'async-validator'
+import request from '@/utils/request'
+
+import hmacSHA1 from 'crypto-js/hmac-sha1'
+import base64 from 'crypto-js/enc-base64'
+
 const descriptor = {
   accessKey: {
     required: true,
@@ -13,12 +18,84 @@ const descriptor = {
 
 const validator = new Schema(descriptor)
 
+const encodeParams = (param) => {
+  const keys = Object.keys(param)
+  keys.sort()
+
+  return keys.map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(param[k])}`).join('&')
+}
+
+const mergeParams = (accessKey, payload = {}, options = {}) => {
+  const now = new Date()
+  const {
+    Action,
+    Version = '2014-05-26',
+    Format = 'JSON',
+    SignatureNonce = now.getTime(),
+    Timestamp = now.toISOString(),
+    SignatureMethod = 'HMAC-SHA1',
+    SignatureVersion = '1.0'
+  } = options
+
+  const param = {
+    Action,
+    Version,
+    Format,
+    SignatureNonce,
+    Timestamp,
+    SignatureMethod,
+    SignatureVersion,
+    AccessKeyId: accessKey,
+    ...payload
+  }
+
+  return param
+}
+
+// ref: https://help.aliyun.com/document_detail/315526.html
+const sign = (accessKeySecret, canonicalizedQueryString, httpRequestMethod = 'POST') => {
+  const stringToSign = [httpRequestMethod, encodeURIComponent('/'), encodeURIComponent(canonicalizedQueryString)].join(
+    '&'
+  )
+  const signature = hmacSHA1(stringToSign, `${accessKeySecret}&`).toString(base64)
+  return signature
+}
+
+const send = (accessKey, accessKeySecret, payload, options, signal, host = 'ecs.aliyuncs.com') => {
+  const headers = {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  }
+  const url = `http:/${host}`
+
+  const target = import.meta.env.MODE === 'development' ? encodeURIComponent(url) : url
+  const param = mergeParams(accessKey, payload, options)
+  const canonicalizedQueryString = encodeParams(param)
+  const signature = sign(accessKeySecret, canonicalizedQueryString)
+  param.Signature = signature
+  const data = encodeParams(param)
+
+  return request({
+    baseURL: '/',
+    method: 'POST',
+    headers,
+    url: `/meta/proxy/${target}`,
+    data,
+    withCredentials: false,
+    signal
+  })
+}
+
 export default function useAlibabaSdk() {
+  let abortController = null
   const accessKey = ref('')
   const accessSecret = ref('')
   const region = ref('')
   const zone = ref('')
   const vpc = ref('')
+
+  onBeforeUnmount(() => {
+    abortController?.abort()
+  })
 
   const keyInfo = reactive({
     loading: false,
@@ -101,6 +178,14 @@ export default function useAlibabaSdk() {
     error: null
   })
 
+  const keyPairInfo = reactive({
+    region: '',
+    loading: false,
+    loaded: true,
+    error: null,
+    data: []
+  })
+
   // watch([() => imageInfo.regionId, imageInfo.instanceType], () => {
   //   imageInfo.data = []
   //   imageInfo.totalCount = 0
@@ -128,7 +213,8 @@ export default function useAlibabaSdk() {
       return false
     }
 
-    keyInfo.valid = false
+    abortController?.abort()
+    abortController = new AbortController()
     fetchRegions()
   }
 
@@ -491,6 +577,62 @@ export default function useAlibabaSdk() {
     })
   }
 
+  const fetchKeyPairs = async (r) => {
+    const tmpRegion = r ?? region.value
+    if (!tmpRegion) {
+      keyPairInfo.error = '"Region" is required'
+      return false
+    }
+    keyPairInfo.region = tmpRegion
+    keyPairInfo.data = []
+    keyPairInfo.error = null
+    keyPairInfo.loaded = false
+    keyPairInfo.loading = true
+    const abortSignal = abortController.signal
+    const { accessKeyId, secretAccessKey } = ecsOptions.value
+    const regionId = keyPairInfo.region
+    const loadData = async (PageNumber = 1, PageSize = 50) => {
+      const resp = await send(
+        accessKeyId,
+        secretAccessKey,
+        {
+          RegionId: regionId,
+          PageNumber,
+          secretAccessKey
+        },
+        {
+          Action: 'DescribeKeyPairs'
+        },
+        abortSignal
+      )
+      const d =
+        resp.KeyPairs?.KeyPair?.map((d) => ({
+          label: d.KeyPairName,
+          value: d.KeyPairName
+        })) ?? []
+      keyPairInfo.data = [...keyPairInfo.data, ...d]
+
+      const lastPage = PageSize === 0 || resp.TotalCount === 0 ? 1 : Math.ceil(resp.TotalCount / PageSize)
+
+      if (PageNumber < lastPage) {
+        await loadData(PageNumber + 1, PageSize)
+      } else {
+        return
+      }
+    }
+    try {
+      await loadData()
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        // do nothing
+      } else {
+        keyPairInfo.error = err.message ?? err
+      }
+    }
+    keyPairInfo.loaded = true
+    keyPairInfo.loading = false
+  }
+
   const resetZoneInfo = () => {
     zoneInfo.data = []
     zoneInfo.loaded = false
@@ -574,6 +716,7 @@ export default function useAlibabaSdk() {
     securityGroupInfo: readonly(securityGroupInfo),
     vSwitchDetail: readonly(vSwitchDetail),
     imageInfo: readonly(imageInfo),
+    keyPairInfo: readonly(keyPairInfo),
     resetZoneInfo,
     resetVpcInfo,
     resetVSwitchInfo,
@@ -586,6 +729,7 @@ export default function useAlibabaSdk() {
     fetchVSwitches,
     fetchSecurityGroups,
     fetchVSwitchDetail,
-    fetchImages
+    fetchImages,
+    fetchKeyPairs
   }
 }
