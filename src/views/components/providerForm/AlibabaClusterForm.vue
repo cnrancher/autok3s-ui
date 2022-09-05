@@ -219,12 +219,21 @@
         <template #subtitle>Params used to login to instance via ssh, e.g. key-pair, ssh user, ssh port</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <string-form
+            <!-- <string-form
               v-model.trim="form.options['key-pair']"
               label="Key Pair"
               :desc="desc.options['key-pair']"
               :readonly="readonly"
-            />
+            /> -->
+            <KComboBox
+              v-model="form.options['key-pair']"
+              label="Key Pair"
+              :desc="desc.options['key-pair']"
+              :disabled="readonly"
+              :loading="keyPairInfo.loading"
+              :options="keyPairInfo.data"
+              clearable
+            ></KComboBox>
             <string-form
               v-model.trim="form.config['ssh-user']"
               label="SSH User"
@@ -455,13 +464,15 @@ const {
   fetchVSwitches,
   fetchSecurityGroups,
   fetchImages,
+  fetchKeyPairs,
   imageInfo,
   keyInfo,
   regionInfo,
   zoneInfo,
   vpcInfo,
   vSwitchInfo,
-  securityGroupInfo
+  securityGroupInfo,
+  keyPairInfo
 } = useAlibabaSdk()
 const validateCredentials = () => {
   validateKeys(form.options['access-key'], form.options['access-secret'])
@@ -622,6 +633,7 @@ const regionChange = (region) => {
   }
   fetchZones(region)
   fetchVpcs(region)
+  fetchKeyPairs(region)
 }
 
 const zoneChange = (zone) => {
@@ -681,6 +693,7 @@ watch(
       if (region) {
         fetchZones(region)
         fetchVpcs(region)
+        fetchKeyPairs(region)
       }
       if (region && v) {
         fetchSecurityGroups(region, v)
