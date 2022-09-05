@@ -473,7 +473,7 @@ export default function useTencentSdk() {
       await loadData(offset, total)
     }
     try {
-      loadData()
+      await loadData()
     } catch (err) {
       if (err.name === 'AbortError') {
         // do nothing
@@ -554,7 +554,7 @@ export default function useTencentSdk() {
       await loadData(offset, total)
     }
     try {
-      loadData()
+      await loadData()
     } catch (err) {
       if (err.name === 'AbortError') {
         // do nothing
@@ -610,7 +610,7 @@ export default function useTencentSdk() {
       await loadData(offset, total)
     }
     try {
-      loadData()
+      await loadData()
     } catch (err) {
       if (err.name === 'AbortError') {
         // do nothing
@@ -625,7 +625,7 @@ export default function useTencentSdk() {
   const fetchKeyPairs = async (r) => {
     const tmpRegion = r ?? region.value
     if (!tmpRegion) {
-      securityGroupInfo.error = '"Region" is required'
+      keyPairInfo.error = '"Region" is required'
       return false
     }
 
@@ -665,7 +665,7 @@ export default function useTencentSdk() {
       await loadData(offset, total)
     }
     try {
-      loadData()
+      await loadData()
     } catch (err) {
       if (err.name === 'AbortError') {
         // do nothing
