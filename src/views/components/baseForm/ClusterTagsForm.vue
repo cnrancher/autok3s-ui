@@ -74,5 +74,5 @@ const getValue = () => {
   }
   return f
 }
-defineExpose({ getValue })
+defineExpose({ getValue, getForm: getValue })
 </script>
