@@ -91,5 +91,5 @@ const getValue = () => {
   return ips.value.map((ip) => ip.value)
 }
 
-defineExpose({ getValue })
+defineExpose({ getValue, getForm: getValue })
 </script>

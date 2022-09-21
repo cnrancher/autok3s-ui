@@ -107,5 +107,5 @@ const getValue = () => {
   return items.value.map((item) => item.value)
 }
 
-defineExpose({ getValue })
+defineExpose({ getValue, getForm: getValue })
 </script>
