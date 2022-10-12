@@ -70,9 +70,7 @@ export default defineComponent({
         }
       },
       () => {
-        Object.values(providerClusterStores).forEach((store) => {
-          store.loadData()
-        })
+        return Promise.all(Object.values(providerClusterStores).map((store) => store.loadData()))
       }
     )
     const templateMessageHandler = useDebounceMessage(
