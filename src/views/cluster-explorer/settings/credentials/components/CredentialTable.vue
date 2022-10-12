@@ -102,7 +102,7 @@ function accessKeyFieldValue(data, keyMap) {
 }
 function accessSecretFieldValue(data, secretMap) {
   const v = data.secrets[secretMap[data.provider]] ?? ''
-  return v.replace(/./g, '*')
+  return v.replace(/./g, '*').slice(0, 50)
 }
 
 const router = useRouter()
