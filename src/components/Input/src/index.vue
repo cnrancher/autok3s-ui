@@ -14,7 +14,7 @@
         </template>
       </tooltip>
       <div v-else></div>
-      <tooltip v-if="error" class="justify-end">
+      <tooltip v-if="error" class="justify-self-end">
         <k-icon type="warning" class="text-red-500" :size="18"></k-icon>
         <template #popover>
           {{ error }}
@@ -146,7 +146,7 @@ defineExpose({
 }
 .k-input__label {
   grid-area: label;
-  @apply grid gap-x-10px items-center grid-cols-[max-content,auto,auto] text-warm-gray-500;
+  @apply grid gap-x-10px items-center grid-cols-[max-content,20px,auto] text-warm-gray-500;
 }
 .k-input__prefix {
   grid-area: prefix;

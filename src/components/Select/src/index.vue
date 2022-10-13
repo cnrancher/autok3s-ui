@@ -13,6 +13,13 @@
           <span v-else>{{ desc }}</span>
         </template>
       </tooltip>
+      <div v-else></div>
+      <tooltip v-if="error" class="justify-self-end">
+        <k-icon type="warning" class="text-red-500" :size="18"></k-icon>
+        <template #popover>
+          {{ error }}
+        </template>
+      </tooltip>
     </div>
     <div v-if="$slots.prefix" class="k-select__prefix">
       <slot name="prefix">{{ prefix }}</slot>
@@ -140,6 +147,10 @@ const props = defineProps({
   clearable: {
     type: Boolean,
     default: false
+  },
+  error: {
+    type: String,
+    default: ''
   }
 })
 
@@ -249,8 +260,7 @@ const handleVisibleChange = (v) => {
 
 .k-select__label {
   grid-area: label;
-  @apply grid grid-cols-[max-content,auto] text-warm-gray-500 gap-x-10px items-center;
-  width: fit-content;
+  @apply grid grid-cols-[max-content,20px,auto] text-warm-gray-500 gap-x-10px items-center;
 }
 .k-select__prefix {
   grid-area: prefix;
