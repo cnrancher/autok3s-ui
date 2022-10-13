@@ -63,7 +63,7 @@
             v-for="(v, index) in options"
             :key="`${index}_${v.value ?? v}`"
             class="k-combo-box__option"
-            :class="[modelValue === v?.value ?? v ? 'text-white bg-warm-gray-400' : '']"
+            :class="[modelValue === (v?.value ?? v) ? 'text-white bg-warm-gray-400' : '']"
             @click="setValue(v?.value ?? v)"
           >
             <slot :option="v">
