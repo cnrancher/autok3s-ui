@@ -15,9 +15,9 @@ export function createCredential(data) {
   })
 }
 
-export function updateCredential(provider, data) {
+export function updateCredential(id, data) {
   return request({
-    url: `/credentials/${provider}`,
+    url: `/credentials/${id}`,
     method: 'put',
     data
   })
