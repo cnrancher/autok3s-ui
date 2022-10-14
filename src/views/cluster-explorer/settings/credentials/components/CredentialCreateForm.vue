@@ -19,7 +19,7 @@
       <string-form
         v-show="'google' === provider"
         v-model.trim="form.google.secret"
-        :label="form.google.secretLabel"
+        :label="`${form.google.secretLabel} Path`"
         required
       />
     </div>

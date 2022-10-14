@@ -14,7 +14,7 @@ export default function useCredentials() {
     state.error = ''
     try {
       const { data } = await fetchList()
-      state.credentials = data.filter((d) => Object.values(d.secrets).every((d) => d))
+      state.credentials = data
     } catch (err) {
       state.error = stringify(err)
     }
