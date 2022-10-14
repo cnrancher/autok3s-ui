@@ -1,12 +1,33 @@
 <template>
-  <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
-  <input style="display: none" autocomplete="new-password" type="password" />
+  <k-alert v-if="keyInfo.valid === true && !keyInfo.error" type="success" title="Credentails are valid"></k-alert>
+  <k-alert v-else-if="keyInfo.valid === false && keyInfo.error" type="error" :title="keyInfo.error"></k-alert>
+  <KAlert v-for="e in errors" :key="e" type="error" :title="e"></KAlert>
   <k-tabs v-model="acitiveTab" tab-position="left">
     <k-tab-pane label="Credential Options" name="credential" :error="credentialError">
       <form-group>
         <template #title>Credential Options</template>
         <template #default>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-center">
+            <KSelect v-model="credential" label="GCE Credential" required :error="credentialRequired">
+              <KOption
+                v-for="c in credentialInfo.data"
+                :key="c.id"
+                :value="c.secrets['service-account']"
+                :label="c.secrets['service-account']"
+              ></KOption>
+            </KSelect>
+            <KButton class="role-secondary" style="width: fit-content" @click="showCredentialModal">
+              {{ credential ? 'Edit' : 'Create' }} Credential
+            </KButton>
+            <string-form
+              v-model.trim="form.options['project']"
+              label="Project"
+              :desc="desc.options['project']"
+              :error="projectRequired"
+              required
+            />
+          </div>
+          <!-- <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <string-form
               v-model="form.options['service-account']"
               label="Service Account"
@@ -23,11 +44,16 @@
               :error="serviceAccountFileRequired"
               required
             ></string-form>
-          </div>
+          </div> -->
         </template>
       </form-group>
+      <div v-if="!readonly" class="mt-4 text-center">
+        <KButton class="role-secondary" :disabled="keyInfo.loading" @click="validateCredentials">
+          Validate Credentails
+        </KButton>
+      </div>
     </k-tab-pane>
-    <k-tab-pane label="Instance Options" name="instance" :error="instanceError">
+    <k-tab-pane label="Instance Options" name="instance">
       <form-group>
         <template #title>Basic</template>
         <template #default>
@@ -36,34 +62,120 @@
               v-model.trim="form.options['project']"
               label="Project"
               :desc="desc.options['project']"
-              :error="projectRequired"
-              required
+              disabled
             />
-            <string-form
+            <!-- <string-form
               v-model.trim="form.options.region"
               label="Region"
               :desc="desc.options.region"
               :readonly="readonly"
-            />
-            <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" :readonly="readonly" />
-            <string-form
+            /> -->
+            <KComboBox
+              v-model.trim="form.options.region"
+              label="Region"
+              :desc="desc.options.region"
+              :disabled="readonly"
+              :loading="regionInfo.loading"
+              :options="regionInfo.data"
+              clearable
+              @change="reginChange($event)"
+            ></KComboBox>
+            <!-- <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" :readonly="readonly" /> -->
+            <KComboBox
+              v-model="form.options.zone"
+              label="Zone"
+              :desc="desc.options.zone"
+              :disabled="readonly"
+              :loading="regionInfo.loading"
+              :options="zones"
+              clearable
+              @change="zoneChange($event)"
+            ></KComboBox>
+            <!-- <string-form
               v-model.trim="form.options['machine-type']"
               label="Machine Type"
               :desc="desc.options['machine-type']"
               :readonly="readonly"
-            />
+            /> -->
+            <KComboBox
+              v-model="form.options['machine-type']"
+              label="Machine Type"
+              :desc="desc.options['machine-type']"
+              :disabled="readonly"
+              :loading="machineTypeInfo.loading"
+              :options="machineTypeInfo.data"
+              clearable
+            >
+              <template #default="{ option }">
+                <div>
+                  <div>
+                    {{ option.label }}
+                  </div>
+                  <div class="text-sm text-gray-500">
+                    {{ option.raw.description }}
+                  </div>
+                </div>
+              </template>
+              <template #footer>
+                <div
+                  v-if="machineTypeInfo.nextPageToken"
+                  class="text-center cursor-pointer"
+                  @click.stop="loadMachineTypes()"
+                >
+                  Load More {{ machineTypeInfo.loading ? '(Loading...)' : '' }}
+                </div>
+              </template>
+            </KComboBox>
             <string-form
               v-model.trim="form.options['machine-image']"
-              label="Machine Image"
+              label="Source Image"
               :desc="desc.options['machine-image']"
               :readonly="readonly"
-            />
-            <string-form
+            >
+              <template v-if="keyInfo.valid" #suffix>
+                <KIcon
+                  type="search"
+                  :size="18"
+                  class="cursor-pointer"
+                  @click="
+                    showSearchImageModal({
+                      imageInfo,
+                      fetchImages,
+                      onSelect: (e) => {
+                        form.options['machine-image'] = e.image
+                      }
+                    })
+                  "
+                ></KIcon>
+              </template>
+            </string-form>
+            <!-- <string-form
               v-model.trim="form.options['disk-type']"
               label="Disk Type"
               :desc="desc.options['disk-type']"
               :readonly="readonly"
-            />
+            /> -->
+            <KComboBox
+              v-model="form.options['disk-type']"
+              label="Disk Type"
+              :desc="desc.options['disk-type']"
+              :disabled="readonly"
+              :loading="diskTypeInfo.loading"
+              :options="diskTypeInfo.data"
+              clearable
+            >
+              <template #default="{ option }">
+                <div>
+                  <div>{{ option.label }}</div>
+                  <div class="text-sm text-gray-500">{{ option.raw.description }}</div>
+                </div>
+              </template>
+              <template #footer>
+                <div v-if="diskTypeInfo.nextPageToken" class="text-center cursor-pointer" @click.stop="loadDiskTypes()">
+                  Load More {{ diskTypeInfo.loading ? '(Loading...)' : '' }}
+                </div>
+              </template>
+            </KComboBox>
             <string-form
               v-model.trim="form.options['disk-size']"
               label="Disk Size"
@@ -90,18 +202,49 @@
         <template #title>Network</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <string-form
+            <!-- <string-form
               v-model.trim="form.options['network']"
               label="Network"
               :desc="desc.options['network']"
               :readonly="readonly"
-            />
-            <string-form
+            /> -->
+            <KComboBox
+              v-model="form.options['network']"
+              label="Network"
+              :desc="desc.options['network']"
+              :disabled="readonly"
+              :loading="networkInfo.loading"
+              :options="networkInfo.data"
+              clearable
+              @change="networkChange($event)"
+            >
+              <template #default="{ option }">
+                <div>
+                  <div>{{ option.label }}</div>
+                  <div class="text-sm text-gray-500">{{ option.raw.description }}</div>
+                </div>
+              </template>
+              <template #footer>
+                <div v-if="networkInfo.nextPageToken" class="text-center cursor-pointer" @click.stop="loadNetworks()">
+                  Load More {{ networkInfo.loading ? '(Loading...)' : '' }}
+                </div>
+              </template>
+            </KComboBox>
+            <!-- <string-form
               v-model.trim="form.options['subnetwork']"
               label="Subnetwork"
               :desc="desc.options['subnetwork']"
               :readonly="readonly"
-            />
+            /> -->
+            <KComboBox
+              v-model="form.options['subnetwork']"
+              label="Subnetwork"
+              :desc="desc.options['subnetwork']"
+              :disabled="readonly"
+              :loading="networkInfo.loading"
+              :options="subnetworks"
+              clearable
+            ></KComboBox>
             <boolean-form
               v-model="form.options['use-internal-ip-only']"
               label="Use Internal IP Only"
@@ -258,6 +401,10 @@ import FormGroup from '../baseForm/FormGroup.vue'
 import { Base64 } from 'js-base64'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
+import CredentialModal from '../providerForm/credentials/CredentialModal.vue'
+import useModal from '@/composables/useModal.js'
+import useGoogleSdk from './hooks/useGoogleSdk.js'
+import GoogleImagesSearchModalVue from './components/GoogleImagesSearchModal.vue'
 
 const needDecodeOptionKeys = ['startup-script-content']
 
@@ -315,21 +462,13 @@ const readonlyOption = computed(() => {
 })
 
 const credentialError = computed(() => {
-  const deps = [form.options['service-account'], form.options['service-account-file']]
+  const deps = [form.options['service-account'], form.options['service-account-file'], form.options['project']]
 
   return deps.some((item) => !item)
 })
 
-const instanceError = computed(() => {
-  return !form.options['project']
-})
-
-const serviceAccountRequired = computed(() => {
-  return form.options['service-account'] ? '' : '"Service Account" is required'
-})
-
-const serviceAccountFileRequired = computed(() => {
-  return form.options['service-account-file'] ? '' : '"Service Account File" is required'
+const credentialRequired = computed(() => {
+  return credential.value ? '' : '"GCE Credential" is required'
 })
 
 const projectRequired = computed(() => {
@@ -337,7 +476,7 @@ const projectRequired = computed(() => {
 })
 
 const updateActiveTab = () => {
-  if (!form.options['service-account'] || !form.options['service-account-file']) {
+  if (!form.options['service-account'] || !form.options['service-account-file'] || !form.options['project']) {
     acitiveTab.value = 'credential'
     return
   }
@@ -365,4 +504,175 @@ const getForm = () => {
   ]
 }
 useFormRegist(getForm)
+
+// google sdk
+
+const {
+  credentialInfo,
+  keyInfo,
+  regionInfo,
+  machineTypeInfo,
+  diskTypeInfo,
+  networkInfo,
+  fetchCredentials,
+  imageInfo,
+  fetchMachineTypes,
+  validateKeys,
+  fetchDiskTypes,
+  fetchNetworks,
+  resetAll,
+  resetMachineTypeInfo,
+  resetDiskTypeInfo,
+  fetchImages
+} = useGoogleSdk()
+
+const credential = ref('')
+const secret = computed(() => {
+  const d = credentialInfo.data
+  if (d.length === 1) {
+    return d[0]
+  }
+  return d.find((item) => item.secrets['service-account'] === credential.value)
+})
+const validateCredentials = () => {
+  validateKeys(secret.value?.id, form.options['project'])
+}
+watch(
+  secret,
+  (s) => {
+    if (s) {
+      form.options['service-account'] = s.secrets['service-account']
+      form.options['service-account-file'] = s.secrets['service-account-file']
+    }
+  },
+  { immediate: true }
+)
+watch(
+  [() => form.options['service-account'], () => form.options['service-account-file']],
+  ([s]) => {
+    if (s) {
+      credential.value = s
+    }
+  },
+  { immediate: true }
+)
+watch(
+  [secret, acitiveTab, () => props.readonly, () => props.initValue],
+  ([s, tab, readonly], [oldTab]) => {
+    if (
+      readonly === false &&
+      (!oldTab || tab !== 'credential') &&
+      (keyInfo.credentialId !== s?.id || keyInfo.project !== form.options['project'])
+    ) {
+      validateCredentials()
+    }
+  },
+  { immediate: true }
+)
+watch(
+  () => keyInfo.valid,
+  (valid) => {
+    if (valid) {
+      const zone = form.options.zone
+      if (zone) {
+        fetchMachineTypes(zone)
+        fetchDiskTypes(zone)
+      }
+      fetchNetworks()
+      return
+    }
+    resetAll()
+  }
+)
+const { show } = useModal(CredentialModal)
+const showCredentialModal = () => {
+  show({
+    desc: props.desc,
+    provider: 'google',
+    initValue: secret.value,
+    mode: secret.value ? 'edit' : 'create',
+    done() {
+      fetchCredentials()
+    }
+  })
+}
+const errors = computed(() => {
+  return [...new Set([credentialInfo.error, machineTypeInfo.error, diskTypeInfo.error, networkInfo.error])].filter(
+    (e) => e
+  )
+})
+
+const zones = computed(() => {
+  const r = form.options.region
+  if (!r) {
+    return []
+  }
+  return (
+    regionInfo.data
+      .find((item) => item.value === r)
+      ?.raw?.zones?.map((link) => link.slice(link.lastIndexOf('/') + 1)) ?? []
+  )
+})
+
+const subnetworks = computed(() => {
+  const network = form.options['network']
+  const region = form.options.region
+  const f = `/regions/${region}`
+  if (!region || !network) {
+    return []
+  }
+  return (
+    networkInfo.data
+      .find((n) => n.value === network)
+      ?.raw?.subnetworks?.filter((s) => s.includes(f))
+      ?.map((s) => s.slice(s.lastIndexOf('/') + 1)) ?? []
+  )
+})
+
+const reginChange = () => {
+  if (!keyInfo.valid) {
+    return
+  }
+  form.options.zone = ''
+}
+const zoneChange = (zone) => {
+  if (!keyInfo.valid) {
+    return
+  }
+  form.options['machine-type'] = ''
+  form.options['disk-type'] = ''
+  if (zone) {
+    fetchMachineTypes(zone)
+    fetchDiskTypes(zone)
+    return
+  }
+  resetMachineTypeInfo()
+  resetDiskTypeInfo()
+}
+
+const networkChange = () => {
+  form.options['subnetwork'] = ''
+}
+
+const loadMachineTypes = () => {
+  if (machineTypeInfo.loading) {
+    return
+  }
+  fetchMachineTypes(form.options.zone, machineTypeInfo.nextPageToken)
+}
+
+const loadDiskTypes = () => {
+  if (diskTypeInfo.loading) {
+    return
+  }
+  fetchDiskTypes(form.options.zone, diskTypeInfo.nextPageToken)
+}
+
+const loadNetworks = () => {
+  if (networkInfo.loading) {
+    return
+  }
+  fetchNetworks(networkInfo.nextPageToken)
+}
+const { show: showSearchImageModal } = useModal(GoogleImagesSearchModalVue)
 </script>
