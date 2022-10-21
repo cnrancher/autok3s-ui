@@ -121,9 +121,13 @@ const inputRef = ref(null)
 const focus = () => {
   inputRef.value?.focus()
 }
+const getFiles = () => {
+  return inputRef.value.files
+}
 
 defineExpose({
-  focus
+  focus,
+  getFiles
 })
 </script>
 <style>

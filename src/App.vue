@@ -8,6 +8,7 @@
 <script>
 import { watchEffect, defineComponent } from 'vue'
 import useThemeStore from '@/store/useThemeStore.js'
+import usePackageStore from '@/store/usePackageStore.js'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
 import useTemplateStore from '@/store/useTemplateStore.js'
 // import useWindownManagerStore from '@/store/useWindowManagerStore.js'
@@ -19,6 +20,7 @@ export default defineComponent({
     const providerClusterStores = useProviderClusterStores()
     const templateStore = useTemplateStore()
     const themeStore = useThemeStore()
+    const packageStore = usePackageStore()
 
     watchEffect(() => {
       const removeThemes = themeStore.themes.filter((t) => t !== themeStore.theme)
@@ -93,6 +95,16 @@ export default defineComponent({
       })
     )
 
+    const packageMessageHandler = useDebounceMessage(
+      handleWebsocketMessage({
+        'resource.change': packageStore.update,
+        'resource.create': packageStore.add,
+        'resource.remove': (t) => {
+          packageStore.remove(t?.id)
+        }
+      })
+    )
+
     subscribe(
       'clusterTemplate',
       (msg) => {
@@ -118,6 +130,19 @@ export default defineComponent({
         }
       },
       explorerStore.loadData
+    )
+    subscribe(
+      'package',
+      (msg) => {
+        if (
+          msg.resourceType === 'package' &&
+          msg.name &&
+          ['resource.change', 'resource.create', 'resource.remove'].includes(msg.name)
+        ) {
+          packageMessageHandler(msg)
+        }
+      },
+      packageStore.loadData
     )
     connect()
   }

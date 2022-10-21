@@ -108,6 +108,18 @@ const clusterExplorerRouter = {
             defaultProvider: route.query.defaultProvider
           }),
           hidden: true
+        },
+        {
+          path: 'packages',
+          component: () => import('@/views/cluster-explorer/settings/air-gap-packages/index.vue'),
+          name: 'ClusterExplorerSettingsPackages',
+          meta: { title: 'Air-gap Packages', icon: 'clone' }
+        },
+        {
+          path: 'packages/create',
+          component: () => import('@/views/cluster-explorer/settings/air-gap-packages/create/index.vue'),
+          name: 'ClusterExplorerSettingsPackagesCreate',
+          hidden: true
         }
       ]
     }
