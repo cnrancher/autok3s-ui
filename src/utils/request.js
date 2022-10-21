@@ -45,4 +45,27 @@ service.interceptors.response.use(
   }
 )
 
+const downloadRequest = axios.create({
+  baseURL: `${getRootPath()}${import.meta.env.VITE_APP_BASE_API}`,
+  timeout: 60000
+})
+downloadRequest.interceptors.request.use(
+  (config) => {
+    // do something before request is sent
+    const csrf = Cookies.get(csrfKey)
+    if (csrf) {
+      config.headers['X-API-CSRF'] = csrf
+    }
+    return config
+  },
+  (error) => {
+    // do something with request error
+    console.log(error) // for debug
+    return Promise.reject(error)
+  }
+)
+downloadRequest.defaults.withCredentials = true
+
+export { downloadRequest }
+
 export default service
