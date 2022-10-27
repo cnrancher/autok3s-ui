@@ -717,9 +717,9 @@ const loadInstanceProfiles = () => {
 }
 
 const reginChange = (region) => {
-  if (!keyInfo.valid) {
-    return
-  }
+  // if (!keyInfo.valid) {
+  //   return
+  // }
   if (region === form.options.region) {
     return
   }
