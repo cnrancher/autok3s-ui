@@ -583,7 +583,7 @@ const {
   resetSubnetInfo,
   resetSecurityGroupInfo,
   fetchImages,
-  fetchImageById,
+  // fetchImageById,
   fetchKeyPairs,
   fetchInstanceProfiles,
   updateImageDetail
@@ -807,9 +807,9 @@ watch(
   }
 )
 
-watch([() => keyInfo.valid, () => form.options['ami']], ([valid, imageId]) => {
-  if (valid && imageId !== imageDetail.imageId) {
-    fetchImageById(form.options.region, form.options['ami'])
-  }
-})
+// watch([() => keyInfo.valid, () => form.options['ami']], ([valid, imageId]) => {
+//   if (valid && imageId !== imageDetail.imageId) {
+//     fetchImageById(form.options.region, form.options['ami'])
+//   }
+// })
 </script>
