@@ -351,7 +351,7 @@ watch(
   },
   { immediate: true }
 )
-const { getForm: getSubform } = useFormManage()
+const { getForm: getSubform, validate: validateSubForm } = useFormManage()
 const diskSize = computed({
   get() {
     return parseSi(form.options['disk-size'], { increment: 1024 }) / 1024 ** 3
@@ -459,7 +459,10 @@ const getForm = () => {
     { path: 'options', value: f.options }
   ]
 }
-useFormRegist(getForm)
+const validate = () => {
+  return validateSubForm()
+}
+useFormRegist(getForm, validate)
 const acitiveTab = ref('instance')
 const visible = ref(false)
 const toggleVisible = () => {

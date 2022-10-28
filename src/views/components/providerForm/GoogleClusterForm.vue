@@ -440,7 +440,7 @@ watch(
   },
   { immediate: true }
 )
-const { getForm: getSubform } = useFormManage()
+const { getForm: getSubform, validate: validateSubForm } = useFormManage()
 const advanceConfigVisible = ref(false)
 const acitiveTab = ref('instance')
 const uiOptions = computed({
@@ -503,7 +503,10 @@ const getForm = () => {
     { path: 'options', value: f.options }
   ]
 }
-useFormRegist(getForm)
+const validate = () => {
+  return validateSubForm()
+}
+useFormRegist(getForm, validate)
 
 // google sdk
 

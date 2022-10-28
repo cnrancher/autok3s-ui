@@ -59,7 +59,7 @@ export default function useFormManage() {
 
   provide(FORM_MANAGE, {
     registValidate: registValidateCallback,
-    removeValide: removeValidateCallback,
+    removeValidate: removeValidateCallback,
     registForm: registFormCallback,
     removeForm: removeFormCallback
   })
@@ -71,7 +71,7 @@ export default function useFormManage() {
     getForm,
     validate,
     registValidate: registValidateCallback,
-    removeValide: removeValidateCallback,
+    removeValidate: removeValidateCallback,
     registForm: registFormCallback,
     removeForm: removeFormCallback
   }

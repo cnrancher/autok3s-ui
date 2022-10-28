@@ -14,6 +14,7 @@
             v-model="config['package-name']"
             label="Air-gap Package Name"
             :disabled="readonly"
+            required
             placeholder="Please select a air-gap package..."
           >
             <KOption v-for="p in packages" :key="p.id" :value="p.name" :label="p.name"></KOption>
@@ -179,7 +180,6 @@ const props = defineProps({
     default: false
   }
 })
-
 const packageStore = usePackageStore()
 const packages = computed(() => {
   return packageStore.data.filter((p) => p.state === 'Active')
@@ -256,7 +256,15 @@ const getForm = () => {
   })
 }
 
-useFormRegist(getForm)
+const validate = () => {
+  const errors = []
+  if (airGapInstall.value && !config['package-name']) {
+    errors.push('"Air-gap Package Name" is required')
+  }
+  return errors
+}
+
+useFormRegist(getForm, validate)
 
 const installScriptOptions = [
   'https://get.k3s.io',

@@ -169,7 +169,7 @@ const uiOptions = computed({
     form.config.enable = v
   }
 })
-const { getForm: getSubform } = useFormManage()
+const { getForm: getSubform, validate: validateSubForm } = useFormManage()
 const getForm = () => {
   const f = getSubform(form)
   f.options['master-ips'] = masterIps.value
@@ -190,5 +190,8 @@ const visible = ref(false)
 const toggleVisible = () => {
   visible.value = !visible.value
 }
-useFormRegist(getForm)
+const validate = () => {
+  return validateSubForm()
+}
+useFormRegist(getForm, validate)
 </script>
