@@ -4,41 +4,59 @@
     <template #title>Basic</template>
     <template #default>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-        <k-select
-          v-model="config['k3s-channel']"
-          :desc="desc.config['k3s-channel']"
-          label="K3s Channel"
-          :disabled="readonly"
-        >
-          <k-option value="stable" label="stable"></k-option>
-          <k-option value="latest" label="latest"></k-option>
-          <k-option value="testing" label="testing"></k-option>
-        </k-select>
-        <string-form
-          v-model.trim="config['k3s-version']"
-          label="K3s Version"
-          :desc="desc.config['k3s-version']"
-          :readonly="readonly"
-        />
+        <label>
+          <input v-model="airGapInstall" type="checkbox" />
+          Install With Air-gap Package
+        </label>
+        <div></div>
+        <template v-if="airGapInstall">
+          <KSelect
+            v-model="config['package-name']"
+            label="Air-gap Package Name"
+            :disabled="readonly"
+            placeholder="Please select a air-gap package..."
+          >
+            <KOption v-for="p in packages" :key="p.id" :value="p.name" :label="p.name"></KOption>
+          </KSelect>
+          <div></div>
+        </template>
+        <template v-else>
+          <KSelect
+            v-model="config['k3s-channel']"
+            :desc="desc.config['k3s-channel']"
+            label="K3s Channel"
+            :disabled="readonly"
+          >
+            <KOption value="stable" label="stable"></KOption>
+            <KOption value="latest" label="latest"></KOption>
+            <KOption value="testing" label="testing"></KOption>
+          </KSelect>
+          <string-form
+            v-model.trim="config['k3s-version']"
+            label="K3s Version"
+            :desc="desc.config['k3s-version']"
+            :readonly="readonly"
+          />
+          <k-combo-box
+            v-model="config['k3s-install-script']"
+            label="K3s Install Script"
+            :desc="desc.config['k3s-install-script']"
+            :disabled="readonly"
+            :options="installScriptOptions"
+            placeholder="Please Select Or Input..."
+          ></k-combo-box>
+          <string-form
+            v-model.trim="config['system-default-registry']"
+            label="System Default Registry"
+            :desc="desc.config['system-default-registry']"
+            :readonly="readonly"
+          />
+        </template>
         <boolean-form v-model="config['cluster']" label="Cluster" :desc="desc.config['cluster']" :readonly="readonly" />
         <string-form
           v-model.trim="config['datastore']"
           label="Datastore"
           :desc="desc.config['datastore']"
-          :readonly="readonly"
-        />
-        <k-combo-box
-          v-model="config['k3s-install-script']"
-          label="K3s Install Script"
-          :desc="desc.config['k3s-install-script']"
-          :disabled="readonly"
-          :options="installScriptOptions"
-          placeholder="Please Select Or Input..."
-        ></k-combo-box>
-        <string-form
-          v-model.trim="config['system-default-registry']"
-          label="System Default Registry"
-          :desc="desc.config['system-default-registry']"
           :readonly="readonly"
         />
       </div>
@@ -141,6 +159,7 @@ import FormGroup from './FormGroup.vue'
 import CommandArgs from './CommandArgs/index.vue'
 import ArrayListForm from '../baseForm/ArrayListForm.vue'
 import useFormRegist from '@/composables/useFormRegist.js'
+import usePackageStore from '@/store/usePackageStore.js'
 
 const props = defineProps({
   initValue: {
@@ -161,6 +180,21 @@ const props = defineProps({
   }
 })
 
+const packageStore = usePackageStore()
+const packages = computed(() => {
+  return packageStore.data.filter((p) => p.state === 'Active')
+})
+
+const airGapInstall = ref(false)
+watch(
+  () => props.initValue?.config?.['package-name'],
+  (packageName) => {
+    if (packageName) {
+      airGapInstall.value = true
+    }
+  },
+  { immediate: true }
+)
 const visible = toRef(props, 'visible')
 const readonlyOption = computed(() => {
   return { readOnly: props.readonly }
@@ -185,7 +219,8 @@ const configFields = [
   'tls-sans',
   'registry-content',
   'k3s-install-mirror',
-  'system-default-registry'
+  'system-default-registry',
+  'package-name'
 ]
 watch(
   configFields.map((k) => {
@@ -200,11 +235,20 @@ watch(
 )
 
 const getForm = () => {
+  const keys = ['k3s-channel', 'k3s-version', 'k3s-install-script', 'system-default-registry']
+  const flag = airGapInstall.value
   return configFields.map((k) => {
     let value = config[k]
     if (k === 'tls-sans') {
       value = tlsSansRef.value.getValue()
     }
+    if (flag === true && keys.includes(k)) {
+      value = ''
+    }
+    if (flag === false && k === 'package-name') {
+      value = ''
+    }
+
     return {
       path: ['config', k],
       value
