@@ -15,6 +15,7 @@
               <KOption value="amd64" label="amd64"></KOption>
               <KOption value="arm64" label="arm64"></KOption>
               <KOption value="arm" label="arm"></KOption>
+              <KOption value="s390x" label="s390x"></KOption>
             </KSelect>
           </div>
         </div>
