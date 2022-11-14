@@ -1,11 +1,11 @@
 <template>
-  <div class="k-select" :class="{ disabled: disabled }">
+  <div class="k-select" :class="{ disabled: disabled, focused: visible }">
     <div class="k-select__label">
       <label v-if="label" :for="inputId">
         {{ label }}
         <sup v-if="required" class="top-0 text-red-500">*</sup>
       </label>
-      <tooltip v-if="desc">
+      <tooltip v-if="desc && !visible">
         <k-icon type="prompt"></k-icon>
         <template #popover>
           <!-- eslint-disable-next-line vue/no-v-html -->
@@ -243,7 +243,7 @@ const handleVisibleChange = (v) => {
   visible.value = v
 }
 </script>
-<style>
+<style scoped>
 .k-select {
   display: grid;
   grid-template-areas:
@@ -254,13 +254,18 @@ const handleVisibleChange = (v) => {
   @apply border rounded p-8px;
   min-height: 60px;
 }
-.k-select:not(.disabled):hover {
-  @apply bg-gray-100;
+.k-select:not(.disabled, .focused):hover {
+  @apply border-$input-hover-border;
 }
-
 .k-select__label {
   grid-area: label;
   @apply grid grid-cols-[max-content,20px,auto] text-warm-gray-500 gap-x-10px items-center;
+}
+.k-select.focused {
+  @apply border-$primary;
+  & .k-select__label {
+    @apply text-$primary;
+  }
 }
 .k-select__prefix {
   grid-area: prefix;

@@ -1,11 +1,11 @@
 <template>
-  <div class="k-input" :class="{ disabled: disabled }">
+  <div class="k-input" :class="{ disabled: disabled, focused: inputFocus }">
     <div class="k-input__label">
       <label v-if="label" :for="inputId">
         {{ label }}
         <sup v-if="required" class="text-red-500 top-0">*</sup>
       </label>
-      <tooltip v-if="desc">
+      <tooltip v-if="desc && !inputFocus">
         <k-icon type="prompt"></k-icon>
         <template #popover>
           <!-- eslint-disable-next-line vue/no-v-html -->
@@ -36,6 +36,8 @@
       :autocomplete="autocomplete"
       :rows="rows"
       @input="$emit('update:modelValue', $event.target.value)"
+      @focus="handleFocus"
+      @blur="handleBlur"
     ></textarea>
     <input
       v-else
@@ -49,6 +51,8 @@
       :autocomplete="autocomplete"
       :type="type"
       @input="$emit('update:modelValue', $event.target.value)"
+      @focus="handleFocus"
+      @blur="handleBlur"
     />
     <div v-if="$slots.suffix" class="k-input__suffix">
       <slot name="suffix"></slot>
@@ -121,6 +125,13 @@ const inputRef = ref(null)
 const focus = () => {
   inputRef.value?.focus()
 }
+const inputFocus = ref(false)
+const handleFocus = () => {
+  inputFocus.value = true
+}
+const handleBlur = () => {
+  inputFocus.value = false
+}
 const getFiles = () => {
   return inputRef.value.files
 }
@@ -130,7 +141,7 @@ defineExpose({
   getFiles
 })
 </script>
-<style>
+<style scoped>
 .k-input {
   display: grid;
   grid-template-areas:
@@ -138,15 +149,23 @@ defineExpose({
     'prefix input suffix';
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
-  @apply p-8px rounded border border-gray-300;
+  @apply p-8px rounded border border-$input-border;
   min-height: 60px;
 }
-.k-input:not(.disabled):hover {
-  @apply bg-gray-100;
+.k-input:not(.disabled, .focused):hover {
+  @apply border-$input-hover-border;
 }
+
 .k-input__label {
   grid-area: label;
   @apply grid gap-x-10px items-center grid-cols-[max-content,20px,auto] text-warm-gray-500;
+}
+
+.k-input.focused {
+  @apply border-$primary;
+  & .k-input__label {
+    @apply text-$primary;
+  }
 }
 .k-input__prefix {
   grid-area: prefix;

@@ -4,7 +4,7 @@
       class="grid grid-cols-[1fr,22px] items-center py-5px cursor-pointer hover:bg-gray-200"
       @click="toggleOpen(routeGroup.name)"
     >
-      <h6 class="pl-8px">{{ routeGroup.title }}</h6>
+      <h6 class="pl-10px font-400">{{ routeGroup.title }}</h6>
       <k-icon
         type="arrow-right"
         :direction="expandedStateMap[routeGroup.name] ? 'up' : ''"
@@ -34,9 +34,9 @@
       :href="href"
       class="k-nav-group__link grid grid-cols-[auto,1fr] gap-2px items-center py-3px"
       :class="[
-        isActive || $route.path.startsWith(route.path) ? 'router-link-active bg-gray-100' : 'hover:bg-gray-200',
+        isActive || $route.path.startsWith(route.path) ? 'router-link-active bg-[#eeeff4]' : 'hover:bg-[#dcdee7]',
         isExactActive ? 'router-link-exact-active' : '',
-        routeGroup.level > 1 ? 'grid-cols-[20px,1fr] pl-16px' : 'pl-8px'
+        routeGroup.level > 1 ? 'grid-cols-[20px,1fr] pl-12px' : 'pl-10px'
       ]"
       @click="navigate"
     >
@@ -80,6 +80,10 @@ export default {
 }
 </script>
 <style>
+.k-nav-group__link {
+  font-size: 13px;
+  height: 31px;
+}
 .k-nav-group__link:hover .k-nav-group__icon {
   @apply text-gray-800;
 }
