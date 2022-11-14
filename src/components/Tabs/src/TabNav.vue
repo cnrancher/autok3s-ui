@@ -68,10 +68,11 @@ const tabs = tabsStore.state.tabs
     @apply py-7.5px px-15px border-l-5px border-l-transparent;
   }
   & > .k-tabs__item--active {
-    @apply bg-white border-l-5px border-l-light-blue-600 text-gray-500;
+    @apply bg-white border-l-5px text-gray-500;
+    border-left-color: var(--primary);
   }
 }
 .k-tabs__item {
-  @apply flex items-center text-light-blue-500 cursor-pointer gap-2;
+  @apply flex items-center text-$primary cursor-pointer gap-2;
 }
 </style>
