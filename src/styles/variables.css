@@ -40,6 +40,26 @@
   --error-banner-bg: rgba(246, 71, 71, 0.15);
   --disabled-bg: #dcdee7;
   --disabled-text: #6c6c76;
+
+  --border: #dcdee7;
+  --box-bg: #f4f5fa;
+  --body-bg: #fff;
+
+  --input-text: #141419;
+  --input-label: #6c6c76;
+  --input-placeholder: #bec1d2;
+  --input-border: var(--border);
+  --input-bg: var(--body-bg);
+  --input-bg-accent: #e8e9f0;
+  --input-hover-bg: var(--box-bg);
+  --input-focus-bg: var(--box-bg);
+  --input-disabled-text: #3b4056;
+  --input-disabled-label: #646d93;
+  --input-disabled-bg: #dcdee7;
+  --input-disabled-border: #bec1d2;
+  --input-disabled-placeholder: #afb3c8;
+  --input-addon-bg: #6c6c76;
+  --input-hover-border: #9097b3;
 }
 
 .suse {

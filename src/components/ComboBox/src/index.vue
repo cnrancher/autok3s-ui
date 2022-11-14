@@ -1,11 +1,11 @@
 <template>
-  <div class="k-combo-box" :class="{ disabled: disabled }">
+  <div class="k-combo-box" :class="{ disabled: disabled, focused: dropdownVisible }">
     <div class="k-combo-box__label">
       <label v-if="label" :for="inputId">
         {{ label }}
         <sup v-if="required" class="k-form-item--required">*</sup>
       </label>
-      <tooltip v-if="desc">
+      <tooltip v-if="desc && !dropdownVisible">
         <k-icon type="prompt"></k-icon>
         <template #popover>
           <!-- eslint-disable-next-line vue/no-v-html -->
@@ -23,6 +23,7 @@
       :append-to-body="false"
       :disabled="disabled"
       :lazy="false"
+      @visible-change="handleVisible"
     >
       <input
         :id="inputId"
@@ -100,7 +101,7 @@ export default {
 }
 </script>
 <script setup>
-import { useSlots } from 'vue'
+import { useSlots, ref } from 'vue'
 import { Dropdown, DropdownMenuItem } from '@/components/Dropdown'
 import Tooltip from '@/components/Tooltip'
 import KIcon from '@/components/Icon'
@@ -157,6 +158,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'change'])
 const slots = useSlots()
 const inputId = getId()
+
 const setValue = (v) => {
   emit('update:modelValue', v)
   if (v !== props.modelValue) {
@@ -180,8 +182,13 @@ const popperOption = {
   ],
   placement: 'bottom-start'
 }
+
+const dropdownVisible = ref(false)
+const handleVisible = (show) => {
+  dropdownVisible.value = show
+}
 </script>
-<style>
+<style scoped>
 .k-combo-box {
   display: grid;
   grid-template-areas:
@@ -189,16 +196,23 @@ const popperOption = {
     'prefix select suffix';
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
-  @apply p-8px rounded border;
+  @apply p-8px rounded border border-$input-border;
   min-height: 60px;
 }
-.k-combo-box:not(.disabled):hover {
-  @apply bg-gray-100;
+.k-combo-box:not(.disabled, .focused):hover {
+  @apply border-$input-hover-border;
 }
+
 .k-combo-box__label {
   grid-area: label;
   @apply grid gap-x-10px items-center grid-cols-[max-content,auto] text-warm-gray-500 grid gap-y-10px items-center grid-cols-[max-content,auto];
   width: fit-content;
+}
+.k-combo-box.focused {
+  @apply border-$primary;
+  & .k-combo-box__label {
+    @apply text-$primary;
+  }
 }
 .k-combo-box__prefix {
   grid-area: prefix;
