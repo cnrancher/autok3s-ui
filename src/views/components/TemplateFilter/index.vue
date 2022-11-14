@@ -242,7 +242,7 @@ watch(dataGroup, () => {
   &:hover > div,
   &.template-filter--selected > div,
   &.template-filter--hover > div {
-    @apply cursor-pointer text-white bg-light-blue-500;
+    @apply cursor-pointer text-white bg-$primary;
   }
   & > div {
     padding: 2px 6px;

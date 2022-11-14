@@ -41,3 +41,22 @@
   --disabled-bg: #dcdee7;
   --disabled-text: #6c6c76;
 }
+
+.suse {
+  --primary: #30bb78;
+  --primary-text: #fff;
+  --primary-hover-bg: #26925e;
+  --primary-hover-text: #fff;
+  --primary-active-bg: #165537;
+  --primary-active-text: #fff;
+  --primary-banner-bg: rgba(48, 187, 120, 0.15);
+  --primary-light-bg: rgba(48, 187, 120, 0.05);
+  --info: #4e9477;
+  --info-text: #fff;
+  --info-hover-bg: #3c735c;
+  --info-hover-text: #fff;
+  --info-active-bg: #224134;
+  --info-active-text: #fff;
+  --info-banner-bg: rgba(78, 148, 119, 0.15);
+  --info-light-bg: rgba(78, 148, 119, 0.05);
+}

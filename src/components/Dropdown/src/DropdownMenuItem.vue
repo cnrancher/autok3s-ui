@@ -1,6 +1,6 @@
 <template>
   <li
-    class="k-dropdown-menu__item flex items-center p-5px t-light-blue-500 hover:bg-light-blue-500 hover:text-white hover:cursor-pointer"
+    class="k-dropdown-menu__item flex items-center p-5px hover:bg-$primary hover:text-white hover:cursor-pointer"
   >
     <slot></slot>
   </li>

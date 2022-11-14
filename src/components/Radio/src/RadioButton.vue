@@ -1,7 +1,7 @@
 <template>
   <label
     class="k-radio-button"
-    :class="[model === label ? 'bg-light-blue-600' : 'bg-gray-200', isDisabled ? 'disabled' : '']"
+    :class="[model === label ? 'bg-$primary' : 'bg-gray-200', isDisabled ? 'disabled' : '']"
   >
     <input
       ref="radioRef"
