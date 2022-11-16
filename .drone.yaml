@@ -15,7 +15,7 @@ steps:
       - npm run lint
     when:
       branch:
-        - main
+        - release-0.6.1
       event:
         - push
         - pull_request
@@ -27,7 +27,7 @@ steps:
       - UI_BASE_PATH=//s3-ap-southeast-2.amazonaws.com/autok3s-ui/static/ npm run build
     when:
       branch:
-        - main
+        - release-0.6.1
       event:
         - push
         - pull_request
@@ -57,7 +57,7 @@ steps:
       target: /static
     when:
       branch:
-        - main
+        - release-0.6.1
       event:
         - push
 
