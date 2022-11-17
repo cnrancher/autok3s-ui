@@ -5,7 +5,7 @@
     <template #default>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
         <label>
-          <input v-model="airGapInstall" type="checkbox" />
+          <input v-model="airGapInstall" type="checkbox" class="accent-$primary" style="accent-color: var(--primary)" />
           Install With Air-gap Package
         </label>
         <div></div>
@@ -53,13 +53,42 @@
             :readonly="readonly"
           />
         </template>
-        <boolean-form v-model="config['cluster']" label="Cluster" :desc="desc.config['cluster']" :readonly="readonly" />
-        <string-form
-          v-model.trim="config['datastore']"
-          label="Datastore"
-          :desc="desc.config['datastore']"
+        <BooleanForm
+          v-model="HAClusters"
+          label="High Availability Clusters"
+          :readonly="readonly"
+          @change="handleHAChanged"
+        />
+        <BooleanForm
+          v-show="HAClusters"
+          v-model="config['cluster']"
+          label="Datastore Type"
+          :desc="desc.config['cluster']"
+          true-label="Embedded etcd"
+          false-label="External DB"
           :readonly="readonly"
         />
+        <div v-show="HAClusters && !config['cluster']" class="col-span-2">
+          <StringForm
+            v-model.trim="config['datastore']"
+            label="Datastore Endpoint"
+            :desc="desc.config['datastore']"
+            :placeholder="connectionStringPlaceholder"
+            :readonly="readonly"
+            required
+          >
+            <template #prefix>
+              <KSelect
+                v-model="datastoreType"
+                select-class="!border-0 !min-h-21px !py-0 !pl-0"
+                input-class="w-80px py-0"
+                :disabled="readonly"
+              >
+                <KOption v-for="t in datastoreTypes" :key="t.value" :value="t.value" :label="t.label"></KOption>
+              </KSelect>
+            </template>
+          </StringForm>
+        </div>
       </div>
     </template>
   </form-group>
@@ -74,6 +103,7 @@
           label="Master"
           :desc="desc.config['master']"
           :readonly="readonly"
+          :disabled="masterFormDisabled"
         />
         <!-- <string-form
           v-model.trim="config['master-extra-args']"
@@ -222,6 +252,27 @@ const configFields = [
   'system-default-registry',
   'package-name'
 ]
+
+const datastoreTypes = [
+  {
+    label: 'PostgreSQL',
+    value: 'PostgreSQL',
+    placeholder: 'e.g. postgres://username:password@hostname:port/database-name'
+  },
+  { label: 'MySQL', value: 'MySQL', placeholder: 'e.g. mysql://username:password@tcp(hostname:3306)/database-name' },
+  {
+    label: 'etcd',
+    value: 'etcd',
+    placeholder: 'e.g. https://etcd-host-1:2379,https://etcd-host-2:2379,https://etcd-host-3:2379'
+  }
+]
+
+const HAClusters = ref(false)
+const datastoreType = ref('PostgreSQL')
+const connectionStringPlaceholder = computed(() => {
+  return datastoreTypes.find((t) => t.value === datastoreType.value)?.placeholder ?? ''
+})
+
 watch(
   configFields.map((k) => {
     return () => props.initValue.config[k]
@@ -234,10 +285,49 @@ watch(
   { immediate: true }
 )
 
+watch(
+  () => props.initValue?.config,
+  (c) => {
+    if (c?.['cluster'] || c?.['datastore']) {
+      HAClusters.value = true
+    }
+    if (c?.['datastore']) {
+      if (c?.['datastore'].startsWith('postgres://')) {
+        datastoreType.value = 'PostgreSQL'
+      } else if (c?.['datastore'].startsWith('mysql://')) {
+        datastoreType.value = 'MySQL'
+      } else {
+        datastoreType.value = 'etcd'
+      }
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  [HAClusters, () => props.initValue?.config?.['master']],
+  ([ha]) => {
+    if (!ha) {
+      config['master'] = '1'
+    }
+  },
+  { immediate: true }
+)
+
+const masterFormDisabled = computed(() => {
+  return !HAClusters.value
+})
+
+const handleHAChanged = (ha) => {
+  if (ha) {
+    config['cluster'] = true
+  }
+}
+
 const getForm = () => {
   const keys = ['k3s-channel', 'k3s-version', 'k3s-install-script', 'system-default-registry']
   const flag = airGapInstall.value
-  return configFields.map((k) => {
+  const f = configFields.map((k) => {
     let value = config[k]
     if (k === 'tls-sans') {
       value = tlsSansRef.value.getValue()
@@ -254,12 +344,29 @@ const getForm = () => {
       value
     }
   })
+
+  const clusterConfig = f.find(({ path: [, k] }) => k === 'cluster')
+  const datastoreConfig = f.find(({ path: [, k] }) => k === 'datastore')
+
+  if (HAClusters.value) {
+    if (clusterConfig.value === true) {
+      datastoreConfig.value = ''
+    }
+  } else {
+    clusterConfig.value = false
+    datastoreConfig.value = ''
+  }
+
+  return f
 }
 
 const validate = () => {
   const errors = []
   if (airGapInstall.value && !config['package-name']) {
     errors.push('"Air-gap Package Name" is required')
+  }
+  if (HAClusters.value && config['cluster'] === false && !config['datastore']) {
+    errors.push('"Datastore Endpoint" is required')
   }
   return errors
 }

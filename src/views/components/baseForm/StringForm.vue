@@ -3,6 +3,9 @@
     <template v-if="$slots.suffix" #suffix>
       <slot name="suffix"></slot>
     </template>
+    <template v-if="$slots.prefix" #prefix>
+      <slot name="prefix"></slot>
+    </template>
   </k-input>
 </template>
 <script>

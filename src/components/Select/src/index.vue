@@ -1,5 +1,5 @@
 <template>
-  <div class="k-select" :class="{ disabled: disabled, focused: visible }">
+  <div class="k-select" :class="[selectClass, { disabled: disabled, focused: visible }]">
     <div class="k-select__label">
       <label v-if="label" :for="inputId">
         {{ label }}
@@ -48,7 +48,7 @@
         readonly
         :disabled="disabled || loading"
         class="bg-transparent cursor-pointer overflow-ellipsis focus-visible:outline-none"
-        :class="[!label ? 'py-10.5px px-0' : '', visible ? 'text-warm-gray-400' : '']"
+        :class="[!label ? 'py-10.5px px-0' : '', visible ? 'text-warm-gray-400' : '', inputClass]"
         v-bind="$attrs"
         :value="selectedOption?.label"
         :placeholder="placeholder"
@@ -132,10 +132,6 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  class: {
-    type: [Array, String, Object],
-    default: ''
-  },
   desc: {
     type: String,
     default: ''
@@ -150,6 +146,14 @@ const props = defineProps({
   },
   error: {
     type: String,
+    default: ''
+  },
+  inputClass: {
+    type: [String, Array, Object],
+    default: ''
+  },
+  selectClass: {
+    type: [String, Array, Object],
     default: ''
   }
 })
