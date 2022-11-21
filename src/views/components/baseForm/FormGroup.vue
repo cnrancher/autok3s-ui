@@ -1,10 +1,12 @@
 <template>
   <div class="grid grid-cols-[auto,1fr] gap-10px items-center">
-    <div class="text-size-18px">
-      <slot name="title"></slot>
-    </div>
     <div v-if="closable" class="grid grid-flow-col items-center justify-between cursor-pointer" @click="toggleVisible">
-      <a class="text-light-blue-500">{{ visible ? 'Hide' : 'Show' }}</a>
+      <a class="text-light-blue-500">
+        {{ visible ? 'Hide' : 'Show' }}
+        <span>
+          <slot name="title"></slot>
+        </span>
+      </a>
       <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
     </div>
     <small v-if="$slots.subtitle" class="col-span-2"><slot name="subtitle"></slot></small>

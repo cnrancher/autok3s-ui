@@ -38,8 +38,7 @@
               class="cursor-pointer grid gap-x-10px grid-cols-[auto,auto,1fr] items-center justify-items-end"
               @click="sshAdvanceVisible = !sshAdvanceVisible"
             >
-              <div>Advance</div>
-              <a class="text-$link">{{ sshAdvanceVisible ? 'Hide' : 'Show' }}</a>
+              <a class="text-$link">{{ sshAdvanceVisible ? 'Hide' : 'Show' }} Advanced</a>
               <k-icon type="arrow-right" :direction="sshAdvanceVisible ? 'down' : ''"></k-icon>
             </div>
             <div v-show="sshAdvanceVisible" class="contents">

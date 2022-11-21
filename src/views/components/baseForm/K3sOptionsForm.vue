@@ -150,8 +150,8 @@
     </template>
   </form-group>
   <hr class="section-divider" />
-  <form-group>
-    <template #title>Advance</template>
+  <form-group :closable="true">
+    <template #title>Advanced</template>
     <template #default>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
         <string-form v-model.trim="config['token']" label="Token" :desc="desc.config['token']" :readonly="readonly" />
