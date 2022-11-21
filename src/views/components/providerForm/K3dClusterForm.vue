@@ -1,7 +1,5 @@
 <template>
-  <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
-  <input style="display: none" autocomplete="new-password" type="password" />
-  <k-tabs v-model="acitiveTab" tab-position="left">
+  <k-tabs v-model="acitiveTab" :tab-position="tabPosition">
     <k-tab-pane label="K3d Options" name="instance">
       <form-group>
         <template #title>Basic</template>
@@ -141,7 +139,7 @@
   </k-tabs>
 </template>
 <script setup>
-import { ref, provide, reactive, watch } from 'vue'
+import { ref, provide, reactive, watch, inject } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3dOptionsForm from '../baseForm/K3dOptionsForm.vue'
@@ -173,6 +171,7 @@ const form = reactive({
   config: {},
   options: {}
 })
+const tabPosition = inject('tab-position', 'left')
 watch(
   () => props.initValue,
   () => {
