@@ -11,8 +11,7 @@
       class="cursor-pointer grid grid-cols-[auto,auto,1fr] items-center justify-items-end gap-x-10px h-full"
       @click="toggleVisible"
     >
-      <div>Advance</div>
-      <a class="text-light-blue-500">{{ visible ? 'Hide' : 'Show' }}</a>
+      <a class="text-light-blue-500">{{ visible ? 'Hide' : 'Show' }} Advanced</a>
       <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
     </div>
     <div v-show="visible" class="contents">

@@ -47,7 +47,7 @@
       ></k3d-options-form>
       <hr class="section-divider" />
       <form-group v-model="visible" :closable="true">
-        <template #title>Advance</template>
+        <template #title>Advanced</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
             <string-form

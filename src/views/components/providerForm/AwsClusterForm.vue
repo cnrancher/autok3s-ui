@@ -42,7 +42,7 @@
         </KButton>
       </div>
     </k-tab-pane>
-    <k-tab-pane label="Instance Options" name="instance">
+    <k-tab-pane label="Machine Options" name="instance">
       <form-group>
         <template #title>Basic</template>
         <template #default>
@@ -67,7 +67,7 @@
             /> -->
             <KComboBox
               v-model="form.options['instance-type']"
-              label="Instance Type"
+              label="Machine Type"
               :desc="desc.options['instance-type']"
               :disabled="readonly"
               :loading="instanceTypeInfo.loading || imageDetail.loading"
@@ -308,7 +308,7 @@
       </form-group>
       <hr class="section-divider" />
       <form-group v-model="advanceConfigVisible" :closable="true">
-        <template #title>Advance</template>
+        <template #title>Advanced</template>
         <template #default>
           <div class="grid gap-10px grid-cols-1 sm:grid-cols-2">
             <cluster-tags-form
@@ -331,7 +331,7 @@
         </template>
       </form-group>
     </k-tab-pane>
-    <k-tab-pane label="K3s Options" name="k3s">
+    <k-tab-pane label="K3s Cluster Options" name="k3s">
       <k3s-options-form
         :visible="acitiveTab === 'k3s'"
         :init-value="form"
@@ -339,7 +339,7 @@
         :readonly="readonly"
       ></k3s-options-form>
     </k-tab-pane>
-    <k-tab-pane label="Additional Options" name="additional">
+    <k-tab-pane label="Add-on Options" name="additional">
       <div class="grid gap-10px grid-cols-1 sm:grid-cols-2">
         <!-- <boolean-form
           v-model="form.config['ui']"

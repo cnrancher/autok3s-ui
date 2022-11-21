@@ -2,7 +2,7 @@
   <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
   <input style="display: none" autocomplete="new-password" type="password" />
   <k-tabs v-model="acitiveTab" tab-position="left">
-    <k-tab-pane label="Instance Options" name="instance">
+    <k-tab-pane label="Machine Options" name="instance">
       <form-group>
         <template #title>Basic</template>
         <template #default>
@@ -51,8 +51,7 @@
               class="cursor-pointer grid grid-cols-[auto,auto,1fr] gap-x-10px items-center justify-items-end"
               @click="toggleVisible"
             >
-              <div>Advance</div>
-              <a class="text-$link">{{ visible ? 'Hide' : 'Show' }}</a>
+              <a class="text-$link">{{ visible ? 'Hide' : 'Show' }} Advanced</a>
               <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
             </div>
             <div v-show="visible" class="contents">
@@ -85,7 +84,7 @@
         </template>
       </form-group>
     </k-tab-pane>
-    <k-tab-pane label="K3s Options" name="k3s">
+    <k-tab-pane label="K3s Cluster Options" name="k3s">
       <k3s-options-form
         :visible="acitiveTab === 'k3s'"
         :init-value="form"
@@ -93,7 +92,7 @@
         :readonly="readonly"
       ></k3s-options-form>
     </k-tab-pane>
-    <k-tab-pane label="Additional Options" name="additional">
+    <k-tab-pane label="Add-on Options" name="additional">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
         <!-- <boolean-form
           v-model="form.config['ui']"
