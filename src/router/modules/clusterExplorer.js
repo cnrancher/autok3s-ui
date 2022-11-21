@@ -12,7 +12,7 @@ const clusterExplorerRouter = {
   children: [
     {
       path: 'quick-start',
-      component: () => import('@/views/cluster-explorer/quick-start/index.vue'),
+      component: () => import('@/views/cluster-explorer/quick-start-v2/index.vue'),
       name: 'QuickStart',
       props: (route) => ({
         templateId: route.query.templateId,

@@ -210,6 +210,7 @@ const props = defineProps({
     default: false
   }
 })
+const emit = defineEmits(['errors'])
 const packageStore = usePackageStore()
 const packages = computed(() => {
   return packageStore.data.filter((p) => p.state === 'Active')
@@ -316,6 +317,14 @@ watch(
 
 const masterFormDisabled = computed(() => {
   return !HAClusters.value
+})
+
+watch([HAClusters, () => config['cluster'], () => config['datastore']], ([ha, c, d]) => {
+  if (ha && c === false && !d) {
+    emit('errors', ['"Datastore Endpoint" is required'])
+  } else {
+    emit('errors', [])
+  }
 })
 
 const handleHAChanged = (ha) => {

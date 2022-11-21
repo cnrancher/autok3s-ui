@@ -2,7 +2,7 @@
   <k-alert v-if="keyInfo.valid === true && !keyInfo.error" type="success" title="Credentails are valid"></k-alert>
   <k-alert v-else-if="keyInfo.valid === false && keyInfo.error" type="error" :title="keyInfo.error"></k-alert>
   <KAlert v-for="e in errors" :key="e" type="error" :title="e"></KAlert>
-  <k-tabs v-model="acitiveTab" tab-position="left">
+  <k-tabs v-model="acitiveTab" :tab-position="tabPosition">
     <k-tab-pane label="Credential Options" name="credential" :error="credentialError">
       <form-group>
         <template #title>Credential Options</template>
@@ -331,12 +331,13 @@
         </template>
       </form-group>
     </k-tab-pane>
-    <k-tab-pane label="K3s Cluster Options" name="k3s">
+    <k-tab-pane label="K3s Cluster Options" name="k3s" :error="k3sOptionsErrors.length > 0">
       <k3s-options-form
         :visible="acitiveTab === 'k3s'"
         :init-value="form"
         :desc="desc"
         :readonly="readonly"
+        @errors="handleK3sErrors"
       ></k3s-options-form>
     </k-tab-pane>
     <k-tab-pane label="Add-on Options" name="additional">
@@ -444,7 +445,7 @@
 </template>
 <script setup>
 import { cloneDeep } from '@/utils'
-import { ref, computed, watch, reactive } from 'vue'
+import { ref, computed, watch, reactive, inject } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
@@ -494,6 +495,7 @@ watch(
   },
   { immediate: true }
 )
+const tabPosition = inject('tab-position', 'left')
 const { getForm: getSubform, validate: validateSubForm } = useFormManage()
 const advanceConfigVisible = ref(false)
 const acitiveTab = ref('instance')
@@ -558,6 +560,11 @@ const validate = () => {
   return validateSubForm()
 }
 useFormRegist(getForm, validate)
+
+const k3sOptionsErrors = ref([])
+const handleK3sErrors = (e) => {
+  k3sOptionsErrors.value = e
+}
 
 // aws sdk
 const { show: showSearchImageModal } = useModal(AwsImagesSearchModalVue)

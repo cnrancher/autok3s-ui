@@ -1,7 +1,5 @@
 <template>
-  <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
-  <input style="display: none" autocomplete="new-password" type="password" />
-  <k-tabs v-model="acitiveTab" tab-position="left">
+  <k-tabs v-model="acitiveTab" :tab-position="tabPosition">
     <k-tab-pane label="Machine Options" name="instance">
       <form-group>
         <template #title>Basic</template>
@@ -84,12 +82,13 @@
         </template>
       </form-group>
     </k-tab-pane>
-    <k-tab-pane label="K3s Cluster Options" name="k3s">
+    <k-tab-pane label="K3s Cluster Options" name="k3s" :error="k3sOptionsErrors.length > 0">
       <k3s-options-form
         :visible="acitiveTab === 'k3s'"
         :init-value="form"
         :desc="desc"
         :readonly="readonly"
+        @errors="handleK3sErrors"
       ></k3s-options-form>
     </k-tab-pane>
     <k-tab-pane label="Add-on Options" name="additional">
@@ -115,7 +114,7 @@
   </k-tabs>
 </template>
 <script setup>
-import { ref, computed, reactive, watch } from 'vue'
+import { ref, computed, reactive, watch, inject } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import IpAddressPoolForm from '../baseForm/IpAddressPoolForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
@@ -146,7 +145,7 @@ const form = reactive({
   config: {},
   options: {}
 })
-
+const tabPosition = inject('tab-position', 'left')
 watch(
   () => props.initValue,
   () => {
@@ -193,4 +192,8 @@ const validate = () => {
   return validateSubForm()
 }
 useFormRegist(getForm, validate)
+const k3sOptionsErrors = ref([])
+const handleK3sErrors = (e) => {
+  k3sOptionsErrors.value = e
+}
 </script>

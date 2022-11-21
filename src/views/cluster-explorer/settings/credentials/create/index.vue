@@ -6,9 +6,6 @@
         Create
       </template>
     </page-header>
-    <!-- fake fields are a workaround for chrome autofill getting the wrong fields -->
-    <input style="display: none" type="text" />
-    <input style="display: none" type="password" />
     <credential-form></credential-form>
   </div>
 </template>
