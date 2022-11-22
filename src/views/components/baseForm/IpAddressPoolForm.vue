@@ -1,8 +1,10 @@
 <template>
   <div class="grid grid-cols-[1fr,auto] gap-10px items-center content-start">
     <h3 class="grid max-w-max col-span-2 grid-flow-col gap-x-10px items-center content-start">
-      {{ label }}
-      <sup v-if="required" class="text-red-500">*</sup>
+      <div>
+        {{ label }}
+        <sup v-if="required" class="top-0 text-red-500">*</sup>
+      </div>
       <k-tooltip v-if="desc">
         <k-icon type="prompt"></k-icon>
         <template #popover>

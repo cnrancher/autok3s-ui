@@ -1,6 +1,6 @@
 <template>
   <k-tabs v-model="acitiveTab" :tab-position="tabPosition">
-    <k-tab-pane label="Machine Options" name="instance">
+    <k-tab-pane label="Machine Options" name="instance" :error="initMasterCount && !form.options['master-ips']">
       <form-group>
         <template #title>Basic</template>
         <template #default>
@@ -11,6 +11,7 @@
               label="Master IPs"
               :desc="desc.options['master-ips']"
               :readonly="readonly"
+              required
             ></ip-address-pool-form>
             <ip-address-pool-form
               ref="workerIps"
@@ -193,7 +194,15 @@ const toggleVisible = () => {
   visible.value = !visible.value
 }
 const validate = () => {
-  return validateSubForm()
+  const errors = []
+  const m = masterIps.value
+    .getValue()
+    .filter((v) => v)
+    .join(',')
+  if (!m) {
+    errors.push('"Master IPs" is required')
+  }
+  return [...errors, ...validateSubForm()]
 }
 useFormRegist(getForm, validate)
 const k3sOptionsErrors = ref([])
@@ -208,7 +217,7 @@ const initWorkerCount = computed(() => {
 })
 
 watch(acitiveTab, (t) => {
-  if (t === 'k3s') {
+  if (t !== 'instance') {
     form.options['master-ips'] = masterIps.value
       .getValue()
       .filter((v) => v)
