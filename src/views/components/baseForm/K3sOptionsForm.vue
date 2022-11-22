@@ -102,7 +102,7 @@
           v-model.trim="config['master']"
           label="Master"
           :desc="desc.config['master']"
-          :readonly="readonly"
+          :readonly="readonly || masterDisabled"
           :disabled="masterFormDisabled"
         />
         <!-- <string-form
@@ -131,7 +131,7 @@
           v-model.trim="config['worker']"
           label="Worker"
           :desc="desc.config['worker']"
-          :readonly="readonly"
+          :readonly="readonly || workerDisabled"
         />
         <!-- <string-form
           v-model.trim="config['worker-extra-args']"
@@ -206,6 +206,22 @@ const props = defineProps({
     default: false
   },
   visible: {
+    type: Boolean,
+    default: false
+  },
+  initMasterCount: {
+    type: Number,
+    default: 0
+  },
+  initWorkerCount: {
+    type: Number,
+    default: 0
+  },
+  masterDisabled: {
+    type: Boolean,
+    default: false
+  },
+  workerDisabled: {
     type: Boolean,
     default: false
   }
@@ -326,6 +342,27 @@ watch([HAClusters, () => config['cluster'], () => config['datastore']], ([ha, c,
     emit('errors', [])
   }
 })
+
+watch(
+  [() => props.initMasterCount, () => props.initWorkerCount],
+  ([m, w]) => {
+    if (m > 0) {
+      config['master'] = `${m}`
+      if (m > 1 && HAClusters.value === false) {
+        HAClusters.value = true
+        if (config['cluster'] === false && !config['datastore']) {
+          config['cluster'] = true
+        }
+      }
+    }
+    if (w > 0) {
+      config['worker'] = `${w}`
+    }
+  },
+  {
+    immediate: true
+  }
+)
 
 const handleHAChanged = (ha) => {
   if (ha) {
