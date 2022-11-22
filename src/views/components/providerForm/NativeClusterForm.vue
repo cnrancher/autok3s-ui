@@ -88,6 +88,10 @@
         :init-value="form"
         :desc="desc"
         :readonly="readonly"
+        :init-master-count="initMasterCount"
+        :init-worker-count="initWorkerCount"
+        master-disabled
+        worker-disabled
         @errors="handleK3sErrors"
       ></k3s-options-form>
     </k-tab-pane>
@@ -196,4 +200,23 @@ const k3sOptionsErrors = ref([])
 const handleK3sErrors = (e) => {
   k3sOptionsErrors.value = e
 }
+const initMasterCount = computed(() => {
+  return form.options['master-ips']?.split(',')?.length ?? 0
+})
+const initWorkerCount = computed(() => {
+  return form.options['worker-ips']?.split(',')?.length ?? 0
+})
+
+watch(acitiveTab, (t) => {
+  if (t === 'k3s') {
+    form.options['master-ips'] = masterIps.value
+      .getValue()
+      .filter((v) => v)
+      .join(',')
+  }
+  form.options['worker-ips'] = workerIps.value
+    .getValue()
+    .filter((v) => v)
+    .join(',')
+})
 </script>
