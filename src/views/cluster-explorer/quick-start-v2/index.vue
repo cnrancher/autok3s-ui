@@ -34,7 +34,7 @@
           </template>
           <footer-actions>
             <k-button class="btn role-secondary" @click="goToCreatePage">Advance</k-button>
-            <k-button class="role-primary" type="button" :loading="loading || creating" @click="saveAsTemplate">
+            <k-button class="role-primary" type="button" :loading="loading || creating" @click="create(true)">
               Save As Template
             </k-button>
             <k-button class="role-primary" type="button" :loading="loading || creating" @click="create">
@@ -183,7 +183,7 @@ const goToCreatePage = () => {
   providerClusterStores[currentProviderId.value]?.saveFormHistory(form)
   router.push({ name: 'ClusterExplorerCoreClustersCreate', query: { quickStart: currentProviderId.value } })
 }
-const create = async () => {
+const create = async (isTemplate) => {
   let errors = []
   if (!currentProviderId.value) {
     errors.push(`"Provider" is required`)
@@ -219,30 +219,28 @@ const create = async () => {
 
   creating.value = true
   try {
-    const { id, name } = await createCluster(formData)
-    wmStore.addTab({
-      id: `log_${id}`,
-      component: 'ClusterLogs',
-      label: `log: ${name ?? id}`,
-      icon: 'log',
-      attrs: {
-        cluster: id
-      }
-    })
-    goBack()
+    if (isTemplate) {
+      await createTemplate(formData)
+      router.push({ name: 'ClusterExplorerSettingsTemplates' })
+    } else {
+      const { id, name } = await createCluster(formData)
+      wmStore.addTab({
+        id: `log_${id}`,
+        component: 'ClusterLogs',
+        label: `log: ${name ?? id}`,
+        icon: 'log',
+        attrs: {
+          cluster: id
+        }
+      })
+      goBack()
+    }
   } catch (err) {
     formErrors.value = [stringify(err)]
   }
   creating.value = false
 }
-const saveAsTemplate = async (formData) => {
-  try {
-    await createTemplate(formData)
-    router.push({ name: 'ClusterExplorerSettingsTemplates' })
-  } catch (err) {
-    formErrors.value = [stringify(err)]
-  }
-}
+
 const handleApplyTemplate = (templateId) => {
   router.push({ name: 'QuickStart', query: { templateId } })
 }
