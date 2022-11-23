@@ -7,23 +7,15 @@
       <form-group>
         <template #title>Credential Options</template>
         <template #default>
+          <CredentialSelectForm
+            v-model="credentialValue"
+            provider="aws"
+            required
+            label="AWS Credential"
+            :disabled="readonly"
+            :desc="desc"
+          />
           <div class="grid gap-10px grid-cols-1 sm:grid-cols-2">
-            <k-password-input
-              v-model="form.options['access-key']"
-              label="Access Key"
-              :desc="desc.options['access-key']"
-              :readonly="readonly"
-              :error="accessKeyRequired"
-              required
-            ></k-password-input>
-            <k-password-input
-              v-model="form.options['secret-key']"
-              label="Secret Key"
-              :desc="desc.options['secret-key']"
-              :readonly="readonly"
-              :error="secretKeyRequired"
-              required
-            ></k-password-input>
             <KSelect
               v-model="form.options.region"
               label="Region"
@@ -459,6 +451,7 @@ import AwsImagesSearchModalVue from './components/AwsImagesSearchModal.vue'
 import { Base64 } from 'js-base64'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
+import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
 
 const needDecodeOptionKeys = ['user-data-content']
 
@@ -524,12 +517,7 @@ const credentialError = computed(() => {
   }
   return deps.some((item) => !item)
 })
-const accessKeyRequired = computed(() => {
-  return form.options['access-key'] ? '' : '"Access Key" is required'
-})
-const secretKeyRequired = computed(() => {
-  return form.options['secret-key'] ? '' : '"Secret Key" is required'
-})
+
 const updateActiveTab = () => {
   if (!form.options['access-key'] || !form.options['secret-key']) {
     acitiveTab.value = 'credential'
@@ -537,6 +525,18 @@ const updateActiveTab = () => {
   }
   acitiveTab.value = 'instance'
 }
+const credentialValue = computed({
+  get() {
+    return {
+      'access-key': form.options['access-key'],
+      'secret-key': form.options['secret-key']
+    }
+  },
+  set(v) {
+    form.options['access-key'] = v['access-key']
+    form.options['secret-key'] = v['secret-key']
+  }
+})
 updateActiveTab()
 
 const tags = ref(null)

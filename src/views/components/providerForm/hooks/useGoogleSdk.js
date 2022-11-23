@@ -1,4 +1,3 @@
-import useProviderCredentials from '@/composables/useProviderCredentials.js'
 import { reactive, readonly } from 'vue'
 import request from '@/utils/request'
 import Schema from 'async-validator'
@@ -21,13 +20,6 @@ const params = {
 
 export default function useGoogleSdk() {
   let abortController = null
-  const { error, loading, credentials, refetch: fetchCredentials } = useProviderCredentials('google')
-
-  const credentialInfo = reactive({
-    error,
-    loading,
-    data: credentials
-  })
 
   const keyInfo = reactive({
     loading: false,
@@ -384,7 +376,6 @@ export default function useGoogleSdk() {
   }
 
   return {
-    credentialInfo: readonly(credentialInfo),
     keyInfo: readonly(keyInfo),
     regionInfo: readonly(regionInfo),
     // zoneInfo: readonly(zoneInfo),
@@ -393,7 +384,6 @@ export default function useGoogleSdk() {
     imageInfo: readonly(imageInfo),
     networkInfo: readonly(networkInfo),
     validateKeys,
-    fetchCredentials,
     fetchRegions,
     // fetchZones,
     fetchMachineTypes,
