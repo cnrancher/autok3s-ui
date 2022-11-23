@@ -1,12 +1,11 @@
 <template>
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-    <StringForm v-model.trim="form['secret-id']" label="Secret Id" :desc="desc.options['secret-id']" required />
-    <StringForm v-model.trim="form['secret-key']" label="Secret Key" :desc="desc.options['secret-key']" required />
+    <KPasswordInput v-model.trim="form['secret-id']" label="Secret Id" :desc="desc.options['secret-id']" required />
+    <KPasswordInput v-model.trim="form['secret-key']" label="Secret Key" :desc="desc.options['secret-key']" required />
   </div>
 </template>
 <script setup>
 import Schema from 'async-validator'
-import StringForm from '@/views/components/baseForm/StringForm.vue'
 import { reactive, watch } from 'vue'
 const props = defineProps({
   initValue: {

@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-    <StringForm v-model.trim="form['access-key']" label="Access Key" :desc="desc.options['access-key']" required />
-    <StringForm
+    <KPasswordInput v-model.trim="form['access-key']" label="Access Key" :desc="desc.options['access-key']" required />
+    <KPasswordInput
       v-model.trim="form['access-secret']"
       label="Access Secret"
       :desc="desc.options['access-secret']"
@@ -11,7 +11,6 @@
 </template>
 <script setup>
 import Schema from 'async-validator'
-import StringForm from '@/views/components/baseForm/StringForm.vue'
 import { reactive, watch } from 'vue'
 const props = defineProps({
   initValue: {
