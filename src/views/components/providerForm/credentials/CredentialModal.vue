@@ -54,7 +54,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'close'])
 const files = import.meta.glob('./*Form.vue')
 const componentMap = Object.entries(files).reduce((t, [k, v]) => {
-  const p = k.substring(2, k.indexOf('CredentialForm.vue')).toLowerCase()
+  const p = k.substring(k.lastIndexOf('/') + 1, k.indexOf('CredentialForm.vue')).toLowerCase()
   t[p] = defineAsyncComponent(v)
   return t
 }, {})
