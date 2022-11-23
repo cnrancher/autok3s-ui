@@ -18,12 +18,9 @@
 <script setup>
 import { stringify } from '@/utils/error.js'
 import { startCase } from 'lodash-es'
-import { ref } from 'vue'
+import { ref, defineAsyncComponent } from 'vue'
 import { createCredential, updateCredential } from '@/api/credential'
-import GoogleCredentialForm from './GoogleCredentialForm.vue'
-import AwsCredentialForm from './AwsCredentialForm.vue'
-import AlibabaCredentialForm from './AlibabaCredentialForm.vue'
-import TencentCredentialForm from './TencentCredentialForm.vue'
+
 const props = defineProps({
   provider: {
     type: String,
@@ -55,12 +52,12 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['update:modelValue', 'close'])
-const componentMap = {
-  google: GoogleCredentialForm,
-  aws: AwsCredentialForm,
-  alibaba: AlibabaCredentialForm,
-  tencent: TencentCredentialForm
-}
+const files = import.meta.glob('./*Form.vue')
+const componentMap = Object.entries(files).reduce((t, [k, v]) => {
+  const p = k.substring(2, k.indexOf('CredentialForm.vue')).toLowerCase()
+  t[p] = defineAsyncComponent(v)
+  return t
+}, {})
 
 const formRef = ref(null)
 const loading = ref(false)
