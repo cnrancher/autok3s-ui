@@ -7,24 +7,14 @@
       <form-group>
         <template #title>Credential Options</template>
         <template #default>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <k-password-input
-              v-model="form.options['secret-id']"
-              label="Secret Id"
-              :desc="desc.options['secret-id']"
-              :readonly="readonly"
-              :error="secretIdRequired"
-              required
-            ></k-password-input>
-            <k-password-input
-              v-model="form.options['secret-key']"
-              label="Secret Key"
-              :desc="desc.options['secret-key']"
-              :readonly="readonly"
-              :error="secretKeyRequired"
-              required
-            ></k-password-input>
-          </div>
+          <CredentialSelectForm
+            v-model="credentialValue"
+            provider="tencent"
+            required
+            label="Tencent Credential"
+            :disabled="readonly"
+            :desc="desc"
+          />
         </template>
       </form-group>
       <div v-if="!readonly" class="mt-4 text-center">
@@ -354,6 +344,7 @@ import useFormRegist from '@/composables/useFormRegist.js'
 import useTencentSdk from './hooks/useTencentSdk.js'
 import TencentImageSearchModal from './components/TencentImageSearchModal.vue'
 import useModal from '@/composables/useModal.js'
+import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
 
 const needDecodeOptionKeys = ['user-data-content']
 
@@ -428,12 +419,17 @@ const credentialError = computed(() => {
   return deps.some((item) => !item)
 })
 
-const secretIdRequired = computed(() => {
-  return form.options['secret-id'] ? '' : '"Secret Id" is required'
-})
-
-const secretKeyRequired = computed(() => {
-  return form.options['secret-key'] ? '' : '"Secret Key" is required'
+const credentialValue = computed({
+  get() {
+    return {
+      'secret-id': form.options['secret-id'],
+      'secret-key': form.options['secret-key']
+    }
+  },
+  set(v) {
+    form.options['secret-id'] = v['secret-id']
+    form.options['secret-key'] = v['secret-key']
+  }
 })
 
 updateActiveTab()

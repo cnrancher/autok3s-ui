@@ -1,5 +1,5 @@
 import { fetchList } from '@/api/credential'
-import { onMounted } from 'vue'
+import { unref, isRef, watch } from 'vue'
 import { reactive, toRefs } from 'vue'
 import { stringify } from '@/utils/error.js'
 
@@ -14,15 +14,18 @@ export default function useCredentials(provider) {
     state.error = ''
     try {
       const { data } = await fetchList()
-      state.credentials = data.filter((d) => d.provider === provider)
+      const p = unref(provider)
+      state.credentials = data.filter((d) => d.provider === p)
     } catch (err) {
       state.error = stringify(err)
     }
     state.loading = false
   }
-  onMounted(() => {
+  if (isRef(provider)) {
+    watch(provider, () => refetch(), { immediate: true })
+  } else {
     refetch()
-  })
+  }
   return {
     ...toRefs(state),
     refetch

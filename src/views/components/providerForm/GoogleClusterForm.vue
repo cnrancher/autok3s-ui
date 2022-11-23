@@ -7,18 +7,15 @@
       <form-group>
         <template #title>Credential Options</template>
         <template #default>
+          <CredentialSelectForm
+            v-model="credentialValue"
+            provider="google"
+            required
+            label="GCE Credential"
+            :disabled="readonly"
+            :desc="desc"
+          />
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-center">
-            <KSelect v-model="credential" label="GCE Credential" required :error="credentialRequired">
-              <KOption
-                v-for="c in credentialInfo.data"
-                :key="c.id"
-                :value="c.secrets['service-account']"
-                :label="c.secrets['service-account']"
-              ></KOption>
-            </KSelect>
-            <KButton class="role-secondary" style="width: fit-content" @click="showCredentialModal">
-              {{ credential ? 'Edit' : 'Create' }} Credential
-            </KButton>
             <string-form
               v-model.trim="form.options['project']"
               label="Project"
@@ -27,24 +24,6 @@
               required
             />
           </div>
-          <!-- <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <string-form
-              v-model="form.options['service-account']"
-              label="Service Account"
-              :desc="desc.options['service-account']"
-              :readonly="readonly"
-              :error="serviceAccountRequired"
-              required
-            ></string-form>
-            <string-form
-              v-model="form.options['service-account-file']"
-              label="Service Account File"
-              :desc="desc.options['service-account-file']"
-              :readonly="readonly"
-              :error="serviceAccountFileRequired"
-              required
-            ></string-form>
-          </div> -->
         </template>
       </form-group>
       <div v-if="!readonly" class="mt-4 text-center">
@@ -402,10 +381,10 @@ import FormGroup from '../baseForm/FormGroup.vue'
 import { Base64 } from 'js-base64'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
-import CredentialModal from '../providerForm/credentials/CredentialModal.vue'
 import useModal from '@/composables/useModal.js'
 import useGoogleSdk from './hooks/useGoogleSdk.js'
 import GoogleImagesSearchModalVue from './components/GoogleImagesSearchModal.vue'
+import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
 
 const needDecodeOptionKeys = ['startup-script-content']
 
@@ -469,12 +448,21 @@ const credentialError = computed(() => {
   return deps.some((item) => !item)
 })
 
-const credentialRequired = computed(() => {
-  return credential.value ? '' : '"GCE Credential" is required'
-})
-
 const projectRequired = computed(() => {
   return form.options['project'] ? '' : '"Project" is required'
+})
+
+const credentialValue = computed({
+  get() {
+    return {
+      'service-account': form.options['service-account'],
+      'service-account-file': form.options['service-account-file']
+    }
+  },
+  set(v) {
+    form.options['service-account'] = v['service-account']
+    form.options['service-account-file'] = v['service-account-file']
+  }
 })
 
 const updateActiveTab = () => {
@@ -517,13 +505,11 @@ const handleK3sErrors = (e) => {
 // google sdk
 
 const {
-  credentialInfo,
   keyInfo,
   regionInfo,
   machineTypeInfo,
   diskTypeInfo,
   networkInfo,
-  fetchCredentials,
   imageInfo,
   fetchMachineTypes,
   validateKeys,
@@ -535,43 +521,17 @@ const {
   fetchImages
 } = useGoogleSdk()
 
-const credential = ref('')
-const secret = computed(() => {
-  const d = credentialInfo.data
-  if (d.length === 1) {
-    return d[0]
-  }
-  return d.find((item) => item.secrets['service-account'] === credential.value)
-})
 const validateCredentials = () => {
-  validateKeys(secret.value?.id, form.options['project'])
+  validateKeys(form.options['service-account'], form.options['project'])
 }
+
 watch(
-  secret,
-  (s) => {
-    if (s) {
-      form.options['service-account'] = s.secrets['service-account']
-      form.options['service-account-file'] = s.secrets['service-account-file']
-    }
-  },
-  { immediate: true }
-)
-watch(
-  [() => form.options['service-account'], () => form.options['service-account-file']],
-  ([s]) => {
-    if (s) {
-      credential.value = s
-    }
-  },
-  { immediate: true }
-)
-watch(
-  [secret, acitiveTab, () => props.readonly, () => props.initValue],
+  [() => form.options['service-account'], acitiveTab, () => props.readonly, () => props.initValue],
   ([s, tab, readonly], [oldTab]) => {
     if (
       readonly === false &&
       (!oldTab || tab !== 'credential') &&
-      (keyInfo.credentialId !== s?.id || keyInfo.project !== form.options['project'])
+      (keyInfo.credentialId !== s || keyInfo.project !== form.options['project'])
     ) {
       validateCredentials()
     }
@@ -593,22 +553,9 @@ watch(
     resetAll()
   }
 )
-const { show } = useModal(CredentialModal)
-const showCredentialModal = () => {
-  show({
-    desc: props.desc,
-    provider: 'google',
-    initValue: secret.value,
-    mode: secret.value ? 'edit' : 'create',
-    done() {
-      fetchCredentials()
-    }
-  })
-}
+
 const errors = computed(() => {
-  return [...new Set([credentialInfo.error, machineTypeInfo.error, diskTypeInfo.error, networkInfo.error])].filter(
-    (e) => e
-  )
+  return [...new Set([machineTypeInfo.error, diskTypeInfo.error, networkInfo.error])].filter((e) => e)
 })
 
 const zones = computed(() => {
