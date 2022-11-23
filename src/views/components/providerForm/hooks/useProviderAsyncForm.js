@@ -11,7 +11,7 @@ import { defineAsyncComponent } from 'vue'
 
 const files = import.meta.glob('../*ClusterForm.vue')
 const asyncComponents = Object.entries(files).reduce((t, [k, v]) => {
-  const p = k.substring(3, k.indexOf('ClusterForm.vue')).toLowerCase()
+  const p = k.substring(k.lastIndexOf('/') + 1, k.indexOf('ClusterForm.vue')).toLowerCase()
   t[p] = defineAsyncComponent(v)
 
   return t
