@@ -71,13 +71,14 @@ export default {
 </script>
 
 <script setup>
-import { computed, nextTick, ref, watch, watchEffect } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useDataGroup from '@/composables/useDataGroup.js'
 import usePopper from '@/composables/usePopper.js'
 import { onClickOutside } from '@vueuse/core'
 import useTemplateStore from '@/store/useTemplateStore.js'
 import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
 const popperOption = {
   placement: 'bottom-start'
 }
@@ -98,7 +99,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'apply-template'])
-
+const route = useRoute()
 const templateStore = useTemplateStore()
 const inputRef = ref(null)
 const resultRef = ref(null)
@@ -157,9 +158,25 @@ const templateDisplayValue = computed(() => {
   }
   return `${t.provider} | ${t.name} | ${t.options.region} | ${t.options.zone}`
 })
-watchEffect(() => {
-  currentTemplate.value = props.modelValue
-})
+
+watch(
+  [() => props.modelValue, () => route, templates],
+  ([v, r, data]) => {
+    if (v) {
+      const t = data.find((t) => t.id === v)
+      if (t) {
+        currentTemplate.value = t
+      }
+    } else if (r.query.templateId) {
+      const id = r.query.templateId
+      const t = data.find((t) => t.id === id)
+      if (t) {
+        currentTemplate.value = t
+      }
+    }
+  },
+  { immediate: true }
+)
 
 const handleFocus = () => {
   searchQuery.value = ''

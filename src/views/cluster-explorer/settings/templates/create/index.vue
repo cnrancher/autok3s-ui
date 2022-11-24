@@ -280,6 +280,10 @@ const create = async () => {
 }
 
 const handleApplyTemplate = (templateId) => {
+  if (props.templateId === templateId) {
+    location.reload()
+    return
+  }
   router.push({ name: 'ClusterExplorerSettingsTemplatesCreate', query: { templateId } })
 }
 </script>
