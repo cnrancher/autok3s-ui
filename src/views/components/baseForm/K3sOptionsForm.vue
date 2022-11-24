@@ -5,7 +5,13 @@
     <template #default>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
         <label>
-          <input v-model="airGapInstall" type="checkbox" class="accent-$primary" style="accent-color: var(--primary)" />
+          <input
+            v-model="airGapInstall"
+            type="checkbox"
+            class="accent-$primary"
+            style="accent-color: var(--primary)"
+            :disabled="readonly"
+          />
           Install With Air-gap Package
         </label>
         <div></div>
