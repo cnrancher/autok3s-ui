@@ -50,7 +50,7 @@ const selectedCredential = computed(() => {
   return credentials.value.find((c) => c.secrets[key] === v && c.secrets[sk] === sv)
 })
 const hasValue = computed(() => {
-  return !!props.modelValue?.[filedMap.value?.key]
+  return !!(props.modelValue?.[filedMap.value?.key] || props.modelValue?.[filedMap.value?.secret])
 })
 const credentialError = computed(() => {
   if (!props.required) {

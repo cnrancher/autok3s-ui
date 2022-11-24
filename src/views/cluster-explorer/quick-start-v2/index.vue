@@ -242,6 +242,10 @@ const create = async (isTemplate) => {
 }
 
 const handleApplyTemplate = (templateId) => {
+  if (props.templateId === templateId) {
+    location.reload()
+    return
+  }
   router.push({ name: 'QuickStart', query: { templateId } })
 }
 </script>

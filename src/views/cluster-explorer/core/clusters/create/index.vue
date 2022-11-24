@@ -304,6 +304,10 @@ const create = async () => {
   creating.value = false
 }
 const handleApplyTemplate = (templateId) => {
+  if (props.templateId === templateId) {
+    location.reload()
+    return
+  }
   router.push({ name: 'ClusterExplorerCoreClustersCreate', query: { templateId } })
 }
 
