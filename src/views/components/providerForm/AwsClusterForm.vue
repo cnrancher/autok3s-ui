@@ -9,6 +9,7 @@
         <template #default>
           <CredentialSelectForm
             v-model="credentialValue"
+            class="mb-10px"
             provider="aws"
             required
             label="AWS Credential"

@@ -9,6 +9,7 @@
         <template #default>
           <CredentialSelectForm
             v-model="credentialValue"
+            class="mb-10px"
             provider="tencent"
             required
             label="Tencent Credential"
