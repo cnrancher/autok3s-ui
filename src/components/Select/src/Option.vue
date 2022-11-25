@@ -3,7 +3,9 @@
     :class="[currentValue.includes(value) ? 'text-white bg-warm-gray-400' : 'text-light-blue-500']"
     @click="setValue"
   >
-    {{ label ?? value }}
+    <slot :label="label" :value="value">
+      {{ label ?? value }}
+    </slot>
   </dropdown-menu-item>
 </template>
 <script>
@@ -50,17 +52,17 @@ const setValue = (e) => {
     const v = currentValue.value.slice()
     if (i > -1) {
       v.splice(i, 1)
-      selectEmit('change', v)
       selectEmit('update:modelValue', v)
+      selectEmit('change', v)
     } else {
       v.push(currentOption.value)
-      selectEmit('change', v)
       selectEmit('update:modelValue', v)
+      selectEmit('change', v)
     }
   } else {
     if (currentValue.value[0] !== currentOption.value) {
-      selectEmit('change', currentOption.value)
       selectEmit('update:modelValue', currentOption.value)
+      selectEmit('change', currentOption.value)
     }
   }
 }
