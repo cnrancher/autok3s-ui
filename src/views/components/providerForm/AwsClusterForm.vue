@@ -448,7 +448,7 @@ import UserDataForm from '../baseForm/UserDataForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
 import useAwsSdk from './hooks/useAwsSdk.js'
 import useModal from '@/composables/useModal.js'
-import AwsImagesSearchModalVue from './components/AwsImagesSearchModal.vue'
+import AwsImagesSearchModalVue from './components/AwsImagesSearchModal/index.vue'
 import { Base64 } from 'js-base64'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
@@ -727,13 +727,7 @@ const loadInstanceProfiles = () => {
   fetchInstanceProfiles(instanceProfileInfo.marker, form.options.region)
 }
 
-const reginChange = (region) => {
-  // if (!keyInfo.valid) {
-  //   return
-  // }
-  if (region === form.options.region) {
-    return
-  }
+const reginChange = () => {
   form.options.zone = ''
   form.options['vpc-id'] = ''
   form.options['subnet-id'] = ''
