@@ -225,15 +225,8 @@ export default function useAwsSdk() {
 
   const imageInfo = shallowReactive({
     region: '',
-    volumeTypes: [],
-    arch: ['x86_64'],
-    query: '',
-    owners: ['amazon'],
-    field: 'name',
-    virtualizationType: ['hvm'],
-    // platform: [],
     loading: false,
-    loaded: true,
+    loaded: false,
     error: null,
     data: []
   })
@@ -673,87 +666,93 @@ export default function useAwsSdk() {
     imageDetail.loaded = true
   }
 
-  const fetchImages = async (r, options = {}) => {
-    let {
-      // volumeTypes = [],
-      arch = [],
-      query = '',
-      owners = [],
-      field = 'name',
-      virtualizationType = []
-      // platform = []
-    } = options
+  const fetchImages = async (r) => {
+    const options = {
+      ubuntu: {
+        ownerIds: [
+          '099720109477'
+          // '898082745236', // Deep Learning AMI
+          // '652529143229' // with SQL Server
+        ],
+        namePrefix: ['ubuntu/images/hvm-ssd/ubuntu-']
+      },
+      amazonLinux: {
+        ownerIds: [
+          '137112412989'
+          // '690405935483', // 1. .NET, Mono, PowerShell, and MATE DE pre-installed; 2. with SQL Server
+          // '898082745236' // Deep Learning AMI
+        ],
+        namePrefix: ['amzn2-ami-kernel-']
+      },
+      redHat: {
+        ownerIds: [
+          '309956199498'
+          // '199830906635' // with SQL Server
+        ],
+        namePrefix: ['RHEL-', 'RHEL_HA']
+      },
+      suseLinux: {
+        ownerIds: ['013907871322'],
+        namePrefix: ['suse-sles-']
+      },
+      debian: {
+        ownerIds: ['136693071363'],
+        namePrefix: ['debian-']
+      }
+    }
 
     const tmpRegion = r ?? region.value
     imageInfo.region = tmpRegion
-    // imageInfo.volumeTypes = volumeTypes
-    imageInfo.arch = arch
-    imageInfo.query = query
-    imageInfo.owners = owners
-    imageInfo.field = field
-    imageInfo.virtualizationType = virtualizationType
-    // imageInfo.platform = platform
 
     const ec2client = new EC2Client({
       credentials: credentials.value,
       region: imageInfo.region
     })
 
-    const filters = [
-      // {
-      //   Name: 'architecture',
-      //   Values: ['i386', 'x86_64', 'arm64'] // i386 | x86_64 | arm64
-      // },
-      // {
-      //   Name: 'block-device-mapping.volume-type',
-      //   Values: ['io1', 'io2', 'gp2', 'gp3', 'sc1', 'st1', 'standard'] // io1 | io2 | gp2 | gp3 | sc1 | st1 | standard
-      // },
-      // {
-      //   Name: 'description',
-      //   Values: []
-      // },
-      {
-        Name: 'image-type',
-        Values: ['machine'] //machine | kernel | ramdisk
+    const { platforms, inputs } = Object.entries(options).reduce(
+      (t, [p, o]) => {
+        const filters = [
+          {
+            Name: 'owner-id',
+            Values: o.ownerIds
+          },
+          {
+            Name: 'image-type',
+            Values: ['machine'] //machine | kernel | ramdisk
+          },
+          {
+            Name: 'name',
+            Values: o.namePrefix.map((n) => `${n}*`)
+          },
+          {
+            Name: 'state',
+            Values: ['available'] // available | pending | failed
+          },
+          {
+            Name: 'virtualization-type',
+            Values: ['hvm'] // paravirtual | hvm
+          },
+          {
+            Name: 'architecture',
+            Values: ['x86_64', 'arm64']
+          },
+          {
+            Name: 'owner-alias',
+            Values: ['amazon']
+          }
+        ]
+        const input = {
+          IncludeDeprecated: false,
+          Filters: filters
+        }
+
+        t.platforms.push(p)
+        t.inputs.push(input)
+
+        return t
       },
-      // {
-      //   Name: 'name',
-      //   Values: ['ubuntu*']
-      // },
-      // {
-      //   Name: 'description',
-      //   Values: ['ubuntu*']
-      // },
-      // {
-      //   Name: 'platform',
-      //   Values: ['ubuntu']
-      // },
-      {
-        Name: 'state',
-        Values: ['available'] // available | pending | failed
-      }
-      // {
-      //   Name: 'virtualization-type',
-      //   Values: [] // paravirtual | hvm
-      // }
-    ]
-
-    if (arch?.length > 0) {
-      filters.push({
-        Name: 'architecture',
-        Values: arch // i386 | x86_64 | arm64
-      })
-    }
-
-    if (query) {
-      if (!query.includes('*')) {
-        query = `*${query}*`
-      }
-      filters.push({
-        Name: field,
-        Values: [query]
-      })
-    }
+      { platforms: [], inputs: [] }
+    )
 
     // if (volumeTypes.length > 0) {
     //   filters.push({
@@ -762,33 +761,14 @@ export default function useAwsSdk() {
     //   })
     // }
 
-    if (virtualizationType.length > 0) {
-      filters.push({
-        Name: 'virtualization-type',
-        Values: virtualizationType
-      })
-    }
-
-    // if (platform.length > 0) {
-    //   filters.push({
-    //     Name: 'platform',
-    //     Values: platform
-    //   })
-    // }
-
-    const input = {
-      Owners: owners,
-      IncludeDeprecated: false,
-      Filters: filters
-    }
-
     imageInfo.loading = true
     imageInfo.loaded = false
     imageInfo.data = []
     const abortSignal = abortController.signal
     try {
-      const data = await ec2client.send(new DescribeImagesCommand(input), { abortSignal })
-      imageInfo.data = data.Images
+      const promies = inputs.map((input) => ec2client.send(new DescribeImagesCommand(input), { abortSignal }))
+      const data = await Promise.all(promies)
+      imageInfo.data = data.map((d, index) => ({ platform: platforms[index], data: d.Images }))
     } catch (err) {
       if (err.name !== 'AbortError') {
         imageInfo.error = err?.message ?? err
