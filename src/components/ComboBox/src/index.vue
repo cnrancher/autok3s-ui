@@ -25,18 +25,22 @@
       :lazy="false"
       @visible-change="handleVisible"
     >
+      <div class="col-start-1 row-start-1" :class="[dropdownVisible ? 'opacity-0' : 'opacity-100']">
+        {{ selectedOption?.label }}
+      </div>
       <input
         :id="inputId"
         autocomplete="off"
         :disabled="disabled"
-        class="cursor-pointer bg-transparent focus-visible:outline-none overflow-ellipsis"
-        :class="[!label ? 'py-9px' : '']"
+        class="cursor-pointer bg-transparent focus-visible:outline-none overflow-ellipsis col-start-1 row-start-1"
+        :class="[!label ? 'py-9px' : '', dropdownVisible ? 'opacity-100' : 'opacity-0']"
         :value="modelValue"
         v-bind="$attrs"
         :placeholder="placeholder"
         @input="$emit('update:modelValue', $event.target.value)"
         @change="$emit('change', $event.target.value)"
       />
+
       <KIcon v-if="loading" type="loading"></KIcon>
       <template v-else>
         <div class="flex">
@@ -278,6 +282,16 @@ const filteredOptions = computed(() => {
         }
       }
     })
+})
+const selectedOption = computed(() => {
+  const v = props.modelValue
+  const o = props.options
+  const obj = isObj.value
+
+  if (obj) {
+    return o.find((item) => item.value === v) ?? { label: v, value: v }
+  }
+  return { label: v, value: v }
 })
 const handleSearchClick = () => {}
 </script>
