@@ -140,6 +140,7 @@ const archOptions = computed(() => {
   const n = getImageName(version, buildVersion)
   const arches = nameMap.get(n)?.map((item) => item.Architecture) ?? []
   arches.sort()
+  arches.reverse()
 
   return arches.map((item) => ({
     value: item,
@@ -152,7 +153,7 @@ const buildVersionOptions = computed(() => {
   const { version } = form[p]
   const { versionMap } = platformImage[p]
   return (
-      versionMap
+    versionMap
       .get(version)
       ?.slice(0, 10)
       .map((item) => ({
@@ -179,6 +180,7 @@ watch(
     const n = getImageName(version, buildVersion)
     const archs = nameMap.get(n)?.map((item) => item.Architecture) ?? []
     archs.sort()
+    archs.reverse()
     arch = archs[0] ?? ''
     form[p].arch = arch
   },
@@ -247,7 +249,7 @@ const handleSelect = () => {
         <div v-if="selectedImage" class="grid grid-cols-[auto,1fr] gap-2 items-center bg-gray-100 p-10px">
           <div class="text-center">
             <!-- {{selectedPlatform?.label}} -->
-            <img :src="selectedPlatform?.logo" class="object-contain w-70px h-70px"/>
+            <img :src="selectedPlatform?.logo" class="object-contain w-70px h-70px" />
           </div>
           <div>
             <div>{{ selectedImage?.Description }}</div>
@@ -259,8 +261,7 @@ const handleSelect = () => {
               <div>Root Device Type: {{ selectedImage?.RootDeviceType }}</div>
               <div>Ena Support: {{ selectedImage?.EnaSupport }}</div>
             </div>
-            </div>
-         
+          </div>
         </div>
       </KLoading>
     </template>
