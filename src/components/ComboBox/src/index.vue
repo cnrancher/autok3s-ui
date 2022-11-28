@@ -25,22 +25,21 @@
       :lazy="false"
       @visible-change="handleVisible"
     >
-      <div class="col-start-1 row-start-1" :class="[dropdownVisible ? 'opacity-0' : 'opacity-100']">
-        {{ selectedOption?.label }}
-      </div>
       <input
         :id="inputId"
         autocomplete="off"
         :disabled="disabled"
-        class="cursor-pointer bg-transparent focus-visible:outline-none overflow-ellipsis col-start-1 row-start-1"
-        :class="[!label ? 'py-9px' : '', dropdownVisible ? 'opacity-100' : 'opacity-0']"
+        class="cursor-pointer bg-transparent focus-visible:outline-none overflow-ellipsis col-start-1 row-start-1 opacity-0 sibling:opacity-100 focus:opacity-100  focus:sibling:opacity-0"
+        :class="[!label ? 'py-9px' : '']"
         :value="modelValue"
         v-bind="$attrs"
         :placeholder="placeholder"
         @input="$emit('update:modelValue', $event.target.value)"
         @change="$emit('change', $event.target.value)"
       />
-
+      <div class="col-start-1 row-start-1 pointer-events-none">
+        {{ selectedOption?.label }}
+      </div>
       <KIcon v-if="loading" type="loading"></KIcon>
       <template v-else>
         <div class="flex">
@@ -86,9 +85,9 @@
           >
             <slot :option="v">
               <template v-if="searchable && query">
-                {{ v.value.slice(0, v.matchedStart) }}
-                <span class="text-$info">{{ v.value.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
-                {{ v.value.slice(v.matchedStart + v.matchedLen) }}
+                {{ v.label.slice(0, v.matchedStart) }}
+                <span class="text-$info">{{ v.label.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                {{ v.label.slice(v.matchedStart + v.matchedLen) }}
               </template>
               <template v-else>
                 {{ isObj ? v.label : v }}
@@ -277,6 +276,7 @@ const filteredOptions = computed(() => {
         const i = l.indexOf(q)
         return {
           value: item,
+          label: item,
           matchedStart: i,
           matchedLen: len
         }
