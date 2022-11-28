@@ -86,9 +86,9 @@
           >
             <slot :option="v">
               <template v-if="searchable && query">
-                {{ v.value.slice(0, v.matchedStart) }}
-                <span class="text-$info">{{ v.value.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
-                {{ v.value.slice(v.matchedStart + v.matchedLen) }}
+                {{ v.label.slice(0, v.matchedStart) }}
+                <span class="text-$info">{{ v.label.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                {{ v.label.slice(v.matchedStart + v.matchedLen) }}
               </template>
               <template v-else>
                 {{ isObj ? v.label : v }}
@@ -277,6 +277,7 @@ const filteredOptions = computed(() => {
         const i = l.indexOf(q)
         return {
           value: item,
+          label: item,
           matchedStart: i,
           matchedLen: len
         }
