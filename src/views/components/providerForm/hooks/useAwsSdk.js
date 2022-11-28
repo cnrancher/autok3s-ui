@@ -433,6 +433,7 @@ export default function useAwsSdk() {
     instanceTypeInfo.data = []
     instanceTypeInfo.nextToken = ''
     const abortSignal = abortController.signal
+    let tmpData = []
 
     const loadData = async (nextToken = '') => {
       if (nextToken) {
@@ -449,7 +450,7 @@ export default function useAwsSdk() {
           group: t.InstanceType.split('.')[0],
           raw: t
         }))
-        instanceTypeInfo.data = [...instanceTypeInfo.data, ...d]
+        tmpData.push(...d)
         if (data.NextToken) {
           await loadData(data.NextToken)
         }
@@ -458,10 +459,21 @@ export default function useAwsSdk() {
           instanceTypeInfo.error = err.message ?? err
         } else {
           resetInstanceTypeInfo()
+          tmpData = []
         }
       }
     }
     await loadData()
+    tmpData.sort((a, b) => {
+      if (a.value > b.value) {
+        return 1
+      }
+      if (a.value < b.value) {
+        return -1
+      }
+      return 0
+    })
+    instanceTypeInfo.data = tmpData
     instanceTypeInfo.loading = false
     instanceTypeInfo.loaded = true
   }

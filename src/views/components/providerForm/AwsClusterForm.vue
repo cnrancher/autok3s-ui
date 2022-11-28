@@ -66,35 +66,8 @@
               :loading="instanceTypeInfo.loading || imageDetail.loading"
               :options="instanceTypeOptions"
               clearable
-            >
-              <template #header>
-                <div class="p-1 bg-white" @click.stop="toggleSeries">
-                  <div class="cursor-pointer flex items-center justify-between">
-                    <div>Filter: {{ typeSeries ? typeSeries : 'All Instance Type Series' }}</div>
-                    <k-icon type="arrow-right" :direction="showSeriesSelection ? 'down' : ''"></k-icon>
-                  </div>
-                  <div v-show="showSeriesSelection" class="flex gap-2 flex-wrap p-1">
-                    <div
-                      :class="['cursor-pointer', typeSeries === '' ? 'bg-warm-gray-400' : '']"
-                      class="p-1"
-                      @click="chooseSeries('')"
-                    >
-                      All Instance Type Series
-                    </div>
-                    <div
-                      v-for="s in instanceTypeSeries"
-                      :key="s"
-                      :class="[typeSeries && typeSeries === s ? 'bg-warm-gray-400' : '']"
-                      class="cursor-pointer p-1"
-                      @click="chooseSeries(s)"
-                    >
-                      {{ s }}
-                    </div>
-                  </div>
-                  <hr />
-                </div>
-              </template>
-            </KComboBox>
+              searchable
+            ></KComboBox>
             <string-form
               v-model.trim="form.options['ami']"
               label="AMI"
@@ -581,7 +554,6 @@ const {
   imageInfo,
   imageDetail,
   keyPairInfo,
-  instanceTypeSeries,
   instanceProfileInfo,
   validateKeys,
   fetchZones,
@@ -604,8 +576,6 @@ const validateCredentials = () => {
   validateKeys(form.options['access-key'], form.options['secret-key'], form.options.region)
 }
 
-const typeSeries = ref('')
-const showSeriesSelection = ref(false)
 // const loading = computed(() => {
 //   return (
 //     keyInfo.loading ||
@@ -631,13 +601,7 @@ const showSeriesSelection = ref(false)
 //   },
 //   { immediate: true }
 // )
-const toggleSeries = () => {
-  showSeriesSelection.value = !showSeriesSelection.value
-}
-const chooseSeries = (s) => {
-  typeSeries.value = s
-  // loadInstanceTypes()
-}
+
 const errors = computed(() => {
   return [
     ...new Set([
@@ -654,21 +618,13 @@ const errors = computed(() => {
 const instanceTypeOptions = computed(() => {
   const arch = imageDetail.data?.Architecture
   const types = instanceTypeInfo.data
-  const series = typeSeries.value
+  if (!arch) {
+    return types
+  }
 
-  return types
-    .filter((t) => {
-      if (arch) {
-        return t.raw?.ProcessorInfo?.SupportedArchitectures?.includes(arch)
-      }
-      return true
-    })
-    .filter((t) => {
-      if (series) {
-        return t.group === series
-      }
-      return true
-    })
+  return types.filter((t) => {
+    return t.raw?.ProcessorInfo?.SupportedArchitectures?.includes(arch)
+  })
 })
 
 // const loadInstanceTypes = async () => {
