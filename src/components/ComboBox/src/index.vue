@@ -6,7 +6,7 @@
         <sup v-if="required" class="k-form-item--required">*</sup>
       </label>
       <tooltip v-if="desc && !dropdownVisible">
-        <k-icon type="prompt"></k-icon>
+        <KIcon type="prompt"></KIcon>
         <template #popover>
           <!-- eslint-disable-next-line vue/no-v-html -->
           <span v-if="rawDesc" v-html="desc"></span>
@@ -37,22 +37,22 @@
         @input="$emit('update:modelValue', $event.target.value)"
         @change="$emit('change', $event.target.value)"
       />
-      <k-icon v-if="loading" type="loading"></k-icon>
+      <KIcon v-if="loading" type="loading"></KIcon>
       <template v-else>
         <div class="flex">
-          <k-icon v-if="!disabled" type="editor" />
-          <k-icon
+          <KIcon v-if="!disabled" type="editor" />
+          <KIcon
             type="arrow-right-blod"
             :class="[clearable && !disabled ? 'group-hover:hidden' : '']"
             direction="down"
-          ></k-icon>
-          <k-icon
+          ></KIcon>
+          <KIcon
             v-if="!disabled"
             type="close"
             class="hidden"
             :class="[clearable ? 'group-hover:inline-block' : '']"
             @click.stop="clear"
-          ></k-icon>
+          ></KIcon>
         </div>
       </template>
       <template #content>
@@ -60,15 +60,35 @@
         <div v-if="loading">Loading ...</div>
         <div v-else-if="options.length === 0">No Data</div>
         <div v-else>
+          <div v-if="searchable" class="sticky top-0 bg-white" @click.stop="handleSearchClick">
+            <label class="grid grid-cols-[auto,1fr] items-center">
+              <KIcon type="search" :size="18" />
+              <input
+                ref="searchInput"
+                v-model="query"
+                type="search"
+                class="focus-visible:outline-none py-4px"
+                placeholder="Filter"
+              />
+            </label>
+            <hr />
+          </div>
           <dropdown-menu-item
-            v-for="(v, index) in options"
-            :key="`${index}_${v.value ?? v}`"
+            v-for="(v, index) in filteredOptions"
+            :key="`${index}_${isObj ? v.value : v}`"
             class="k-combo-box__option"
-            :class="[modelValue === (v?.value ?? v) ? 'text-white bg-warm-gray-400' : '']"
-            @click="setValue(v?.value ?? v)"
+            :class="[modelValue === (isObj ? v.value : v) ? 'text-white bg-warm-gray-400' : '']"
+            @click="setValue(isObj ? v.value : v)"
           >
             <slot :option="v">
-              {{ v?.label ?? v }}
+              <template v-if="searchable && query">
+                {{ v.value.slice(0, v.matchedStart) }}
+                <span class="text-$info">{{ v.value.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                {{ v.value.slice(v.matchedStart + v.matchedLen) }}
+              </template>
+              <template v-else>
+                {{ isObj ? v.label : v }}
+              </template>
             </slot>
           </dropdown-menu-item>
         </div>
@@ -82,6 +102,8 @@
 </template>
 <script>
 import { useIdGenerator } from '@/utils/idGenerator.js'
+import { customRef } from 'vue'
+
 const getId = useIdGenerator(0, 'combo-box_')
 const useMinWithModifier = (minWith = '200px') => {
   return {
@@ -95,13 +117,32 @@ const useMinWithModifier = (minWith = '200px') => {
   }
 }
 
+function useDebouncedRef(value, delay = 300) {
+  let timeout
+  return customRef((track, trigger) => {
+    return {
+      get() {
+        track()
+        return value
+      },
+      set(newValue) {
+        clearTimeout(timeout)
+        timeout = setTimeout(() => {
+          value = newValue
+          trigger()
+        }, delay)
+      }
+    }
+  })
+}
+
 export default {
   name: 'KComboBox',
   inheritAttrs: false
 }
 </script>
 <script setup>
-import { useSlots, ref } from 'vue'
+import { useSlots, ref, computed } from 'vue'
 import { Dropdown, DropdownMenuItem } from '@/components/Dropdown'
 import Tooltip from '@/components/Tooltip'
 import KIcon from '@/components/Icon'
@@ -147,6 +188,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  searchable: {
+    type: Boolean,
+    default: false
+  },
   options: {
     type: Array,
     default() {
@@ -158,6 +203,8 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'change'])
 const slots = useSlots()
 const inputId = getId()
+const query = useDebouncedRef('')
+const searchInput = ref(null)
 
 const setValue = (v) => {
   emit('update:modelValue', v)
@@ -187,6 +234,52 @@ const dropdownVisible = ref(false)
 const handleVisible = (show) => {
   dropdownVisible.value = show
 }
+const isObj = computed(() => {
+  const options = props.options
+  if (options.length === 0) {
+    return false
+  }
+  return typeof options[0] !== 'string'
+})
+const filteredOptions = computed(() => {
+  const searchable = props.searchable
+  const options = props.options
+  const q = query.value?.toLowerCase()
+  const len = q.length
+  if (!searchable || !q) {
+    return options
+  }
+  if (options.length === 0) {
+    return []
+  }
+  const obj = isObj.value
+  return options
+    .filter((item) =>
+      obj
+        ? item.label?.toLowerCase().includes(q) || item.value?.toLowerCase().includes(q)
+        : item?.toLowerCase().includes(q)
+    )
+    .map((item) => {
+      if (obj) {
+        const l = item.label?.toLowerCase() ?? ''
+        const i = l.indexOf(q)
+        return {
+          ...item,
+          matchedStart: i,
+          matchedLen: len
+        }
+      } else {
+        const l = item?.toLowerCase() ?? ''
+        const i = l.indexOf(q)
+        return {
+          value: item,
+          matchedStart: i,
+          matchedLen: len
+        }
+      }
+    })
+})
+const handleSearchClick = () => {}
 </script>
 <style scoped>
 .k-combo-box {
