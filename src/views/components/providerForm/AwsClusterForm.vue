@@ -67,7 +67,32 @@
               :options="instanceTypeOptions"
               clearable
               searchable
-            ></KComboBox>
+            >
+              <template #default="{ option: v, query }">
+                <template v-if="query">
+                  <div>
+                    {{ v.value.slice(0, v.matchedStart) }}
+                    <span class="text-$info">{{ v.label.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                    {{ v.value.slice(v.matchedStart + v.matchedLen) }}
+                  </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>Family: {{ v.group }}</div>
+                    <div>{{ v.vCPU }} vCPU</div>
+                    <div>{{ v.memory }} GiB Memory</div>
+                  </div>
+                </template>
+                <template v-else>
+                  <div>
+                    {{ v.value }}
+                  </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>Family: {{ v.group }}</div>
+                    <div>{{ v.vCPU }} vCPU</div>
+                    <div>{{ v.memory }} GiB Memory</div>
+                  </div>
+                </template>
+              </template>
+            </KComboBox>
             <string-form
               v-model.trim="form.options['ami']"
               label="AMI"
@@ -621,7 +646,6 @@ const instanceTypeOptions = computed(() => {
   if (!arch) {
     return types
   }
-
   return types.filter((t) => {
     return t.raw?.ProcessorInfo?.SupportedArchitectures?.includes(arch)
   })

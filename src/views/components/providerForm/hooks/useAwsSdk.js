@@ -420,7 +420,16 @@ export default function useAwsSdk() {
     instanceTypeInfo.loading = true
     instanceTypeInfo.loaded = false
 
-    const filters = []
+    const filters = [
+      {
+        Name: 'supported-virtualization-type',
+        Values: ['hvm']
+      },
+      {
+        Name: 'bare-metal',
+        Values: ['false']
+      }
+    ]
 
     if (arch.length > 0) {
       filters.push({ Name: 'processor-info.supported-architecture', Values: [...arch] })
@@ -448,6 +457,8 @@ export default function useAwsSdk() {
           value: t.InstanceType,
           label: `${t.InstanceType} (vCPU: ${t.VCpuInfo?.DefaultVCpus}, Memory: ${t.MemoryInfo?.SizeInMiB / 1024} GiB)`,
           group: t.InstanceType.split('.')[0],
+          vCPU: t.VCpuInfo?.DefaultVCpus,
+          memory: t.MemoryInfo?.SizeInMiB / 1024,
           raw: t
         }))
         tmpData.push(...d)
