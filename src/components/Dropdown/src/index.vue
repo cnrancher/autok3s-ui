@@ -89,4 +89,5 @@ watch(show, () => {
   remove()
   emit('visible-change', false)
 })
+defineExpose({ contentRef })
 </script>

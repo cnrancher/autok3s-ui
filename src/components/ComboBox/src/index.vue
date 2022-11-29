@@ -18,6 +18,7 @@
       <slot name="prefix">{{ prefix }}</slot>
     </div>
     <dropdown
+      ref="dropdownRef"
       class="k-combo-box__trigger group"
       :option="popperOption"
       :append-to-body="false"
@@ -29,7 +30,7 @@
         :id="inputId"
         autocomplete="off"
         :disabled="disabled"
-        class="cursor-pointer bg-transparent focus-visible:outline-none overflow-ellipsis col-start-1 row-start-1 opacity-0 sibling:opacity-100 focus:opacity-100  focus:sibling:opacity-0"
+        class="cursor-pointer bg-transparent focus-visible:outline-none overflow-ellipsis col-start-1 row-start-1 opacity-0 sibling:opacity-100 focus:opacity-100 focus:sibling:opacity-0"
         :class="[!label ? 'py-9px' : '']"
         :value="modelValue"
         v-bind="$attrs"
@@ -62,7 +63,7 @@
         <slot name="header"></slot>
         <div v-if="loading">Loading ...</div>
         <div v-else-if="options.length === 0">No Data</div>
-        <div v-else>
+        <template v-else>
           <div v-if="searchable" class="sticky top-0 bg-white" @click.stop="handleSearchClick">
             <label class="grid grid-cols-[auto,1fr] items-center">
               <KIcon type="search" :size="18" />
@@ -76,25 +77,26 @@
             </label>
             <hr />
           </div>
-          <dropdown-menu-item
-            v-for="(v, index) in filteredOptions"
-            :key="`${index}_${isObj ? v.value : v}`"
-            class="k-combo-box__option"
-            :class="[modelValue === (isObj ? v.value : v) ? 'text-white bg-warm-gray-400' : '']"
-            @click="setValue(isObj ? v.value : v)"
+          <div
+            v-for="v in filteredOptions"
+            :key="v.value"
+            :data-key="v.value"
+            class="k-combo-box__option p-5px hover:bg-$primary hover:text-white hover:cursor-pointer"
+            :class="[modelValue === v.value ? 'text-white bg-warm-gray-400' : '']"
+            @click="setValue(v.value)"
           >
-            <slot :option="v">
+            <slot :option="v" :searchable="searchable" :query="query">
               <template v-if="searchable && query">
                 {{ v.label.slice(0, v.matchedStart) }}
                 <span class="text-$info">{{ v.label.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
                 {{ v.label.slice(v.matchedStart + v.matchedLen) }}
               </template>
               <template v-else>
-                {{ isObj ? v.label : v }}
+                {{ v.label }}
               </template>
             </slot>
-          </dropdown-menu-item>
-        </div>
+          </div>
+        </template>
         <slot name="footer"></slot>
       </template>
     </dropdown>
@@ -145,8 +147,8 @@ export default {
 }
 </script>
 <script setup>
-import { useSlots, ref, computed } from 'vue'
-import { Dropdown, DropdownMenuItem } from '@/components/Dropdown'
+import { useSlots, ref, computed, watch, nextTick } from 'vue'
+import { Dropdown } from '@/components/Dropdown'
 import Tooltip from '@/components/Tooltip'
 import KIcon from '@/components/Icon'
 
@@ -208,6 +210,7 @@ const slots = useSlots()
 const inputId = getId()
 const query = useDebouncedRef('')
 const searchInput = ref(null)
+const dropdownRef = ref(null)
 
 const setValue = (v) => {
   emit('update:modelValue', v)
@@ -294,6 +297,22 @@ const selectedOption = computed(() => {
   return { label: v, value: v }
 })
 const handleSearchClick = () => {}
+
+watch(
+  [() => props.searchable, () => props.loading, selectedOption, dropdownVisible],
+  ([searchable, loading, item, v]) => {
+    if (!searchable) {
+      return
+    }
+    if (loading === false && item && v) {
+      nextTick(() => {
+        dropdownRef.value.contentRef
+          ?.querySelector(`div > div[data-key="${item.value}"]`)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      })
+    }
+  }
+)
 </script>
 <style scoped>
 .k-combo-box {
