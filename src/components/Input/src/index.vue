@@ -45,7 +45,11 @@
       v-bind="$attrs"
       ref="inputRef"
       class="k-input__input"
-      :class="[!label ? 'py-10.5px px-0' : '', 'w-full']"
+      :class="[
+        !label ? 'py-10.5px px-0' : '',
+        'w-full',
+        maskValue ? 'opacity-0 focus:opacity-100 sibling:opacity-100 focus:sibling:opacity-0' : ''
+      ]"
       :value="modelValue"
       :disabled="disabled"
       :autocomplete="autocomplete"
@@ -54,6 +58,9 @@
       @focus="handleFocus"
       @blur="handleBlur"
     />
+    <div v-if="maskValue && type !== 'textarea'" style="grid-area: input" class="pointer-events-none">
+      {{ maskValue }}
+    </div>
     <div v-if="$slots.suffix" class="k-input__suffix">
       <slot name="suffix"></slot>
     </div>
@@ -85,6 +92,10 @@ defineProps({
     default: false
   },
   modelValue: {
+    type: [String, Boolean, Number],
+    default: ''
+  },
+  maskValue: {
     type: [String, Boolean, Number],
     default: ''
   },
