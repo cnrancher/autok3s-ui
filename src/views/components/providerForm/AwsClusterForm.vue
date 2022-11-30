@@ -114,6 +114,15 @@
                       fetchImages,
                       onSelect: (e) => {
                         form.options['ami'] = e.ImageId
+                        const rdt = upperFirst(e.RootDeviceType)
+                        const rootSize = e.BlockDeviceMappings?.[0]?.[rdt]?.VolumeSize
+                        const volumeType = e.BlockDeviceMappings?.[0]?.[rdt]?.VolumeType
+                        if (rootSize) {
+                          form.options['root-size'] = rootSize
+                        }
+                        if (volumeType) {
+                          form.options['volume-type'] = volumeType
+                        }
                         updateImageDetail(cloneDeep(e))
                         // form.options['instance-type'] = ''
                       }
