@@ -85,15 +85,17 @@
             :class="[modelValue === v.value ? 'text-white bg-warm-gray-400' : '']"
             @click="setValue(v.value)"
           >
-            <slot :option="v" :searchable="searchable" :query="query">
-              <template v-if="searchable && query">
-                {{ v.label.slice(0, v.matchedStart) }}
-                <span class="text-$info">{{ v.label.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
-                {{ v.label.slice(v.matchedStart + v.matchedLen) }}
-              </template>
-              <template v-else>
-                {{ v.label }}
-              </template>
+            <slot :option="v" :searchable="searchable" :query="query" :search-field="searchField">
+              <div class="flex">
+                <template v-if="searchable && query">
+                  {{ v[searchField].slice(0, v.matchedStart) }}
+                  <span class="text-$info">{{ v[searchField].slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                  {{ v[searchField].slice(v.matchedStart + v.matchedLen) }}
+                </template>
+                <template v-else>
+                  {{ v.label }}
+                </template>
+              </div>
             </slot>
           </div>
         </template>
@@ -202,6 +204,10 @@ const props = defineProps({
     default() {
       return []
     }
+  },
+  searchField: {
+    type: String,
+    default: 'label'
   }
 })
 
@@ -259,15 +265,12 @@ const filteredOptions = computed(() => {
     return []
   }
   const obj = isObj.value
+  const searchField = props.searchField
   return options
-    .filter((item) =>
-      obj
-        ? item.label?.toLowerCase().includes(q) || item.value?.toLowerCase().includes(q)
-        : item?.toLowerCase().includes(q)
-    )
+    .filter((item) => (obj ? item[searchField]?.toLowerCase().includes(q) : item?.toLowerCase().includes(q)))
     .map((item) => {
       if (obj) {
-        const l = item.label?.toLowerCase() ?? ''
+        const l = item[searchField]?.toLowerCase() ?? ''
         const i = l.indexOf(q)
         return {
           ...item,
