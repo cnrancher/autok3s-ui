@@ -65,14 +65,15 @@
               :disabled="readonly"
               :loading="instanceTypeInfo.loading || imageDetail.loading"
               :options="instanceTypeOptions"
+              search-field="value"
               clearable
               searchable
             >
               <template #default="{ option: v, query }">
                 <template v-if="query">
-                  <div>
+                  <div class="flex">
                     {{ v.value.slice(0, v.matchedStart) }}
-                    <span class="text-$info">{{ v.label.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                    <span class="text-$info">{{ v.value.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
                     {{ v.value.slice(v.matchedStart + v.matchedLen) }}
                   </div>
                   <div class="flex gap-2 text-sm text-gray-500">
@@ -179,6 +180,7 @@
               :loading="vpcInfo.loading"
               :options="vpcInfo.data"
               clearable
+              searchable
               @change="vpcChange($event)"
             >
               <template #default="{ option }">
@@ -215,6 +217,7 @@
               :loading="subnetInfo.loading"
               :options="subnetInfo.data"
               clearable
+              searchable
             >
               <template #footer>
                 <div v-if="subnetInfo.nextToken" class="text-center cursor-pointer" @click.stop="loadSubnets()">
@@ -237,6 +240,7 @@
               :loading="securityGroupInfo.loading"
               :options="securityGroupInfo.data"
               clearable
+              searchable
             >
               <template #footer>
                 <div
@@ -272,7 +276,29 @@
               :loading="keyPairInfo.loading"
               :options="keyPairInfo.data"
               clearable
-            ></KComboBox>
+              searchable
+            >
+              <template #default="{ option: v, query }">
+                <template v-if="query">
+                  <div class="flex">
+                    {{ v.label.slice(0, v.matchedStart) }}
+                    <span class="text-$info">{{ v.label.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                    {{ v.label.slice(v.matchedStart + v.matchedLen) }}
+                  </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>Type: {{ v.raw.KeyType }}</div>
+                  </div>
+                </template>
+                <template v-else>
+                  <div>
+                    {{ v.label }}
+                  </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>Type: {{ v.raw.KeyType }}</div>
+                  </div>
+                </template>
+              </template>
+            </KComboBox>
             <string-form
               v-model.trim="form.config['ssh-user']"
               label="SSH User"
