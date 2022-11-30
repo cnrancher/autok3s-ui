@@ -299,12 +299,12 @@ const selectedOption = computed(() => {
 const handleSearchClick = () => {}
 
 watch(
-  [() => props.searchable, () => props.loading, selectedOption, dropdownVisible],
-  ([searchable, loading, item, v]) => {
+  [() => props.searchable, () => props.loading, query, selectedOption, dropdownVisible],
+  ([searchable, loading, q, item, v]) => {
     if (!searchable) {
       return
     }
-    if (loading === false && item && v) {
+    if (loading === false && item && v && !q) {
       nextTick(() => {
         dropdownRef.value.contentRef
           ?.querySelector(`div > div[data-key="${item.value}"]`)
