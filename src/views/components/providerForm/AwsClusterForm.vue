@@ -98,6 +98,7 @@
               label="AMI"
               :desc="desc.options['ami']"
               :readonly="readonly"
+              :mask-value="selectedImageName"
             >
               <template v-if="keyInfo.valid" #suffix>
                 <KIcon
@@ -451,6 +452,7 @@ import { Base64 } from 'js-base64'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
 import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
+import { upperFirst } from 'lodash-es'
 
 const needDecodeOptionKeys = ['user-data-content']
 
@@ -591,7 +593,7 @@ const {
   resetSubnetInfo,
   resetSecurityGroupInfo,
   fetchImages,
-  // fetchImageById,
+  fetchImageById,
   fetchKeyPairs,
   fetchInstanceProfiles,
   updateImageDetail
@@ -792,9 +794,26 @@ watch(
   }
 )
 
-// watch([() => keyInfo.valid, () => form.options['ami']], ([valid, imageId]) => {
-//   if (valid && imageId !== imageDetail.imageId) {
-//     fetchImageById(form.options.region, form.options['ami'])
-//   }
-// })
+const imageIdReg = /^ami-[a-zA-Z0-9]{17}$/
+watch([() => keyInfo.valid, () => form.options['ami']], ([valid, imageId]) => {
+  if (valid && imageIdReg.test(imageId) && imageId !== imageDetail.data?.ImageId) {
+    fetchImageById(form.options.region, form.options['ami'])
+  }
+})
+const selectedImageName = computed(() => {
+  const imageId = form.options['ami']
+  const image = imageDetail.data
+  if (imageId === image?.ImageId) {
+    const imageName = image.Name
+    return imageName
+      .split('/')
+      .slice(-1)[0]
+      .replace(/hvm|ssd/gi, '')
+      .replace(/-([0-9.]+)?v?[0-9]{8}(-[0-9]+|[0-9.]+)?/, '')
+      .split('-')
+      .map((item) => upperFirst(item))
+      .join(' ')
+  }
+  return imageId
+})
 </script>
