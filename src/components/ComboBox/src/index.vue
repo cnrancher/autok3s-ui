@@ -89,7 +89,9 @@
               <div class="flex">
                 <template v-if="searchable && query">
                   {{ v[searchField].slice(0, v.matchedStart) }}
-                  <span class="text-$info">{{ v[searchField].slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                  <span class="text-$info">
+                    {{ v[searchField].slice(v.matchedStart, v.matchedStart + v.matchedLen) }}
+                  </span>
                   {{ v[searchField].slice(v.matchedStart + v.matchedLen) }}
                 </template>
                 <template v-else>
