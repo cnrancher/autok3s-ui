@@ -108,8 +108,8 @@
           v-model.trim="config['master']"
           label="Master"
           :desc="desc.config['master']"
-          :readonly="readonly || masterDisabled"
-          :disabled="masterFormDisabled"
+          :readonly="readonly"
+          :disabled="masterFormDisabled || masterDisabled"
         />
         <!-- <string-form
           v-model.trim="config['master-extra-args']"
@@ -137,7 +137,8 @@
           v-model.trim="config['worker']"
           label="Worker"
           :desc="desc.config['worker']"
-          :readonly="readonly || workerDisabled"
+          :readonly="readonly"
+          :disabled="workerDisabled"
         />
         <!-- <string-form
           v-model.trim="config['worker-extra-args']"
