@@ -233,7 +233,6 @@ export default function useAwsSdk() {
 
   const imageDetail = reactive({
     region: '',
-    imageId: '',
     loading: false,
     loaded: true,
     error: null,
@@ -657,15 +656,16 @@ export default function useAwsSdk() {
       region: tmpRegion
     })
 
-    const filters = [
-      {
-        Name: 'image-id',
-        Values: [imageId]
-      }
-    ]
+    // const filters = [
+    //   {
+    //     Name: 'image-id',
+    //     Values: [imageId]
+    //   }
+    // ]
     const input = {
       IncludeDeprecated: false,
-      Filters: filters
+      // Filters: filters,
+      ImageIds: [imageId]
     }
     imageDetail.data = null
     imageDetail.loading = true
