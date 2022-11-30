@@ -579,7 +579,8 @@ export default function useAwsSdk() {
       const data = await ec2client.send(new DescribeSubnetsCommand(input), { abortSignal })
       const d = data.Subnets.map((s) => ({
         label: s.SubnetId,
-        value: s.SubnetId
+        value: s.SubnetId,
+        raw: s
       }))
       subnetInfo.data.push(...d)
       subnetInfo.nextToken = data.NextToken
@@ -629,7 +630,8 @@ export default function useAwsSdk() {
       const data = await ec2client.send(new DescribeSecurityGroupsCommand(input), { abortSignal })
       const d = data.SecurityGroups.map((sg) => ({
         label: `${sg.GroupName} (${sg.GroupId})`,
-        value: sg.GroupId
+        value: sg.GroupId,
+        raw: sg
       }))
       securityGroupInfo.data.push(...d)
       securityGroupInfo.nextToken = data.NextToken
@@ -820,7 +822,8 @@ export default function useAwsSdk() {
       const data = await ec2client.send(new DescribeKeyPairsCommand(input), { abortSignal })
       keyPairInfo.data = data.KeyPairs.map((item) => ({
         label: item.KeyName,
-        value: item.KeyName
+        value: item.KeyName,
+        raw: item
       }))
     } catch (err) {
       if (err.name !== 'AbortError') {
