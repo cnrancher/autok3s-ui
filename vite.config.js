@@ -4,6 +4,7 @@ import { createHtmlPlugin } from 'vite-plugin-html'
 import WindiCSS from 'vite-plugin-windicss'
 import { loadEnv } from 'vite'
 import { fileURLToPath, URL } from 'url'
+import legacy from '@vitejs/plugin-legacy'
 
 /**
  * @type {import('vite').UserConfig}
@@ -26,6 +27,9 @@ export default ({ command, mode }) => {
           }
         },
         minify: isBuild
+      }),
+      legacy({
+        targets: ['defaults', 'not IE 11']
       })
     ],
     resolve: {
