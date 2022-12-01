@@ -37,7 +37,7 @@
             <k-button class="role-primary" type="button" :loading="loading || creating" @click="create(true)">
               Save As Template
             </k-button>
-            <k-button class="role-primary" type="button" :loading="loading || creating" @click="create">
+            <k-button class="role-primary" type="button" :loading="loading || creating" @click="create(false)">
               Create
             </k-button>
           </footer-actions>
