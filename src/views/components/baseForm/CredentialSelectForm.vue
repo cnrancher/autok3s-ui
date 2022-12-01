@@ -150,7 +150,10 @@ const formLabel = computed(() => {
         style="width: fit-content"
         @click="showCredentialModal"
       >
-        {{ hasValue ? 'Edit' : 'Create' }} Credential
+        Edit Credential
+      </KButton>
+      <KButton v-else-if="!disabled" class="role-secondary" style="width: fit-content" @click="showCredentialModal">
+        Create Credential
       </KButton>
     </div>
 
