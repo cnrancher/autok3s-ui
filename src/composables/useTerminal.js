@@ -40,6 +40,7 @@ export default function useTerminal(domRef, onDataCallback, xtermConfig = {}) {
         selection: docStyle.getPropertyValue('--terminal-selection').trim(),
         foreground: docStyle.getPropertyValue('--terminal-text').trim()
       },
+      allowProposedApi: true,
       ...xtermConfig
     })
     readyState.value = INITIALIZING
