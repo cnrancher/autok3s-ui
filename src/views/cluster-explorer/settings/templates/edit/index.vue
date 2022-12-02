@@ -20,6 +20,9 @@
       <k-alert v-if="template.status" type="warning" :title="template.status"></k-alert>
       <div class="grid grid-cols-3 gap-10px pb-20px">
         <k-select :model-value="template?.provider" label="Provider" required :loading="loading" disabled>
+          <template #suffix>
+            <img class="h-42px w-42px object-contain" :src="providerIconMap.get(template?.provider)" />
+          </template>
           <k-option v-for="p in providers" :key="p.id" :value="p.id" :label="p.name"></k-option>
         </k-select>
         <string-form :model-value="template?.name" label="Name" placeholder="e.g. test" required readonly />
@@ -63,6 +66,7 @@ import { cloneDeep } from '@/utils'
 import useTemplateStore from '@/store/useTemplateStore.js'
 import { storeToRefs } from 'pinia'
 import useClusterFormManage from '@/composables/useClusterFormManage.js'
+import { useProviderIcon } from '@/views/composables/useProviderIcon.js'
 
 const props = defineProps({
   templateId: {
@@ -70,7 +74,7 @@ const props = defineProps({
     default: ''
   }
 })
-
+const providerIconMap = useProviderIcon()
 const { getForm, validate } = useClusterFormManage()
 const templateStore = useTemplateStore()
 const router = useRouter()
