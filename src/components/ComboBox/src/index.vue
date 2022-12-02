@@ -30,7 +30,7 @@
         :id="inputId"
         autocomplete="off"
         :disabled="disabled"
-        class="cursor-pointer bg-transparent focus-visible:outline-none overflow-ellipsis col-start-1 row-start-1 opacity-0 sibling:opacity-100 focus:opacity-100 focus:sibling:opacity-0"
+        class="cursor-pointer bg-transparent focus-visible:outline-none overflow-ellipsis col-start-1 row-start-1 opacity-0 sibling:opacity-100 focus:opacity-100 focus:sibling:opacity-0 placeholder-shown:opacity-100 placeholder-shown:sibling:opacity-0"
         :class="[!label ? 'py-9px' : '']"
         :value="modelValue"
         v-bind="$attrs"
