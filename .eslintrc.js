@@ -8,5 +8,13 @@ module.exports = {
     node: true,
     'vue/setup-compiler-macros': true
   },
-  ignorePatterns: ['public/*']
+  ignorePatterns: ['public/*'],
+  overrides: [
+    {
+      files: ['src/views/**/*.vue', 'src/layouts/**/*.vue'],
+      rules: {
+        'vue/multi-word-component-names': 0
+      }
+    }
+  ]
 }
