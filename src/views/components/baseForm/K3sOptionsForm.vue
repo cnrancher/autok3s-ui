@@ -157,7 +157,7 @@
     </template>
   </form-group>
   <hr class="section-divider" />
-  <form-group :closable="true">
+  <form-group>
     <template #title>Advanced</template>
     <template #default>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">

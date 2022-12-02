@@ -9,6 +9,9 @@
       </a>
       <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
     </div>
+    <div v-else>
+      <slot name="title"></slot>
+    </div>
     <small v-if="$slots.subtitle" class="col-span-2"><slot name="subtitle"></slot></small>
     <div v-show="show" class="col-span-2">
       <slot></slot>
