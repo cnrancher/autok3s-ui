@@ -43,7 +43,14 @@
       @selection-change="handleSelectionChange"
     >
       <k-table-column type="selection"></k-table-column>
-      <k-table-column sortable label="Provider" field="provider"></k-table-column>
+      <k-table-column sortable label="Provider" field="provider">
+        <template #default="{ row }">
+          <Tooltip append-to-body>
+            <img class="w-32px h-21px object-contain" :src="providerIconMap.get(row.provider)" />
+            <template #popover>Provider: {{ row.provider }}</template>
+          </Tooltip>
+        </template>
+      </k-table-column>
       <k-table-column label="Access Key" field="key"></k-table-column>
       <k-table-column label="Access Secret" field="secret"></k-table-column>
       <k-table-column field="action" width="30">
@@ -60,6 +67,12 @@
             button to reload credentials data
           </div>
         </div>
+      </template>
+      <template #group="{ group }">
+        <Tooltip append-to-body>
+          <img class="w-32px h-21px object-contain" :src="providerIconMap.get(group)" />
+          <template #popover>Provider: {{ group }}</template>
+        </Tooltip>
       </template>
     </k-table>
     <k-modal v-model="confirmModalVisible">
@@ -95,6 +108,8 @@ import CredentialBulkActions from './CredentialBulkActions.vue'
 import PageHeader from '@/views/components/PageHeader.vue'
 import useNotificationStore from '@/store/useNotificationStore.js'
 import { stringify } from '@/utils/error.js'
+import { useProviderIcon } from '@/views/composables/useProviderIcon.js'
+import Tooltip from '@/components/Tooltip'
 
 function accessKeyFieldValue(data, keyMap) {
   const v = data.secrets[keyMap[data.provider]] ?? ''
@@ -104,7 +119,7 @@ function accessSecretFieldValue(data, secretMap) {
   const v = data.secrets[secretMap[data.provider]] ?? ''
   return v.replace(/./g, '*').slice(0, 50)
 }
-
+const providerIconMap = useProviderIcon()
 const router = useRouter()
 const confirmModalVisible = ref(false)
 const commandParams = ref([])

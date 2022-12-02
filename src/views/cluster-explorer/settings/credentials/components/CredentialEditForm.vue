@@ -2,6 +2,9 @@
   <div>
     <div class="grid grid-cols-2 gap-10px">
       <k-select v-model="provider" label="Provider" required :loading="loading" disabled>
+        <template #suffix>
+          <img class="h-42px w-42px object-contain" :src="providerIconMap.get(provider)" />
+        </template>
         <k-option v-for="p in providerOptions" :key="p" :label="p.name" :value="p.id"></k-option>
       </k-select>
       <div></div>
@@ -40,6 +43,7 @@ import { updateCredential } from '@/api/credential'
 import FooterActions from '@/views/components/FooterActions.vue'
 import { stringify } from '@/utils/error.js'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
+import { useProviderIcon } from '@/views/composables/useProviderIcon.js'
 
 const props = defineProps({
   credencialId: {
@@ -47,7 +51,7 @@ const props = defineProps({
     required: true
   }
 })
-
+const providerIconMap = useProviderIcon()
 const router = useRouter()
 const credencialId = toRef(props, 'credencialId')
 const { providerKeyFieldMap } = useProviderKeyMap()
