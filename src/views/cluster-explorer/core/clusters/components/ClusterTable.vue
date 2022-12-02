@@ -17,7 +17,7 @@
         class="border rounded px-12px hover:bg-gray-100 focus-visible:outline-none"
       />
     </div>
-    <k-grouped-table :data="groupData" :group-by="groupBy" @selection-change="handleSelectionChange">
+    <KGroupedTable :data="groupData" :group-by="groupBy" @selection-change="handleSelectionChange">
       <k-table-column type="selection"></k-table-column>
       <k-table-column sortable label="State" field="status">
         <template #default="{ row, column }">
@@ -34,7 +34,14 @@
           </router-link>
         </template>
       </k-table-column>
-      <k-table-column sortable label="Provider" field="provider"></k-table-column>
+      <k-table-column sortable label="Provider" field="provider">
+        <template #default="{ row }">
+          <Tooltip append-to-body>
+            <img class="w-32px h-21px object-contain" :src="providerIconMap.get(row.provider)" />
+            <template #popover>Provider: {{ row.provider }}</template>
+          </Tooltip>
+        </template>
+      </k-table-column>
       <k-table-column sortable label="Region" field="region"></k-table-column>
       <k-table-column sortable label="Master" field="master"></k-table-column>
       <k-table-column sortable label="Worker" field="worker"></k-table-column>
@@ -66,7 +73,13 @@
           </div>
         </div>
       </template>
-    </k-grouped-table>
+      <template #group="{ group }">
+        <Tooltip append-to-body>
+          <img class="w-32px h-21px object-contain" :src="providerIconMap.get(group)" />
+          <template #popover>Provider: {{ group }}</template>
+        </Tooltip>
+      </template>
+    </KGroupedTable>
     <k-modal v-model="confirmModalVisible">
       <template #title>Are you sure?</template>
       <template #default>
@@ -112,7 +125,10 @@ import { GroupedTable as KGroupedTable } from '@/components/Table'
 import useNotificationStore from '@/store/useNotificationStore.js'
 import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 import useModal from '@/composables/useModal.js'
+import { useProviderIcon } from '@/views/composables/useProviderIcon.js'
+import Tooltip from '@/components/Tooltip'
 
+const providerIconMap = useProviderIcon()
 const router = useRouter()
 const providerClusterStores = useProviderClusterStores()
 const { loading: providersLoading, providers, error: loadProviderError } = useProviders()

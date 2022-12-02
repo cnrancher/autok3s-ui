@@ -26,6 +26,9 @@
       ></k-alert>
       <div class="grid grid-cols-2 gap-10px pb-20px">
         <k-select v-model="currentProviderId" label="Provider" required :loading="loading">
+          <template #suffix>
+            <img class="h-42px w-42px object-contain" :src="providerIconMap.get(currentProviderId)" />
+          </template>
           <k-option v-for="p in providers" :key="p.id" :value="p.id" :label="p.name"></k-option>
         </k-select>
         <k-input v-model.trim="name" label="Name" placeholder="e.g. test" required :error="nameRequired" />
@@ -84,6 +87,7 @@ import EditFromTemplate from '@/views/components/providerForm/EditFromTemplate.v
 import useClusterFormManage from '@/composables/useClusterFormManage.js'
 import useModal from '@/composables/useModal.js'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
+import { useProviderIcon } from '@/views/composables/useProviderIcon.js'
 
 const props = defineProps({
   clusterId: {
@@ -104,6 +108,7 @@ const props = defineProps({
     default: ''
   }
 })
+const providerIconMap = useProviderIcon()
 // generate cli command
 const { show: showCliCommand } = useModal(CliCommand)
 const { getForm, validate } = useClusterFormManage()
