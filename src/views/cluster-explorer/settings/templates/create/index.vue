@@ -26,6 +26,9 @@
       ></k-alert>
       <div class="grid grid-cols-3 gap-10px pb-20px">
         <k-select v-model="currentProviderId" label="Provider" required :loading="loading">
+          <template #suffix>
+            <img class="h-42px w-42px object-contain" :src="providerIconMap.get(currentProviderId)" />
+          </template>
           <k-option v-for="p in providers" :key="p.id" :value="p.id" :label="p.name"></k-option>
         </k-select>
         <string-form v-model.trim="name" label="Name" placeholder="e.g. test" required :error="nameRequired" />
@@ -73,6 +76,7 @@ import useTemplateStore from '@/store/useTemplateStore.js'
 import { storeToRefs } from 'pinia'
 import useClusterFormManage from '@/composables/useClusterFormManage.js'
 import { fetchById } from '@/api/cluster.js'
+import { useProviderIcon } from '@/views/composables/useProviderIcon.js'
 
 const props = defineProps({
   clusterId: {
@@ -88,6 +92,7 @@ const props = defineProps({
     default: 'aws'
   }
 })
+const providerIconMap = useProviderIcon()
 const { getForm, validate } = useClusterFormManage()
 const templateStore = useTemplateStore()
 const router = useRouter()

@@ -17,7 +17,7 @@
         class="focus-visible:outline-none px-12px rounded border hover:bg-gray-100"
       />
     </div>
-    <k-table :data="data" :state="state" :group-by="groupBy" @selection-change="handleSelectionChange">
+    <KTable :data="data" :state="state" :group-by="groupBy" @selection-change="handleSelectionChange">
       <k-table-column type="selection"></k-table-column>
       <k-table-column sortable label="ID" field="id">
         <template #default="{ row, column }">
@@ -33,7 +33,14 @@
           </template>
         </template>
       </k-table-column>
-      <k-table-column sortable label="Provider" field="provider"></k-table-column>
+      <k-table-column sortable label="Provider" field="provider">
+        <template #default="{ row }">
+          <Tooltip append-to-body>
+            <img class="w-32px h-21px object-contain" :src="providerIconMap.get(row.provider)" />
+            <template #popover>Provider: {{ row.provider }}</template>
+          </Tooltip>
+        </template>
+      </k-table-column>
       <k-table-column sortable label="Default" field="is-default">
         <template #default="{ row }">
           <!-- <k-icon :type="row['is-default'] ? 'favorites-fill': 'favorites'"></k-icon> -->
@@ -67,7 +74,13 @@
           </div>
         </div>
       </template>
-    </k-table>
+      <template #group="{ group }">
+        <Tooltip append-to-body>
+          <img class="w-32px h-21px object-contain" :src="providerIconMap.get(group)" />
+          <template #popover>Provider: {{ group }}</template>
+        </Tooltip>
+      </template>
+    </KTable>
     <k-modal v-model="confirmModalVisible">
       <template #title>Are you sure?</template>
       <template #default>
@@ -103,7 +116,10 @@ import useTemplateStore from '@/store/useTemplateStore.js'
 import { storeToRefs } from 'pinia'
 import useNotificationStore from '@/store/useNotificationStore.js'
 import { ref, watchEffect } from 'vue'
+import { useProviderIcon } from '@/views/composables/useProviderIcon.js'
+import Tooltip from '@/components/Tooltip'
 
+const providerIconMap = useProviderIcon()
 const router = useRouter()
 const notificationStore = useNotificationStore()
 const templateStore = useTemplateStore()
