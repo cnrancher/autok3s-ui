@@ -445,31 +445,115 @@ watch(
     immediate: true
   }
 )
-const masterExtraArgs = [
-  {
-    long: '--docker',
-    alias: 'runtime',
-    flag: true,
-    values: ['docker', 'containerd'],
-    modelValue: true,
-    desc: '(agent/runtime) Automatic install docker on VM and use docker instead of containerd'
-  },
-  {
-    long: '--no-deploy',
-    alias: 'disable',
-    multiple: true,
-    values: ['coredns', 'servicelb', 'traefik', 'local-storage', 'metrics-server'],
-    modelValue: '',
-    desc: 'Do not deploy packaged components (valid items: coredns, servicelb, traefik, local-storage, metrics-server)'
-  },
-  {
-    long: '--flannel-backend',
-    alias: 'flannel-backend',
-    values: ['none', 'vxlan', 'ipsec', 'host-gw', 'wireguard'],
-    modelValue: 'vxlan',
-    desc: `(networking) One of 'none', 'vxlan', 'ipsec', 'host-gw', or 'wireguard' (default: "vxlan")`
+
+// ref: https://semver.org/lang/zh-CN/
+const versionReg =
+  /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+const versionLt = (a, b) => {
+  // a < b; only compare major,  minor and patch
+  const resultA = versionReg.exec(a.replace(/^v/i, ''))
+  const resultB = versionReg.exec(b.replace(/^v/i, ''))
+
+  if (!resultA || !resultB) {
+    return {
+      error: `Unknown Version: a: ${a}, b: ${b}`
+    }
   }
-]
+
+  const versionA = [resultA[1], resultA[2], resultA[3]]
+  const versionB = [resultB[1], resultB[2], resultB[3]]
+  let r = 0
+  for (let i = 0; i < 3; i++) {
+    r = versionA[i] - versionB[i]
+    if (r < 0) {
+      return {
+        result: true
+      }
+    }
+  }
+
+  return {
+    result: false
+  }
+}
+
+watch(
+  () => config['k3s-version'],
+  (v) => {
+    const args = config['master-extra-args']
+    if (!v) {
+      // latest version
+      config['master-extra-args'] = args.replace(/--no-deploy /i, '--disable ')
+    }
+
+    const result = versionLt(v, '1.20.0')?.result
+    if (result === false) {
+      // >= 1.20.0
+      config['master-extra-args'] = args.replace(/--no-deploy /i, '--disable ')
+    } else if (result === true) {
+      config['master-extra-args'] = args.replace(/--disable /i, '--no-deploy ')
+    }
+  },
+  { immediate: true }
+)
+
+const masterExtraArgs = computed(() => {
+  const arg1 = [
+    {
+      long: '--docker',
+      alias: 'runtime',
+      flag: true,
+      values: ['docker', 'containerd'],
+      modelValue: true,
+      desc: '(agent/runtime) Automatic install docker on VM and use docker instead of containerd'
+    },
+    {
+      long: '--no-deploy',
+      alias: 'disable',
+      multiple: true,
+      values: ['coredns', 'servicelb', 'traefik', 'local-storage', 'metrics-server'],
+      modelValue: '',
+      desc: 'Do not deploy packaged components (valid items: coredns, servicelb, traefik, local-storage, metrics-server)'
+    },
+    {
+      long: '--flannel-backend',
+      alias: 'flannel-backend',
+      values: ['none', 'vxlan', 'ipsec', 'host-gw', 'wireguard'],
+      modelValue: 'vxlan',
+      desc: `(networking) One of 'none', 'vxlan', 'ipsec', 'host-gw', or 'wireguard' (default: "vxlan")`
+    }
+  ]
+  const arg2 = [
+    {
+      long: '--docker',
+      alias: 'runtime',
+      flag: true,
+      values: ['docker', 'containerd'],
+      modelValue: true,
+      desc: '(agent/runtime) Automatic install docker on VM and use docker instead of containerd'
+    },
+    {
+      long: '--disable',
+      alias: 'disable',
+      multiple: true,
+      values: ['coredns', 'servicelb', 'traefik', 'local-storage', 'metrics-server'],
+      modelValue: '',
+      desc: 'Do not deploy packaged components (valid items: coredns, servicelb, traefik, local-storage, metrics-server)'
+    },
+    {
+      long: '--flannel-backend',
+      alias: 'flannel-backend',
+      values: ['none', 'vxlan', 'ipsec', 'host-gw', 'wireguard'],
+      modelValue: 'vxlan',
+      desc: `(networking) One of 'none', 'vxlan', 'ipsec', 'host-gw', or 'wireguard' (default: "vxlan")`
+    }
+  ]
+  const v = config['k3s-version']
+  if (!v || versionLt(v, '1.20.0')?.result === false) {
+    return arg2
+  }
+  return arg1
+})
 const workExtraArgs = [
   {
     long: '--docker',
