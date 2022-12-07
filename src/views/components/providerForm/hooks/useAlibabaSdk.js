@@ -5,6 +5,8 @@ import request from '@/utils/request'
 import hmacSHA1 from 'crypto-js/hmac-sha1'
 import base64 from 'crypto-js/enc-base64'
 
+import { useWhitelist } from './useWhitelist'
+
 const descriptor = {
   accessKey: {
     required: true,
@@ -171,6 +173,21 @@ export default function useAlibabaSdk() {
     error: null
   })
 
+  const instanceTypeInfo = shallowReactive({
+    loading: false,
+    loaded: false,
+    error: null,
+    data: []
+  })
+
+  const imageDetail = reactive({
+    regionId: '',
+    loading: false,
+    loaded: true,
+    error: null,
+    data: null
+  })
+
   const vSwitchDetail = reactive({
     loading: false,
     loaded: false,
@@ -185,6 +202,8 @@ export default function useAlibabaSdk() {
     error: null,
     data: []
   })
+
+  const { updateWhitelist } = useWhitelist()
 
   // watch([() => imageInfo.regionId, imageInfo.instanceType], () => {
   //   imageInfo.data = []
@@ -241,7 +260,7 @@ export default function useAlibabaSdk() {
         return
       }
       keyInfo.valid = true
-      regionInfo.data = resp.Regions.Region.map((r) => ({ label: r.RegionId, value: r.RegionId, raw: r }))
+      regionInfo.data = resp.Regions.Region.map((r) => ({ label: r.LocalName, value: r.RegionId, raw: r }))
     })
   }
 
@@ -269,7 +288,7 @@ export default function useAlibabaSdk() {
           zoneInfo.error = err.message ?? err
           return
         }
-        zoneInfo.data = resp.Zones.Zone.map((z) => ({ label: z.ZoneId, value: z.ZoneId, raw: z }))
+        zoneInfo.data = resp.Zones.Zone.map((z) => ({ label: z.LocalName, value: z.ZoneId, raw: z }))
       }
     )
   }
@@ -577,6 +596,63 @@ export default function useAlibabaSdk() {
     })
   }
 
+  const fetchImageById = (r, imageId) => {
+    const tmpRegion = r ?? region.value
+    imageDetail.regionId = tmpRegion
+    imageDetail.loading = true
+    imageDetail.loaded = false
+    imageDetail.error = null
+
+    const p = { RegionId: imageDetail.regionId, ImageId: imageId }
+
+    // eslint-disable-next-line no-undef
+    const ecs = new ALY.ECS(ecsOptions.value)
+    ecs.describeImages(p, (err, resp) => {
+      imageDetail.loading = false
+      imageDetail.loaded = true
+      if (err) {
+        imageDetail.error = err.message ?? err
+        return
+      }
+      const data = resp.Images.Image ?? []
+      if (data.length === 0) {
+        imageDetail.error = `Not found image by id(${imageId})`
+        imageDetail.data = null
+      } else {
+        imageDetail.data = data[0]
+      }
+    })
+  }
+
+  const fetchAllInstanceTypes = () => {
+    instanceTypeInfo.loading = true
+    instanceTypeInfo.loaded = false
+    // eslint-disable-next-line no-undef
+    const ecs = new ALY.ECS(ecsOptions.value)
+    const data = []
+    const loadData = (p = {}) => {
+      ecs.describeInstanceTypes(p, (err, resp) => {
+        if (err) {
+          instanceTypeInfo.error = err.message ?? err
+          instanceTypeInfo.loading = false
+          instanceTypeInfo.loaded = true
+          return
+        }
+        data.push(...resp.InstanceTypes.InstanceType)
+        if (resp.NextToken) {
+          const p = {}
+          p.NextToken = resp.NextToken
+          loadData(p)
+        } else {
+          instanceTypeInfo.loading = false
+          instanceTypeInfo.loaded = true
+          instanceTypeInfo.data = data
+        }
+      })
+    }
+    loadData()
+  }
+
   const fetchKeyPairs = async (r) => {
     const tmpRegion = r ?? region.value
     if (!tmpRegion) {
@@ -621,6 +697,7 @@ export default function useAlibabaSdk() {
       }
     }
     try {
+      await updateWhitelist(['ecs.aliyuncs.com'])
       await loadData()
     } catch (err) {
       if (err.name === 'AbortError') {
@@ -631,6 +708,10 @@ export default function useAlibabaSdk() {
     }
     keyPairInfo.loaded = true
     keyPairInfo.loading = false
+  }
+
+  const updateImageDetail = (image) => {
+    imageDetail.data = image
   }
 
   const resetZoneInfo = () => {
@@ -681,7 +762,8 @@ export default function useAlibabaSdk() {
   }
 
   const resetImageInfo = () => {
-    ;(imageInfo.regionId = ''), (imageInfo.imageName = '')
+    imageInfo.regionId = ''
+    imageInfo.imageName = ''
     imageInfo.imageOwnerAlias = null
     imageInfo.instanceType = ''
     imageInfo.OSType = 'linux'
@@ -695,12 +777,20 @@ export default function useAlibabaSdk() {
     imageInfo.loaded = false
   }
 
+  const resetInstanceTypeInfo = () => {
+    instanceTypeInfo.data = []
+    instanceTypeInfo.loaded = false
+    instanceTypeInfo.loading = false
+    instanceTypeInfo.error = null
+    instanceTypeInfo.regionId = ''
+  }
+
   const resetAll = () => {
     // keyInfo.loaded = false
     // keyInfo.loading = false
     // keyInfo.valid = false
     // keyInfo.error = null
-    resetZoneInfo()
+    resetInstanceTypeInfo, resetZoneInfo()
     resetVpcInfo()
     resetVSwitchInfo()
     resetSecurityGroupInfo()
@@ -716,7 +806,9 @@ export default function useAlibabaSdk() {
     securityGroupInfo: readonly(securityGroupInfo),
     vSwitchDetail: readonly(vSwitchDetail),
     imageInfo: readonly(imageInfo),
+    imageDetail: readonly(imageDetail),
     keyPairInfo: readonly(keyPairInfo),
+    instanceTypeInfo: readonly(instanceTypeInfo),
     resetZoneInfo,
     resetVpcInfo,
     resetVSwitchInfo,
@@ -730,6 +822,9 @@ export default function useAlibabaSdk() {
     fetchSecurityGroups,
     fetchVSwitchDetail,
     fetchImages,
-    fetchKeyPairs
+    fetchImageById,
+    fetchKeyPairs,
+    updateImageDetail,
+    fetchAllInstanceTypes
   }
 }

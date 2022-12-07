@@ -136,6 +136,7 @@ const searchImages = () => {
             <div>
               <div>Image ID: {{ d.ImageId }}</div>
               <div>Name: {{ d.ImageName }}</div>
+              <div>OS: {{ d.OSNameEn ?? d.OSName }}</div>
               <div>Platform: {{ d.Platform }}</div>
               <div>Architecture: {{ d.Architecture }}</div>
             </div>
