@@ -70,33 +70,31 @@
               :loading="instanceTypeInfo.loading"
               :options="instanceTypeOptions"
               clearable
+              searchable
             >
-              <template #header>
-                <div class="p-1 bg-white" @click.stop="toggleSeries">
-                  <div class="cursor-pointer flex items-center justify-between">
-                    <div>Filter: {{ typeSeries ? typeSeries : 'All Instance Type Series' }}</div>
-                    <k-icon type="arrow-right" :direction="showSeriesSelection ? 'down' : ''"></k-icon>
+              <template #default="{ option: v, query }">
+                <template v-if="query">
+                  <div class="flex">
+                    {{ v.value.slice(0, v.matchedStart) }}
+                    <span class="text-$info">{{ v.value.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                    {{ v.value.slice(v.matchedStart + v.matchedLen) }}
                   </div>
-                  <div v-show="showSeriesSelection" class="flex gap-2 flex-wrap p-1">
-                    <div
-                      :class="['cursor-pointer', typeSeries === '' ? 'bg-warm-gray-400' : '']"
-                      class="p-1"
-                      @click="chooseSeries('')"
-                    >
-                      All Instance Type Series
-                    </div>
-                    <div
-                      v-for="s in instanceTypeSeries"
-                      :key="s"
-                      :class="[typeSeries && typeSeries === s ? 'bg-warm-gray-400' : '']"
-                      class="cursor-pointer p-1"
-                      @click="chooseSeries(s)"
-                    >
-                      {{ s }}
-                    </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>Family: {{ v.raw.InstanceFamily }}</div>
+                    <div>{{ v.raw.CPU }} CPU</div>
+                    <div>{{ v.raw.Memory }} GiB Memory</div>
                   </div>
-                  <hr />
-                </div>
+                </template>
+                <template v-else>
+                  <div>
+                    {{ v.value }}
+                  </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>Family: {{ v.raw.InstanceFamily }}</div>
+                    <div>{{ v.raw.CPU }} CPU</div>
+                    <div>{{ v.raw.Memory }} GiB Memory</div>
+                  </div>
+                </template>
               </template>
             </KComboBox>
             <string-form
@@ -104,6 +102,7 @@
               label="Image"
               :desc="desc.options['image']"
               :readonly="readonly"
+              :mask-value="selectedImageName"
             >
               <template v-if="keyInfo.valid" #suffix>
                 <KIcon
@@ -118,6 +117,7 @@
                       fetchImages,
                       onSelect: (e) => {
                         form.options['image'] = e.ImageId
+                        updateImageDetail(cloneDeep(e))
                       }
                     })
                   "
@@ -172,6 +172,7 @@
               :loading="vpcInfo.loading"
               :options="vpcInfo.data"
               clearable
+              searchable
               @change="vpcChange($event)"
             ></KComboBox>
             <!-- <string-form
@@ -188,6 +189,7 @@
               :loading="subnetInfo.loading"
               :options="subnetInfo.data"
               clearable
+              searchable
             ></KComboBox>
             <string-form
               v-model.trim="form.options['internet-max-bandwidth-out']"
@@ -209,6 +211,7 @@
               :loading="securityGroupInfo.loading"
               :options="securityGroupInfo.data"
               clearable
+              searchable
             ></KComboBox>
             <boolean-form v-model="form.options['eip']" label="EIP" :desc="desc.options['eip']" :readonly="readonly" />
           </div>
@@ -234,6 +237,7 @@
               :loading="keyPairInfo.loading"
               :options="keyPairInfo.data"
               clearable
+              searchable
             ></KComboBox>
             <string-form
               v-model.trim="form.config['ssh-user']"
@@ -470,6 +474,7 @@ const {
   fetchSecrityGroups,
   fetchKeyPairs,
   fetchImages,
+  fetchImageById,
   restAll,
   resetZoneInfo,
   resetInstanceTypeInfo,
@@ -488,6 +493,7 @@ const {
   securityGroupInfo,
   keyPairInfo,
   imageInfo,
+  imageDetail,
   whitelistInfo
 } = useTencentSdk()
 const validateCredentials = () => {
@@ -495,14 +501,6 @@ const validateCredentials = () => {
 }
 const { show: showSearchImageModal } = useModal(TencentImageSearchModal)
 const typeSeries = ref('')
-const showSeriesSelection = ref(false)
-const toggleSeries = () => {
-  showSeriesSelection.value = !showSeriesSelection.value
-}
-const chooseSeries = (s) => {
-  typeSeries.value = s
-  // loadInstanceTypes()
-}
 
 const errors = computed(() => {
   return [
@@ -518,17 +516,6 @@ const errors = computed(() => {
   ].filter((e) => e)
 })
 
-const instanceTypeSeries = computed(() => {
-  const groups = instanceTypeInfo.data.reduce((t, c) => {
-    const g = c.raw.InstanceFamily
-    if (!t.includes(g)) {
-      t.push(g)
-    }
-    return t
-  }, [])
-  groups.sort()
-  return groups
-})
 const enCollator = new Intl.Collator('en')
 const instanceTypeOptions = computed(() => {
   const series = typeSeries.value
@@ -633,4 +620,19 @@ watch(
     }
   }
 )
+
+const imageIdReg = /^img-[a-zA-Z0-9]{8}$/
+watch([() => keyInfo.valid, () => form.options['image']], ([valid, imageId]) => {
+  if (valid && imageIdReg.test(imageId) && imageId !== imageDetail.data?.ImageId) {
+    fetchImageById(form.options.region, form.options['image'])
+  }
+})
+const selectedImageName = computed(() => {
+  const imageId = form.options['image']
+  const image = imageDetail.data
+  if (imageId === image?.ImageId) {
+    return image.ImageName
+  }
+  return imageId
+})
 </script>

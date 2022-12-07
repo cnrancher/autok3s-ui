@@ -16,6 +16,8 @@ const descriptor = {
   }
 }
 const validator = new Schema(descriptor)
+const languages = ['zh-CN', 'en-US']
+const currentLanguage = languages.includes(navigator.language) ? navigator.language : 'zh-CN'
 
 const encodeHeaders = (headers = {}) => {
   const h = Object.entries(headers).reduce((t, [k, v]) => {
@@ -121,6 +123,7 @@ function send(secretId, secretKey, action, region, payload, signal, host = 'cvm.
     'X-TC-Action': action,
     'X-TC-Timestamp': requestTimestamp,
     'X-TC-Version': '2017-03-12',
+    'X-TC-Language': currentLanguage,
     Authorization: auth
   }
 
@@ -263,7 +266,13 @@ export default function useTencentSdk() {
     total: 0,
     offset: 0
   })
-
+  const imageDetail = reactive({
+    region: '',
+    loading: false,
+    loaded: true,
+    error: null,
+    data: null
+  })
   let whitelist = []
   const updateWhitelist = async (domains, signal) => {
     if (domains.every((d) => whitelist.includes(d))) {
@@ -416,7 +425,7 @@ export default function useTencentSdk() {
       }
       instanceTypeInfo.data =
         resp.Response?.InstanceTypeConfigSet?.map((item) => ({
-          label: item.InstanceType,
+          label: `${item.InstanceType} (CPU: ${item.CPU}, Memory: ${item.Memory} GiB)`,
           value: item.InstanceType,
           raw: item
         })) ?? []
@@ -762,6 +771,65 @@ export default function useTencentSdk() {
     imageInfo.loaded = true
   }
 
+  const fetchImageById = async (r, imageId) => {
+    if (imageDetail.data?.ImageId === imageId) {
+      return
+    }
+
+    imageDetail.region = r ?? region.value
+    if (!imageDetail.region) {
+      imageDetail.error = '"Region" is required'
+      return false
+    }
+    imageDetail.error = null
+    imageDetail.loading = true
+    imageDetail.loaded = false
+    imageDetail.data = null
+    const abortSignal = abortController.signal
+    try {
+      const payload = {
+        Filters: [
+          {
+            Values: [imageId],
+            Name: 'image-id'
+          }
+        ]
+      }
+
+      const resp = await send(
+        keyInfo.secretId,
+        keyInfo.secretKey,
+        'DescribeImages',
+        imageDetail.region,
+        payload,
+        abortSignal
+      )
+      if (resp.Response.Error) {
+        throw new Error(resp.Response.Error.Message)
+      }
+      const data = resp.Response?.ImageSet ?? []
+
+      if (data.length === 0) {
+        imageDetail.error = `Not found image by id(${imageId})`
+        imageDetail.data = null
+      } else {
+        imageDetail.data = data[0]
+      }
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        // do nothing
+      } else {
+        imageDetail.error = err
+      }
+    }
+    imageDetail.loading = false
+    imageDetail.loaded = true
+  }
+
+  const updateImageDetail = (image) => {
+    imageDetail.data = image
+  }
+
   // const resetKeyInfo = () => {
   //   keyInfo.valid = false
   //   keyInfo.loaded = false
@@ -856,6 +924,8 @@ export default function useTencentSdk() {
     fetchSecrityGroups,
     fetchKeyPairs,
     fetchImages,
+    fetchImageById,
+    updateImageDetail,
     restAll,
     resetZoneInfo,
     resetInstanceTypeInfo,
@@ -874,6 +944,7 @@ export default function useTencentSdk() {
     securityGroupInfo: readonly(securityGroupInfo),
     keyPairInfo: readonly(keyPairInfo),
     imageInfo: readonly(imageInfo),
+    imageDetail: readonly(imageDetail),
     whitelistInfo: readonly(whitelistInfo)
   }
 }
