@@ -25360,6 +25360,9 @@ module.exports={
           },
           "InstanceTypeFamily": {
             "type": "string"
+          },
+          "NextToken": {
+            "type": "string"
           }
         }
       }

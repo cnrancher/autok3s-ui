@@ -61,33 +61,31 @@
               :disabled="readonly"
               :options="instanceTypeOptions"
               clearable
+              searchable
             >
-              <template #header>
-                <div class="p-1 bg-white" @click.stop="toggleSeries">
-                  <div class="cursor-pointer flex items-center justify-between">
-                    <div>Filter: {{ typeSeries ? typeSeries : 'All Instance Type Families' }}</div>
-                    <k-icon type="arrow-right" :direction="showSeriesSelection ? 'down' : ''"></k-icon>
+              <template #default="{ option: v, query }">
+                <template v-if="query">
+                  <div class="flex">
+                    {{ v.value.slice(0, v.matchedStart) }}
+                    <span class="text-$info">{{ v.value.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                    {{ v.value.slice(v.matchedStart + v.matchedLen) }}
                   </div>
-                  <div v-show="showSeriesSelection" class="flex gap-2 flex-wrap p-1">
-                    <div
-                      :class="['cursor-pointer', typeSeries === '' ? 'bg-warm-gray-400' : '']"
-                      class="p-1"
-                      @click="chooseSeries('')"
-                    >
-                      All Instance Type Families
-                    </div>
-                    <div
-                      v-for="s in instanceTypeSeries"
-                      :key="s"
-                      :class="[typeSeries && typeSeries === s ? 'bg-warm-gray-400' : '']"
-                      class="cursor-pointer p-1"
-                      @click="chooseSeries(s)"
-                    >
-                      {{ s }}
-                    </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>Family: {{ v.raw.InstanceTypeFamily }}</div>
+                    <div>{{ v.raw.CpuCoreCount }} CPU</div>
+                    <div>{{ v.raw.MemorySize }} GiB Memory</div>
                   </div>
-                  <hr />
-                </div>
+                </template>
+                <template v-else>
+                  <div>
+                    {{ v.value }}
+                  </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>Family: {{ v.raw.InstanceTypeFamily }}</div>
+                    <div>{{ v.raw.CpuCoreCount }} CPU</div>
+                    <div>{{ v.raw.MemorySize }} GiB Memory</div>
+                  </div>
+                </template>
               </template>
             </KComboBox>
             <string-form
@@ -95,6 +93,7 @@
               label="Image"
               :desc="desc.options['image']"
               :readonly="readonly"
+              :mask-value="selectedImageName"
             >
               <template v-if="keyInfo.valid" #suffix>
                 <KIcon
@@ -109,6 +108,7 @@
                       fetchImages,
                       onSelect: (e) => {
                         form.options['image'] = e.ImageId
+                        updateImageDetail(cloneDeep(e))
                       }
                     })
                   "
@@ -148,6 +148,7 @@
               :loading="vpcInfo.loading"
               :options="vpcInfo.data"
               clearable
+              searchable
               @change="vpcChange"
             >
               <template #footer>
@@ -166,6 +167,7 @@
               :options="vSwitchInfo.data"
               :desc="desc.options['v-switch']"
               clearable
+              searchable
             >
               <template #footer>
                 <div v-if="hasMoreVSwitches" class="text-center cursor-pointer" @click.stop="loadVSwitches()">
@@ -193,6 +195,7 @@
               :options="securityGroupInfo.data"
               :desc="desc.options['security-group']"
               clearable
+              searchable
             >
               <template #footer>
                 <div v-if="hasMoreSecurityGroups" class="text-center cursor-pointer" @click.stop="loadSecurityGroups()">
@@ -224,6 +227,7 @@
               :loading="keyPairInfo.loading"
               :options="keyPairInfo.data"
               clearable
+              searchable
             ></KComboBox>
             <string-form
               v-model.trim="form.config['ssh-user']"
@@ -470,15 +474,20 @@ const {
   fetchVSwitches,
   fetchSecurityGroups,
   fetchImages,
+  fetchImageById,
   fetchKeyPairs,
+  updateImageDetail,
+  fetchAllInstanceTypes,
   imageInfo,
+  imageDetail,
   keyInfo,
   regionInfo,
   zoneInfo,
   vpcInfo,
   vSwitchInfo,
   securityGroupInfo,
-  keyPairInfo
+  keyPairInfo,
+  instanceTypeInfo
 } = useAlibabaSdk()
 const validateCredentials = () => {
   validateKeys(form.options['access-key'], form.options['access-secret'])
@@ -493,7 +502,6 @@ const { showLoading, hideLoading } = inject(
 )
 const { show: showSearchImageModal } = useModal(AlibabaImageSearchModal)
 const typeSeries = ref('')
-const showSeriesSelection = ref(false)
 const vpc = ref('')
 const errors = computed(() => {
   return [...new Set([zoneInfo.error, vpcInfo.error, vSwitchInfo.error])].filter((e) => e)
@@ -541,38 +549,57 @@ const hasMoreSecurityGroups = computed(() => {
   const totalPage = Math.ceil(totalCount / pageSize)
   return pageNumber > totalPage
 })
-
-const instanceTypes = computed(() => {
-  const zone = form.options.zone
-  if (!zone) {
-    return []
-  }
-
-  return (
-    zoneInfo.data
-      .find((z) => z.value === zone)
-      ?.raw?.AvailableInstanceTypes?.InstanceTypes?.map((t) => ({ label: t, value: t })) ?? []
-  )
-})
-
 const instanceTypeOptions = computed(() => {
-  const s = typeSeries.value
-  if (!s) {
-    return instanceTypes.value
+  const arch = imageDetail.data?.Architecture
+  if (arch) {
+    const a = arch.toUpperCase()
+    return instanceTypeInfo.data
+      .filter((item) => a.startsWith(item.CpuArchitecture))
+      .map((item) => ({
+        label: `${item.InstanceTypeId} (CPU: ${item.CpuCoreCount}, Memory: ${item.MemorySize} GiB)`,
+        value: item.InstanceTypeId,
+        raw: item
+      }))
   }
 
-  return instanceTypes.value.filter((t) => t.value.substring(0, t.value.lastIndexOf('.')) === s)
+  return instanceTypeInfo.data.map((item) => ({
+    label: `${item.InstanceTypeId} (CPU: ${item.CpuCoreCount}, Memory: ${item.MemorySize} GiB)`,
+    value: item.InstanceTypeId,
+    raw: item
+  }))
 })
 
-const instanceTypeSeries = computed(() => {
-  const types = instanceTypes.value
-    .map((t) => t.value.substring(0, t.value.lastIndexOf('.')))
-    .reduce((t, c) => {
-      t.add(c)
-      return t
-    }, new Set())
-  return [...types]
-})
+// const instanceTypes = computed(() => {
+//   const zone = form.options.zone
+//   if (!zone) {
+//     return []
+//   }
+
+//   return (
+//     zoneInfo.data
+//       .find((z) => z.value === zone)
+//       ?.raw?.AvailableInstanceTypes?.InstanceTypes?.map((t) => ({ label: t, value: t })) ?? []
+//   )
+// })
+
+// const instanceTypeOptions = computed(() => {
+//   const s = typeSeries.value
+//   if (!s) {
+//     return instanceTypes.value
+//   }
+
+//   return instanceTypes.value.filter((t) => t.value.substring(0, t.value.lastIndexOf('.')) === s)
+// })
+
+// const instanceTypeSeries = computed(() => {
+//   const types = instanceTypes.value
+//     .map((t) => t.value.substring(0, t.value.lastIndexOf('.')))
+//     .reduce((t, c) => {
+//       t.add(c)
+//       return t
+//     }, new Set())
+//   return [...types]
+// })
 
 const loadVpcs = () => {
   const region = form.options.region
@@ -597,13 +624,6 @@ const loadSecurityGroups = () => {
     return
   }
   fetchSecurityGroups(region, v, securityGroupInfo.pageNumber + 1)
-}
-
-const toggleSeries = () => {
-  showSeriesSelection.value = !showSeriesSelection.value
-}
-const chooseSeries = (s) => {
-  typeSeries.value = s
 }
 
 const diskCategories = computed(() => {
@@ -696,6 +716,7 @@ watch(
       const region = form.options.region
       const zone = form.options.zone
       const v = vpc.value
+      fetchAllInstanceTypes()
       if (region) {
         fetchZones(region)
         fetchVpcs(region)
@@ -726,4 +747,17 @@ watch(
     }
   }
 )
+watch([() => keyInfo.valid, () => form.options['image']], ([valid, imageId]) => {
+  if (valid && imageId !== imageDetail.data?.ImageId) {
+    fetchImageById(form.options.region, form.options['image'])
+  }
+})
+const selectedImageName = computed(() => {
+  const imageId = form.options['image']
+  const image = imageDetail.data
+  if (imageId === image?.ImageId) {
+    return image.OSNameEn ?? image.OSName
+  }
+  return imageId
+})
 </script>
