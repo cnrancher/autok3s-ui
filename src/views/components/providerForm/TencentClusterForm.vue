@@ -69,6 +69,7 @@
               :disabled="readonly"
               :loading="instanceTypeInfo.loading"
               :options="instanceTypeOptions"
+              search-field="value"
               clearable
               searchable
             >

@@ -60,6 +60,7 @@
               :desc="desc.options['instance-type']"
               :disabled="readonly"
               :options="instanceTypeOptions"
+              search-field="value"
               clearable
               searchable
             >
