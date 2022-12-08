@@ -15,6 +15,7 @@
             label="GCE Credential"
             :disabled="readonly"
             :desc="desc"
+            @credential-change="handleCredentialChange"
           />
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-center">
             <string-form
@@ -84,17 +85,29 @@
               :disabled="readonly"
               :loading="machineTypeInfo.loading"
               :options="machineTypeInfo.data"
+              search-field="value"
               clearable
+              searchable
             >
-              <template #default="{ option }">
-                <div>
+              <template #default="{ option: v, query }">
+                <template v-if="query">
+                  <div class="flex">
+                    {{ v.value.slice(0, v.matchedStart) }}
+                    <span class="text-$info">{{ v.value.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                    {{ v.value.slice(v.matchedStart + v.matchedLen) }}
+                  </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>{{ v.raw.description }}</div>
+                  </div>
+                </template>
+                <template v-else>
                   <div>
-                    {{ option.label }}
+                    {{ v.value }}
                   </div>
-                  <div class="text-sm text-gray-500">
-                    {{ option.raw.description }}
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>{{ v.raw.description }}</div>
                   </div>
-                </div>
+                </template>
               </template>
               <template #footer>
                 <div
@@ -142,13 +155,29 @@
               :disabled="readonly"
               :loading="diskTypeInfo.loading"
               :options="diskTypeInfo.data"
+              search-field="value"
               clearable
+              searchable
             >
-              <template #default="{ option }">
-                <div>
-                  <div>{{ option.label }}</div>
-                  <div class="text-sm text-gray-500">{{ option.raw.description }}</div>
-                </div>
+              <template #default="{ option: v, query }">
+                <template v-if="query">
+                  <div class="flex">
+                    {{ v.value.slice(0, v.matchedStart) }}
+                    <span class="text-$info">{{ v.value.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                    {{ v.value.slice(v.matchedStart + v.matchedLen) }}
+                  </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>{{ v.raw.description }}</div>
+                  </div>
+                </template>
+                <template v-else>
+                  <div>
+                    {{ v.value }}
+                  </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>{{ v.raw.description }}</div>
+                  </div>
+                </template>
               </template>
               <template #footer>
                 <div v-if="diskTypeInfo.nextPageToken" class="text-center cursor-pointer" @click.stop="loadDiskTypes()">
@@ -195,14 +224,30 @@
               :disabled="readonly"
               :loading="networkInfo.loading"
               :options="networkInfo.data"
+              search-field="value"
               clearable
+              searchable
               @change="networkChange($event)"
             >
-              <template #default="{ option }">
-                <div>
-                  <div>{{ option.label }}</div>
-                  <div class="text-sm text-gray-500">{{ option.raw.description }}</div>
-                </div>
+              <template #default="{ option: v, query }">
+                <template v-if="query">
+                  <div class="flex">
+                    {{ v.value.slice(0, v.matchedStart) }}
+                    <span class="text-$info">{{ v.value.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                    {{ v.value.slice(v.matchedStart + v.matchedLen) }}
+                  </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>{{ v.raw.description }}</div>
+                  </div>
+                </template>
+                <template v-else>
+                  <div>
+                    {{ v.value }}
+                  </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>{{ v.raw.description }}</div>
+                  </div>
+                </template>
               </template>
               <template #footer>
                 <div v-if="networkInfo.nextPageToken" class="text-center cursor-pointer" @click.stop="loadNetworks()">
@@ -521,18 +566,21 @@ const {
   resetDiskTypeInfo,
   fetchImages
 } = useGoogleSdk()
-
+const credentialId = ref('')
+const handleCredentialChange = (c) => {
+  credentialId.value = c?.id ?? ''
+}
 const validateCredentials = () => {
-  validateKeys(form.options['service-account'], form.options['project'])
+  validateKeys(credentialId.value, form.options['project'])
 }
 
 watch(
-  [() => form.options['service-account'], acitiveTab, () => props.readonly, () => props.initValue],
-  ([s, tab, readonly], [oldTab]) => {
+  [credentialId, acitiveTab, () => props.readonly, () => props.initValue],
+  ([cId, tab, readonly], [oldTab]) => {
     if (
       readonly === false &&
       (!oldTab || tab !== 'credential') &&
-      (keyInfo.credentialId !== s || keyInfo.project !== form.options['project'])
+      (keyInfo.credentialId !== cId || keyInfo.project !== form.options['project'])
     ) {
       validateCredentials()
     }

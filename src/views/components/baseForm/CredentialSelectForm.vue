@@ -37,7 +37,7 @@ const props = defineProps({
 })
 const { providerKeyFieldMap } = useProviderKeyMap()
 const p = toRef(props, 'provider')
-const emit = defineEmits(['update:modelValue', 'change'])
+const emit = defineEmits(['update:modelValue', 'change', 'credential-change'])
 const { error, loading, credentials, refetch: fetchCredentials } = useProviderCredentials(p)
 const filedMap = computed(() => {
   return providerKeyFieldMap[props.provider]
@@ -110,6 +110,13 @@ watch(
   },
   { immediate: true }
 )
+watch(
+  selectedCredential,
+  (c) => {
+    emit('credential-change', c)
+  },
+  { immediate: true }
+)
 const handleChanged = () => {
   const k = filedMap.value?.key
   const s = filedMap.value?.secret
@@ -174,6 +181,11 @@ const formLabel = computed(() => {
         :readonly="disabled"
         @change="handleChanged"
       />
+      <div if="provider === 'google' && !disabled">
+        <KButton class="role-secondary" style="width: fit-content" @click="showCredentialModal">
+          Create Credential
+        </KButton>
+      </div>
     </div>
     <div>
       {{ error }}

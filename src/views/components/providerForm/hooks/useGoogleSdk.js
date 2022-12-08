@@ -100,7 +100,7 @@ export default function useGoogleSdk() {
     regionInfo.error = null
     try {
       const { data = [] } = await fetchRegions(keyInfo.credentialId, keyInfo.project)
-      regionInfo.data = data.map((r) => ({ value: r.name, label: r.name, raw: r }))
+      regionInfo.data = data.map((r) => ({ value: r.name, label: r.description ?? r.name, raw: r }))
       keyInfo.valid = true
     } catch (err) {
       if (err.name !== 'AbortError') {
@@ -182,7 +182,11 @@ export default function useGoogleSdk() {
         params: p,
         signal
       })
-      const d = data.map((item) => ({ value: item.name, label: item.name, raw: item }))
+      const d = data.map((item) => ({
+        value: item.name,
+        label: `${item.name}${item.description ? ` (${item.description})` : ''}`,
+        raw: item
+      }))
       if (pageToken) {
         machineTypeInfo.data.push(...d)
       } else {
@@ -224,7 +228,7 @@ export default function useGoogleSdk() {
         params: p,
         signal
       })
-      const d = data.map((item) => ({ value: item.name, label: item.name, raw: item }))
+      const d = data.map((item) => ({ value: item.name, label: `${item.name} (${item.description})`, raw: item }))
       if (pageToken) {
         diskTypeInfo.data.push(...d)
       } else {
@@ -311,7 +315,7 @@ export default function useGoogleSdk() {
         params: p,
         signal
       })
-      const d = data.map((item) => ({ value: item.name, label: item.name, raw: item }))
+      const d = data.map((item) => ({ value: item.name, label: `${item.name} (${item.description})`, raw: item }))
       if (pageToken) {
         networkInfo.data.push(...d)
       } else {
