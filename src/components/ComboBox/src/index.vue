@@ -260,13 +260,20 @@ const filteredOptions = computed(() => {
   const options = props.options
   const q = query.value?.toLowerCase()
   const len = q.length
+  const obj = isObj.value
   if (!searchable || !q) {
+    if (!obj) {
+      return options.map((v) => ({
+        label: v,
+        value: v
+      }))
+    }
     return options
   }
   if (options.length === 0) {
     return []
   }
-  const obj = isObj.value
+
   const searchField = props.searchField
   return options
     .filter((item) => (obj ? item[searchField]?.toLowerCase().includes(q) : item?.toLowerCase().includes(q)))
