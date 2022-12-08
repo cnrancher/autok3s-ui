@@ -480,10 +480,11 @@ const versionLt = (a, b) => {
 watch(
   () => config['k3s-version'],
   (v) => {
-    const args = config['master-extra-args']
+    const args = config['master-extra-args'] ?? ''
     if (!v) {
       // latest version
       config['master-extra-args'] = args.replace(/--no-deploy /i, '--disable ')
+      return
     }
 
     const result = versionLt(v, '1.20.0')?.result
