@@ -135,7 +135,7 @@
                       imageInfo,
                       fetchImages,
                       onSelect: (e) => {
-                        form.options['machine-image'] = e.image
+                        form.options['machine-image'] = e.imageId
                       }
                     })
                   "
@@ -429,7 +429,7 @@ import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
 import useModal from '@/composables/useModal.js'
 import useGoogleSdk from './hooks/useGoogleSdk.js'
-import GoogleImagesSearchModalVue from './components/GoogleImagesSearchModal.vue'
+import GoogleImagesSearchModalVue from './components/GoogleImagesSearchModal/index.vue'
 import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
 
 const needDecodeOptionKeys = ['startup-script-content']
