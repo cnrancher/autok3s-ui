@@ -66,9 +66,6 @@ export default function useGoogleSdk() {
     loading: false,
     loaded: false,
     error: null,
-    nextPageToken: null,
-    project: null,
-    filter: null,
     data: []
   })
 
@@ -244,44 +241,66 @@ export default function useGoogleSdk() {
     diskTypeInfo.loaded = true
   }
 
-  const fetchImages = async (project, filter, pageToken) => {
+  const fetchImages = async () => {
     imageInfo.error = null
     imageInfo.loading = true
     imageInfo.loaded = false
     const p = {
       ...params,
       method: 'image',
-      project
+      orderBy: 'creationTimestamp desc'
     }
-    if (filter) {
-      p.filter = filter
-    } else {
-      p.orderBy = 'creationTimestamp desc'
-    }
-    if (pageToken) {
-      imageInfo.nextPageToken = pageToken
-      p.pageToken = pageToken
-    } else {
-      imageInfo.data = []
-      imageInfo.project = project
-      imageInfo.filter = filter
-    }
+    imageInfo.data = []
     const signal = abortController.signal
+    const OSOptions = [
+      {
+        label: 'Ubuntu LTS',
+        value: 'ubuntu-os-cloud'
+      },
+      {
+        label: 'Ubuntu Pro',
+        value: 'ubuntu-os-pro-cloud'
+      },
+      {
+        label: 'SUSE Linux Enterprise Server (SLES)',
+        value: 'suse-cloud'
+      },
+      // {
+      //   label: 'CentOS',
+      //   value: 'centos-cloud'
+      // },
+      {
+        label: 'Debian',
+        value: 'debian-cloud'
+      },
+      {
+        label: 'Red Hat Enterprise Linux (RHEL)',
+        value: 'rhel-cloud'
+      }
+      // {
+      //   label: 'Rocky Linux',
+      //   value: 'rocky-linux-cloud'
+      // }
+    ]
     const { credentialId } = keyInfo
     try {
-      const { data = [], continue: nextPageToken } = await request({
-        url: `/credentials/${credentialId}`,
-        method: 'get',
-        params: p,
-        signal
+      const promises = OSOptions.map((item) =>
+        request({
+          url: `/credentials/${credentialId}`,
+          method: 'get',
+          params: { ...p, project: item.value },
+          signal
+        })
+      )
+
+      const resp = await Promise.all(promises)
+
+      imageInfo.data = OSOptions.map((item, index) => {
+        return {
+          ...item,
+          data: resp[index].data.filter((item) => !item.deprecated)
+        }
       })
-      const d = data.filter((item) => !item.deprecated)
-      if (pageToken) {
-        imageInfo.data.push(...d)
-      } else {
-        imageInfo.data = d
-      }
-      imageInfo.nextPageToken = nextPageToken
     } catch (err) {
       if (err.name !== 'AbortError') {
         imageInfo.error = err?.response?.data?.message ?? err
