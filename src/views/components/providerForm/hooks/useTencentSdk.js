@@ -254,17 +254,10 @@ export default function useTencentSdk() {
 
   const imageInfo = shallowReactive({
     region: '',
-    imageType: '', // PRIVATE_IMAGE, PUBLIC_IMAGE, SHARED_IMAGE
-    platform: '',
-    instanceType: '',
-    query: '',
-    field: 'image-name', // image-id, image-name
     loading: false,
-    loaded: true,
+    loaded: false,
     error: null,
-    data: [],
-    total: 0,
-    offset: 0
+    data: []
   })
   const imageDetail = reactive({
     region: '',
@@ -686,7 +679,7 @@ export default function useTencentSdk() {
     keyPairInfo.loading = false
   }
 
-  const fetchImages = async (r, options) => {
+  const fetchImages = async (r) => {
     imageInfo.region = r ?? region.value
     if (!imageInfo.region) {
       imageInfo.error = '"Region" is required'
@@ -698,68 +691,38 @@ export default function useTencentSdk() {
     imageInfo.data = []
     const abortSignal = abortController.signal
     try {
-      const {
-        query = '',
-        field = 'image-name',
-        platform = '',
-        imageType = '',
-        instanceType = '',
-        offset = 0,
-        limit = 10
-      } = options
-      imageInfo.query = ''
-      imageInfo.field = field
-      imageInfo.platform = platform
-      imageInfo.imageType = imageType
-      imageInfo.instanceType = instanceType
-      imageInfo.limit = limit
-      imageInfo.offset = offset
-      const payload = {}
-      const filters = []
-      if (query) {
-        filters.push({
-          Name: field,
-          Values: [`${query}`]
-        })
-      }
-
-      if (platform) {
-        filters.push({
-          Name: 'platform',
-          Values: [platform]
-        })
-      }
-
-      if (imageType) {
-        filters.push({
-          Name: 'image-type',
-          Values: [imageType]
-        })
-      }
-
-      if (instanceType) {
-        payload.InstanceType = instanceType
-      }
-      if (filters.length > 0) {
-        payload.Filters = filters
-      }
-
-      payload.Offset = offset
-      payload.Limit = limit
-
-      const resp = await send(
-        keyInfo.secretId,
-        keyInfo.secretKey,
-        'DescribeImages',
-        imageInfo.region,
-        payload,
-        abortSignal
+      const platforms = ['Ubuntu', 'Debian', 'CentOS', 'openSUSE']
+      const imageType = 'PUBLIC_IMAGE'
+      const promises = platforms.map((p) =>
+        send(
+          keyInfo.secretId,
+          keyInfo.secretKey,
+          'DescribeImages',
+          imageInfo.region,
+          {
+            Filters: [
+              {
+                Name: 'platform',
+                Values: [p]
+              },
+              {
+                Name: 'image-type',
+                Values: [imageType]
+              }
+            ],
+            Offset: 0,
+            Limit: 100
+          },
+          abortSignal
+        )
       )
-      if (resp.Response.Error) {
-        throw new Error(resp.Response.Error.Message)
-      }
-      imageInfo.data = resp.Response?.ImageSet ?? []
-      imageInfo.total = resp.Response?.TotalCount ?? 0
+
+      const resp = await Promise.all(promises)
+      const data = resp.map((d, index) => ({
+        platform: platforms[index],
+        data: d.Response?.ImageSet ?? []
+      }))
+      imageInfo.data = data
     } catch (err) {
       if (err.name === 'AbortError') {
         // do nothing
