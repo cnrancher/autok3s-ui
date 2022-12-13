@@ -112,7 +112,7 @@ const handleSelect = () => {
       <KLoading :loading="imageInfo.loading" class="w-60vw min-h-60vh">
         <div v-if="imageInfo.error">{{ imageInfo.error }}</div>
         <div class="grid gap-10px grid-cols-1 sm:grid-cols-2 mb-20px">
-          <KSelect v-model="platform" label="OS" required @change="handlePlatformChanged">
+          <KSelect v-model="platform" label="OS" required>
             <KOption v-for="p in platforms" :key="p.value" :value="p.value" :label="p.label">
               <div class="flex gap-2">
                 <img :src="p.logo" class="object-contain w-30px h-24px" />
