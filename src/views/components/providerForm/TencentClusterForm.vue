@@ -118,6 +118,10 @@
                       onSelect: (e) => {
                         form.options['image'] = e.ImageId
                         updateImageDetail(cloneDeep(e))
+                        const size = e.ImageSize
+                        if (size) {
+                          form.options['disk-size'] = size
+                        }
                       }
                     })
                   "
