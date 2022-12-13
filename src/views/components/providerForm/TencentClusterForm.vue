@@ -113,7 +113,6 @@
                   @click="
                     showSearchImageModal({
                       region: form.options.region,
-                      instanceType: form.options['instance-type'],
                       imageInfo,
                       fetchImages,
                       onSelect: (e) => {
@@ -348,7 +347,7 @@ import { Base64 } from 'js-base64'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
 import useTencentSdk from './hooks/useTencentSdk.js'
-import TencentImageSearchModal from './components/TencentImageSearchModal.vue'
+import TencentImageSearchModal from './components/TencentImageSearchModal/index.vue'
 import useModal from '@/composables/useModal.js'
 import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
 
@@ -484,6 +483,7 @@ const {
   resetSecurityGroupInfo,
   resetKeyPairInfo,
   resetImageInfo,
+  updateImageDetail,
   keyInfo,
   regionInfo,
   zoneInfo,
