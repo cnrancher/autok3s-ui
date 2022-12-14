@@ -679,7 +679,7 @@ export default function useTencentSdk() {
     keyPairInfo.loading = false
   }
 
-  const fetchImages = async (r) => {
+  const fetchImages = async (r, instanceType) => {
     imageInfo.region = r ?? region.value
     if (!imageInfo.region) {
       imageInfo.error = '"Region" is required'
@@ -693,6 +693,10 @@ export default function useTencentSdk() {
     try {
       const platforms = ['Ubuntu', 'Debian', 'CentOS', 'openSUSE']
       const imageType = 'PUBLIC_IMAGE'
+      const param = {}
+      if (instanceType) {
+        param.InstanceType = instanceType
+      }
       const promises = platforms.map((p) =>
         send(
           keyInfo.secretId,
@@ -711,7 +715,8 @@ export default function useTencentSdk() {
               }
             ],
             Offset: 0,
-            Limit: 100
+            Limit: 100,
+            ...param
           },
           abortSignal
         )
