@@ -509,91 +509,67 @@ export default function useAlibabaSdk() {
     })
   }
 
-  const fetchImages = (r, options = {}) => {
+  const fetchImages = (r, instanceType) => {
     const tmpRegion = r ?? region.value
-    let {
-      imageOwnerAlias = '',
-      instanceType = '',
-      // OSType = 'linux',
-      architecture = 'x86_64',
-      pageNumber = 1,
-      pageSize = 10,
-      query = '',
-      field = 'ImageName'
-    } = options
-
-    if (pageNumber !== 1) {
-      if (tmpRegion !== imageInfo.regionId) {
-        imageInfo.error = 'Region has changed, no further image information is available'
-        return false
-      }
-      if (imageOwnerAlias !== imageInfo.imageOwnerAlias) {
-        imageInfo.error = 'ImageOwnerAlias has changed, no further imageOwnerAlias information is available'
-        return false
-      }
-      if (instanceType !== imageInfo.instanceType) {
-        imageInfo.error = 'InstanceType has changed, no further instanceType information is available'
-        return false
-      }
-      // if (OSType !== imageInfo.OSType) {
-      //   imageInfo.error = 'OSType has changed, no further OSType information is available'
-      //   return false
-      // }
-      if (architecture !== imageInfo.architecture) {
-        imageInfo.error = 'Architecture has changed, no further architecture information is available'
-        return false
-      }
-      if (pageSize === 0) {
-        return
-      }
-      const totalPage = Math.ceil(imageInfo.totalCount / pageSize)
-
-      if (pageNumber > totalPage) {
-        return
-      }
-    }
-
-    if (pageNumber !== imageInfo.pageNumber) {
-      imageInfo.pageNumber = pageNumber
-    }
-    if (pageNumber === 1) {
-      imageInfo.data = []
-    }
+    imageInfo.data = []
     imageInfo.regionId = tmpRegion
     imageInfo.loading = true
     imageInfo.loaded = false
     imageInfo.error = null
 
-    const p = { RegionId: imageInfo.regionId }
-    const excludeKeys = ['query', 'field']
-    Object.entries(options).forEach(([k, v]) => {
-      imageInfo[k] = v
-      const key = `${k[0].toUpperCase()}${k.substring(1)}`
-      if (v && !excludeKeys.includes(k)) {
-        p[key] = v
-      }
-    })
-
-    if (query) {
-      if (field === 'ImageId') {
-        p[field] = query
-      } else {
-        p[field] = `*${query}*`
-      }
+    const p = {
+      RegionId: imageInfo.regionId,
+      OSType: 'linux',
+      ImageOwnerAlias: 'system',
+      PageNumber: 1,
+      PageSize: 100
     }
+
+    if (instanceType) {
+      p.InstanceType = instanceType
+    }
+
+    const platforms = ['CentOS', 'CentOS Stream', 'Ubuntu', 'Debian', 'openSUSE']
     // eslint-disable-next-line no-undef
     const ecs = new ALY.ECS(ecsOptions.value)
-    ecs.describeImages(p, (err, resp) => {
-      imageInfo.loading = false
-      imageInfo.loaded = true
-      if (err) {
-        imageInfo.error = err.message ?? err
-        return
-      }
-      imageInfo.totalCount = resp.TotalCount
-      imageInfo.pageNumber = pageNumber
-      imageInfo.data = resp.Images.Image
-    })
+    imageInfo.loading = true
+    imageInfo.loaded = false
+    const data = []
+    const loadData = (page = 1) => {
+      ecs.describeImages(
+        {
+          ...p,
+          PageNumber: page
+        },
+        (err, resp) => {
+          if (err) {
+            imageInfo.loading = false
+            imageInfo.loaded = true
+            imageInfo.error = err
+            return
+          }
+          const d = resp.Images.Image
+          const pageNumber = resp.PageNumber
+          const pageSize = resp.PageSize
+          const totalCount = resp.TotalCount
+          const total = pageNumber * pageSize
+          data.push(...d)
+          if (total < totalCount) {
+            loadData(pageNumber + 1)
+          } else {
+            imageInfo.data = platforms.map((p) => {
+              return {
+                platform: p,
+                data: data.filter((item) => item.Platform === p)
+              }
+            })
+            imageInfo.loading = false
+            imageInfo.loaded = true
+          }
+        }
+      )
+    }
+    loadData()
   }
 
   const fetchImageById = (r, imageId) => {

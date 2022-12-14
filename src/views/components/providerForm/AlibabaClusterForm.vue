@@ -110,6 +110,10 @@
                       onSelect: (e) => {
                         form.options['image'] = e.ImageId
                         updateImageDetail(cloneDeep(e))
+                        const size = e.Size
+                        if (size) {
+                          form.options['disk-size'] = `${size}`
+                        }
                       }
                     })
                   "
@@ -348,7 +352,7 @@ import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
 import useAlibabaSdk from './hooks/useAlibabaSdk.js'
 import useModal from '@/composables/useModal.js'
-import AlibabaImageSearchModal from './components/AlibabaImageSearchModal.vue'
+import AlibabaImageSearchModal from './components/AlibabaImageSearchModal/index.vue'
 import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
 
 const needDecodeOptionKeys = ['user-data-content']
