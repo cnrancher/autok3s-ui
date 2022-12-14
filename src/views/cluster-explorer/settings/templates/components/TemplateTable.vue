@@ -59,6 +59,18 @@
       </k-table-column>
       <k-table-column sortable label="Region" field="options.region"></k-table-column>
       <k-table-column sortable label="Zone" field="options.zone"></k-table-column>
+      <k-table-column sortable label="HA Mode" field="is-ha-mode">
+        <template #default="{ row }">
+          <span v-if="row['is-ha-mode']">True</span>
+          <span v-else-if="row['is-ha-mode'] === false">False</span>
+          <span v-else>-</span>
+        </template>
+      </k-table-column>
+      <k-table-column sortable label="Datastore Type" field="datastore-type">
+        <template #default="{ row }">
+          {{ row['datastore-type'] ?? '-' }}
+        </template>
+      </k-table-column>
       <k-table-column type="action" field="action" width="30">
         <template #default="{ row }">
           <template-actions :template="row" @exec-command="handleCommand"></template-actions>
