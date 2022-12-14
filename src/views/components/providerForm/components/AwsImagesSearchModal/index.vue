@@ -40,68 +40,12 @@ if (props.imageInfo.loaded === false && props.imageInfo.loading === false) {
   loadImages()
 }
 
-const {
-  versionOptions: ubuntuVersionOptions,
-  nameMap: ubuntuNameMap,
-  versionMap: ubuntuVersionMap,
-  getImageName: getUbuntuImageName
-} = useUbuntuImages(data)
-const {
-  versionOptions: amazonLinuxVersionOptions,
-  nameMap: amazonLinuxMap,
-  versionMap: amazonLinuxVersionMap,
-  getImageName: getAmazonLinuxImageName
-} = useAmazonLinuxImages(data)
-const {
-  versionOptions: redHatVersionOptions,
-  nameMap: redHatNameMap,
-  versionMap: redHatVersionMap,
-  getImageName: getRedHatImageName
-} = useRedHatImages(data)
-const {
-  versionOptions: suseLinuxVersionOptions,
-  nameMap: suseLinuxNameMap,
-  versionMap: suseLinuxVersionMap,
-  getImageName: getSuseLinuxImageName
-} = useSuseLinuxImages(data)
-const {
-  versionOptions: debianVersionOptions,
-  nameMap: debianNameMap,
-  versionMap: debianVersionMap,
-  getImageName: getDebianImageName
-} = useDebianImages(data)
-
 const platformImage = reactive({
-  ubuntu: {
-    versionOptions: ubuntuVersionOptions,
-    nameMap: ubuntuNameMap,
-    versionMap: ubuntuVersionMap,
-    getImageName: getUbuntuImageName
-  },
-  amazonLinux: {
-    versionOptions: amazonLinuxVersionOptions,
-    nameMap: amazonLinuxMap,
-    versionMap: amazonLinuxVersionMap,
-    getImageName: getAmazonLinuxImageName
-  },
-  redHat: {
-    versionOptions: redHatVersionOptions,
-    nameMap: redHatNameMap,
-    versionMap: redHatVersionMap,
-    getImageName: getRedHatImageName
-  },
-  suseLinux: {
-    versionOptions: suseLinuxVersionOptions,
-    nameMap: suseLinuxNameMap,
-    versionMap: suseLinuxVersionMap,
-    getImageName: getSuseLinuxImageName
-  },
-  debian: {
-    versionOptions: debianVersionOptions,
-    nameMap: debianNameMap,
-    versionMap: debianVersionMap,
-    getImageName: getDebianImageName
-  }
+  ubuntu: useUbuntuImages(data),
+  amazonLinux: useAmazonLinuxImages(data),
+  redHat: useRedHatImages(data),
+  suseLinux: useSuseLinuxImages(data),
+  debian: useDebianImages(data)
 })
 
 const logoMap = {

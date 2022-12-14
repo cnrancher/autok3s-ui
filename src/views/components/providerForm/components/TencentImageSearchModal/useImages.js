@@ -1,9 +1,10 @@
 import { computed, unref } from 'vue'
 
-export function useUbuntuImages(data) {
+export function useImages(data, platform) {
   const images = computed(() => {
     const d = unref(data)
-    return d.find((d) => d.platform === 'Ubuntu')?.data ?? []
+    const p = unref(platform)
+    return d.find((d) => d.platform === p)?.data ?? []
   })
 
   const imageArchMap = computed(() => {
