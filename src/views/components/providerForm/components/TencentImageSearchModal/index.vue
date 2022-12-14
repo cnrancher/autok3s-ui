@@ -1,9 +1,6 @@
 <script setup>
 import { toRef, ref, computed, reactive, watch } from 'vue'
-import { useCentOSImages } from './useCentOSImages.js'
-import { useUbuntuImages } from './useUbuntuImages.js'
-import { useDebianImages } from './useDebianImages.js'
-import { useOpenSuseImages } from './useOpenSuseImages.js'
+import { useImages } from './useImages.js'
 import Ubuntu from '@/styles/images/brand/ubuntu.svg'
 import openSUSE from '@/styles/images/brand/suse.svg'
 import CentOS from '@/styles/images/brand/centos.svg'
@@ -42,10 +39,10 @@ if (props.imageInfo.loaded === false && props.imageInfo.loading === false) {
 }
 
 const platformImage = reactive({
-  Ubuntu: useUbuntuImages(data),
-  openSUSE: useOpenSuseImages(data),
-  CentOS: useCentOSImages(data),
-  Debian: useDebianImages(data)
+  Ubuntu: useImages(data, 'Ubuntu'),
+  openSUSE: useImages(data, 'openSUSE'),
+  CentOS: useImages(data, 'CentOS'),
+  Debian: useImages(data, 'Debian')
 })
 const logoMap = {
   Ubuntu,
