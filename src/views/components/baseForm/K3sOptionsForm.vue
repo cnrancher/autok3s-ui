@@ -74,26 +74,46 @@
           false-label="External DB"
           :readonly="readonly"
         />
-        <div v-show="HAClusters && !config['cluster']" class="col-span-2">
-          <StringForm
-            v-model.trim="config['datastore']"
-            label="Datastore Endpoint"
-            :desc="desc.config['datastore']"
-            :placeholder="connectionStringPlaceholder"
+        <div v-show="HAClusters && !config['cluster']" class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-10px">
+          <div class="col-span-2">
+            <StringForm
+              v-model.trim="config['datastore']"
+              label="Datastore Endpoint"
+              :desc="desc.config['datastore']"
+              :placeholder="connectionStringPlaceholder"
+              :readonly="readonly"
+              required
+            >
+              <template #prefix>
+                <KSelect
+                  v-model="datastoreType"
+                  select-class="!border-0 !min-h-21px !py-0 !pl-0"
+                  input-class="w-80px py-0"
+                  :disabled="readonly"
+                >
+                  <KOption v-for="t in datastoreTypes" :key="t.value" :value="t.value" :label="t.label"></KOption>
+                </KSelect>
+              </template>
+            </StringForm>
+          </div>
+          <string-form
+            v-model.trim="config['datastore-cafile']"
+            label="Datastore CA File"
+            :desc="desc.config['datastore-cafile']"
             :readonly="readonly"
-            required
-          >
-            <template #prefix>
-              <KSelect
-                v-model="datastoreType"
-                select-class="!border-0 !min-h-21px !py-0 !pl-0"
-                input-class="w-80px py-0"
-                :disabled="readonly"
-              >
-                <KOption v-for="t in datastoreTypes" :key="t.value" :value="t.value" :label="t.label"></KOption>
-              </KSelect>
-            </template>
-          </StringForm>
+          />
+          <string-form
+            v-model.trim="config['datastore-certfile']"
+            label="Datastore Cert File"
+            :desc="desc.config['datastore-certfile']"
+            :readonly="readonly"
+          />
+          <string-form
+            v-model.trim="config['datastore-keyfile']"
+            label="Datastore Key File"
+            :desc="desc.config['datastore-keyfile']"
+            :readonly="readonly"
+          />
         </div>
       </div>
     </template>
@@ -274,7 +294,10 @@ const configFields = [
   'registry-content',
   'k3s-install-mirror',
   'system-default-registry',
-  'package-name'
+  'package-name',
+  'datastore-cafile',
+  'datastore-certfile',
+  'datastore-keyfile'
 ]
 
 const datastoreTypes = [
@@ -400,14 +423,23 @@ const getForm = () => {
 
   const clusterConfig = f.find(({ path: [, k] }) => k === 'cluster')
   const datastoreConfig = f.find(({ path: [, k] }) => k === 'datastore')
+  const datastoreCAConfig = f.find(({ path: [, k] }) => k === 'datastore-cafile')
+  const datastoreCertConfig = f.find(({ path: [, k] }) => k === 'datastore-certfile')
+  const datastoreKeyConfig = f.find(({ path: [, k] }) => k === 'datastore-keyfile')
 
   if (HAClusters.value) {
     if (clusterConfig.value === true) {
       datastoreConfig.value = ''
+      datastoreCAConfig.value = ''
+      datastoreCertConfig.value = ''
+      datastoreKeyConfig.value = ''
     }
   } else {
     clusterConfig.value = false
     datastoreConfig.value = ''
+    datastoreCAConfig.value = ''
+    datastoreCertConfig.value = ''
+    datastoreKeyConfig.value = ''
   }
 
   return f
