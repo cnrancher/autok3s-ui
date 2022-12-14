@@ -25,13 +25,17 @@ const props = defineProps({
   fetchImages: {
     type: Function,
     required: true
+  },
+  instanceType: {
+    type: String,
+    default: ''
   }
 })
 
 const emit = defineEmits(['close', 'select'])
 const data = toRef(props.imageInfo, 'data')
 const loadImages = () => {
-  props.fetchImages(props.region)
+  props.fetchImages(props.region, props.instanceType)
 }
 if (props.imageInfo.loaded === false && props.imageInfo.loading === false) {
   loadImages()
@@ -143,7 +147,7 @@ const handleSelect = () => {
               <div>{{ selectedImage?.ImageId }}({{ selectedImage?.Architecture }})</div>
             </div>
             <div class="flex gap-2 text-sm text-gray-500">
-              <div>Is Support Cloudinit: {{ selectedImage?.VirtualizationType }}</div>
+              <div>Is Support Cloudinit: {{ selectedImage?.IsSupportCloudinit }}</div>
             </div>
           </div>
         </div>
