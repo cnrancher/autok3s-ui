@@ -62,7 +62,6 @@
       <k-table-column sortable label="HA Mode" field="is-ha-mode">
         <template #default="{ row }">
           <span v-if="row['is-ha-mode']">True</span>
-          <span v-else-if="row['is-ha-mode'] === false">False</span>
           <span v-else>-</span>
         </template>
       </k-table-column>
