@@ -186,7 +186,7 @@
               </template>
             </KComboBox>
             <string-form
-              v-model.trim="form.options['disk-size']"
+              v-model.number="form.options['disk-size']"
               label="Disk Size"
               :desc="desc.options['disk-size']"
               :readonly="readonly"

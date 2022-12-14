@@ -118,7 +118,7 @@
                         const rootSize = e.BlockDeviceMappings?.[0]?.[rdt]?.VolumeSize
                         const volumeType = e.BlockDeviceMappings?.[0]?.[rdt]?.VolumeType
                         if (rootSize) {
-                          form.options['root-size'] = rootSize
+                          form.options['root-size'] = `${rootSize}`
                         }
                         if (volumeType) {
                           form.options['volume-type'] = volumeType
