@@ -44,16 +44,16 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
-    "@vitejs/plugin-legacy": "^2.3.1",
-    "@vitejs/plugin-vue": "^3.2.0",
-    "@vitejs/plugin-vue-jsx": "^2.1.1",
+    "@vitejs/plugin-legacy": "^3.0.1",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "@vitejs/plugin-vue-jsx": "^3.0.0",
     "@vue/eslint-config-prettier": "^7.0.0",
     "eslint": "^8.28.0",
     "eslint-plugin-vue": "^9.8.0",
-    "prettier": "^2.8.0",
-    "vite": "^v3.2.4",
+    "prettier": "^2.8.1",
+    "vite": "^v4.0.1",
     "vite-plugin-html": "^3.2.0",
-    "vite-plugin-windicss": "^1.8.8",
+    "vite-plugin-windicss": "^1.8.10",
     "windicss": "^3.5.6"
   }
 }
