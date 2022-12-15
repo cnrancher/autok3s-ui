@@ -37,7 +37,7 @@ export default function useTerminal(domRef, onDataCallback, xtermConfig = {}) {
       theme: {
         background: docStyle.getPropertyValue('--terminal-bg').trim(),
         cursor: docStyle.getPropertyValue('--terminal-cursor').trim(),
-        selection: docStyle.getPropertyValue('--terminal-selection').trim(),
+        selectionBackground: docStyle.getPropertyValue('--terminal-selection').trim(),
         foreground: docStyle.getPropertyValue('--terminal-text').trim()
       },
       allowProposedApi: true,
