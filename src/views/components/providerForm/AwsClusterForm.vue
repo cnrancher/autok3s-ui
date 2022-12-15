@@ -751,6 +751,7 @@ const reginChange = () => {
   form.options['security-group'] = ''
   form.options['instance-type'] = ''
   form.options['keypair-name'] = ''
+  form.options['ami'] = ''
   resetAll()
 }
 
