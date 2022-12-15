@@ -74,7 +74,10 @@
           false-label="External DB"
           :readonly="readonly"
         />
-        <div v-show="HAClusters && !config['cluster']" class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-10px">
+        <div
+          v-show="HAClusters && !config['cluster']"
+          class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-10px items-start"
+        >
           <div class="col-span-2">
             <StringForm
               v-model.trim="config['datastore']"
@@ -99,20 +102,26 @@
           <string-form
             v-model.trim="config['datastore-cafile']"
             label="Datastore CA File"
+            type="textarea"
             :desc="desc.config['datastore-cafile']"
             :readonly="readonly"
+            :rows="config['datastore-cafile']?.split('\n').length + 1"
           />
           <string-form
             v-model.trim="config['datastore-certfile']"
             label="Datastore Cert File"
+            type="textarea"
             :desc="desc.config['datastore-certfile']"
             :readonly="readonly"
+            :rows="config['datastore-certfile']?.split('\n').length + 1"
           />
           <string-form
             v-model.trim="config['datastore-keyfile']"
             label="Datastore Key File"
+            type="textarea"
             :desc="desc.config['datastore-keyfile']"
             :readonly="readonly"
+            :rows="config['datastore-keyfile']?.split('\n').length + 1"
           />
         </div>
       </div>
