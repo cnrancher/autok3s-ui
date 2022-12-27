@@ -37,7 +37,7 @@
 <script setup>
 import { reactive, computed, ref } from 'vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
-import KeyForm from './KeyForm.vue'
+import KeyForm from '@/views/components/baseForm/KeyForm.vue'
 import FooterActions from '@/views/components/FooterActions.vue'
 import Schema from 'async-validator'
 import { create } from '@/api/sshKey.js'

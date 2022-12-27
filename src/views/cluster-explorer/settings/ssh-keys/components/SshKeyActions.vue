@@ -30,7 +30,7 @@ export default {
           label: 'Delete',
           icon: 'ashbin',
           command: 'delete'
-        },
+        }
         // {
         //   label: 'View',
         //   icon: 'editor',

@@ -256,7 +256,7 @@
           Params used to login to instance from user computer, e.g. ssh private key, ssh password, etc
         </template>
         <template #default>
-          <ssh-private-form :form="form" :desc="desc" :readonly="readonly"></ssh-private-form>
+          <ssh-private-form :init-value="form" :desc="desc" :readonly="readonly"></ssh-private-form>
         </template>
       </form-group>
       <hr class="section-divider" />
