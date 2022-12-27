@@ -13,6 +13,7 @@ import useProviderClusterStores from '@/store/useProviderClusterStores.js'
 import useTemplateStore from '@/store/useTemplateStore.js'
 // import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 import useExplorerStore from '@/store/useExplorerStore.js'
+import useSshKeyStore from '@/store/useSshKeyStore.js'
 import useResourceChangeSocket from '@/composables/useResourceChangeSocket.js'
 export default defineComponent({
   name: 'App',
@@ -21,6 +22,7 @@ export default defineComponent({
     const templateStore = useTemplateStore()
     const themeStore = useThemeStore()
     const packageStore = usePackageStore()
+    const sshKeyStore = useSshKeyStore()
 
     watchEffect(() => {
       const removeThemes = themeStore.themes.filter((t) => t !== themeStore.theme)
@@ -103,6 +105,16 @@ export default defineComponent({
       })
     )
 
+    const sshKeyMessageHandler = useDebounceMessage(
+      handleWebsocketMessage({
+        'resource.change': sshKeyStore.update,
+        'resource.create': sshKeyStore.add,
+        'resource.remove': (t) => {
+          sshKeyStore.remove(t?.id)
+        }
+      })
+    )
+
     subscribe(
       'clusterTemplate',
       (msg) => {
@@ -141,6 +153,20 @@ export default defineComponent({
         }
       },
       packageStore.loadData
+    )
+
+    subscribe(
+      'sshKey',
+      (msg) => {
+        if (
+          msg.resourceType === 'sshKey' &&
+          msg.name &&
+          ['resource.change', 'resource.create', 'resource.remove'].includes(msg.name)
+        ) {
+          sshKeyMessageHandler(msg)
+        }
+      },
+      sshKeyStore.loadData
     )
     connect()
   }

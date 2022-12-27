@@ -120,6 +120,18 @@ const clusterExplorerRouter = {
           component: () => import('@/views/cluster-explorer/settings/air-gap-packages/create/index.vue'),
           name: 'ClusterExplorerSettingsPackagesCreate',
           hidden: true
+        },
+        {
+          path: 'ssh-keys',
+          component: () => import('@/views/cluster-explorer/settings/ssh-keys/index.vue'),
+          name: 'ClusterExplorerSettingsSshKeys',
+          meta: { title: 'SSH Keys', icon: 'key' }
+        },
+        {
+          path: 'ssh-keys/create',
+          component: () => import('@/views/cluster-explorer/settings/ssh-keys/create/index.vue'),
+          name: 'ClusterExplorerSettingsSshKeysCreate',
+          hidden: true
         }
       ]
     }
