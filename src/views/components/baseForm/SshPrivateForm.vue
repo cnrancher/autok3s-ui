@@ -1,6 +1,6 @@
 <template>
   <!-- eslint-disable vue/no-mutating-props -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-end">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-start">
     <KSelect v-model="privateKeyOption" label="Private Key Options" :disabled="readonly">
       <KOption v-for="o in privateKeyOptions" :key="o.value" :value="o.value" :label="o.label"></KOption>
     </KSelect>
