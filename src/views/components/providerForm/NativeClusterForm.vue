@@ -40,45 +40,9 @@
               :desc="desc.config['ssh-port']"
               :readonly="readonly"
             />
-            <string-form
-              v-model.trim="form.config['ssh-key-path']"
-              label="SSH Key Path"
-              :desc="desc.config['ssh-key-path']"
-              :readonly="readonly"
-            />
-            <div
-              class="cursor-pointer grid grid-cols-[auto,auto,1fr] gap-x-10px items-center justify-items-end"
-              @click="toggleVisible"
-            >
-              <a class="text-$link">{{ visible ? 'Hide' : 'Show' }} Advanced</a>
-              <k-icon type="arrow-right" :direction="visible ? 'down' : ''"></k-icon>
-            </div>
-            <div v-show="visible" class="contents">
-              <k-password-input
-                v-model.trim="form.config['ssh-key-passphrase']"
-                label="SSH Key Passphrase"
-                :desc="desc.config['ssh-key-passphrase']"
-                :readonly="readonly"
-              />
-              <string-form
-                v-model.trim="form.config['ssh-cert-path']"
-                label="SSH Cert Path"
-                :desc="desc.config['ssh-cert-path']"
-                :readonly="readonly"
-              />
-              <k-password-input
-                v-model.trim="form.config['ssh-password']"
-                label="SSH Password"
-                :desc="desc.config['ssh-password']"
-                :readonly="readonly"
-              />
-              <boolean-form
-                v-model="form.config['ssh-agent-auth']"
-                label="SSH Agent Auth"
-                :desc="desc.config['ssh-agent-auth']"
-                :readonly="readonly"
-              />
-            </div>
+          </div>
+          <div class="mt-10px">
+            <SshPrivateForm :init-value="form" :desc="desc" :readonly="readonly" />
           </div>
         </template>
       </form-group>
@@ -120,11 +84,11 @@
 </template>
 <script setup>
 import { ref, computed, reactive, watch, inject } from 'vue'
-import BooleanForm from '../baseForm/BooleanForm.vue'
 import IpAddressPoolForm from '../baseForm/IpAddressPoolForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3sOptionsForm from '../baseForm/K3sOptionsForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
+import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import { cloneDeep } from '@/utils'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
@@ -189,10 +153,7 @@ const getForm = () => {
   ]
 }
 const acitiveTab = ref('instance')
-const visible = ref(false)
-const toggleVisible = () => {
-  visible.value = !visible.value
-}
+
 const validate = () => {
   const errors = []
   const m = masterIps.value
