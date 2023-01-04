@@ -14,7 +14,7 @@ export default function useProviders() {
     state.error = ''
     try {
       const { data } = await fetchList()
-      state.providers = data.sort((a, b) => enCollator.compare(a.id, b.id))
+      state.providers = data.filter((item) => item.id !== 'harvester').sort((a, b) => enCollator.compare(a.id, b.id))
     } catch (err) {
       state.error = stringify(err)
     }
