@@ -18,7 +18,7 @@
 <script setup>
 import { stringify } from '@/utils/error.js'
 import { startCase } from 'lodash-es'
-import { ref, defineAsyncComponent } from 'vue'
+import { ref } from 'vue'
 import { createCredential, updateCredential } from '@/api/credential'
 
 const props = defineProps({
@@ -52,10 +52,11 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['update:modelValue', 'close'])
-const files = import.meta.glob('./*Form.vue')
+const files = import.meta.glob('./*Form.vue', { eager: true, import: 'default' })
 const componentMap = Object.entries(files).reduce((t, [k, v]) => {
   const p = k.substring(k.lastIndexOf('/') + 1, k.indexOf('CredentialForm.vue')).toLowerCase()
-  t[p] = defineAsyncComponent(v)
+  t[p] = v
+
   return t
 }, {})
 

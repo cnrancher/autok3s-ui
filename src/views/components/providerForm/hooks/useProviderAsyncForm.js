@@ -1,4 +1,3 @@
-import { defineAsyncComponent } from 'vue'
 // const asyncComponents = {
 //   alibaba: defineAsyncComponent(() => import('../AlibabaClusterForm.vue')),
 //   aws: defineAsyncComponent(() => import('../AwsClusterForm.vue')),
@@ -9,10 +8,10 @@ import { defineAsyncComponent } from 'vue'
 //   tencent: defineAsyncComponent(() => import('../TencentClusterForm.vue'))
 // }
 
-const files = import.meta.glob('../*ClusterForm.vue')
+const files = import.meta.glob('../*ClusterForm.vue', { eager: true, import: 'default' })
 const asyncComponents = Object.entries(files).reduce((t, [k, v]) => {
   const p = k.substring(k.lastIndexOf('/') + 1, k.indexOf('ClusterForm.vue')).toLowerCase()
-  t[p] = defineAsyncComponent(v)
+  t[p] = v
 
   return t
 }, {})
