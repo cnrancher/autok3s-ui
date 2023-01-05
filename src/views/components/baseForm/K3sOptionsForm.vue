@@ -467,10 +467,7 @@ const validate = () => {
 
 useFormRegist(getForm, validate)
 
-const installScriptOptions = [
-  'https://get.k3s.io',
-  'https://rancher-mirror.oss-cn-beijing.aliyuncs.com/k3s/k3s-install.sh'
-]
+const installScriptOptions = ['https://get.k3s.io', 'https://rancher-mirror.rancher.cn/k3s/k3s-install.sh']
 watch(
   () => config['k3s-install-script'],
   (installScript) => {

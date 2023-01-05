@@ -113,10 +113,7 @@ const form = reactive({
   'k3s-version': '',
   'package-name': ''
 })
-const installScriptOptions = [
-  'https://get.k3s.io',
-  'https://rancher-mirror.oss-cn-beijing.aliyuncs.com/k3s/k3s-install.sh'
-]
+const installScriptOptions = ['https://get.k3s.io', 'https://rancher-mirror.rancher.cn/k3s/k3s-install.sh']
 
 watch(
   cluster,
