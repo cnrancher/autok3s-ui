@@ -93,7 +93,10 @@ const getForm = () => {
   if (v) {
     f.options['kubeconfig-content'] = Base64.encode(v)
   }
-  return f
+  return [
+    { path: 'config', value: f.config },
+    { path: 'options', value: f.options }
+  ]
 }
 
 useFormRegist(getForm)
