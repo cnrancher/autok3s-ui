@@ -99,29 +99,26 @@
               </template>
             </StringForm>
           </div>
-          <string-form
-            v-model.trim="config['datastore-cafile']"
+          <KeyForm
+            v-model.trim="config['datastore-cafile-content']"
             label="Datastore CA File"
             type="textarea"
             :desc="desc.config['datastore-cafile']"
             :readonly="readonly"
-            :rows="config['datastore-cafile']?.split('\n').length + 1"
           />
-          <string-form
-            v-model.trim="config['datastore-certfile']"
+          <KeyForm
+            v-model.trim="config['datastore-certfile-content']"
             label="Datastore Cert File"
             type="textarea"
             :desc="desc.config['datastore-certfile']"
             :readonly="readonly"
-            :rows="config['datastore-certfile']?.split('\n').length + 1"
           />
-          <string-form
-            v-model.trim="config['datastore-keyfile']"
+          <KeyForm
+            v-model.trim="config['datastore-keyfile-content']"
             label="Datastore Key File"
             type="textarea"
             :desc="desc.config['datastore-keyfile']"
             :readonly="readonly"
-            :rows="config['datastore-keyfile']?.split('\n').length + 1"
           />
         </div>
       </div>
@@ -225,6 +222,7 @@ import RegistryConfigForm from './RegistryConfigForm.vue'
 import FormGroup from './FormGroup.vue'
 import CommandArgs from './CommandArgs/index.vue'
 import ArrayListForm from '../baseForm/ArrayListForm.vue'
+import KeyForm from './KeyForm.vue'
 import useFormRegist from '@/composables/useFormRegist.js'
 import usePackageStore from '@/store/usePackageStore.js'
 
