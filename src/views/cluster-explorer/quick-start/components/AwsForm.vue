@@ -9,22 +9,9 @@
       label="AWS Credential"
       :desc="desc"
     />
-    <string-form v-model.trim="form.config['master']" label="Master" :desc="desc.config['master']" />
-    <string-form v-model.trim="form.config['worker']" label="Worker" :desc="desc.config['worker']" />
-    <!-- <k-password-input
-      v-show="showKeyForm"
-      v-model.trim="form.options['access-key']"
-      label="Access Key"
-      :desc="desc.options['access-key']"
-      required
-    />
-    <k-password-input
-      v-show="showKeyForm"
-      v-model.trim="form.options['secret-key']"
-      label="Secret Key"
-      :desc="desc.options['secret-key']"
-      required
-    /> -->
+    <div class="sm:col-span-2">
+      <HaConfigForm :init-value="form" :desc="desc" />
+    </div>
     <string-form v-model.trim="form.options.region" label="Region" :desc="desc.options.region" disabled />
     <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" disabled />
   </div>
@@ -35,6 +22,8 @@ import StringForm from '@/views/components/baseForm/StringForm.vue'
 import { cloneDeep } from '@/utils'
 import useFormRegist from '@/composables/useFormRegist.js'
 import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
+import HaConfigForm from './HaConfigForm.vue'
+import useFormManage from '@/composables/useFormManage.js'
 
 const props = defineProps({
   initValue: {
@@ -50,6 +39,7 @@ const props = defineProps({
     default: false
   }
 })
+const { getForm: getSubform, validate: validateSubForm } = useFormManage()
 const form = reactive(cloneDeep(props.initValue))
 watch(
   () => props.initValue,
@@ -72,12 +62,15 @@ const credentialValue = computed({
     form.options['secret-key'] = v['secret-key']
   }
 })
+const validate = () => {
+  return validateSubForm()
+}
 const getForm = () => {
-  const f = cloneDeep(form)
+  const f = getSubform(form)
   return [
     { path: 'config', value: f.config },
     { path: 'options', value: f.options }
   ]
 }
-useFormRegist(getForm)
+useFormRegist(getForm, validate)
 </script>
