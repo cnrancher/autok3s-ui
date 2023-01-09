@@ -2,28 +2,28 @@
   <k-modal v-model="modalVisible">
     <template #title>Create Cluster Command</template>
     <template #default>
-      <div v-if="registryContent">
+      <div v-for="(content, index) in contentArgs" :key="content.key">
         <div class="mb-10px grid gap-y-10px grid-cols-1">
-          <div>1. You are using registry config, please save the following content as a file.</div>
-          <pre class="bg-gray-100 p-10px relative">
-{{registryContent}}
+          <div>{{ index + 1 }}. You are using {{ content.name }}, please save the following content as a file.</div>
+          <pre class="bg-gray-100 p-10px relative break-words whitespace-pre-wrap">
+{{content.value}}
 <div class="grid grid-flow-col top-0 right-0 gap-x-10px absolute items-center">
   <k-tooltip append-to-body :delay="0">
-    <k-icon type="download" @click="downloadRegistryContent"></k-icon>
-    <template #popover>Download Regisrty Content</template>
+    <k-icon type="download" @click="downloadContent(content)"></k-icon>
+    <template #popover>Download {{ startCase(content.name) }}</template>
   </k-tooltip>
   <k-tooltip append-to-body :delay="0">
-    <k-icon type="clone" @click="copyRegistryContent"></k-icon>
-    <template #popover>Copy Regisrty Content</template>
+    <k-icon type="clone" @click="copyContent(content)"></k-icon>
+    <template #popover>Copy {{ startCase(content.name) }}</template>
   </k-tooltip>
 </div></pre>
         </div>
       </div>
-      <div class="max-w-80vw grid gap-y-10px grid-cols-1">
-        <div v-if="registryContent">
-          2. Please replace the following
-          <span class="text-red-500">{{ registryPlaceholder }}</span>
-          as a real file path that you have saved at first step.
+      <div class="grid gap-y-10px grid-cols-1">
+        <div v-if="contentArgs.length > 0">
+          {{ contentArgs.length + 1 }}. Please replace the following
+          <span class="text-red-500">{{ contentArgs.map((c) => c.placehoder).join(' ') }}</span>
+          as a real file path that you have saved at the above step(s).
         </div>
         <code class="border rounded bg-gray-100 m-5px p-10px relative">
           <div class="grid grid-flow-col top-0 right-0 gap-x-10px absolute items-center">
@@ -41,9 +41,9 @@
               &nbsp;{{ o.value }}
             </span>
           </template>
-          <template v-if="registryContent">
-            <span class="text-blue-700">&nbsp;--registry</span>
-            <span class="text-red-500 cli-command__value break-all">{{ registryPlaceholder }}</span>
+          <template v-for="content in contentArgs" :key="content.key">
+            <span class="text-blue-700">&nbsp;--{{ content.key }}</span>
+            <span class="text-red-500 cli-command__value break-all">&nbsp;{{ content.placehoder }}</span>
           </template>
         </code>
         <!-- <code>{{createCmd}} <span class="text-red-500" v-if="registryContent">--registry {{registryPlaceholder}}</span></code> -->
@@ -59,6 +59,7 @@
 import { computed } from 'vue'
 import Clipboard from 'clipboard'
 import useNotificationStore from '@/store/useNotificationStore.js'
+import { startCase } from 'lodash-es'
 
 const props = defineProps({
   clusterForm: {
@@ -74,7 +75,6 @@ const props = defineProps({
 const emit = defineEmits(['update:visible', 'close'])
 
 const notificationStore = useNotificationStore()
-const registryPlaceholder = '<registry-path>'
 
 const modalVisible = computed({
   get() {
@@ -88,10 +88,75 @@ const registryContent = computed(() => {
   if (!props.visible) {
     return ''
   }
-  if (!props.clusterForm.config['registry-content']?.trim()) {
+  const content = props.clusterForm.config['registry-content']?.trim()
+  if (!content) {
     return ''
   }
-  return props.clusterForm.config['registry-content']?.trim()
+  return content
+})
+const caFileContent = computed(() => {
+  if (!props.visible) {
+    return ''
+  }
+  const content = props.clusterForm.config['datastore-cafile-content']?.trim()
+  if (!content) {
+    return ''
+  }
+  return content
+})
+const certFileContent = computed(() => {
+  if (!props.visible) {
+    return ''
+  }
+  const content = props.clusterForm.config['datastore-certfile-content']?.trim()
+  if (!content) {
+    return ''
+  }
+  return content
+})
+const keyFileContent = computed(() => {
+  if (!props.visible) {
+    return ''
+  }
+  const content = props.clusterForm.config['datastore-keyfile-content']?.trim()
+  if (!content) {
+    return ''
+  }
+  return content
+})
+const contentArgs = computed(() => {
+  const contents = [
+    {
+      key: 'registry',
+      value: registryContent.value,
+      placehoder: '<registry-path>',
+      name: 'registry content',
+      suffix: '.yaml'
+    },
+    {
+      key: 'datastore-cafile',
+      value: caFileContent.value,
+      placehoder: '<datastore-cafile-path>',
+      name: 'datastore cafile content',
+      suffix: '.ca'
+    },
+    {
+      key: 'datastore-certfile',
+      value: certFileContent.value,
+      placehoder: '<datastore-certfile-path>',
+      name: 'datastore certfile content',
+      suffix: '.cert'
+    },
+    {
+      key: 'datastore-keyfile',
+      value: keyFileContent.value,
+      placehoder: '<datastore-keyfile-path>',
+      name: 'datastore keyfile content',
+      suffix: '.key'
+    }
+  ]
+
+  return contents.filter((c) => c.value)
 })
 const cmdOptions = computed(() => {
   if (!props.visible) {
@@ -102,9 +167,18 @@ const cmdOptions = computed(() => {
   }
 
   const arrayArgs = ['tags', 'labels', 'envs', 'volumes', 'ports', 'tls-sans', 'enable']
-  const excludeKeys = ['registry-content', 'registry']
+  const excludeKeys = [
+    'registry-content',
+    'registry',
+    'datastore-cafile-content',
+    'datastore-cafile',
+    'datastore-certfile-content',
+    'datastore-certfile',
+    'datastore-keyfile-content',
+    'datastore-keyfile'
+  ]
   const ignoreValues = [null, undefined, '', false]
-  const extraArgs = ['master-extra-args', 'worker-extra-args']
+  const extraArgs = ['master-extra-args', 'worker-extra-args', 'datastore']
   const provider = props.clusterForm.provider
 
   const filterArgs = (k, v) => {
@@ -186,7 +260,13 @@ const optionValueClass = (v) => {
 
 const copyCmd = async () => {
   try {
-    await toClipboard(`${createCmd.value}${registryContent.value ? ` --registry ${registryPlaceholder}` : ''}`)
+    const contents = contentArgs.value
+      .reduce((t, c) => {
+        t.push(`--${c.key}`, c.placehoder)
+        return t
+      }, [])
+      .join(' ')
+    await toClipboard(`${createCmd.value}${contents ? ` ${contents}` : ''}`)
     notificationStore.notify({
       type: 'success',
       title: 'CLI Command Copied'
@@ -200,23 +280,23 @@ const copyCmd = async () => {
   }
 }
 
-const copyRegistryContent = async () => {
+const copyContent = async (content) => {
   try {
-    await toClipboard(registryContent.value)
+    await toClipboard(content.value)
     notificationStore.notify({
       type: 'success',
-      title: 'Registry Content Copied'
+      title: `${startCase(content.name)} Copied`
     })
   } catch (e) {
     notificationStore.notify({
       type: 'error',
-      title: 'Registry Content Copy Failed',
+      title: `${startCase(content.name)} Copy Failed`,
       content: e?.toString()
     })
   }
 }
-const downloadRegistryContent = () => {
-  downloadFile(registryContent.value, 'registry.yaml')
+const downloadContent = (content) => {
+  downloadFile(content.value, `${content.key}${content.suffix}`)
 }
 
 function toClipboard(text, action = 'copy', appendToBody = false) {

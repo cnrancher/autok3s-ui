@@ -53,7 +53,7 @@ export function defineClusterStoreFactory(provider) {
             zone: cluster.options?.zone,
             status: cluster.status?.status,
             worker: cluster.worker,
-            master: cluster.master,
+            master: cluster.master
           }
           const temp = { ...cloneDeep(this.data[index]), ...props }
           this.data.splice(index, 1, temp)
