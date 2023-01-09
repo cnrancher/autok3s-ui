@@ -430,9 +430,9 @@ const getForm = () => {
 
   const clusterConfig = f.find(({ path: [, k] }) => k === 'cluster')
   const datastoreConfig = f.find(({ path: [, k] }) => k === 'datastore')
-  const datastoreCAConfig = f.find(({ path: [, k] }) => k === 'datastore-cafile')
-  const datastoreCertConfig = f.find(({ path: [, k] }) => k === 'datastore-certfile')
-  const datastoreKeyConfig = f.find(({ path: [, k] }) => k === 'datastore-keyfile')
+  const datastoreCAConfig = f.find(({ path: [, k] }) => k === 'datastore-cafile-content')
+  const datastoreCertConfig = f.find(({ path: [, k] }) => k === 'datastore-certfile-content')
+  const datastoreKeyConfig = f.find(({ path: [, k] }) => k === 'datastore-keyfile-content')
 
   if (HAClusters.value) {
     if (clusterConfig.value === true) {
