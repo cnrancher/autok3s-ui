@@ -48,11 +48,12 @@ export function defineClusterStoreFactory(provider) {
         const index = this.data.findIndex((item) => item.id === cluster.id)
         if (index > -1) {
           const props = {
+            ...cluster,
             region: cluster.options?.region,
             zone: cluster.options?.zone,
             status: cluster.status?.status,
             worker: cluster.worker,
-            master: cluster.master
+            master: cluster.master,
           }
           const temp = { ...cloneDeep(this.data[index]), ...props }
           this.data.splice(index, 1, temp)
