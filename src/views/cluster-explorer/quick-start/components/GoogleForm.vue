@@ -8,25 +8,11 @@
       required
       label="GCE Credential"
       :desc="desc"
-      @credential-change="handleCredentialChange"
     />
-    <string-form v-model.trim="form.config['master']" label="Master" :desc="desc.config['master']" />
-    <string-form v-model.trim="form.config['worker']" label="Worker" :desc="desc.config['worker']" />
-    <!-- <string-form
-      v-show="showKeyForm"
-      v-model.trim="form.options['service-account']"
-      label="Service Account"
-      :desc="desc.options['service-account']"
-      required
-    />
-    <string-form
-      v-show="showKeyForm"
-      v-model.trim="form.options['service-account-file']"
-      label="Service Account File"
-      :desc="desc.options['service-account-file']"
-      required
-    /> -->
     <string-form v-model.trim="form.options['project']" label="Project" :desc="desc.options['project']" required />
+    <div class="sm:col-span-2">
+      <HaConfigForm :init-value="form" :desc="desc" />
+    </div>
     <string-form v-model.trim="form.options.region" label="Region" :desc="desc.options.region" disabled />
     <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" disabled />
   </div>
@@ -34,9 +20,11 @@
 <script setup>
 import { computed, watch, reactive } from 'vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
+import HaConfigForm from './HaConfigForm.vue'
 import { cloneDeep } from '@/utils'
 import useFormRegist from '@/composables/useFormRegist.js'
 import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
+import useFormManage from '@/composables/useFormManage.js'
 
 const props = defineProps({
   initValue: {
@@ -52,7 +40,7 @@ const props = defineProps({
     default: false
   }
 })
-
+const { getForm: getSubform, validate: validateSubForm } = useFormManage()
 const form = reactive(cloneDeep(props.initValue))
 watch(
   () => props.initValue,
@@ -77,12 +65,16 @@ const credentialValue = computed({
     form.options['service-account-file'] = v['service-account-file']
   }
 })
+
+const validate = () => {
+  return validateSubForm()
+}
 const getForm = () => {
-  const f = cloneDeep(form)
+  const f = getSubform(form)
   return [
     { path: 'config', value: f.config },
     { path: 'options', value: f.options }
   ]
 }
-useFormRegist(getForm)
+useFormRegist(getForm, validate)
 </script>
