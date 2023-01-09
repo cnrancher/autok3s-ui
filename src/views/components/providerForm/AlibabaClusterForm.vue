@@ -761,7 +761,7 @@ const selectedImageName = computed(() => {
   const imageId = form.options['image']
   const image = imageDetail.data
   if (imageId === image?.ImageId) {
-    return image.OSNameEn ?? image.OSName
+    return image?.OSNameEn ?? image?.OSName
   }
   return imageId
 })

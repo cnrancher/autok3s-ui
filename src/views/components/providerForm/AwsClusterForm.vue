@@ -839,7 +839,7 @@ watch([() => keyInfo.valid, () => form.options['ami']], ([valid, imageId]) => {
 const selectedImageName = computed(() => {
   const imageId = form.options['ami']
   const image = imageDetail.data
-  if (imageId === image?.ImageId) {
+  if (image?.Name && imageId === image?.ImageId) {
     const imageName = image.Name
     return imageName
       .split('/')
