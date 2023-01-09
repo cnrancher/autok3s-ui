@@ -163,7 +163,7 @@ export default defineComponent({
         return
       }
       const scrollInfo = codemirror.getScrollInfo()
-      codemirror.setValue(newVal)
+      codemirror.setValue(newVal ?? '')
       codemirror.scrollTo(scrollInfo.left, scrollInfo.top)
     }
     const validateFile = (file) => {
@@ -265,7 +265,7 @@ export default defineComponent({
     })
     onMounted(() => {
       codemirror = CodeMirror.fromTextArea(textarea.value, { ...options.value })
-      codemirror.setValue(props.modelValue)
+      codemirror.setValue(props.modelValue ?? '')
       codemirror.on('change', handleChange)
       nextTick(() => {
         codemirror?.refresh()
