@@ -302,9 +302,9 @@ const configFields = [
   'k3s-install-mirror',
   'system-default-registry',
   'package-name',
-  'datastore-cafile',
-  'datastore-certfile',
-  'datastore-keyfile'
+  'datastore-cafile-content',
+  'datastore-certfile-content',
+  'datastore-keyfile-content'
 ]
 
 const datastoreTypes = [
