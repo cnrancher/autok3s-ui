@@ -11,7 +11,7 @@
     />
     <string-form v-model.trim="form.options['project']" label="Project" :desc="desc.options['project']" required />
     <div class="sm:col-span-2">
-      <HaConfigForm :init-value="form" :desc="desc" />
+      <HaConfigForm :init-value="form" :desc="desc" provider="google" />
     </div>
     <string-form v-model.trim="form.options.region" label="Region" :desc="desc.options.region" disabled />
     <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" disabled />

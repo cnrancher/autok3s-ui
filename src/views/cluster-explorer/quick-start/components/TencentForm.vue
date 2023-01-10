@@ -10,7 +10,7 @@
       :desc="desc"
     />
     <div class="sm:col-span-2">
-      <HaConfigForm :init-value="form" :desc="desc" />
+      <HaConfigForm :init-value="form" :desc="desc" provider="tencent" />
     </div>
     <string-form v-model.trim="form.options.region" label="Region" :desc="desc.options.region" disabled />
     <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" disabled />
