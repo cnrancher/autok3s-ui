@@ -28,7 +28,7 @@
         <string-form :model-value="template?.name" label="Name" placeholder="e.g. test" required readonly />
         <boolean-form
           v-if="template"
-          v-model="template['is-default']"
+          v-model="isDefault"
           label="Default Template"
           true-label="True"
           false-label="False"
@@ -52,7 +52,7 @@
   </div>
 </template>
 <script setup>
-import { computed, ref, provide } from 'vue'
+import { computed, ref, provide, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/views/components/PageHeader.vue'
 import FooterActions from '@/views/components/FooterActions.vue'
@@ -81,6 +81,7 @@ const router = useRouter()
 const updating = ref(false)
 const formErrors = ref([])
 const formLoading = ref(false)
+const isDefault = ref(false)
 
 provide('formLoading', {
   showLoading: () => {
@@ -100,6 +101,13 @@ const template = computed(() => {
   }
   return null
 })
+watch(
+  template,
+  (t) => {
+    isDefault.value = t?.['is-default'] ?? false
+  },
+  { immediate: true }
+)
 const templateProvider = computed(() => {
   if (!template.value) {
     return null
@@ -157,7 +165,8 @@ const save = async () => {
     provider,
     options: {
       ...form.options
-    }
+    },
+    'is-default': isDefault.value
   }
 
   updating.value = true
