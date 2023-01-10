@@ -147,6 +147,9 @@ const getForm = () => {
     .getValue()
     .filter((v) => v)
     .join(',')
+  if (f.options['master-ips'].split(',').length > 1 && f.config['cluster'] === false && !f.config['datastore']) {
+    f.config['cluster'] = true
+  }
   return [
     { path: 'config', value: f.config },
     { path: 'options', value: f.options }
