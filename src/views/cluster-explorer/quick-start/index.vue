@@ -19,6 +19,9 @@
         <k-loading :loading="loading || creating">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-20px pb-20px">
             <k-select v-model="currentProviderId" label="Provider" required :loading="loading">
+              <template #suffix>
+                <img class="h-42px w-42px object-contain" :src="providerIconMap.get(currentProviderId)" />
+              </template>
               <k-option v-for="p in providers" :key="p.id" :value="p.id" :label="p.name"></k-option>
             </k-select>
             <k-input v-model.trim="name" label="Name" placeholder="e.g. test" required />
@@ -67,6 +70,7 @@ import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import { cloneDeep } from '@/utils'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
 import useWindownManagerStore from '@/store/useWindowManagerStore.js'
+import { useProviderIcon } from '@/views/composables/useProviderIcon.js'
 
 const props = defineProps({
   templateId: {
@@ -78,6 +82,7 @@ const props = defineProps({
     default: 'aws'
   }
 })
+const providerIconMap = useProviderIcon()
 const providerComponentMap = {
   aws: AwsForm,
   alibaba: AlibabaForm,
