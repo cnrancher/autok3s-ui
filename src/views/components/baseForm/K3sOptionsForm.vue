@@ -62,7 +62,7 @@
         <BooleanForm
           v-model="HAClusters"
           label="High Availability Clusters"
-          :readonly="readonly"
+          :readonly="readonly || onlyHAMode"
           @change="handleHAChanged"
         />
         <BooleanForm
@@ -124,6 +124,9 @@
       </div>
     </template>
   </form-group>
+  <div v-show="onlyHAMode">
+    <KAlert type="warning" title="We can only using HA Mode for multiple master nodes." />
+  </div>
   <hr class="section-divider" />
   <form-group>
     <template #title>Master</template>
@@ -372,6 +375,17 @@ const masterFormDisabled = computed(() => {
   return !HAClusters.value
 })
 
+const onlyHAMode = computed(() => {
+  const m = parseInt(config['master'], 10)
+  return m > 1 || props.initMasterCount > 1
+})
+
+watch(onlyHAMode, (haMode) => {
+  if (haMode) {
+    HAClusters.value = true
+  }
+})
+
 watch([HAClusters, () => config['cluster'], () => config['datastore']], ([ha, c, d]) => {
   if (ha && c === false && !d) {
     emit('errors', ['"Datastore Endpoint" is required'])
@@ -410,23 +424,33 @@ const handleHAChanged = (ha) => {
 const getForm = () => {
   const keys = ['k3s-channel', 'k3s-version', 'k3s-install-script', 'system-default-registry']
   const flag = airGapInstall.value
-  const f = configFields.map((k) => {
-    let value = config[k]
-    if (k === 'tls-sans') {
-      value = tlsSansRef.value.getValue()
-    }
-    if (flag === true && keys.includes(k)) {
-      value = ''
-    }
-    if (flag === false && k === 'package-name') {
-      value = ''
-    }
+  const isNativeProvider = props.initValue.provider === 'native'
+  const ignoreKeys = ['master', 'worker']
+  const f = configFields
+    .filter((k) => {
+      if (isNativeProvider) {
+        return !ignoreKeys.includes(k)
+      } else {
+        return true
+      }
+    })
+    .map((k) => {
+      let value = config[k]
+      if (k === 'tls-sans') {
+        value = tlsSansRef.value.getValue()
+      }
+      if (flag === true && keys.includes(k)) {
+        value = ''
+      }
+      if (flag === false && k === 'package-name') {
+        value = ''
+      }
 
-    return {
-      path: ['config', k],
-      value
-    }
-  })
+      return {
+        path: ['config', k],
+        value
+      }
+    })
 
   const clusterConfig = f.find(({ path: [, k] }) => k === 'cluster')
   const datastoreConfig = f.find(({ path: [, k] }) => k === 'datastore')
