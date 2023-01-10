@@ -151,6 +151,8 @@ const getForm = () => {
   if (f.options['master-ips'].split(',').length > 1 && f.config['cluster'] === false && !f.config['datastore']) {
     f.config['cluster'] = true
   }
+  delete f.config['worker']
+  delete f.config['master']
   return [
     { path: 'config', value: f.config },
     { path: 'options', value: f.options }
