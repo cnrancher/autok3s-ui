@@ -18,7 +18,7 @@ const clusterExplorerRouter = {
         templateId: route.query.templateId,
         defaultProvider: route.query.defaultProvider
       }),
-      meta: { title: 'Quick start' }
+      meta: { title: 'Quick Start' }
     },
     {
       path: 'core',
