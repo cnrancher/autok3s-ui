@@ -89,7 +89,6 @@ import BooleanForm from '@/views/components/baseForm/BooleanForm.vue'
 import StringForm from '@/views/components/baseForm/StringForm.vue'
 import { joinNode } from '@/api/cluster.js'
 import { stringify } from '@/utils/error.js'
-import useNotificationStore from '@/store/useNotificationStore.js'
 import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 
 const formDefaultValue = {
@@ -123,7 +122,6 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'close'])
 
-const notificationStore = useNotificationStore()
 const wmStore = useWindownManagerStore()
 const sshAdvanceVisible = ref(false)
 const masterIps = ref(null)
@@ -285,14 +283,10 @@ const save = async () => {
         cluster: id
       }
     })
+    close()
   } catch (err) {
-    notificationStore.notify({
-      type: 'error',
-      title: 'Join Nodes Failed',
-      content: stringify(err)
-    })
+    formErrors.value = [stringify(err)]
   }
   saving.value = false
-  close()
 }
 </script>
