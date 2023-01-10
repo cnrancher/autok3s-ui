@@ -3,13 +3,6 @@
     <page-header>
       <template #title>Quick Start</template>
       <template #subtitle>User quick guides to help you quickly create K3s cluster and add K3s nodes.</template>
-      <template #actions>
-        <template-filter
-          :disabled="loading || creating"
-          :provider="currentProviderId"
-          @apply-template="handleApplyTemplate"
-        ></template-filter>
-      </template>
     </page-header>
     <div class="grid grid-cols-[auto,1fr]">
       <div>
@@ -50,7 +43,6 @@
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/views/components/PageHeader.vue'
-import TemplateFilter from '@/views/components/TemplateFilter/index.vue'
 import FooterActions from '@/views/components/FooterActions.vue'
 import AwsForm from './components/AwsForm.vue'
 import AlibabaForm from './components/AlibabaForm.vue'
@@ -288,8 +280,5 @@ const create = async () => {
     formErrors.value = [stringify(err)]
   }
   creating.value = false
-}
-const handleApplyTemplate = (templateId) => {
-  router.push({ name: 'QuickStart', query: { templateId } })
 }
 </script>
