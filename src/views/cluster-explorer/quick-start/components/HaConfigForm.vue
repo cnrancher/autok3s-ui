@@ -23,10 +23,6 @@ const props = defineProps({
   initWorkerCount: {
     type: Number,
     default: 0
-  },
-  provider: {
-    type: String,
-    required: true
   }
 })
 const config = reactive({})
@@ -52,7 +48,7 @@ watch(
 )
 const HAClusters = ref(false)
 const hideMasterAndWorkerConfig = computed(() => {
-  return props.provider === 'native'
+  return props.initValue.provider === 'native'
 })
 watch(
   () => props.initValue?.config,
@@ -82,12 +78,22 @@ watch(
 )
 
 const getForm = () => {
-  const f = configFields.map((k) => {
-    return {
-      path: ['config', k],
-      value: config[k]
-    }
-  })
+  const isNativeProvider = props.initValue.provider === 'native'
+  const ignoreKeys = ['master', 'worker']
+  const f = configFields
+    .filter((k) => {
+      if (isNativeProvider) {
+        return !ignoreKeys.includes(k)
+      } else {
+        return true
+      }
+    })
+    .map((k) => {
+      return {
+        path: ['config', k],
+        value: config[k]
+      }
+    })
   const clusterConfig = f.find(({ path: [, k] }) => k === 'cluster')
   const datastoreConfig = f.find(({ path: [, k] }) => k === 'datastore')
   const datastoreCAConfig = f.find(({ path: [, k] }) => k === 'datastore-cafile-content')

@@ -14,7 +14,7 @@
       :desc="desc.options['worker-ips']"
     ></ip-address-pool-form>
     <div class="sm:col-span-2">
-      <HaConfigForm :init-value="form" :desc="desc" provider="native" />
+      <HaConfigForm :init-value="form" :desc="desc" />
     </div>
     <string-form v-model.trim="form.config['ssh-user']" label="SSH User" :desc="desc.config['ssh-user']" />
     <string-form v-model.trim="form.config['ssh-key-path']" label="SSH Key Path" :desc="desc.config['ssh-key-path']" />
@@ -44,12 +44,17 @@ const props = defineProps({
   }
 })
 const { getForm: getSubform } = useFormManage()
-const form = reactive(cloneDeep(props.initValue))
+const form = reactive({
+  provider: '',
+  config: {},
+  options: {}
+})
 watch(
   () => props.initValue,
   () => {
-    ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
-  }
+    ;({ config: form.config, options: form.options, provider: form.provider } = cloneDeep(props.initValue))
+  },
+  { immediate: true }
 )
 const masterIps = ref(null)
 const workerIps = ref(null)
@@ -74,6 +79,8 @@ const getForm = () => {
   if (f.options['master-ips'].split(',').length > 1 && f.config['cluster'] === false && !f.config['datastore']) {
     f.config['cluster'] = true
   }
+  delete f.config['worker']
+  delete f.config['master']
   return [
     { path: 'config', value: f.config },
     { path: 'options', value: f.options }

@@ -10,7 +10,7 @@
       :desc="desc"
     />
     <div class="sm:col-span-2">
-      <HaConfigForm :init-value="form" :desc="desc" provider="tencent" />
+      <HaConfigForm :init-value="form" :desc="desc" />
     </div>
     <string-form v-model.trim="form.options.region" label="Region" :desc="desc.options.region" disabled />
     <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" disabled />
@@ -40,12 +40,17 @@ const props = defineProps({
   }
 })
 const { getForm: getSubform, validate: validateSubForm } = useFormManage()
-const form = reactive(cloneDeep(props.initValue))
+const form = reactive({
+  provider: '',
+  config: {},
+  options: {}
+})
 watch(
   () => props.initValue,
   () => {
-    ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
-  }
+    ;({ config: form.config, options: form.options, provider: form.provider } = cloneDeep(props.initValue))
+  },
+  { immediate: true }
 )
 const showKeyForm = computed(() => {
   return props.hasError || !props.initValue.options['secret-id'] || !props.initValue.options['secret-key']
