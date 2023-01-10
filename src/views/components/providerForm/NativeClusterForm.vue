@@ -111,6 +111,7 @@ const props = defineProps({
 const masterIps = ref(null)
 const workerIps = ref(null)
 const form = reactive({
+  provider: '',
   config: {},
   options: {}
 })
@@ -118,7 +119,7 @@ const tabPosition = inject('tab-position', 'left')
 watch(
   () => props.initValue,
   () => {
-    ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
+    ;({ config: form.config, options: form.options, provider: form.provider } = cloneDeep(props.initValue))
   },
   { immediate: true }
 )

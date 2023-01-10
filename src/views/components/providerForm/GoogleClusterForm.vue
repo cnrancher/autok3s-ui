@@ -449,6 +449,7 @@ const props = defineProps({
   }
 })
 const form = reactive({
+  provider: '',
   config: {},
   options: {}
 })
@@ -456,7 +457,7 @@ const form = reactive({
 watch(
   () => props.initValue,
   () => {
-    ;({ config: form.config, options: form.options } = cloneDeep(props.initValue))
+    ;({ config: form.config, options: form.options, provider: form.provider } = cloneDeep(props.initValue))
     needDecodeOptionKeys.forEach((k) => {
       const v = form.options[k]
       if (v) {
