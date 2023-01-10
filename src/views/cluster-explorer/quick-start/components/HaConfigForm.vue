@@ -59,11 +59,17 @@ watch(
   },
   { immediate: true }
 )
-watch(HAClusters, (ha) => {
-  if (!ha) {
-    config['master'] = '1'
-  }
-})
+watch(
+  HAClusters,
+  (ha) => {
+    if (!ha) {
+      config['master'] = '1'
+    } else if (config['master'] === '0') {
+      config['master'] = '1'
+    }
+  },
+  { immediate: true }
+)
 
 watch(
   () => config['master'],
