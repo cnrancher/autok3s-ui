@@ -34,7 +34,24 @@ const initForm = computed(() => {
     const clone = cloneDeep(t)
     const form = {
       config: Object.keys(clone)
-        .filter((k) => !['options', 'id', 'context-name', 'is-default', 'type', 'links', 'status'].includes(k))
+        .filter(
+          (k) =>
+            ![
+              'options',
+              'id',
+              'context-name',
+              'is-default',
+              'type',
+              'links',
+              'status',
+              'provider',
+              'token',
+              'ip',
+              'cluster-cidr',
+              'is-ha-mode',
+              'datastore-type'
+            ].includes(k)
+        )
         .reduce((r, k) => {
           r[k] = t[k]
           return r
