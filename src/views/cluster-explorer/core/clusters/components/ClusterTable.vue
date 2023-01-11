@@ -328,7 +328,23 @@ const handleCommand = ({ command, data }) => {
           const provider = providers.value.find((p) => p.id === cluster.provider)
           const defaultVal = {
             config: Object.keys(cluster)
-              .filter((k) => k != 'options')
+              .filter(
+                (k) =>
+                  ![
+                    'options',
+                    'id',
+                    'actions',
+                    'status',
+                    'type',
+                    'links',
+                    'provider',
+                    'token',
+                    'ip',
+                    'cluster-cidr',
+                    'is-ha-mode',
+                    'datastore-type'
+                  ].includes(k)
+              )
               .reduce((t, k) => {
                 t[k] = cluster[k]
                 return t
