@@ -26,7 +26,7 @@ const initForm = computed(() => {
   const clone = cloneDeep(props.cluster)
   const form = {
     config: Object.keys(clone)
-      .filter((k) => !['options', 'id', 'actions', 'status', 'type', 'links'].includes(k))
+      .filter((k) => !['options', 'id', 'actions', 'status', 'type', 'links', 'provider'].includes(k))
       .reduce((r, k) => {
         r[k] = clone[k]
         return r
