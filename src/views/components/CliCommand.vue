@@ -124,6 +124,26 @@ const keyFileContent = computed(() => {
   }
   return content
 })
+const sshKeyContent = computed(() => {
+  if (!props.visible) {
+    return ''
+  }
+  const content = props.clusterForm.config['ssh-key']?.trim()
+  if (!content) {
+    return ''
+  }
+  return content
+})
+const sshCertContent = computed(() => {
+  if (!props.visible) {
+    return ''
+  }
+  const content = props.clusterForm.config['ssh-cert']?.trim()
+  if (!content) {
+    return ''
+  }
+  return content
+})
 const contentArgs = computed(() => {
   const contents = [
     {
@@ -153,6 +173,20 @@ const contentArgs = computed(() => {
       placehoder: '<datastore-keyfile-path>',
       name: 'datastore keyfile content',
       suffix: '.key'
+    },
+    {
+      key: 'ssh-key-path',
+      value: sshKeyContent.value,
+      placehoder: '<ssh-key-path>',
+      name: 'ssh key path',
+      suffix: '.key'
+    },
+    {
+      key: 'ssh-cert-path',
+      value: sshCertContent.value,
+      placehoder: '<ssh-cert-path>',
+      name: 'ssh cert path',
+      suffix: '.cert'
     }
   ]
 
