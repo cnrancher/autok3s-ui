@@ -4,6 +4,7 @@ import { cloneDeep } from '@/utils'
 import useFormFromSchema from '@/views/composables/useFormFromSchema.js'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
 import useProviderAsyncForm from '@/views/components/providerForm/hooks/useProviderAsyncForm.js'
+import { EXCLUDED_KEYS_FOR_CLUSTER_FORM } from '@/utils/constants.js'
 
 const props = defineProps({
   provider: {
@@ -28,7 +29,7 @@ const initForm = computed(() => {
     const { config = {}, options = {} } = cloneDeep(quickStartForm)
     const form = {
       config: Object.keys(config)
-        .filter((k) => !['provider', 'token', 'ip', 'cluster-cidr', 'is-ha-mode', 'datastore-type'].includes(k))
+        .filter((k) => !EXCLUDED_KEYS_FOR_CLUSTER_FORM.includes(k))
         .reduce((r, k) => {
           r[k] = config[k]
           return r
