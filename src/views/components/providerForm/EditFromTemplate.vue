@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { cloneDeep } from '@/utils'
 import { useDescFromSchema } from '@/views/composables/useFormFromSchema.js'
 import useProviderAsyncForm from '@/views/components/providerForm/hooks/useProviderAsyncForm.js'
+import { EXCLUDED_KEYS_FOR_CLUSTER_FORM } from '@/utils/constants.js'
 
 const props = defineProps({
   provider: {
@@ -28,24 +29,7 @@ const initForm = computed(() => {
   const clone = cloneDeep(props.template)
   const form = {
     config: Object.keys(clone)
-      .filter(
-        (k) =>
-          ![
-            'options',
-            'id',
-            'context-name',
-            'is-default',
-            'type',
-            'links',
-            'status',
-            'provider',
-            'token',
-            'ip',
-            'cluster-cidr',
-            'is-ha-mode',
-            'datastore-type'
-          ].includes(k)
-      )
+      .filter((k) => !EXCLUDED_KEYS_FOR_CLUSTER_FORM.includes(k))
       .reduce((r, k) => {
         r[k] = clone[k]
         return r
