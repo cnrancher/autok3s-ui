@@ -25,7 +25,17 @@ const defaultFormAndDesc = computed(() => {
 const initForm = computed(() => {
   const quickStartForm = providerClusterStores[props.provider.id]?.formHistory?.[0]
   if (quickStartForm) {
-    return cloneDeep(quickStartForm)
+    const { config = {}, options = {} } = cloneDeep(quickStartForm)
+    const form = {
+      config: Object.keys(config)
+        .filter((k) => !['provider'].includes(k))
+        .reduce((r, k) => {
+          r[k] = config[k]
+          return r
+        }, {}),
+      options: options
+    }
+    return form
   }
   return defaultFormAndDesc.value.form
 })
