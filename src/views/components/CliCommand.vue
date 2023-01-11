@@ -209,7 +209,9 @@ const cmdOptions = computed(() => {
     'datastore-certfile-content',
     'datastore-certfile',
     'datastore-keyfile-content',
-    'datastore-keyfile'
+    'datastore-keyfile',
+    'ssh-key',
+    'ssh-cert'
   ]
   const ignoreValues = [null, undefined, '', false]
   const extraArgs = ['master-extra-args', 'worker-extra-args', 'datastore']
