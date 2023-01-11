@@ -171,7 +171,7 @@ const save = async () => {
 
   updating.value = true
   const promises = [updateTemplate(props.templateId, formData)]
-  const rawTemplate = templates.value.find((t) => t.id === formData.id)
+  const rawTemplate = templates.value.find((t) => t.id === props.templateId)
   if (rawTemplate?.['is-default'] === false && formData['is-default'] === true) {
     promises.push(
       ...templates.value
