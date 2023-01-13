@@ -853,4 +853,26 @@ const selectedImageName = computed(() => {
   }
   return imageId
 })
+
+watch(
+  () => imageDetail.data,
+  (image) => {
+    const arch = image?.Architecture
+    if (!arch) {
+      return
+    }
+    const instanceType = form.options['instance-type']
+    if (!instanceType) {
+      return
+    }
+    const selectedInstanceType = instanceTypeInfo.data.find((t) => t.value === instanceType)
+    if (!selectedInstanceType) {
+      return
+    }
+    const supportedArchitectures = selectedInstanceType.raw?.ProcessorInfo?.SupportedArchitectures
+    if (supportedArchitectures && !supportedArchitectures.includes(arch)) {
+      form.options['instance-type'] = ''
+    }
+  }
+)
 </script>
