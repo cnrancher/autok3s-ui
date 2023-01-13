@@ -63,8 +63,11 @@ export function useUbuntuImages(data) {
         ['minimal', []]
       ])
     )
-
-    return [...optionMap.get('normal'), ...optionMap.get('minimal')]
+    const normals = optionMap.get('normal')
+    const minimals = optionMap.get('minimal')
+    normals.sort((a, b) => b.value.localeCompare(a.value))
+    minimals.sort((a, b) => b.value.localeCompare(a.value))
+    return [...normals, ...minimals]
   })
 
   const getImageName = (versionPrefix, buildVersion) => {
