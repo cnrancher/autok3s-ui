@@ -239,6 +239,11 @@ const create = async () => {
     formErrors.value = errors
     return
   }
+  if (/\s/.test(name.value)) {
+    errors.push(`"Name" cannot contain blank characters`)
+    formErrors.value = errors
+    return
+  }
   const form = getForm()
   if (!form.config || !form.options) {
     errors.push(`Forms are not initialized `)
