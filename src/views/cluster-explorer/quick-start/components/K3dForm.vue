@@ -34,6 +34,9 @@ watch(
   () => props.initValue,
   () => {
     ;({ config: form.config, options: form.options, provider: form.provider } = cloneDeep(props.initValue))
+    if (form.config.master === '0') {
+      form.config.master = '1'
+    }
   },
   { immediate: true }
 )
