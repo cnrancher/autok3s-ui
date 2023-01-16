@@ -83,6 +83,9 @@ watch(
     configFields.forEach((k) => {
       config[k] = props.initValue.config[k]
     })
+    if (config['master'] === '0') {
+      config['master'] = '1'
+    }
   },
   { immediate: true }
 )
