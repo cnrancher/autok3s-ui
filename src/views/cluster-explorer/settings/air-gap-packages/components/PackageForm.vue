@@ -66,20 +66,42 @@ const form = reactive({
 })
 
 const importPackageDescriptor = {
-  name: {
-    required: true,
-    message: '"Name" is required'
-  },
+  name: [
+    {
+      required: true,
+      message: '"Name" is required'
+    },
+    {
+      validator(rule, value) {
+        const errors = []
+        if (/\s/.test(value)) {
+          errors.push(`"Name" cannot contain blank characters`)
+        }
+        return errors
+      }
+    }
+  ],
   package: {
     required: true,
     message: '"Package File" is required'
   }
 }
 const createPacdageDescriptor = {
-  name: {
-    required: true,
-    message: '"Name" is required'
-  },
+  name: [
+    {
+      required: true,
+      message: '"Name" is required'
+    },
+    {
+      validator(rule, value) {
+        const errors = []
+        if (/\s/.test(value)) {
+          errors.push(`"Name" cannot contain blank characters`)
+        }
+        return errors
+      }
+    }
+  ],
   k3sVersion: {
     required: true,
     message: '"K3sVersion" is required'
