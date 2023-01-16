@@ -28,6 +28,7 @@ const initForm = computed(() => {
   if (quickStartForm) {
     const { config = {}, options = {} } = cloneDeep(quickStartForm)
     const form = {
+      provider: props.provider?.id,
       config: Object.keys(config)
         .filter((k) => !EXCLUDED_KEYS_FOR_CLUSTER_FORM.includes(k))
         .reduce((r, k) => {
