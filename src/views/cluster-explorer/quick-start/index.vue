@@ -246,6 +246,11 @@ const create = async () => {
     formErrors.value = errors
     return
   }
+  if (/\./.test(name.value)) {
+    errors.push(`"Name" cannot contain the dot special character (.)`)
+    formErrors.value = errors
+    return
+  }
   const form = getForm()
   if (!form.config || !form.options) {
     errors.push(`Forms are not initialized `)
