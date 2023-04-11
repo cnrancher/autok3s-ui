@@ -125,13 +125,20 @@
             <a href="https://k3d.io/usage/guides/registries/#secure-registries" target="_blank">more details</a>
             .
           </k-alert>
-          <string-form
+          <!-- <string-form
             v-model.trim="form.config['registry']"
             label="Registry"
             :desc="desc.config['registry']"
             :readonly="readonly"
             type="textarea"
             :style="{ resize: 'vertical' }"
+          /> -->
+          <registry-config-form
+            v-model="form.config['registry-content']"
+            class="col-span-1 sm:col-span-2"
+            label="Registry"
+            :desc="desc.config['registry-content']"
+            :options="readonlyOption"
           />
         </template>
       </form-group>
@@ -139,12 +146,13 @@
   </k-tabs>
 </template>
 <script setup>
-import { ref, provide, reactive, watch, inject } from 'vue'
+import { computed, ref, provide, reactive, watch, inject } from 'vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
 import StringForm from '../baseForm/StringForm.vue'
 import K3dOptionsForm from '../baseForm/K3dOptionsForm.vue'
 import ArrayListForm from '../baseForm/ArrayListForm.vue'
 import FormGroup from '../baseForm/FormGroup.vue'
+import RegistryConfigForm from '@/views/components/baseForm/RegistryConfigForm.vue'
 import { cloneDeep } from '@/utils'
 import useFormRegist from '@/composables/useFormRegist.js'
 
@@ -171,6 +179,9 @@ const form = reactive({
   provider: '',
   config: {},
   options: {}
+})
+const readonlyOption = computed(() => {
+  return { readOnly: props.readonly }
 })
 const tabPosition = inject('tab-position', 'left')
 watch(
