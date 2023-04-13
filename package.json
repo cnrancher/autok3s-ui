@@ -14,7 +14,9 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore",
     "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore ",
     "preview": "vite preview",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@aws-sdk/client-ec2": "^3.220.0",
@@ -50,10 +52,12 @@
     "@vue/eslint-config-prettier": "^7.0.0",
     "eslint": "^8.28.0",
     "eslint-plugin-vue": "^9.8.0",
+    "jsdom": "^21.1.1",
     "prettier": "^2.8.1",
     "vite": "^v4.0.1",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-windicss": "^1.8.10",
+    "vitest": "^0.30.1",
     "windicss": "^3.5.6"
   }
 }

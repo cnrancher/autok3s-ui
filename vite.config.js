@@ -58,6 +58,9 @@ export default ({ command, mode }) => {
     },
     build: {
       outDir: 'dist/static'
+    },
+    test: {
+      environment: 'jsdom' // or 'jsdom', 'node'
     }
   }
 }
