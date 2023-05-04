@@ -3,28 +3,22 @@
     <k-button :disabled="deleteDisabled" class="role-primary" @click="handleBulkDelete">Delete</k-button>
   </div>
 </template>
-<script>
+<script setup>
 import { cloneDeep } from '@/utils'
 import { computed } from 'vue'
-export default {
-  props: {
-    clusters: {
-      type: Array,
-      required: true
-    }
-  },
-  emits: ['exec-command'],
-  setup(props, { emit }) {
-    const deleteDisabled = computed(() => {
-      return props.clusters.length === 0
-    })
-    const handleBulkDelete = () => {
-      emit('exec-command', { command: 'delete', data: cloneDeep(props.clusters) })
-    }
-    return {
-      deleteDisabled,
-      handleBulkDelete
-    }
+
+const props = defineProps({
+  clusters: {
+    type: Array,
+    required: true
   }
+})
+const emit = defineEmits(['exec-command'])
+
+const deleteDisabled = computed(() => {
+  return props.clusters.length === 0
+})
+const handleBulkDelete = () => {
+  emit('exec-command', { command: 'delete', data: cloneDeep(props.clusters) })
 }
 </script>
