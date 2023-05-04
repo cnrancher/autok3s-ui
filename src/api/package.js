@@ -81,3 +81,20 @@ export function importPackage(name, data) {
     data
   })
 }
+
+export function fetchPackageSouce(signal) {
+  return request({
+    url: `/settings/package-download-source`,
+    method: 'get',
+    signal
+  })
+}
+
+export function updatePackageSource(data, signal) {
+  return request({
+    url: `/settings/package-download-source`,
+    method: 'put',
+    data,
+    signal
+  })
+}
