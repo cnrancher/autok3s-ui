@@ -101,19 +101,42 @@ const handleCommand = async ({ command, data }) => {
       downloadPackage(data[0].id, data[0].name)
       break
     case 'download':
-      await downloadPkg(data[0].name)
-      wmStore.addTab({
-        id: `package_log_${data[0]?.id}`,
-        component: 'PackageDownloadLogs',
-        label: `log: ${data[0].name}`,
-        icon: 'log',
-        attrs: {
-          package: data[0]?.id
+      try {
+        await downloadPkg(data[0].name)
+        wmStore.addTab({
+          id: `package_log_${data[0]?.id}`,
+          component: 'PackageDownloadLogs',
+          label: `package log: ${data[0].name}`,
+          icon: 'log',
+          attrs: {
+            package: data[0]?.id
+          }
+        })
+      } catch (err) {
+        if (!err) {
+          return
         }
-      })
+        notificationStore.notify({
+          type: 'error',
+          title: 'Download Package Error',
+          content: stringify(err)
+        })
+      }
       break
     case 'cancelDownload':
-      cancelDownloadPkg(data[0].name)
+      try {
+        await cancelDownloadPkg(data[0].name)
+      } catch (err) {
+        if (!err) {
+          return
+        }
+        notificationStore.notify({
+          type: 'error',
+          title: 'Cancel Downloading Package Error',
+          content: stringify(err)
+        })
+      }
+
       break
   }
 }
