@@ -60,12 +60,14 @@ import { stringify } from '@/utils/error.js'
 import useNotificationStore from '@/store/useNotificationStore.js'
 import { ref, watchEffect } from 'vue'
 import TableCaptions from '@/views/components/TableCaption.vue'
-import { remove, exportPackage } from '@/api/package.js'
+import { remove, exportPackage, cancelDownloadPkg, downloadPkg } from '@/api/package.js'
 import usePackageStore from '@/store/usePackageStore.js'
 import { storeToRefs } from 'pinia'
 import EditPackageModal from './EditPackageModal.vue'
 import useModal from '@/composables/useModal.js'
+import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 
+const wmStore = useWindownManagerStore()
 const packageStore = usePackageStore()
 const notificationStore = useNotificationStore()
 const { loading, error, data: packages } = storeToRefs(packageStore)
@@ -86,7 +88,7 @@ const reload = () => {
 
 const { show } = useModal(EditPackageModal)
 
-const handleCommand = ({ command, data }) => {
+const handleCommand = async ({ command, data }) => {
   switch (command) {
     case 'delete':
       commandParams.value = data
@@ -97,6 +99,21 @@ const handleCommand = ({ command, data }) => {
       break
     case 'export':
       downloadPackage(data[0].id, data[0].name)
+      break
+    case 'download':
+      await downloadPkg(data[0].name)
+      wmStore.addTab({
+        id: `package_log_${data[0]?.id}`,
+        component: 'PackageDownloadLogs',
+        label: `log: ${data[0].name}`,
+        icon: 'log',
+        attrs: {
+          package: data[0]?.id
+        }
+      })
+      break
+    case 'cancelDownload':
+      cancelDownloadPkg(data[0].name)
       break
   }
 }

@@ -11,50 +11,60 @@
     </template>
   </KDropdown>
 </template>
-<script>
+<script setup>
 import { cloneDeep } from '@/utils'
-
 import { computed } from 'vue'
-export default {
-  props: {
-    package: {
-      type: Object,
-      required: true
-    }
-  },
-  emits: ['exec-command'],
-  setup(props, { emit }) {
-    const actions = computed(() => {
-      const actions = [
-        {
-          label: 'Delete',
-          icon: 'ashbin',
-          command: 'delete'
-        },
-        {
-          label: 'Edit',
-          icon: 'editor',
-          command: 'edit'
-        }
-      ]
 
-      if (props.package?.links?.export && props.package.state === 'Active') {
-        actions.push({
-          label: 'Export',
-          icon: 'editor',
-          command: 'export'
-        })
-      }
-
-      return actions
-    })
-    const handleCommand = (command) => {
-      emit('exec-command', { command, data: [cloneDeep(props.package)] })
-    }
-    return {
-      actions,
-      handleCommand
-    }
+const props = defineProps({
+  package: {
+    type: Object,
+    required: true
   }
+})
+
+const emit = defineEmits(['exec-command'])
+
+const actions = computed(() => {
+  const actions = [
+    {
+      label: 'Delete',
+      icon: 'ashbin',
+      command: 'delete'
+    },
+    {
+      label: 'Edit',
+      icon: 'editor',
+      command: 'edit'
+    }
+  ]
+
+  if (props.package?.links?.export && props.package.state === 'Active') {
+    actions.push({
+      label: 'Export',
+      icon: 'editor',
+      command: 'export'
+    })
+  }
+
+  if (props.package?.actions?.cancel && props.package.state === 'Downloading') {
+    actions.push({
+      label: 'Cancel',
+      icon: 'editor',
+      command: 'cancelDownload'
+    })
+  }
+
+  if (props.package?.actions?.download && props.package.state === 'OutOfSync') {
+    actions.push({
+      label: 'Download',
+      icon: 'download',
+      command: 'download'
+    })
+  }
+
+  return actions
+})
+const handleCommand = (command) => {
+  emit('exec-command', { command, data: [cloneDeep(props.package)] })
 }
 </script>

@@ -36,6 +36,7 @@
 import { computed, defineComponent, onBeforeUnmount, onMounted, watchEffect, ref } from 'vue'
 import KIcon from '@/components/Icon'
 import ClusterLogs from './components/ClusterLogs.vue'
+import PackageDownloadLogs from './components/PackageDownloadLogs.vue'
 import KubectlShell from './components/KubectlShell.vue'
 import NodeShell from './components/NodeShell.vue'
 import useWindownManagerStore from '@/store/useWindowManagerStore.js'
@@ -46,7 +47,8 @@ export default defineComponent({
     KIcon,
     ClusterLogs,
     KubectlShell,
-    NodeShell
+    NodeShell,
+    PackageDownloadLogs
   },
   setup() {
     const windowManagerStore = useWindownManagerStore()

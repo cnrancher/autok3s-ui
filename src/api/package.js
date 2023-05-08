@@ -98,3 +98,19 @@ export function updatePackageSource(data, signal) {
     signal
   })
 }
+
+export function cancelDownloadPkg(name, signal) {
+  return request({
+    url: `/packages/${name}?action=cancel`,
+    method: 'post',
+    signal
+  })
+}
+
+export function downloadPkg(name, signal) {
+  return request({
+    url: `/packages/${name}?action=download`,
+    method: 'post',
+    signal
+  })
+}
