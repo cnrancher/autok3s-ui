@@ -49,6 +49,7 @@ import { createPackage, importPackage } from '@/api/package.js'
 import Schema from 'async-validator'
 import { stringify } from '@/utils/error.js'
 import { useRouter } from 'vue-router'
+import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 
 defineProps({
   readonly: {
@@ -57,6 +58,7 @@ defineProps({
   }
 })
 const router = useRouter()
+const wmStore = useWindownManagerStore()
 
 const form = reactive({
   name: '',
@@ -149,7 +151,17 @@ const save = async () => {
         k3sVersion: form.k3sVersion,
         archs: form.archs
       }
-      await createPackage(data)
+      const resp = await createPackage(data)
+
+      wmStore.addTab({
+        id: `package_log_${resp.id}`,
+        component: 'PackageDownloadLogs',
+        label: `package log: ${resp.name}`,
+        icon: 'log',
+        attrs: {
+          package: resp.id
+        }
+      })
     }
 
     router.push({ name: 'ClusterExplorerSettingsPackages' })
