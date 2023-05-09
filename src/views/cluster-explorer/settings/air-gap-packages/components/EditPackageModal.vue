@@ -32,6 +32,7 @@ import { computed, ref, watch } from 'vue'
 import { fetchById, update } from '@/api/package.js'
 import useRequest from '@/composables/useRequest.js'
 import Schema from 'async-validator'
+import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 
 const props = defineProps({
   visible: {
@@ -44,6 +45,7 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['close'])
+const wmStore = useWindownManagerStore()
 const descriptor = {
   k3sVersion: {
     required: true,
@@ -91,7 +93,19 @@ const updatePackage = async () => {
 
   updating.value = true
   try {
-    await update(props.id, form.value)
+    const resp = await update(props.id, form.value)
+    if (resp?.state === 'OutOfSync') {
+      wmStore.addTab({
+        id: `package_log_${resp.id}`,
+        component: 'PackageDownloadLogs',
+        label: `package log: ${resp.name}`,
+        icon: 'log',
+        attrs: {
+          package: resp.id
+        }
+      })
+    }
+
     close()
   } catch (err) {
     updateError.value = error
