@@ -16,7 +16,7 @@ const helmDashboardEnabled = computed(() => {
   return settings.value.find((s) => s.id === 'helm-dashboard-enabled')
 })
 const helmDashboardState = computed(() => {
-  return helmDashboardEnabled.value?.value === 'true' ? 'active' : 'deactive'
+  return helmDashboardEnabled.value?.value === 'true' ? 'active' : 'disabled'
 })
 
 const d = computed(() => {
