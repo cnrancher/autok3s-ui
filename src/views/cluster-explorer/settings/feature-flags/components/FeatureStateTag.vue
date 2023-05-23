@@ -8,7 +8,7 @@ import { computed } from 'vue'
 
 const states = {
   active: { color: 'success' },
-  deactive: { color: 'disabled' }
+  disabled: { color: 'disabled' }
 }
 
 const props = defineProps({
