@@ -9,6 +9,7 @@
 import { watchEffect, defineComponent } from 'vue'
 import useThemeStore from '@/store/useThemeStore.js'
 import usePackageStore from '@/store/usePackageStore.js'
+import useSettingStore from '@/store/useSettingStore.js'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
 import useTemplateStore from '@/store/useTemplateStore.js'
 // import useWindownManagerStore from '@/store/useWindowManagerStore.js'
@@ -23,6 +24,7 @@ export default defineComponent({
     const themeStore = useThemeStore()
     const packageStore = usePackageStore()
     const sshKeyStore = useSshKeyStore()
+    const settingStore = useSettingStore()
 
     watchEffect(() => {
       const removeThemes = themeStore.themes.filter((t) => t !== themeStore.theme)
@@ -115,6 +117,16 @@ export default defineComponent({
       })
     )
 
+    const settingMessageHandler = useDebounceMessage(
+      handleWebsocketMessage({
+        'resource.change': settingStore.update,
+        'resource.create': settingStore.add,
+        'resource.remove': (t) => {
+          settingStore.remove(t?.id)
+        }
+      })
+    )
+
     subscribe(
       'clusterTemplate',
       (msg) => {
@@ -167,6 +179,20 @@ export default defineComponent({
         }
       },
       sshKeyStore.loadData
+    )
+
+    subscribe(
+      'setting',
+      (msg) => {
+        if (
+          msg.resourceType === 'setting' &&
+          msg.name &&
+          ['resource.change', 'resource.create', 'resource.remove'].includes(msg.name)
+        ) {
+          settingMessageHandler(msg)
+        }
+      },
+      settingStore.loadData
     )
     connect()
   }

@@ -6,7 +6,9 @@
       <img class="h-32px object-contain" :src="k3sLogo" />
       <div class="overflow-ellipsis">{{ currentGroup.title }}</div>
     </div>
-    <kube-ctl-button></kube-ctl-button>
+    <div class="flex gap-10px items-center">
+      <KubeCtlButton />
+    </div>
   </header>
 </template>
 <script setup>

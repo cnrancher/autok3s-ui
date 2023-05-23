@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-[1fr,auto,minmax(min-content,200px)] pb-20px gap-x-10px">
+  <div class="grid grid-cols-[1fr,auto,minmax(min-content,200px)] pb-20px gap-x-10px min-h-60px">
     <div>
       <slot name="actions"></slot>
     </div>
