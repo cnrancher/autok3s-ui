@@ -58,10 +58,10 @@
       </k-table-column>
       <k-table-column type="action" field="action" width="60">
         <template #default="{ row }">
-          <div class="flex items-center justify-between gap-4px">
+          <div class="flex items-center justify-end gap-4px">
             <HelmDashboardLink :cluster="row" />
-            <explorer-link :cluster-id="row.id"></explorer-link>
-            <cluster-actions :cluster="row" @exec-command="handleCommand"></cluster-actions>
+            <ExplorerLink :cluster-id="row.id" />
+            <ClusterActions :cluster="row" @exec-command="handleCommand" />
           </div>
         </template>
       </k-table-column>
