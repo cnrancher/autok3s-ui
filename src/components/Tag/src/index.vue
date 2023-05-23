@@ -47,4 +47,7 @@ const classes = computed(() => {
 .k-tag--error {
   @apply border-red-500 text-red-500;
 }
+.k-tag--disabled {
+  @apply border-gray-500 bg-gray-500 text-white;
+}
 </style>

@@ -58,9 +58,9 @@
       </k-table-column>
       <k-table-column type="action" field="action" width="60">
         <template #default="{ row }">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between gap-4px">
+            <HelmDashboardLink :cluster="row" />
             <explorer-link :cluster-id="row.id"></explorer-link>
-            &nbsp;
             <cluster-actions :cluster="row" @exec-command="handleCommand"></cluster-actions>
           </div>
         </template>
@@ -120,6 +120,7 @@ import ClusterActions from './ClusterActions.vue'
 import ClusterBulkActions from './ClusterBulkActions.vue'
 import ClusterStateTag from './ClusterStateTag.vue'
 import ExplorerLink from './ExplorerLink.vue'
+import HelmDashboardLink from './HelmDashboardLink.vue'
 import JoinNodeModal from './JoinNodeModal.vue'
 import ViewKubeconfigModal from './ViewKubeconfigModal.vue'
 import UpgradeModal from './UpgradeModal.vue'

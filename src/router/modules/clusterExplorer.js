@@ -132,6 +132,12 @@ const clusterExplorerRouter = {
           component: () => import('@/views/cluster-explorer/settings/ssh-keys/create/index.vue'),
           name: 'ClusterExplorerSettingsSshKeysCreate',
           hidden: true
+        },
+        {
+          path: 'feature-flags',
+          component: () => import('@/views/cluster-explorer/settings/feature-flags/index.vue'),
+          name: 'ClusterExplorerSettingsFeatureFlags',
+          meta: { title: 'Feature Flags', icon: 'key' }
         }
       ]
     }
