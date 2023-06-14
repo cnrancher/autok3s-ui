@@ -1,12 +1,12 @@
 <template>
   <a
     v-if="explorer?.links?.explorer"
-    class="py-5px inline-flex items-center btn btn-xs role-tertiary"
+    class="py-3px inline-flex items-center btn btn-xs role-tertiary"
     target="_blank"
     :href="`${explorer?.links?.explorer}`"
   >
     <tooltip>
-      Explorer
+      <img class="logo" :src="explorerLogo" />
       <template #popover>Go to kube-explorer page</template>
     </tooltip>
   </a>
@@ -15,6 +15,7 @@
 import { computed } from 'vue'
 import Tooltip from '@/components/Tooltip'
 import useExplorerStore from '@/store/useExplorerStore.js'
+import explorerLogo from '@/styles/images/brand/explorer-logo.svg'
 
 const props = defineProps({
   clusterId: {
@@ -31,3 +32,9 @@ const explorer = computed(() => {
   return explorerStore.data.find((e) => e.id === props.clusterId)
 })
 </script>
+<style scoped>
+.logo {
+  object-fit: contain;
+  height: 18px;
+}
+</style>

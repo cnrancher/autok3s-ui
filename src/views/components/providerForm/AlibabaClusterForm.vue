@@ -332,6 +332,9 @@
           type="number"
           :readonly="readonly"
         ></string-form> -->
+        <div class="col-span-1 sm:col-span-2">
+          <AddonForm ref="addons" :readonly="readonly" :init-value="form.enable"></AddonForm>
+        </div>
       </div>
     </k-tab-pane>
   </k-tabs>
@@ -354,6 +357,7 @@ import useAlibabaSdk from './hooks/useAlibabaSdk.js'
 import useModal from '@/composables/useModal.js'
 import AlibabaImageSearchModal from './components/AlibabaImageSearchModal/index.vue'
 import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
+import AddonForm from '../baseForm/AddonForm.vue'
 
 const needDecodeOptionKeys = ['user-data-content']
 
@@ -444,10 +448,14 @@ const credentialValue = computed({
 updateActiveTab()
 
 const tags = ref(null)
+const addons = ref(null)
 const getForm = () => {
   const f = getSubform(form)
-  const values = tags.value.getValue()
-  f.options.tags = values ? values.filter((v) => v) : values
+  const t = tags.value.getValue()
+  const { enable, values } = addons.value.getForm()
+  f.options.tags = t ? t.filter((v) => v) : t
+  f.enable = enable
+  f.values = values
   needDecodeOptionKeys.forEach((k) => {
     const v = f.options[k]?.trim()
     if (v) {

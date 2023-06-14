@@ -1,15 +1,17 @@
 <template>
   <div class="grid grid-cols-[1fr,1fr,auto] gap-10px items-center">
-    <div class="grid col-span-2 grid-flow-col gap-x-10px items-center text-size-18px">
-      {{ label }}
-      <k-tooltip v-if="desc">
-        <k-icon type="prompt"></k-icon>
-        <template #popover>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <span v-if="rawDesc" v-html="desc"></span>
-          <span v-else>{{ desc }}</span>
-        </template>
-      </k-tooltip>
+    <div class="grid col-span-3 grid-flow-col gap-x-10px items-center text-size-18px">
+      <slot name="title">
+        {{ label }}
+        <k-tooltip v-if="desc">
+          <k-icon type="prompt"></k-icon>
+          <template #popover>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <span v-if="rawDesc" v-html="desc"></span>
+            <span v-else>{{ desc }}</span>
+          </template>
+        </k-tooltip>
+      </slot>
     </div>
     <template v-for="(t, index) in tags" :key="index">
       <k-input v-model.trim="t.label" :label="keyLabel" :readonly="readonly" placeholder="e.g. foo"></k-input>
