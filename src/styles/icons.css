@@ -181,3 +181,13 @@
   mask-image: url(./icons/key.svg);
   -webkit-mask-image: url(./icons/key.svg);
 }
+
+.k-icon-add-ons {
+  mask-image: url(./icons/add-ons.svg);
+  -webkit-mask-image: url(./icons/add-ons.svg);
+}
+
+.k-icon-switch {
+  mask-image: url(./icons/switch.svg);
+  -webkit-mask-image: url(./icons/switch.svg);
+}

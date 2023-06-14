@@ -1,12 +1,12 @@
 <template>
   <a
-    v-if="enabled && port && isRunning"
-    class="py-5px inline-flex items-center btn btn-xs role-tertiary"
+    v-if="isRunning && enabled && port"
+    class="py-3px inline-flex items-center btn btn-xs role-tertiary"
     target="_blank"
     :href="url"
   >
     <tooltip>
-      Dashboard
+      <img class="logo" :src="helmLogo" />
       <template #popover>Go to helm dasboard page</template>
     </tooltip>
   </a>
@@ -15,6 +15,7 @@
 import { computed } from 'vue'
 import Tooltip from '@/components/Tooltip'
 import useSettingStore from '@/store/useSettingStore.js'
+import helmLogo from '@/styles/images/brand/helm-logo.svg'
 
 const props = defineProps({
   cluster: {
@@ -41,3 +42,10 @@ const url = computed(() => {
   return `${location.protocol}//${location.hostname}:${port.value}/#context=${props.cluster?.id}`
 })
 </script>
+
+<style scoped>
+.logo {
+  object-fit: contain;
+  height: 18px;
+}
+</style>

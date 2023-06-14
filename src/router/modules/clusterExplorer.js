@@ -137,7 +137,33 @@ const clusterExplorerRouter = {
           path: 'feature-flags',
           component: () => import('@/views/cluster-explorer/settings/feature-flags/index.vue'),
           name: 'ClusterExplorerSettingsFeatureFlags',
-          meta: { title: 'Feature Flags', icon: 'key' }
+          meta: { title: 'Feature Flags', icon: 'switch' }
+        },
+        {
+          path: 'add-ons',
+          component: () => import('@/views/cluster-explorer/settings/add-ons/index.vue'),
+          name: 'ClusterExplorerSettingsAddOns',
+          meta: { title: 'Add-ons', icon: 'add-ons' }
+        },
+        {
+          path: 'add-ons/create',
+          component: () => import('@/views/cluster-explorer/settings/add-ons/create/index.vue'),
+          name: 'ClusterExplorerSettingsAddOnsCreate',
+          hidden: true
+        },
+        {
+          path: 'add-ons/edit/:id',
+          component: () => import('@/views/cluster-explorer/settings/add-ons/edit/index.vue'),
+          name: 'ClusterExplorerSettingsAddOnsEdit',
+          props: true,
+          hidden: true
+        },
+        {
+          path: 'add-ons/detail/:id',
+          component: () => import('@/views/cluster-explorer/settings/add-ons/detail/index.vue'),
+          name: 'ClusterExplorerSettingsAddonsDetail',
+          props: true,
+          hidden: true
         }
       ]
     }

@@ -56,7 +56,7 @@
           {{ row['datastore-type'] ?? '-' }}
         </template>
       </k-table-column>
-      <k-table-column type="action" field="action" width="60">
+      <k-table-column type="action" field="action" width="120">
         <template #default="{ row }">
           <div class="flex items-center justify-end gap-4px">
             <HelmDashboardLink :cluster="row" />

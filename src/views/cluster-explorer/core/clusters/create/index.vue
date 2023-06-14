@@ -24,7 +24,7 @@
         type="warning"
         title="Highly recommended that K3d provider run in a Linux / Unix environment, do not run K3d provider in MacOS container environment."
       ></k-alert>
-      <div class="grid grid-cols-2 gap-10px pb-20px">
+      <div class="grid grid-cols-2 gap-10px">
         <k-select v-model="currentProviderId" label="Provider" required :loading="loading">
           <template #suffix>
             <img class="h-42px w-42px object-contain" :src="providerIconMap.get(currentProviderId)" />
@@ -32,6 +32,15 @@
           <k-option v-for="p in providers" :key="p.id" :value="p.id" :label="p.name"></k-option>
         </k-select>
         <k-input v-model.trim="name" label="Name" placeholder="e.g. test" required :error="nameRequired" />
+        <div></div>
+        <label class="justify-self-end">
+          <input type="checkbox" />
+          Not rollback(for debug)
+          <tooltip>
+            <k-icon type="prompt"></k-icon>
+            <template #popover>xxxxxxxxxx</template>
+          </tooltip>
+        </label>
       </div>
 
       <template v-if="!loading">
@@ -88,6 +97,8 @@ import useClusterFormManage from '@/composables/useClusterFormManage.js'
 import useModal from '@/composables/useModal.js'
 import useProviderClusterStores from '@/store/useProviderClusterStores.js'
 import { useProviderIcon } from '@/views/composables/useProviderIcon.js'
+import Tooltip from '@/components/Tooltip'
+import KIcon from '@/components/Icon'
 
 const props = defineProps({
   clusterId: {

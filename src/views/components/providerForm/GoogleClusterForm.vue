@@ -410,6 +410,9 @@
           :desc="desc.options['iam-instance-profile-worker']"
           :readonly="readonly"
         /> -->
+        <div class="col-span-1 sm:col-span-2">
+          <AddonForm ref="addons" :readonly="readonly" :init-value="form.enable"></AddonForm>
+        </div>
       </div>
     </k-tab-pane>
   </k-tabs>
@@ -431,6 +434,7 @@ import useModal from '@/composables/useModal.js'
 import useGoogleSdk from './hooks/useGoogleSdk.js'
 import GoogleImagesSearchModalVue from './components/GoogleImagesSearchModal/index.vue'
 import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
+import AddonForm from '../baseForm/AddonForm.vue'
 
 const needDecodeOptionKeys = ['startup-script-content']
 
@@ -523,12 +527,16 @@ updateActiveTab()
 
 const tags = ref(null)
 const ports = ref(null)
+const addons = ref(null)
 const getForm = () => {
   const f = getSubform(form)
   const tagValues = tags.value.getValue()
   const portValues = ports.value.getValue()
+  const { enable, values } = addons.value.getForm()
   f.options.tags = tagValues ? tagValues.filter((v) => v) : tagValues
   f.options['open-ports'] = portValues ? portValues.filter((v) => v) : portValues
+  f.config.enable = enable
+  f.config.values = values
   needDecodeOptionKeys.forEach((k) => {
     const v = f.options[k]?.trim()
     if (v) {

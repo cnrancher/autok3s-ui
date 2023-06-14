@@ -132,7 +132,7 @@ const deleteSshKeys = async (keys) => {
       content: stringify(e)
     })
   })
-  reload()
+  // reload()
 }
 watchEffect(() => {
   if (confirmModalVisible.value === false) {

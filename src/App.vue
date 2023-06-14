@@ -15,6 +15,7 @@ import useTemplateStore from '@/store/useTemplateStore.js'
 // import useWindownManagerStore from '@/store/useWindowManagerStore.js'
 import useExplorerStore from '@/store/useExplorerStore.js'
 import useSshKeyStore from '@/store/useSshKeyStore.js'
+import useAddonStore from '@/store/useAddonStore.js'
 import useResourceChangeSocket from '@/composables/useResourceChangeSocket.js'
 export default defineComponent({
   name: 'App',
@@ -25,6 +26,7 @@ export default defineComponent({
     const packageStore = usePackageStore()
     const sshKeyStore = useSshKeyStore()
     const settingStore = useSettingStore()
+    const addonStore = useAddonStore()
 
     watchEffect(() => {
       const removeThemes = themeStore.themes.filter((t) => t !== themeStore.theme)
@@ -127,6 +129,16 @@ export default defineComponent({
       })
     )
 
+    const addonMessageHandler = useDebounceMessage(
+      handleWebsocketMessage({
+        'resource.change': addonStore.update,
+        'resource.create': addonStore.add,
+        'resource.remove': (t) => {
+          addonStore.remove(t?.id)
+        }
+      })
+    )
+
     subscribe(
       'clusterTemplate',
       (msg) => {
@@ -193,6 +205,20 @@ export default defineComponent({
         }
       },
       settingStore.loadData
+    )
+
+    subscribe(
+      'addon',
+      (msg) => {
+        if (
+          msg.resourceType === 'addon' &&
+          msg.name &&
+          ['resource.change', 'resource.create', 'resource.remove'].includes(msg.name)
+        ) {
+          addonMessageHandler(msg)
+        }
+      },
+      addonStore.loadData
     )
     connect()
   }

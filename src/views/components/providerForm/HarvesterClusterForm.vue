@@ -296,6 +296,9 @@
         >
           <k-option value="explorer" label="explorer"></k-option>
         </k-select>
+        <div class="col-span-1 sm:col-span-2">
+          <AddonForm ref="addons" :readonly="readonly" :init-value="form.enable"></AddonForm>
+        </div>
       </div>
     </k-tab-pane>
   </k-tabs>
@@ -314,6 +317,7 @@ import useHarvesterSdk from './hooks/useHarvesterSdk.js'
 import { useDebounceFn } from '@vueuse/core'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
+import AddonForm from '../baseForm/AddonForm.vue'
 
 const needDecodeOptionKeys = ['kubeconfig-content', 'network-data', 'user-data']
 const MANAGEMENT_NETWORK = 'management Network'
@@ -448,8 +452,12 @@ const interfaceType = computed(() => {
   return otherTypes
 })
 
+const addons = ref(null)
 const getForm = () => {
   const f = getSubform(form)
+  const { enable, values } = addons.value.getForm()
+  f.config.enable = enable
+  f.config.values = values
   needDecodeOptionKeys.forEach((k) => {
     const v = f.options[k]?.trim()
     if (v) {

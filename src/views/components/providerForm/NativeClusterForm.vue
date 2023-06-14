@@ -78,6 +78,9 @@
         >
           <k-option value="explorer" label="explorer"></k-option>
         </k-select>
+        <div class="col-span-1 sm:col-span-2">
+          <AddonForm ref="addons" :readonly="readonly" :init-value="form.enable"></AddonForm>
+        </div>
       </div>
     </k-tab-pane>
   </k-tabs>
@@ -92,6 +95,7 @@ import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import { cloneDeep } from '@/utils'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
+import AddonForm from '../baseForm/AddonForm.vue'
 
 const props = defineProps({
   desc: {
@@ -138,6 +142,7 @@ const uiOptions = computed({
   }
 })
 const { getForm: getSubform, validate: validateSubForm } = useFormManage()
+const addons = ref(null)
 const getForm = () => {
   const f = getSubform(form)
   f.options['master-ips'] = masterIps.value
@@ -153,6 +158,9 @@ const getForm = () => {
   }
   delete f.config['worker']
   delete f.config['master']
+  const { enable, values } = addons.value.getForm()
+  f.config.enable = enable
+  f.config.values = values
   return [
     { path: 'config', value: f.config },
     { path: 'options', value: f.options }
