@@ -12,6 +12,11 @@
         <k-password-input v-show="p === provider" v-model.trim="form[p].key" :label="form[p].keyLabel" required />
         <k-password-input v-show="p === provider" v-model.trim="form[p].secret" :label="form[p].secretLabel" required />
       </template>
+      <k-password-input
+        v-show="'aws' === provider"
+        v-model.trim="form.aws['session-token']"
+        label="AWS session token"
+      />
       <string-form
         v-show="'google' === provider"
         v-model.trim="form.google.key"
@@ -96,12 +101,16 @@ watchEffect(() => {
     return
   }
   if (credential.value) {
-    form[credential.value.provider] = {
-      ...form[credential.value.provider],
-      key: credential.value.secrets[providerKeyFieldMap[credential.value.provider].key],
-      secret: credential.value.secrets[providerKeyFieldMap[credential.value.provider].secret]
+    const p = credential.value.provider
+    form[p] = {
+      ...form[p],
+      key: credential.value.secrets[providerKeyFieldMap[p].key],
+      secret: credential.value.secrets[providerKeyFieldMap[p].secret]
     }
-    provider.value = credential.value.provider
+    if (p === 'aws') {
+      form[p]['session-token'] = credential.value.secrets['session-token']
+    }
+    provider.value = p
   }
 })
 const validate = () => {
@@ -129,6 +138,9 @@ const save = async () => {
       [providerKeyFieldMap[provider.value].key]: key,
       [providerKeyFieldMap[provider.value].secret]: secret
     }
+  }
+  if ('aws' === provider.value) {
+    postData.secrets['session-token'] = form[credential.value.provider]['session-token']
   }
   try {
     await updateCredential(credential.value.id, postData)

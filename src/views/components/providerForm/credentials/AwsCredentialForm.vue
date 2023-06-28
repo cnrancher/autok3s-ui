@@ -2,6 +2,7 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
     <KPasswordInput v-model.trim="form['access-key']" label="Access Key" :desc="desc.options['access-key']" required />
     <KPasswordInput v-model.trim="form['secret-key']" label="Secret Key" :desc="desc.options['secret-key']" required />
+    <KPasswordInput v-model.trim="form['session-token']" label="Session Token" :desc="desc.options['session-token']" />
   </div>
 </template>
 <script setup>
@@ -13,7 +14,8 @@ const props = defineProps({
     default() {
       return {
         'access-key': '',
-        'secret-key': ''
+        'secret-key': '',
+        'session-token': ''
       }
     }
   },

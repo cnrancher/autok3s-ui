@@ -151,6 +151,7 @@ export default function useAwsSdk() {
   let abortController = null
   const accessKey = ref('')
   const secretKey = ref('')
+  const sessionTokenKey = ref('')
   const region = ref('')
   const zone = ref('')
   const vpc = ref('')
@@ -160,7 +161,8 @@ export default function useAwsSdk() {
   const credentials = computed(() => {
     return {
       accessKeyId: keyInfo.accessKey,
-      secretAccessKey: keyInfo.secretKey
+      secretAccessKey: keyInfo.secretKey,
+      sessionToken: keyInfo.sessionToken
     }
   })
 
@@ -169,6 +171,7 @@ export default function useAwsSdk() {
     loaded: false,
     accessKey: '',
     secretKey: '',
+    sessionToken: '',
     region: '',
     error: null,
     valid: false
@@ -257,9 +260,10 @@ export default function useAwsSdk() {
     data: []
   })
 
-  const validateKeys = async (access, secret, r) => {
+  const validateKeys = async (access, secret, token, r) => {
     keyInfo.accessKey = access ?? accessKey.value
     keyInfo.secretKey = secret ?? secretKey.value
+    keyInfo.sessionToken = token ?? sessionTokenKey.value
     keyInfo.region = r ?? region.value
     try {
       await validator.validate(keyInfo)
@@ -995,6 +999,7 @@ export default function useAwsSdk() {
   return {
     accessKey,
     secretKey,
+    sessionTokenKey,
     defaultRegions,
     volumeTypes,
     region,
