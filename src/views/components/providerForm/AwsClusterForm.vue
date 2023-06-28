@@ -566,12 +566,14 @@ const credentialValue = computed({
   get() {
     return {
       'access-key': form.options['access-key'],
-      'secret-key': form.options['secret-key']
+      'secret-key': form.options['secret-key'],
+      'session-token': form.options['session-token']
     }
   },
   set(v) {
     form.options['access-key'] = v['access-key']
     form.options['secret-key'] = v['secret-key']
+    form.options['session-token'] = v['session-token']
   }
 })
 updateActiveTab()
@@ -636,7 +638,12 @@ const {
 } = useAwsSdk()
 
 const validateCredentials = () => {
-  validateKeys(form.options['access-key'], form.options['secret-key'], form.options.region)
+  validateKeys(
+    form.options['access-key'],
+    form.options['secret-key'],
+    form.options['session-token'],
+    form.options.region
+  )
 }
 
 // const loading = computed(() => {
@@ -796,6 +803,7 @@ watch(
       (!oldTab || tab !== 'credential') &&
       (keyInfo.accessKey !== form.options['access-key'] ||
         keyInfo.secretKey !== form.options['secret-key'] ||
+        keyInfo.sessionToken !== form.options['session-token'] ||
         keyInfo.region !== form.options.region)
     ) {
       validateCredentials()

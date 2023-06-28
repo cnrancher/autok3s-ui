@@ -74,10 +74,13 @@ const credential = computed({
     const f = filedMap.value ?? {}
     const key = f.key
     const secretKey = f.secret
-    const c = credentials.value.find((item) => item.secrets[key] === v)
+    const c = credentials.value.find((item) => item.secrets[key] === v).secrets
     const d = {
       [key]: c[key],
       [secretKey]: c[secretKey]
+    }
+    if ('aws' === props.provider) {
+      d['session-token'] = c['session-token']
     }
     emit('update:modelValue', d)
     emit('change', d)
@@ -121,6 +124,9 @@ const handleChanged = () => {
   const k = filedMap.value?.key
   const s = filedMap.value?.secret
   const d = { [k]: form[k], [s]: form[s] }
+  if ('aws' === props.provider) {
+    d['session-token'] = form['session-token']
+  }
   emit('update:modelValue', d)
   emit('change', d)
 }
@@ -178,6 +184,14 @@ const formLabel = computed(() => {
         :label="formLabel.secret"
         :desc="desc.options[filedMap?.secret]"
         :required="required"
+        :readonly="disabled"
+        @change="handleChanged"
+      />
+      <KPasswordInput
+        v-if="'aws' === provider"
+        v-model.trim="form['session-token']"
+        label="Session Token"
+        desc="AWS session token"
         :readonly="disabled"
         @change="handleChanged"
       />
