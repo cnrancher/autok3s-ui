@@ -317,7 +317,7 @@ import useHarvesterSdk from './hooks/useHarvesterSdk.js'
 import { useDebounceFn } from '@vueuse/core'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
-import AddonForm from '../baseForm/AddonForm.vue'
+import AddonForm from '../baseForm/AddonsForm.vue'
 
 const needDecodeOptionKeys = ['kubeconfig-content', 'network-data', 'user-data']
 const MANAGEMENT_NETWORK = 'management Network'

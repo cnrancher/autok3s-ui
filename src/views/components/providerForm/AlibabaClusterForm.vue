@@ -357,7 +357,7 @@ import useAlibabaSdk from './hooks/useAlibabaSdk.js'
 import useModal from '@/composables/useModal.js'
 import AlibabaImageSearchModal from './components/AlibabaImageSearchModal/index.vue'
 import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
-import AddonForm from '../baseForm/AddonForm.vue'
+import AddonForm from '../baseForm/AddonsForm.vue'
 
 const needDecodeOptionKeys = ['user-data-content']
 

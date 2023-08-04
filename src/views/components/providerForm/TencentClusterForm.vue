@@ -358,7 +358,7 @@ import useTencentSdk from './hooks/useTencentSdk.js'
 import TencentImageSearchModal from './components/TencentImageSearchModal/index.vue'
 import useModal from '@/composables/useModal.js'
 import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
-import AddonForm from '../baseForm/AddonForm.vue'
+import AddonForm from '../baseForm/AddonsForm.vue'
 
 const needDecodeOptionKeys = ['user-data-content']
 
