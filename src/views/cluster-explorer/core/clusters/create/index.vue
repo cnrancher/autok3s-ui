@@ -34,11 +34,11 @@
         <k-input v-model.trim="name" label="Name" placeholder="e.g. test" required :error="nameRequired" />
         <div></div>
         <label class="justify-self-end">
-          <input type="checkbox" />
+          <input v-model="notRollback" type="checkbox" />
           Not rollback(for debug)
-          <tooltip>
+          <tooltip v-if="currentProvider">
             <k-icon type="prompt"></k-icon>
-            <template #popover>xxxxxxxxxx</template>
+            <template #popover>{{ currentProvider.config.rollback.description }}</template>
           </tooltip>
         </label>
       </div>
@@ -132,6 +132,7 @@ const name = ref('')
 const creating = ref(false)
 const formErrors = ref([])
 const formLoading = ref(false)
+const notRollback = ref(false)
 
 provide('formLoading', {
   showLoading: () => {
@@ -296,6 +297,7 @@ const create = async () => {
     return
   }
   form.config.name = name.value
+  form.config.rollback = !notRollback.value
   const providerSchema = currentProvider.value
   const provider = providerSchema.id
   errors = validate(form, providerSchema)
