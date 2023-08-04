@@ -9,5 +9,5 @@
 </template>
 <script setup>
 import PageHeader from '@/views/components/PageHeader.vue'
-import AddonsTable from './components/AddonsTable.vue'
+import AddonsTable from './components/Table.vue'
 </script>

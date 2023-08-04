@@ -20,7 +20,7 @@
 import { reactive, ref, watch } from 'vue'
 import FooterActions from '@/views/components/FooterActions.vue'
 import PageHeader from '@/views/components/PageHeader.vue'
-import AddonsForm from '../components/AddonsForm.vue'
+import AddonsForm from '../components/Form.vue'
 import { update, fetchById } from '@/api/addon.js'
 import { useRouter, useRoute } from 'vue-router'
 import { stringify } from '@/utils/error.js'

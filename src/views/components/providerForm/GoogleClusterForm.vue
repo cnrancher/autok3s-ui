@@ -434,7 +434,7 @@ import useModal from '@/composables/useModal.js'
 import useGoogleSdk from './hooks/useGoogleSdk.js'
 import GoogleImagesSearchModalVue from './components/GoogleImagesSearchModal/index.vue'
 import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectForm.vue'
-import AddonForm from '../baseForm/AddonForm.vue'
+import AddonForm from '../baseForm/AddonsForm.vue'
 
 const needDecodeOptionKeys = ['startup-script-content']
 

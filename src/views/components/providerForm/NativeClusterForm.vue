@@ -95,7 +95,7 @@ import SshPrivateForm from '../baseForm/SshPrivateForm.vue'
 import { cloneDeep } from '@/utils'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
-import AddonForm from '../baseForm/AddonForm.vue'
+import AddonForm from '../baseForm/AddonsForm.vue'
 
 const props = defineProps({
   desc: {
