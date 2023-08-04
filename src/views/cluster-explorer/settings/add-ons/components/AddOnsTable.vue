@@ -91,9 +91,8 @@ const handleCommand = async ({ command, data }) => {
   }
 }
 
+const selectedData = ref([])
 const handleSelectionChange = (rows) => {
   selectedData.value = rows
 }
-
-const selectedData = ref([])
 </script>
