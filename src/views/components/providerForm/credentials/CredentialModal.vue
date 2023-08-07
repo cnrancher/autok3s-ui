@@ -88,11 +88,11 @@ const save = async () => {
     }
 
     props?.done(resp)
+    close()
   } catch (err) {
     errors.value = [stringify(err)]
   }
   saveing.value = false
-  close()
 }
 const close = () => {
   emit('close')
