@@ -257,9 +257,10 @@ const errors = computed(() => {
 
 watch(
   () => props.clusterId,
-  (id) => {
+  async (id) => {
     if (id) {
-      loadCluster()
+      await loadCluster()
+      notRollback.value = !cluster.value?.rollback
     }
   },
   { immediate: true }
