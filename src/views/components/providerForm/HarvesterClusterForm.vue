@@ -297,7 +297,12 @@
           <k-option value="explorer" label="explorer"></k-option>
         </k-select>
         <div class="col-span-1 sm:col-span-2">
-          <AddonForm ref="addons" :readonly="readonly" :init-value="form.enable"></AddonForm>
+          <AddonForm
+            ref="addons"
+            :readonly="readonly"
+            :init-value="form.config.enable"
+            :visible="acitiveTab === 'additional'"
+          ></AddonForm>
         </div>
       </div>
     </k-tab-pane>
