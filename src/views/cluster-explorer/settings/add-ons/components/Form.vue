@@ -71,7 +71,7 @@ const form = reactive({})
 const values = ref(null)
 
 const readonlyOption = computed(() => {
-  return { readOnly: props.readonly }
+  return { readOnly: props.readonly, lint: false }
 })
 watch(
   () => props.initValue,
