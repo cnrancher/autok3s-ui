@@ -10,7 +10,7 @@
         v-model="item.manifest"
         class="col-span-1 sm:col-span-2"
         label="Manifest"
-        :options="{ readOnly: true }"
+        :options="{ readOnly: true, lint: false }"
       />
       <ArrayListForm
         ref="values"
