@@ -165,7 +165,12 @@ const formLabel = computed(() => {
       >
         Edit Credential
       </KButton>
-      <KButton v-else-if="!disabled" class="role-secondary" style="width: fit-content" @click="showCredentialModal">
+      <KButton
+        v-else-if="!disabled && credentials.length === 0"
+        class="role-secondary"
+        style="width: fit-content"
+        @click="showCredentialModal"
+      >
         Create Credential
       </KButton>
     </div>
@@ -195,7 +200,7 @@ const formLabel = computed(() => {
         :readonly="disabled"
         @change="handleChanged"
       />
-      <div if="provider === 'google' && !disabled">
+      <div v-if="!disabled && credentials.length === 0">
         <KButton class="role-secondary" style="width: fit-content" @click="showCredentialModal">
           Create Credential
         </KButton>

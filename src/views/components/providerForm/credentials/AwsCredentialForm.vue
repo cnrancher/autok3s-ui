@@ -41,7 +41,7 @@ watch(
   () => props.initValue,
   (v) => {
     Object.entries(v).forEach(([k, v]) => {
-      form[k] = v
+      form[k] = v ?? ''
     })
   },
   { immediate: true }
