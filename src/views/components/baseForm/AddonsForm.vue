@@ -7,6 +7,7 @@
         <KIcon type="close" class="cursor-pointer" @click="remove(item)"></KIcon>
       </div>
       <YamlConfigForm
+        ref="manifest"
         v-model="item.manifest"
         class="col-span-1 sm:col-span-2"
         label="Manifest"
@@ -39,14 +40,14 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, watchEffect, nextTick } from 'vue'
 import useAddonStore from '@/store/useAddonStore.js'
 import YamlConfigForm from '@/views/components/baseForm/YamlConfigForm.vue'
 import ArrayListForm from '@/views/components/baseForm/ArrayListForm.vue'
 import { Base64 } from 'js-base64'
 
 const props = defineProps({
-  initValues: {
+  initValue: {
     type: Array,
     default() {
       return []
@@ -61,15 +62,27 @@ const props = defineProps({
   readonly: {
     type: Boolean,
     default: false
+  },
+  visible: {
+    type: Boolean,
+    default: false
   }
 })
 
 const addonStore = useAddonStore()
 const items = ref([])
 const values = ref([])
+const manifest = ref(null)
+watchEffect(() => {
+  if (props.visible) {
+    nextTick(() => {
+      manifest.value?.forEach((item) => item.refresh())
+    })
+  }
+})
 watch(
   [() => props.initValue, () => addonStore.data],
-  (v, d) => {
+  ([v = [], d]) => {
     items.value = d
       .filter((item) => v.includes(item.id))
       .map((item) => ({ ...item, manifest: Base64.decode(item.manifest), values: [] }))
