@@ -66,7 +66,11 @@ function activeOption(state) {
 }
 function activeOptions(state) {
   return computed(() => {
-    return state.values?.map((v) => state.options.find((o) => o.value === v)) ?? []
+    return (
+      state.values
+        ?.filter((v) => state.options.find((o) => o.value === v))
+        ?.map((v) => state.options.find((o) => o.value === v)) ?? []
+    )
   })
 }
 export function createGetter(state) {

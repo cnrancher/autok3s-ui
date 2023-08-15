@@ -268,6 +268,9 @@ export default defineComponent({
 
       codemirror = null
     })
+    const refresh = () => {
+      codemirror?.refresh()
+    }
     return {
       file,
       handleFileChange,
@@ -275,7 +278,8 @@ export default defineComponent({
       handleDrag,
       handleDrop,
       triggerSelectFile,
-      clearContent
+      clearContent,
+      refresh
     }
   }
 })
