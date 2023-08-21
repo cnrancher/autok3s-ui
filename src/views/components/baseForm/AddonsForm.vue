@@ -114,13 +114,17 @@ const getForm = () => {
   return items.value.reduce(
     (t, a, i) => {
       t.enable.push(a.name)
-      const v = values.value[i].getForm()?.map((v) => `${a.name}.${v}`)
-      if (v?.length > 0) {
-        t.values.push(...v)
+      const v = values.value[i].getForm()?.reduce((t, c) => {
+        const [k, v = ''] = c.split('=')
+        t[`${a.name}.${k}`] = v
+        return t
+      }, {})
+      if (v && Object.keys(v).length > 0) {
+        Object.assign(t.values, v)
       }
       return t
     },
-    { enable: [], values: [] }
+    { enable: [], values: {} }
   )
 }
 
