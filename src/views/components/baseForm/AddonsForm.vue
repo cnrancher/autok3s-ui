@@ -14,7 +14,7 @@
         :options="{ readOnly: true, lint: false }"
       />
       <ArrayListForm
-        ref="values"
+        ref="valuesRef"
         :init-value="item.values"
         :readonly="readonly"
         label="Values"
@@ -47,10 +47,10 @@ import ArrayListForm from '@/views/components/baseForm/ArrayListForm.vue'
 import { Base64 } from 'js-base64'
 
 const props = defineProps({
-  initValue: {
-    type: Array,
+  initValues: {
+    type: Object,
     default() {
-      return []
+      return {}
     }
   },
   initAddons: {
@@ -71,7 +71,7 @@ const props = defineProps({
 
 const addonStore = useAddonStore()
 const items = ref([])
-const values = ref([])
+const valuesRef = ref([])
 const manifest = ref(null)
 watchEffect(() => {
   if (props.visible) {
@@ -81,11 +81,17 @@ watchEffect(() => {
   }
 })
 watch(
-  [() => props.initValue, () => addonStore.data],
-  ([v = [], d]) => {
+  [() => props.initValues, () => props.initAddons, () => addonStore.data],
+  ([v = {}, addons = [], d]) => {
     items.value = d
-      .filter((item) => v.includes(item.id))
-      .map((item) => ({ ...item, manifest: Base64.decode(item.manifest), values: [] }))
+      .filter((item) => addons.includes(item.id))
+      .map((item) => ({
+        ...item,
+        manifest: Base64.decode(item.manifest),
+        values: Object.entries(v)
+          .filter(([k]) => k.split('.')[0] === item.id)
+          .map(([k, v = '']) => (v ? `${k.split('.')[1]}=${v}` : k.split('.')[1]))
+      }))
   },
   {
     immediate: true
@@ -114,7 +120,7 @@ const getForm = () => {
   return items.value.reduce(
     (t, a, i) => {
       t.enable.push(a.name)
-      const v = values.value[i].getForm()?.reduce((t, c) => {
+      const v = valuesRef.value[i].getForm()?.reduce((t, c) => {
         const [k, v = ''] = c.split('=')
         t[`${a.name}.${k}`] = v
         return t
