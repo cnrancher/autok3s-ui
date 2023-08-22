@@ -20,8 +20,8 @@
 
       <ArrayListForm
         v-if="mode !== 'view'"
-        ref="values"
-        :init-value="form.values"
+        ref="valuesRef"
+        :init-value="values"
         :readonly="readonly"
         label="Values"
         placeholder="e.g. foo=bar"
@@ -68,7 +68,8 @@ const props = defineProps({
 })
 
 const form = reactive({})
-const values = ref(null)
+const valuesRef = ref(null)
+const values = ref([])
 
 const readonlyOption = computed(() => {
   return { readOnly: props.readonly, lint: false }
@@ -86,6 +87,7 @@ watch(
         form[k] = v[k]
       }
     })
+    values.value = Object.entries(v.values ?? {}).map(([k, v = '']) => (v ? `${k}=${v}` : k))
   },
   { immediate: true, deep: true }
 )
@@ -103,7 +105,7 @@ const validate = async () => {
 }
 const getForm = () => {
   const f = cloneDeep(form)
-  f.values = values.value.getValue().reduce((t, c) => {
+  f.values = valuesRef.value.getValue().reduce((t, c) => {
     const [k, v = ''] = c.split('=')
     t[k] = v
     return t

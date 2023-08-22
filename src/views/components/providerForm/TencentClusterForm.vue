@@ -338,7 +338,8 @@
           <AddonForm
             ref="addons"
             :readonly="readonly"
-            :init-value="form.config.enable"
+            :init-values="form.config.values"
+            :init-addons="form.config.enable"
             :visible="acitiveTab === 'additional'"
           ></AddonForm>
         </div>
