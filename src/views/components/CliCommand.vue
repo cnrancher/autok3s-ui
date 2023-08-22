@@ -213,8 +213,12 @@ const cmdOptions = computed(() => {
     'ssh-key',
     'ssh-cert'
   ]
+  const keyMap = {
+    values: 'set'
+  }
   const ignoreValues = [null, undefined, '', false]
   const extraArgs = ['master-extra-args', 'worker-extra-args', 'datastore']
+  const objectArgs = ['values']
   const provider = props.clusterForm.provider
 
   const filterArgs = (k, v) => {
@@ -238,6 +242,9 @@ const cmdOptions = computed(() => {
     //     return `${k.replaceAll("'", "\\'")}=${v.replaceAll("'", "\\'")}`
     //   }).join(',')}'`
     // }
+    // if (objectArgs.includes(k)) {
+    //   return `${v.replaceAll("'", "\\'")}`
+    // }
     return v
   }
   let configEntries = Object.entries(props.clusterForm.config)
@@ -250,16 +257,28 @@ const cmdOptions = computed(() => {
   const options = [['--provider', provider], ...configEntries, ...optionEntries]
     .filter(([k, v]) => filterArgs(k, v))
     .reduce((t, [k, v]) => {
+      const key = keyMap[k] ?? k
+      const option = key.startsWith('-') ? key : `--${key}`
       if (arrayArgs.includes(k)) {
         const values = v.map((item) => ({
-          option: k.startsWith('-') ? k : `--${k}`,
+          option,
           value: parseValue(k, item)
         }))
         t.push(...values)
         return t
+      } else if (objectArgs.includes(k)) {
+        const values = Object.entries(v).map(([e1, e2]) => {
+          return {
+            option,
+            value: parseValue(k, `${e1}=${e2 || "''"}`)
+          }
+        })
+        t.push(...values)
+        return t
       }
+
       const o = {
-        option: k.startsWith('-') ? k : `--${k}`,
+        option,
         value: parseValue(k, v)
       }
       t.push(o)
