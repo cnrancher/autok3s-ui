@@ -106,7 +106,11 @@ const addOns = computed(() => {
 })
 
 const handleItemClick = (item) => {
-  items.value.push({ ...item.raw, values: [], manifest: Base64.decode(item.raw.manifest) })
+  items.value.push({
+    ...item.raw,
+    values: Object.entries(item.raw.values ?? {}).map(([k, v = '']) => (v ? `${k}=${v}` : k)),
+    manifest: Base64.decode(item.raw.manifest)
+  })
 }
 const remove = (item) => {
   const i = items.value.findIndex((i) => i === item)
