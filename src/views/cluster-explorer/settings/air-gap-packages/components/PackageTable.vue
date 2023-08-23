@@ -178,7 +178,7 @@ const deletePackages = async (packages) => {
       content: stringify(e)
     })
   })
-  // reload()
+  reload()
 }
 watchEffect(() => {
   if (confirmModalVisible.value === false) {
