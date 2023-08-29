@@ -105,11 +105,12 @@ const validate = async () => {
 }
 const getForm = () => {
   const f = cloneDeep(form)
-  f.values = valuesRef.value.getValue().reduce((t, c) => {
-    const [k, v = ''] = c.split('=')
-    t[k] = v
-    return t
-  }, {})
+  f.values =
+    valuesRef.value.getValue()?.reduce((t, c) => {
+      const [k, v = ''] = c.split('=')
+      t[k] = v
+      return t
+    }, {}) ?? {}
   f.manifest = Base64.encode(form.manifest ?? '')
   return f
 }
