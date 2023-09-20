@@ -5,7 +5,7 @@
     </div>
     <div v-if="!flag || choices" class="flex items-center flex-wrap max-w-300px">
       <template v-if="choices">
-        <select v-if="!multiple" v-model="value" class="focus-visible:outline-none border rounded">
+        <select v-if="!multiple" v-model="value" class="focus-visible:outline-none border-solid border-1 rounded">
           <option v-for="v in choices" :key="v.value" :value="v.value">
             {{ v.label }}
           </option>
@@ -14,7 +14,7 @@
           <label
             v-for="(v, index) in values"
             :key="index"
-            class="grid items-center grid-cols-[max-content,max-content] gap-x-10px mr-10px"
+            class="grid items-center grid-cols-[max-content_max-content] gap-x-10px mr-10px"
             @click.stop="handleClick"
           >
             <input v-model="multipleValue" type="checkbox" :value="v" />

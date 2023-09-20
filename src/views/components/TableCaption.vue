@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-[1fr,auto,minmax(min-content,200px)] pb-20px gap-x-10px min-h-60px">
+  <div class="grid grid-cols-[1fr_auto_minmax(min-content,200px)] pb-20px gap-x-10px min-h-60px">
     <div>
       <slot name="actions"></slot>
     </div>
@@ -18,7 +18,7 @@
       :modelValue="query"
       type="search"
       placeholder="Filter"
-      class="focus-visible:outline-none px-12px rounded border hover:bg-gray-100"
+      class="focus-visible:outline-none px-12px rounded border-solid border-1 hover:bg-gray-100"
       @update:modelValue="$emit('update:query', $event)"
     />
   </div>

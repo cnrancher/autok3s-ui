@@ -3,7 +3,7 @@
     class="k-app-nav border-r h-full flex flex-col transform lg:transform-none -translate-x-full"
     :class="{ '-translate-x-0': openSideBar }"
   >
-    <div class="lg:hidden h-$header-height grid grid-cols-[auto,auto,1fr] items-center gap-x-10px py-0 px-5px">
+    <div class="lg:hidden h-$header-height grid grid-cols-[auto_auto_1fr] items-center gap-x-10px py-0 px-5px">
       <k-icon type="arrow-right" direction="left" class="cursor-pointer" :size="24" @click="toggleSideBar"></k-icon>
       <img class="h-32px object-contain" :src="k3sLogo" />
       <div class="overflow-ellipsis">{{ currentGroup.title }}</div>

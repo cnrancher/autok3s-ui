@@ -33,7 +33,7 @@
         v-model="searchQuery"
         type="search"
         placeholder="Filter"
-        class="focus-visible:outline-none px-12px rounded border hover:bg-gray-100"
+        class="focus-visible:outline-none px-12px rounded border-solid border-1 hover:bg-gray-100"
       />
     </div>
     <k-table

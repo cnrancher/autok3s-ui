@@ -25,7 +25,7 @@
           <span class="text-red-500">{{ contentArgs.map((c) => c.placehoder).join(' ') }}</span>
           as a real file path that you have saved at the above step(s).
         </div>
-        <code class="border rounded bg-gray-100 m-5px p-10px relative">
+        <code class="border-solid border-1 rounded bg-gray-100 m-5px p-10px relative">
           <div class="grid grid-flow-col top-0 right-0 gap-x-10px absolute items-center">
             <k-tooltip append-to-body :delay="0">
               <k-icon type="clone" class="cursor-pointer" @click="copyCmd"></k-icon>

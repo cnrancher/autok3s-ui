@@ -35,7 +35,7 @@
               :desc="nativeProviderSchema?.config?.['ssh-key-path']?.description"
             />
             <div
-              class="cursor-pointer grid gap-x-10px grid-cols-[auto,auto,1fr] items-center justify-items-end"
+              class="cursor-pointer grid gap-x-10px grid-cols-[auto_auto_1fr] items-center justify-items-end"
               @click="sshAdvanceVisible = !sshAdvanceVisible"
             >
               <a class="text-$link">{{ sshAdvanceVisible ? 'Hide' : 'Show' }} Advanced</a>

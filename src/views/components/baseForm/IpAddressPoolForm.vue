@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-[1fr,auto] gap-10px items-center content-start">
+  <div class="grid grid-cols-[1fr_auto] gap-10px items-center content-start">
     <h3 class="grid max-w-max col-span-2 grid-flow-col gap-x-10px items-center content-start">
       <div>
         {{ label }}

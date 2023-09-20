@@ -181,7 +181,7 @@ const handleSelect = () => {
             <KOption v-for="a in archOptions" :key="a.value" :value="a.value" :label="a.label"></KOption>
           </KSelect>
         </div>
-        <div v-if="selectedImage" class="grid grid-cols-[auto,1fr] gap-2 items-center bg-gray-100 p-10px">
+        <div v-if="selectedImage" class="grid grid-cols-[auto_1fr] gap-2 items-center bg-gray-100 p-10px">
           <div class="text-center">
             <!-- {{selectedPlatform?.label}} -->
             <img :src="selectedPlatform?.logo" class="object-contain w-70px h-70px" />

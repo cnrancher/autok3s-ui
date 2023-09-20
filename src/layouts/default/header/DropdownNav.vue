@@ -1,6 +1,6 @@
 <template>
   <k-dropdown class="h-full">
-    <div class="grid grid-cols-[auto,1fr,auto] items-center h-full cursor-pointer gap-x-10px py-0 px-5px">
+    <div class="grid grid-cols-[auto_1fr_auto] items-center h-full cursor-pointer gap-x-10px py-0 px-5px">
       <img class="h-32px object-contain" :src="k3sLogo" />
       <div class="overflow-ellipsis">{{ currentGroup.title }}</div>
       <k-icon :size="20" type="arrow-right-blod" direction="down" :blod="true"></k-icon>
@@ -15,7 +15,7 @@
           custom
         >
           <li
-            class="grid grid-cols-[30px,1fr] items-center cursor-pointer text-light-blue-500 p-10px border-l-5px border-transparent"
+            class="grid grid-cols-[30px_1fr] items-center cursor-pointer text-light-blue-500 p-10px border-l-5px border-transparent"
             :class="[
               isActive
                 ? 'text-gray-800 bg-gray-100 border-l-5px border-light-blue-600 router-link-active'

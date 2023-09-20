@@ -10,7 +10,7 @@
       <div
         v-if="!lazy || show"
         ref="contentRef"
-        class="absolute z-$popper-z-index border rounded bg-white shadow min-w-160px max-h-50vh overflow-y-auto"
+        class="absolute z-$popper-z-index border-solid border-1 border-gray-500/20 rounded bg-white shadow min-w-160px max-h-50vh overflow-y-auto"
         :class="{ block: show, hidden: !show }"
       >
         <slot name="content"></slot>

@@ -1,7 +1,7 @@
 <template>
   <div v-if="routeGroup.children && routeGroup.children.length > 0" :key="routeGroup.name">
     <div
-      class="grid grid-cols-[1fr,22px] items-center py-5px cursor-pointer hover:bg-gray-200"
+      class="grid grid-cols-[1fr_22px] items-center py-5px cursor-pointer hover:bg-gray-200"
       @click="toggleOpen(routeGroup.name)"
     >
       <h6 class="pl-10px font-400">{{ routeGroup.title }}</h6>
@@ -19,7 +19,7 @@
   </div>
   <!-- <router-link v-else
     class="k-nav-group-link"
-    :class="{'grid-cols-[20px,1fr]': routeGroup.level > 1}"
+    :class="{'grid-cols-[20px_1fr]': routeGroup.level > 1}"
     :to="{name: routeGroup.name}">
     <k-icon v-if="routeGroup.level > 1" :type="routeGroup.icon || 'folder'" class="k-nav-group-link__icon"></k-icon>
     <span>{{routeGroup.title}}</span>
@@ -32,11 +32,11 @@
   >
     <a
       :href="href"
-      class="k-nav-group__link grid grid-cols-[auto,1fr] gap-2px items-center py-3px"
+      class="k-nav-group__link grid grid-cols-[auto_1fr] gap-2px items-center py-3px"
       :class="[
         isActive || $route.path.startsWith(route.path) ? 'router-link-active bg-[#eeeff4]' : 'hover:bg-[#dcdee7]',
         isExactActive ? 'router-link-exact-active' : '',
-        routeGroup.level > 1 ? 'grid-cols-[20px,1fr] pl-12px' : 'pl-10px'
+        routeGroup.level > 1 ? 'grid-cols-[20px_1fr] pl-12px' : 'pl-10px'
       ]"
       @click="navigate"
     >

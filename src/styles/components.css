@@ -1,45 +1,54 @@
-@layer components {
+  .btn {
+    @apply px-21px leading-40px rounded focus:outline-none;
+  }
+
+  .btn-sm {
+    @apply px-10px py-8px leading-none;
+  }
+
+  .btn-xs {
+    @apply px-7px py-4px leading-none;
+  }
+
+  .role-primary {
+    @apply bg-$primary text-white hover:bg-$primary-hover-bg;
+  }
+
+  .role-secondary {
+    @apply bg-transparent text-$primary border-solid border-1 border-$primary;
+  }
+
+  .role-tertiary {
+    @apply bg-$primary-banner-bg text-$primary border-solid border-1 border-$primary hover:text-gray-800;
+  }
+
+  .role-danger {
+    @apply bg-$error text-white hover:bg-$error-hover-bg;
+  }
+
+  .section-divider {
+    @apply my-20px border-t-1 border-b-0 border-l-0 border-r-0 border-gray-500/20;
+  }
+
+  .text-error {
+    @apply text-$error;
+  }
+
+  .text-info {
+    @apply text-$info;
+  }
+
+  .text-success {
+    @apply text-$success;
+  }
+
   .disabled,
   [disabled] {
     @apply !bg-gray-200 cursor-not-allowed text-gray-500;
+
     & label,
     & input,
     & select {
       @apply cursor-not-allowed;
     }
   }
-  .btn {
-    @apply px-21px leading-40px rounded focus:outline-none;
-  }
-  .btn-sm {
-    @apply px-10px py-8px leading-none;
-  }
-  .btn-xs {
-    @apply px-7px py-4px leading-none;
-  }
-  .role-primary {
-    @apply bg-$primary text-white hover:bg-$primary-hover-bg;
-  }
-  .role-secondary {
-    @apply bg-transparent text-$primary border border-$primary;
-  }
-  .role-tertiary {
-    @apply bg-$primary-banner-bg text-$primary border border-$primary hover:text-gray-800;
-  }
-  .role-danger {
-    @apply bg-$error text-white hover:bg-$error-hover-bg;
-  }
-  .section-divider {
-    @apply my-20px;
-  }
-
-  .text-error {
-    @apply text-$error;
-  }
-  .text-info {
-    @apply text-$info;
-  }
-  .text-success {
-    @apply text-$success;
-  }
-}

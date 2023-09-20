@@ -83,8 +83,9 @@ watchEffect(() => {
 watch(
   [() => props.initValues, () => props.initAddons, () => addonStore.data],
   ([v = {}, addons = [], d]) => {
+    console.log(addons)
     items.value = d
-      .filter((item) => addons.includes(item.id))
+      .filter((item) => addons?.includes(item.id))
       .map((item) => ({
         ...item,
         manifest: Base64.decode(item.manifest),

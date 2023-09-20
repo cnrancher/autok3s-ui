@@ -233,7 +233,7 @@
               :readonly="readonly"
             />
             <div
-              class="cursor-pointer grid grid-cols-[auto,auto,1fr] gap-x-10px items-end justify-end"
+              class="cursor-pointer grid grid-cols-[auto_auto_1fr] gap-x-10px items-end justify-end"
               @click="toggleVisible"
             >
               <a class="text-$link">{{ visible ? 'Hide' : 'Show' }} Advanced</a>
