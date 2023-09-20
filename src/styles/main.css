@@ -1,10 +1,10 @@
+@import './resets.css';
 @import './fonts/fontstack.css';
 @import './fonts/dots.css';
 @import './icons.css';
 @import './variables.css';
 @import './components.css';
 
-html,
-body {
-  font-size: 14px;
+.hidden {
+  display: none;
 }

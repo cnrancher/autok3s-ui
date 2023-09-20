@@ -47,6 +47,9 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
     "@testing-library/vue": "^7.0.0",
+    "@unocss/preset-web-fonts": "^0.56.0",
+    "@unocss/transformer-directives": "^0.56.0",
+    "@unocss/transformer-variant-group": "^0.56.0",
     "@vitejs/plugin-legacy": "^3.0.1",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vitejs/plugin-vue-jsx": "^3.0.0",
@@ -55,10 +58,9 @@
     "eslint-plugin-vue": "^9.8.0",
     "happy-dom": "^9.3.2",
     "prettier": "^2.8.1",
+    "unocss": "^0.56.0",
     "vite": "^v4.0.1",
     "vite-plugin-html": "^3.2.0",
-    "vite-plugin-windicss": "^1.8.10",
-    "vitest": "^0.30.1",
-    "windicss": "^3.5.6"
+    "vitest": "^0.30.1"
   }
 }

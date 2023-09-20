@@ -255,7 +255,7 @@ const handleVisibleChange = (v) => {
     'prefix select suffix';
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
-  @apply border rounded p-8px;
+  @apply border-solid border-1 rounded p-8px border-$input-border;
   min-height: 60px;
 }
 .k-select:not(.disabled, .focused):hover {
@@ -263,7 +263,7 @@ const handleVisibleChange = (v) => {
 }
 .k-select__label {
   grid-area: label;
-  @apply grid grid-cols-[max-content,20px,auto] text-warm-gray-500 gap-x-10px items-center;
+  @apply grid grid-cols-[max-content_20px_auto] text-warm-gray-500 gap-x-10px items-center;
 }
 .k-select.focused {
   @apply border-$primary;
@@ -281,6 +281,6 @@ const handleVisibleChange = (v) => {
 }
 .k-select__trigger {
   grid-area: select;
-  @apply grid grid-cols-[1fr,auto,auto] items-center;
+  @apply grid grid-cols-[1fr_auto_auto] items-center;
 }
 </style>

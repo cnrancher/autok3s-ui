@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-[1fr,auto] gap-10px items-center content-start">
+  <div class="grid grid-cols-[1fr_auto] gap-10px items-center content-start">
     <h4 class="col-span-2 grid grid-flow-col items-center justify-start gap-x-10px">
       <span class="text-size-18px">{{ label }}</span>
       <sup v-if="required" class="text-red-500">*</sup>

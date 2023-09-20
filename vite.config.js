@@ -1,10 +1,10 @@
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { createHtmlPlugin } from 'vite-plugin-html'
-import WindiCSS from 'vite-plugin-windicss'
 import { loadEnv } from 'vite'
 import { fileURLToPath, URL } from 'url'
 import legacy from '@vitejs/plugin-legacy'
+import UnoCSS from 'unocss/vite'
 
 /**
  * @type {import('vite').UserConfig}
@@ -18,7 +18,7 @@ export default ({ command, mode }) => {
     plugins: [
       vue(),
       vueJsx(),
-      WindiCSS(),
+      UnoCSS(),
       createHtmlPlugin({
         inject: {
           data: {

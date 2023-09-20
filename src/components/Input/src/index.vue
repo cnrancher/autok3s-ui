@@ -29,6 +29,7 @@
       :id="inputId"
       v-bind="$attrs"
       ref="inputRef"
+      spellcheck="false"
       class="k-input__textarea"
       :class="[!label ? 'py-10.5px px-0' : '', 'w-full']"
       :value="modelValue"
@@ -44,11 +45,12 @@
       :id="inputId"
       v-bind="$attrs"
       ref="inputRef"
+      spellcheck="false"
       class="k-input__input"
       :class="[
         !label ? 'py-10.5px px-0' : '',
         'w-full',
-        maskValue ? 'opacity-0 focus:opacity-100 sibling:opacity-100 focus:sibling:opacity-0' : ''
+        maskValue ? 'opacity-0 focus:opacity-100 sibling:opacity-100 sibling:focus:opacity-0' : ''
       ]"
       :value="modelValue"
       :disabled="disabled"
@@ -58,7 +60,7 @@
       @focus="handleFocus"
       @blur="handleBlur"
     />
-    <div v-if="maskValue && type !== 'textarea'" style="grid-area: input" class="pointer-events-none">
+    <div v-if="maskValue && type !== 'textarea'" style="grid-area: input" class="pointer-events-none flex items-center">
       {{ maskValue }}
     </div>
     <div v-if="$slots.suffix" class="k-input__suffix">
@@ -160,7 +162,7 @@ defineExpose({
     'prefix input suffix';
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
-  @apply p-8px rounded border border-$input-border;
+  @apply p-8px rounded border-solid border-1 border-$input-border;
   min-height: 60px;
 }
 .k-input:not(.disabled, .focused):hover {
@@ -169,7 +171,7 @@ defineExpose({
 
 .k-input__label {
   grid-area: label;
-  @apply grid gap-x-10px items-center grid-cols-[max-content,20px,auto] text-warm-gray-500;
+  @apply grid gap-x-10px items-center grid-cols-[max-content_20px_auto] text-warm-gray-500;
 }
 
 .k-input.focused {

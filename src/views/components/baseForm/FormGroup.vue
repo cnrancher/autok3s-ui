@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-[auto,1fr] gap-10px items-center">
+  <div class="grid grid-cols-[auto_1fr] gap-10px items-center">
     <div v-if="closable" class="grid grid-flow-col items-center justify-between cursor-pointer" @click="toggleVisible">
       <a class="text-light-blue-500">
         {{ visible ? 'Hide' : 'Show' }}

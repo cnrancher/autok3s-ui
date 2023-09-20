@@ -60,7 +60,7 @@ const handleChange = (e) => {
 </script>
 
 <template>
-  <div class="grid grid-cols-[auto,40px,auto] items-center gap-x-2">
+  <div class="grid grid-cols-[auto_40px_auto] items-center gap-x-2">
     <label>{{ label }}</label>
     <input
       type="number"

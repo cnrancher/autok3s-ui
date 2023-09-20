@@ -1,10 +1,7 @@
-// windicss layers
-import 'virtual:windi-base.css'
-import 'virtual:windi-components.css'
+// import '@unocss/reset/normalize.css'
+import 'virtual:uno.css'
 // custom styles here
 import './styles/main.css'
-// windicss utilities
-import 'virtual:windi-utilities.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

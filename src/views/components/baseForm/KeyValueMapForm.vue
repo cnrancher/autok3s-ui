@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-[1fr,1fr,auto] gap-10px items-center">
+  <div class="grid grid-cols-[1fr_1fr_auto] gap-10px items-center">
     <div class="grid col-span-3 grid-flow-col gap-x-10px items-center text-size-18px">
       <slot name="title">
         {{ label }}

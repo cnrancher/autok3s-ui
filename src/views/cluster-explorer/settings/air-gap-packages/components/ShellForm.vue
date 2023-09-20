@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-[max-content,auto,auto,1fr] gap-10px p-8px items-center">
+  <div class="grid grid-cols-[max-content_auto_auto_1fr] gap-10px p-8px items-center">
     <label class="text-gray-500">
       {{ label }}
       <sup v-if="required" class="text-red-500">*</sup>

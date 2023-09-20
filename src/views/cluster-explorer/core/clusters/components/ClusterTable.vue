@@ -14,7 +14,7 @@
         v-model="searchQuery"
         type="search"
         placeholder="Filter"
-        class="border rounded px-12px hover:bg-gray-100 focus-visible:outline-none"
+        class="border-solid border-1 rounded px-12px hover:bg-gray-100 focus-visible:outline-none"
       />
     </div>
     <KGroupedTable :data="groupData" :group-by="groupBy" @selection-change="handleSelectionChange">

@@ -65,7 +65,7 @@
         <div v-else-if="options.length === 0">No Data</div>
         <template v-else>
           <div v-if="searchable" class="sticky top-0 bg-white" @click.stop="handleSearchClick">
-            <label class="grid grid-cols-[auto,1fr] items-center">
+            <label class="grid grid-cols-[auto_1fr] items-center">
               <KIcon type="search" :size="18" />
               <input
                 ref="searchInput"
@@ -334,7 +334,7 @@ watch(
     'prefix select suffix';
   grid-template-columns: auto 1fr auto;
   grid-template-rows: auto 1fr;
-  @apply p-8px rounded border border-$input-border;
+  @apply p-8px rounded border-solid border-1 border-$input-border;
   min-height: 60px;
 }
 .k-combo-box:not(.disabled, .focused):hover {
@@ -343,7 +343,7 @@ watch(
 
 .k-combo-box__label {
   grid-area: label;
-  @apply grid gap-x-10px items-center grid-cols-[max-content,auto] text-warm-gray-500 grid gap-y-10px items-center grid-cols-[max-content,auto];
+  @apply grid gap-x-10px items-center grid-cols-[max-content_auto] text-warm-gray-500 grid gap-y-10px items-center grid-cols-[max-content_auto];
   width: fit-content;
 }
 .k-combo-box.focused {
@@ -362,6 +362,6 @@ watch(
 }
 .k-combo-box__trigger {
   grid-area: select;
-  @apply grid grid-cols-[1fr,auto,auto] items-center;
+  @apply grid grid-cols-[1fr_auto_auto] items-center;
 }
 </style>

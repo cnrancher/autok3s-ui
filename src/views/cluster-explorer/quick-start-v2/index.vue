@@ -11,7 +11,7 @@
         ></template-filter>
       </template>
     </page-header>
-    <div class="grid grid-cols-[auto,1fr]">
+    <div class="grid grid-cols-[auto_1fr]">
       <div>
         <img :src="clustcerIcon" class="w-160px h-100px object-contain" />
       </div>

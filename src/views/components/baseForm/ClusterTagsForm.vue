@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-[1fr,1fr,auto] gap-10px items-center">
+  <div class="grid grid-cols-[1fr_1fr_auto] gap-10px items-center">
     <div class="grid grid-flow-col gap-10px items-center justify-start col-span-3">
       <span class="text-size-18px">Tags</span>
       <k-tooltip v-if="desc">

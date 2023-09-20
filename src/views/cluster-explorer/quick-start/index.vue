@@ -4,7 +4,7 @@
       <template #title>Quick Start</template>
       <template #subtitle>User quick guides to help you quickly create K3s cluster and add K3s nodes.</template>
     </page-header>
-    <div class="grid grid-cols-[auto,1fr]">
+    <div class="grid grid-cols-[auto_1fr]">
       <div>
         <img :src="clustcerIcon" class="w-160px h-100px object-contain" />
       </div>

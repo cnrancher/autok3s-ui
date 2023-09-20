@@ -3,7 +3,7 @@
     <input
       ref="inputRef"
       v-model="searchQuery"
-      class="template-filter__search p-8px rounded border border-gray-300 focus-visible:outline-none hover:bg-gray-100"
+      class="template-filter__search p-8px rounded border-solid border-1 border-gray-300 focus-visible:outline-none hover:bg-gray-100"
       type="search"
       :placeholder="placeholder"
       :disabled="loading || disabled"
@@ -27,7 +27,7 @@
     <teleport to="body">
       <div
         ref="resultRef"
-        class="absolute bg-white z-$popper-z-index border rounded shadow max-h-90vh overflow-auto min-w-324px"
+        class="absolute bg-white z-$popper-z-index border-solid border-1 rounded shadow max-h-90vh overflow-auto min-w-324px"
         :class="[show ? 'block' : 'hidden']"
         @click.prevent.stop="handlePopperClick"
       >

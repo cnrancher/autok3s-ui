@@ -193,7 +193,7 @@
               @change="vpcChange($event)"
             >
               <template #default="{ option }">
-                <div class="grid grid-cols-[1fr,auto] w-full">
+                <div class="grid grid-cols-[1fr_auto] w-full">
                   <div>
                     {{ option.label }}
                   </div>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class="k-collapse-item grid grid-cols-[1fr,auto] items-center min-h-48px cursor-pointer"
+      class="k-collapse-item grid grid-cols-[1fr_auto] items-center min-h-48px cursor-pointer"
       :class="{ 'k-collapse-item--active': active }"
       @click="toggleActiveName(name)"
     >
@@ -10,7 +10,7 @@
       </div>
       <k-icon type="arrow-right" :direction="active ? 'down' : ''"></k-icon>
     </div>
-    <div v-show="active" class="border pb-18px" :class="{ 'k-collapse-item--active': active }">
+    <div v-show="active" class="border-solid border-1 pb-18px" :class="{ 'k-collapse-item--active': active }">
       <slot></slot>
     </div>
   </div>

@@ -26,9 +26,9 @@
         :class="[show ? 'block' : 'hidden']"
         @click.stop="handlePopperClick"
       >
-        <div class="grid grid-cols-[1fr,auto,1fr] gap-x-10px min-h-200px max-w-80vw">
-          <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border rounded">
-            <div class="grid grid-cols-[auto,1fr,auto] gap-x-10px items-center bg-gray-100 p-8px">
+        <div class="grid grid-cols-[1fr_auto_1fr] gap-x-10px min-h-200px max-w-80vw">
+          <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border-solid border-1 rounded">
+            <div class="grid grid-cols-[auto_1fr_auto] gap-x-10px items-center bg-gray-100 p-8px">
               <input v-model="optionsAllSelected" type="checkbox" :indeterminate="optionsIndeterminate" />
               Available Options
               <div>{{ selectedOptions.length }}/{{ options.length }}</div>
@@ -38,7 +38,7 @@
               <label
                 v-for="(o, index) in options"
                 :key="index"
-                class="grid grid-cols-[auto,1fr] gap-x-10px items-center select-none"
+                class="grid grid-cols-[auto_1fr] gap-x-10px items-center select-none"
               >
                 <input v-model="selectedOptions" type="checkbox" :value="o" />
                 <command-option v-bind="o" v-model="o.modelValue"></command-option>
@@ -54,8 +54,8 @@
               <k-icon type="arrow-right-blod" direction="left"></k-icon>
             </button>
           </div>
-          <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border rounded">
-            <div class="grid grid-cols-[auto,1fr,auto] gap-x-10px items-center bg-gray-100 p-8px">
+          <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border-solid border-1 rounded">
+            <div class="grid grid-cols-[auto_1fr_auto] gap-x-10px items-center bg-gray-100 p-8px">
               <input v-model="usedOptionsAllSelected" type="checkbox" :indeterminate="usedOptionsIndeterminate" />
               Used Options
               <div>{{ selectedUsedOptions.length }}/{{ usedOptions.length }}</div>
@@ -65,13 +65,13 @@
               <label
                 v-for="(o, index) in usedOptions"
                 :key="index"
-                class="grid grid-cols-[auto,1fr] gap-x-10px items-center select-none"
+                class="grid grid-cols-[auto_1fr] gap-x-10px items-center select-none"
               >
                 <input v-model="selectedUsedOptions" type="checkbox" :value="o" />
                 <!-- eslint-disable-next-line vue/v-on-event-hyphenation -->
                 <command-option v-bind="o" @update:modelValue="handleOptionChange(o, $event)"></command-option>
               </label>
-              <div v-for="(o, index) in customValue" :key="index" class="grid grid-cols-[1fr,auto] items-center">
+              <div v-for="(o, index) in customValue" :key="index" class="grid grid-cols-[1fr_auto] items-center">
                 <custom-option v-model="customValue[index]"></custom-option>
                 <k-icon type="close" class="cursor-pointer" @click="removeCustomArg(index)"></k-icon>
               </div>
@@ -376,7 +376,7 @@ const handleOptionChange = (option, v) => {
 }
 .command-args__label {
   grid-area: label;
-  @apply grid gap-x-10px items-center grid-cols-[max-content,auto] text-warm-gray-500 grid gap-y-10px items-center grid-cols-[max-content,auto];
+  @apply grid gap-x-10px items-center grid-cols-[max-content_auto] text-warm-gray-500 grid gap-y-10px items-center grid-cols-[max-content_auto];
   width: fit-content;
 }
 </style>
