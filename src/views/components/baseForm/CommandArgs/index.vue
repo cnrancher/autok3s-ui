@@ -27,7 +27,7 @@
         @click.stop="handlePopperClick"
       >
         <div class="grid grid-cols-[1fr_auto_1fr] gap-x-10px min-h-200px max-w-80vw">
-          <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border-solid border-1 rounded">
+          <div class="grid grid-rows-[auto_auto_1fr_auto] gap-y-10px border-solid border-1 rounded">
             <div class="grid grid-cols-[auto_1fr_auto] gap-x-10px items-center bg-gray-100 p-8px">
               <input v-model="optionsAllSelected" type="checkbox" :indeterminate="optionsIndeterminate" />
               Available Options
@@ -54,7 +54,7 @@
               <k-icon type="arrow-right-blod" direction="left"></k-icon>
             </button>
           </div>
-          <div class="grid grid-rows-[auto,auto,1fr,auto] gap-y-10px border-solid border-1 rounded">
+          <div class="grid grid-rows-[auto_auto_1fr_auto] gap-y-10px border-solid border-1 rounded">
             <div class="grid grid-cols-[auto_1fr_auto] gap-x-10px items-center bg-gray-100 p-8px">
               <input v-model="usedOptionsAllSelected" type="checkbox" :indeterminate="usedOptionsIndeterminate" />
               Used Options
