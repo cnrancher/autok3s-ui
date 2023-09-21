@@ -62,9 +62,9 @@
       <template #content>
         <slot name="header"></slot>
         <div v-if="loading">Loading ...</div>
-        <div v-else-if="options.length === 0">No Data</div>
+        <div v-else-if="filteredOptions.length === 0">No Data</div>
         <template v-else>
-          <div v-if="searchable" class="sticky top-0 bg-white" @click.stop="handleSearchClick">
+          <!-- <div v-if="searchable" class="sticky top-0 bg-white" @click.stop="handleSearchClick">
             <label class="grid grid-cols-[auto_1fr] items-center">
               <KIcon type="search" :size="18" />
               <input
@@ -76,7 +76,7 @@
               />
             </label>
             <hr />
-          </div>
+          </div> -->
           <div
             v-for="v in filteredOptions"
             :key="v.value"
@@ -217,7 +217,7 @@ const emit = defineEmits(['update:modelValue', 'change'])
 const slots = useSlots()
 const inputId = getId()
 const query = useDebouncedRef('')
-const searchInput = ref(null)
+// const searchInput = ref(null)
 const dropdownRef = ref(null)
 
 const setValue = (v) => {
@@ -308,7 +308,7 @@ const selectedOption = computed(() => {
   }
   return { label: v, value: v }
 })
-const handleSearchClick = () => {}
+// const handleSearchClick = () => {}
 
 watch(
   [() => props.searchable, () => props.loading, query, selectedOption, dropdownVisible],
@@ -325,6 +325,12 @@ watch(
     }
   }
 )
+
+watch([() => props.searchable, () => props.modelValue], ([s, v]) => {
+  if (s) {
+    query.value = v
+  }
+})
 </script>
 <style scoped>
 .k-combo-box {
