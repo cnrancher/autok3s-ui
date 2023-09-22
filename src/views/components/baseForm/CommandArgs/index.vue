@@ -24,6 +24,7 @@
         ref="commandOptionsRef"
         class="absolute bg-white z-$popper-z-index shadow max-h90vh overflow-auto"
         :class="[show ? 'block' : 'hidden']"
+        :style="floatingStyles"
         @click.stop="handlePopperClick"
       >
         <div class="grid grid-cols-[1fr_auto_1fr] gap-x-10px min-h-200px max-w-80vw">
@@ -96,27 +97,16 @@
   </div>
 </template>
 <script>
-const useMinWithModifier = (minWith = '200px') => {
-  return {
-    name: 'selectOptionMinWith',
-    enabled: true,
-    phase: 'beforeWrite',
-    fn: ({ state }) => {
-      const w = state.elements.reference.getBoundingClientRect().width
-      state.styles.popper['min-width'] = w ? `${w}px` : minWith
-    }
-  }
-}
 export default {
   name: 'CommandArgs'
 }
 </script>
 <script setup>
-import { computed, watchEffect, ref, watch, nextTick } from 'vue'
+import { computed, watchEffect, ref, watch } from 'vue'
 import CommandOption from './CommandOption.vue'
 import CustomOption from './CustomOption.vue'
-import usePopper from '@/composables/usePopper.js'
 import { onClickOutside } from '@vueuse/core'
+import { offset, flip, shift, useFloating, autoUpdate } from '@floating-ui/vue'
 
 const props = defineProps({
   readonly: {
@@ -159,35 +149,15 @@ const addCustomArgDisabled = computed(() => {
 const show = ref(false)
 const commandArgsRef = ref(null)
 const commandOptionsRef = ref(null)
-const minWithModifier = useMinWithModifier()
-const popperOption = {
-  modifiers: [
-    {
-      name: 'offset',
-      options: {
-        offset: [0, 8]
-      }
-    },
-    minWithModifier
-  ],
-  placement: 'bottom-start'
-}
-const { create, remove, update } = usePopper(commandArgsRef, commandOptionsRef, popperOption)
+
+const middleware = ref([offset(10), flip(), shift()])
+const { floatingStyles } = useFloating(commandArgsRef, commandOptionsRef, {
+  placement: 'bottom-start',
+  whileElementsMounted: autoUpdate,
+  middleware
+})
 onClickOutside(commandOptionsRef, () => {
   show.value = false
-})
-const createPopper = () => {
-  create()
-  update()
-}
-watch(show, () => {
-  if (show.value) {
-    nextTick(() => {
-      createPopper()
-    })
-    return
-  }
-  remove()
 })
 
 const usedOptions = ref([])
@@ -296,9 +266,6 @@ watch(
 const removeCustomArg = (index) => {
   customValue.value.splice(index, 1)
   emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
-  nextTick(() => {
-    update()
-  })
 }
 const addCustemArg = () => {
   if (addCustomArgDisabled.value) {
@@ -314,9 +281,6 @@ const addCustemArg = () => {
   customValue.value.push(customCommandArgs.value)
   emit('update:modelValue', `${usedOptionsStr.value} ${customValue.value.join(' ')}`.trim())
   customCommandArgs.value = ''
-  nextTick(() => {
-    update()
-  })
 }
 
 const removeOptions = () => {

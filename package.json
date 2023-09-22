@@ -21,7 +21,7 @@
   "dependencies": {
     "@aws-sdk/client-ec2": "^3.220.0",
     "@aws-sdk/client-iam": "^3.218.0",
-    "@popperjs/core": "^2.11.6",
+    "@floating-ui/vue": "^1.0.2",
     "@vueuse/core": "^9.6.0",
     "ansi_up": "^5.1.0",
     "async-validator": "^4.2.5",

@@ -26,16 +26,15 @@
     </div>
     <dropdown
       class="k-select__trigger group"
-      :option="popperOption"
       :append-to-body="false"
       :disabled="disabled"
       :lazy="false"
       @visible-change="handleVisibleChange"
     >
       <div v-if="multiple" class="flex">
-        <span v-if="selectdOptions.length === 0" class="text-warm-gray-400">{{ placeholder }}</span>
+        <span v-if="selectedOptions.length === 0" class="text-warm-gray-400">{{ placeholder }}</span>
         <template v-else>
-          <k-tag v-for="o in selectdOptions" :key="o.value" class="flex m-r-2px items-center" type="info">
+          <k-tag v-for="o in selectedOptions" :key="o.value" class="flex m-r-2px items-center" type="info">
             {{ o.label }}
             <k-icon v-if="!disabled" type="close" class="cursor-pointer" @click.stop="removeOption(o.value)"></k-icon>
           </k-tag>
@@ -76,17 +75,6 @@
 import { useIdGenerator } from '@/utils/idGenerator.js'
 
 const getId = useIdGenerator(0, 'labeled-select_')
-const useMinWithModifier = (minWith = '200px') => {
-  return {
-    name: 'selectOptionMinWith',
-    enabled: true,
-    phase: 'beforeWrite',
-    fn: ({ state }) => {
-      const w = state.elements.reference.getBoundingClientRect().width
-      state.styles.popper['min-width'] = w ? `${w + 18}px` : minWith
-    }
-  }
-}
 
 export default {
   name: 'KSelect',
@@ -95,7 +83,7 @@ export default {
 </script>
 
 <script setup>
-import { computed, provide, watch, ref, useSlots, nextTick } from 'vue'
+import { computed, provide, watch, ref, nextTick } from 'vue'
 
 import { Dropdown } from '@/components/Dropdown'
 import KIcon from '@/components/Icon'
@@ -159,13 +147,12 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
-const slots = useSlots()
 const selectStore = useStore()
 provide('selectStore', selectStore)
 provide('multiple', props.multiple)
 provide('selectEmit', emit)
 const inputId = getId()
-const selectdOptions = computed(() => {
+const selectedOptions = computed(() => {
   const v = props.modelValue
   const selected = selectStore.getter.activeOptions
   if (v && selected) {
@@ -221,19 +208,6 @@ watch(
   }
 )
 
-const minWithModifier = useMinWithModifier()
-const popperOption = {
-  modifiers: [
-    {
-      name: 'offset',
-      options: {
-        offset: [slots.prefix ? 0 : -10, 8]
-      }
-    },
-    minWithModifier
-  ],
-  placement: 'bottom-start'
-}
 const removeOption = (v) => {
   const values = [...props.modelValue]
   const i = values.indexOf(v)

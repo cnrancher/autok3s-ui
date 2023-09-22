@@ -12,6 +12,7 @@
         ref="contentRef"
         class="absolute z-$popper-z-index border-solid border-1 border-gray-500/20 rounded bg-white shadow min-w-160px max-h-50vh overflow-y-auto"
         :class="{ block: show, hidden: !show }"
+        :style="floatingStyles"
       >
         <slot name="content"></slot>
       </div>
@@ -24,9 +25,9 @@ export default {
 }
 </script>
 <script setup>
-import usePopper from '@/composables/usePopper.js'
 import { onClickOutside } from '@vueuse/core'
-import { ref, nextTick, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { offset, flip, shift, useFloating, autoUpdate, size } from '@floating-ui/vue'
 
 const props = defineProps({
   option: {
@@ -52,6 +53,19 @@ const props = defineProps({
   lazy: {
     type: Boolean,
     default: true
+  },
+  offset: {
+    type: Object,
+    default() {
+      return {
+        mainAxis: 8,
+        crossAxis: -9
+      }
+    }
+  },
+  minWidth: {
+    type: Number,
+    default: 0
   }
 })
 
@@ -60,16 +74,37 @@ const emit = defineEmits(['visible-change'])
 const toggleRef = ref(null)
 const contentRef = ref(null)
 const show = ref(false)
-const { create, remove, update } = usePopper(toggleRef, contentRef, props.option)
+
+const middleware = computed(() => {
+  const minWidth = props.minWidth
+  const m = [
+    flip(),
+    shift(),
+    size({
+      apply({ rects }) {
+        Object.assign(contentRef.value.style, {
+          minWidth: minWidth ? `${props.minWidth}px` : `${rects.reference.width + 18}px`
+        })
+      }
+    })
+  ]
+  if (props.offset) {
+    m.splice(0, 0, offset({ ...props.offset }))
+  }
+  return m
+})
+
+const { floatingStyles } = useFloating(toggleRef, contentRef, {
+  ...props.option,
+  whileElementsMounted: autoUpdate,
+  middleware
+})
+
 const toggleDropDown = () => {
   if (props.disabled) {
     return
   }
   show.value = !show.value
-}
-const createPopper = () => {
-  create()
-  update()
 }
 onClickOutside(
   toggleRef,
@@ -79,15 +114,7 @@ onClickOutside(
   { event: 'click' }
 )
 watch(show, () => {
-  if (show.value) {
-    nextTick(() => {
-      createPopper()
-    })
-    emit('visible-change', true)
-    return
-  }
-  remove()
-  emit('visible-change', false)
+  emit('visible-change', show.value)
 })
 defineExpose({ contentRef })
 </script>

@@ -29,6 +29,7 @@
         ref="resultRef"
         class="absolute bg-white z-$popper-z-index border-solid border-1 rounded shadow max-h-90vh overflow-auto min-w-324px"
         :class="[show ? 'block' : 'hidden']"
+        :style="floatingStyles"
         @click.prevent.stop="handlePopperClick"
       >
         <div v-if="loading">
@@ -71,17 +72,14 @@ export default {
 </script>
 
 <script setup>
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import useDataSearch from '@/composables/useDataSearch.js'
 import useDataGroup from '@/composables/useDataGroup.js'
-import usePopper from '@/composables/usePopper.js'
 import { onClickOutside } from '@vueuse/core'
 import useTemplateStore from '@/store/useTemplateStore.js'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
-const popperOption = {
-  placement: 'bottom-start'
-}
+import { offset, flip, shift, useFloating, autoUpdate } from '@floating-ui/vue'
 
 const props = defineProps({
   modelValue: {
@@ -106,7 +104,13 @@ const resultRef = ref(null)
 const show = ref(false)
 const currentTemplate = ref(null)
 
-const { create, remove, update } = usePopper(inputRef, resultRef, popperOption)
+const middleware = ref([offset(10), flip(), shift()])
+const { floatingStyles } = useFloating(inputRef, resultRef, {
+  placement: 'bottom-start',
+  whileElementsMounted: autoUpdate,
+  middleware
+})
+
 onClickOutside(resultRef, () => {
   show.value = false
 })
@@ -226,27 +230,9 @@ const handleKeyEnter = () => {
 const handleApplyTemplate = () => {
   emit('apply-template', currentTemplate.value.id)
 }
-const createPopper = () => {
-  create()
-  update()
-}
 watch(show, () => {
-  if (show.value) {
-    nextTick(() => {
-      createPopper()
-    })
-    return
-  }
-  remove()
   hoverIndex.value = -1
   searchQuery.value = ''
-})
-watch(dataGroup, () => {
-  if (show.value) {
-    nextTick(() => {
-      update()
-    })
-  }
 })
 </script>
 <style>
