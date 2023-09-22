@@ -20,7 +20,6 @@
     <dropdown
       ref="dropdownRef"
       class="k-combo-box__trigger group"
-      :option="popperOption"
       :append-to-body="false"
       :disabled="disabled"
       :lazy="false"
@@ -114,17 +113,6 @@ import { useIdGenerator } from '@/utils/idGenerator.js'
 import { customRef } from 'vue'
 
 const getId = useIdGenerator(0, 'combo-box_')
-const useMinWithModifier = (minWith = '200px') => {
-  return {
-    name: 'selectOptionMinWith',
-    enabled: true,
-    phase: 'beforeWrite',
-    fn: ({ state }) => {
-      const w = state.elements.reference.getBoundingClientRect().width
-      state.styles.popper['min-width'] = w ? `${w + 18}px` : minWith
-    }
-  }
-}
 
 function useDebouncedRef(value, delay = 300) {
   let timeout
@@ -151,7 +139,7 @@ export default {
 }
 </script>
 <script setup>
-import { useSlots, ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { Dropdown } from '@/components/Dropdown'
 import Tooltip from '@/components/Tooltip'
 import KIcon from '@/components/Icon'
@@ -214,7 +202,6 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
-const slots = useSlots()
 const inputId = getId()
 const query = useDebouncedRef('')
 // const searchInput = ref(null)
@@ -230,20 +217,6 @@ const clear = () => {
   emit('update:modelValue', '')
   emit('change', '')
 }
-const minWithModifier = useMinWithModifier()
-const popperOption = {
-  modifiers: [
-    {
-      name: 'offset',
-      options: {
-        offset: [slots.prefix ? 0 : -10, 8]
-      }
-    },
-    minWithModifier
-  ],
-  placement: 'bottom-start'
-}
-
 const dropdownVisible = ref(false)
 const handleVisible = (show) => {
   dropdownVisible.value = show
