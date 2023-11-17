@@ -56,6 +56,11 @@
           {{ row['datastore-type'] ?? '-' }}
         </template>
       </k-table-column>
+      <k-table-column sortable label="Version" field="version">
+        <template #default="{ row }">
+          <span>{{ row['version'] ?? '-' }}</span>
+        </template>
+      </k-table-column>
       <k-table-column type="action" field="action" width="120">
         <template #default="{ row }">
           <div class="flex items-center justify-end gap-4px">
