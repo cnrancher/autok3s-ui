@@ -13,6 +13,7 @@
 
         <k-password-input v-show="p === provider" v-model.trim="form[p].secret" :label="form[p].secretLabel" required />
       </template>
+      <k-password-input v-show="'aws' === provider" v-model.trim="form.aws['session-token']" label="Session Token" />
       <string-form
         v-show="'google' === provider"
         v-model.trim="form.google.key"
@@ -118,6 +119,9 @@ const create = async () => {
       [providerKeyFieldMap[provider.value].key]: key,
       [providerKeyFieldMap[provider.value].secret]: secret
     }
+  }
+  if (provider.value === 'aws') {
+    postData.secrets['session-token'] = form['aws']['session-token']
   }
   try {
     await createCredential(postData)
