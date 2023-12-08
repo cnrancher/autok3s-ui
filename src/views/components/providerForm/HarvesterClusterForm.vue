@@ -280,13 +280,13 @@
     </k-tab-pane>
     <k-tab-pane label="Add-on Options" name="additional">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-        <!-- <boolean-form
-          v-model="form.config['ui']"
+        <boolean-form
+          v-model="dashboardUI"
           label="UI"
-          :desc="desc.config['ui']"
+          :desc="desc.config['enable'] || desc.config['ui']"
           :readonly="readonly"
-        /> -->
-        <k-select
+        />
+        <!-- <k-select
           v-model="uiOptions"
           :desc="desc.config['enable']"
           label="UI"
@@ -295,7 +295,7 @@
           multiple
         >
           <k-option value="explorer" label="explorer"></k-option>
-        </k-select>
+        </k-select> -->
         <div class="col-span-1 sm:col-span-2">
           <AddonForm
             ref="addons"
@@ -348,10 +348,11 @@ const form = reactive({
   config: {},
   options: {}
 })
+const dashboardUI = ref(false)
 // decode options
 watch(
   () => props.initValue,
-  () => {
+  (initValue) => {
     ;({ config: form.config, options: form.options, provider: form.provider } = cloneDeep(props.initValue))
     needDecodeOptionKeys.forEach((k) => {
       const v = form.options[k]
@@ -359,6 +360,11 @@ watch(
         form.options[k] = Base64.decode(v)
       }
     })
+    if (initValue?.config?.enable) {
+      dashboardUI.value = initValue?.config?.enable?.findIndex((item) => item === 'dashboard') !== -1
+    } else if (initValue.config?.ui) {
+      dashboardUI.value = true
+    }
   },
   { immediate: true }
 )
@@ -380,20 +386,7 @@ const memorySize = computed({
     form.options['memory-size'] = `${v}Gi`
   }
 })
-const uiOptions = computed({
-  get() {
-    if (form.config.enable) {
-      return form.config.enable
-    }
-    if (form.config.ui) {
-      return ['dashboard']
-    }
-    return []
-  },
-  set(v) {
-    form.config.enable = v
-  }
-})
+
 const interfaceOption = ref([
   {
     label: 'VirtIO',
@@ -464,6 +457,9 @@ const getForm = () => {
   const { enable, values } = addons.value.getForm()
   f.config.enable = enable
   f.config.values = values
+  if (dashboardUI.value) {
+    f.config.enable.push('dashboard')
+  }
   needDecodeOptionKeys.forEach((k) => {
     const v = f.options[k]?.trim()
     if (v) {
