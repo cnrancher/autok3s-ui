@@ -369,13 +369,13 @@
     </k-tab-pane>
     <k-tab-pane label="Add-on Options" name="additional">
       <div class="grid gap-10px grid-cols-1 sm:grid-cols-2">
-        <!-- <boolean-form
-          v-model="form.config['ui']"
+        <boolean-form
+          v-model="dashboardUI"
           label="UI"
           :desc="desc.config['enable'] || desc.config['ui']"
           :readonly="readonly"
-        /> -->
-        <k-select
+        />
+        <!-- <k-select
           v-model="uiOptions"
           :desc="desc.config['enable']"
           label="UI"
@@ -384,7 +384,7 @@
           multiple
         >
           <k-option value="explorer" label="explorer"></k-option>
-        </k-select>
+        </k-select> -->
         <boolean-form
           v-model="form.options['cloud-controller-manager']"
           label="Cloud Controller Manager"
@@ -539,20 +539,7 @@ const tabPosition = inject('tab-position', 'left')
 const { getForm: getSubform, validate: validateSubForm } = useFormManage()
 const advanceConfigVisible = ref(false)
 const acitiveTab = ref('instance')
-const uiOptions = computed({
-  get() {
-    if (form.config.enable) {
-      return form.config.enable
-    }
-    if (form.config.ui) {
-      return ['dashboard']
-    }
-    return []
-  },
-  set(v) {
-    form.config.enable = v
-  }
-})
+const dashboardUI = ref(false)
 const readonlyOption = computed(() => {
   return { readOnly: props.readonly }
 })
@@ -597,6 +584,9 @@ const getForm = () => {
   f.options.tags = t ? t.filter((v) => v) : t
   f.config.enable = enable
   f.config.values = values
+  if (dashboardUI.value) {
+    f.config.enable.push('dashboard')
+  }
   needDecodeOptionKeys.forEach((k) => {
     const v = f.options[k]?.trim()
     if (v) {
@@ -811,7 +801,7 @@ const zoneChange = (zone) => {
 watch(
   [acitiveTab, () => props.readonly, () => props.initValue],
   // eslint-disable-next-line no-unused-vars
-  ([tab, readonly], [oldTab]) => {
+  ([tab, readonly, initValue], [oldTab]) => {
     if (
       readonly === false &&
       (!oldTab || tab !== 'credential') &&
@@ -821,6 +811,11 @@ watch(
         keyInfo.region !== form.options.region)
     ) {
       validateCredentials()
+    }
+    if (initValue?.config?.enable) {
+      dashboardUI.value = initValue?.config?.enable?.findIndex((item) => item === 'dashboard') !== -1
+    } else if (initValue.config?.ui) {
+      dashboardUI.value = true
     }
   },
   { immediate: true }
