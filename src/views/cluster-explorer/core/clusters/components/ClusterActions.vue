@@ -1,5 +1,5 @@
 <template>
-  <k-dropdown :offset="false" :min-width="160">
+  <k-dropdown :offset="null" :min-width="160">
     <button class="btn btn-xs role-tertiary"><k-icon type="ellipsis" direction="down"></k-icon></button>
     <template #content>
       <div v-if="actions.length === 0">No Actions</div>
