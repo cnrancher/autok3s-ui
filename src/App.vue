@@ -48,6 +48,9 @@ export default defineComponent({
         'resource.create': (cluster) => {
           const provider = cluster?.provider
           providerClusterStores[provider]?.add(cluster)
+          if (cluster?.status?.status?.toLowerCase() === 'running') {
+            providerClusterStores[provider]?.loadData()
+          }
           // view create logs
           // wmStore.addTab({
           //   id: `log_${cluster.id}`,
