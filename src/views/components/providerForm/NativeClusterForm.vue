@@ -102,6 +102,7 @@ import { cloneDeep } from '@/utils'
 import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
 import AddonForm from '../baseForm/AddonsForm.vue'
+import BooleanForm from '../baseForm/BooleanForm.vue'
 
 const props = defineProps({
   desc: {
