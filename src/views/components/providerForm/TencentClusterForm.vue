@@ -452,7 +452,7 @@ const getForm = () => {
   f.config.enable = enable
   f.config.values = values
   if (dashboardUI.value) {
-    f.config.enable.push('dashboard')
+    f.config.enable.push('explorer')
   }
   needDecodeOptionKeys.forEach((k) => {
     const v = f.options[k]?.trim()
@@ -605,7 +605,7 @@ watch(
       validateCredentials()
     }
     if (initValue?.config?.enable) {
-      dashboardUI.value = initValue?.config?.enable?.findIndex((item) => item === 'dashboard') !== -1
+      dashboardUI.value = initValue?.config?.enable?.findIndex((item) => item === 'explorer') !== -1
     } else if (initValue.config?.ui) {
       dashboardUI.value = true
     }

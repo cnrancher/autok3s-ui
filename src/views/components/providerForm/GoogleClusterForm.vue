@@ -587,7 +587,7 @@ watch(
       validateCredentials()
     }
     if (initValue?.config?.enable) {
-      dashboardUI.value = initValue?.config?.enable?.findIndex((item) => item === 'dashboard') !== -1
+      dashboardUI.value = initValue?.config?.enable?.findIndex((item) => item === 'explorer') !== -1
     } else if (initValue.config?.ui) {
       dashboardUI.value = true
     }
