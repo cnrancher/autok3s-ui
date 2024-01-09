@@ -44,6 +44,9 @@ export default defineComponent({
         'resource.change': (cluster) => {
           const provider = cluster?.provider
           providerClusterStores[provider]?.update(cluster)
+          if (cluster?.status?.status?.toLowerCase() === 'running') {
+            providerClusterStores[provider]?.loadData()
+          }
         },
         'resource.create': (cluster) => {
           const provider = cluster?.provider
