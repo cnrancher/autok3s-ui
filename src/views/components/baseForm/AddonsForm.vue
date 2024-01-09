@@ -99,7 +99,7 @@ watch(
 )
 
 const addOns = computed(() => {
-  const d = items.value.filter((item) => item !== 'dashboard').map((item) => item.id)
+  const d = items.value.filter((item) => item !== 'explorer').map((item) => item.id)
   return addonStore.data
     .filter((item) => !d.includes(item.id))
     .map((item) => ({ label: item.name, value: item.id, raw: item }))
