@@ -55,7 +55,7 @@ const props = defineProps({
     default: true
   },
   offset: {
-    type: Object,
+    type: [Object, Boolean],
     default() {
       return {
         mainAxis: 8,
@@ -88,7 +88,7 @@ const middleware = computed(() => {
       }
     })
   ]
-  if (props.offset) {
+  if (props.offset && props.offset !== true) {
     m.splice(0, 0, offset({ ...props.offset }))
   }
   return m
