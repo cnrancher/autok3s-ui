@@ -43,8 +43,12 @@ export default defineComponent({
       handleWebsocketMessage({
         'resource.change': (cluster) => {
           const provider = cluster?.provider
-          providerClusterStores[provider]?.update(cluster)
-          if (cluster?.status?.status?.toLowerCase() === 'running') {
+          const store = providerClusterStores[provider]
+          store?.update(cluster)
+          if (
+            cluster?.status?.status?.toLowerCase() === 'running' &&
+            store?.data?.find((item) => item.id === cluster.id && !item.version)
+          ) {
             providerClusterStores[provider]?.loadData()
           }
         },
