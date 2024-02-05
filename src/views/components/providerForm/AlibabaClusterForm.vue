@@ -447,8 +447,8 @@ const getForm = () => {
   const t = tags.value.getValue()
   const { enable, values } = addons.value.getForm()
   f.options.tags = t ? t.filter((v) => v) : t
-  f.enable = enable
-  f.values = values
+  f.config.enable = enable
+  f.config.values = values
   if (dashboardUI.value) {
     f.config.enable.push('explorer')
   }
