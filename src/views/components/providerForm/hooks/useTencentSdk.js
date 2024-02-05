@@ -366,7 +366,10 @@ export default function useTencentSdk() {
       if (resp.Response.Error) {
         throw new Error(resp.Response.Error.Message)
       }
-      zoneInfo.data = resp.Response?.ZoneSet?.map((item) => ({ label: item.ZoneName, value: item.Zone })) ?? []
+      zoneInfo.data =
+        resp.Response?.ZoneSet?.filter((item) => item.ZoneState !== 'UNAVAILABLE' && !item.ZoneState.ParentZone).map(
+          (item) => ({ label: item.ZoneName, value: item.Zone })
+        ) ?? []
     } catch (err) {
       if (err.name === 'AbortError') {
         // do nothing
