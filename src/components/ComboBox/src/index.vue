@@ -29,7 +29,7 @@
         :id="inputId"
         autocomplete="off"
         :disabled="disabled"
-        class="cursor-pointer bg-transparent focus-visible:outline-none overflow-ellipsis col-start-1 row-start-1 opacity-0 sibling:opacity-100 focus:opacity-100 focus:sibling:opacity-0 placeholder-shown:opacity-100 placeholder-shown:sibling:opacity-0"
+        class="cursor-pointer bg-transparent focus-visible:outline-none overflow-ellipsis col-start-1 row-start-1 opacity-0 sibling:opacity-100 focus:opacity-100 placeholder-shown:opacity-100 k-combo-box__input"
         :class="[!label ? 'py-9px' : '']"
         :value="modelValue"
         v-bind="$attrs"
@@ -342,5 +342,10 @@ watch([() => props.searchable, () => props.modelValue], ([s, v]) => {
 .k-combo-box__trigger {
   grid-area: select;
   @apply grid grid-cols-[1fr_auto_auto] items-center;
+}
+
+.k-combo-box__input:focus + div,
+.k-combo-box__input:placeholder-shown + div {
+  opacity: 0;
 }
 </style>
