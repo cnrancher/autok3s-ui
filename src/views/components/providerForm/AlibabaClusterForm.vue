@@ -29,8 +29,6 @@
         <template #title>Basic</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <!-- <string-form v-model.trim="form.options.region" label="Region" :desc="desc.options.region"
-              :readonly="readonly" /> -->
             <KComboBox
               v-model="form.options.region"
               label="Region"
@@ -41,7 +39,6 @@
               clearable
               @change="regionChange"
             ></KComboBox>
-            <!-- <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" :readonly="readonly" /> -->
             <KComboBox
               v-model="form.options.zone"
               label="Zone"
@@ -52,8 +49,37 @@
               clearable
               @change="zoneChange"
             ></KComboBox>
-            <!-- <string-form v-model.trim="form.options['instance-type']" label="Instance Type"
-              :desc="desc.options['instance-type']" :readonly="readonly" /> -->
+            <string-form
+              v-model.trim="form.options['image']"
+              label="Image"
+              :desc="desc.options['image']"
+              :readonly="readonly"
+              :mask-value="selectedImageName"
+            >
+              <template v-if="keyInfo.valid" #suffix>
+                <KIcon
+                  type="search"
+                  :size="18"
+                  class="cursor-pointer"
+                  @click="
+                    showSearchImageModal({
+                      region: form.options.region,
+                      instanceType: form.options['instance-type'],
+                      imageInfo,
+                      fetchImages,
+                      onSelect: (e) => {
+                        form.options['image'] = e.ImageId
+                        updateImageDetail(cloneDeep(e))
+                        const size = e.Size
+                        if (size) {
+                          form.options['disk-size'] = `${size}`
+                        }
+                      }
+                    })
+                  "
+                ></KIcon>
+              </template>
+            </string-form>
             <KComboBox
               v-model="form.options['instance-type']"
               label="Machine Type"
@@ -89,39 +115,6 @@
                 </template>
               </template>
             </KComboBox>
-            <string-form
-              v-model.trim="form.options['image']"
-              label="Image"
-              :desc="desc.options['image']"
-              :readonly="readonly"
-              :mask-value="selectedImageName"
-            >
-              <template v-if="keyInfo.valid" #suffix>
-                <KIcon
-                  type="search"
-                  :size="18"
-                  class="cursor-pointer"
-                  @click="
-                    showSearchImageModal({
-                      region: form.options.region,
-                      instanceType: form.options['instance-type'],
-                      imageInfo,
-                      fetchImages,
-                      onSelect: (e) => {
-                        form.options['image'] = e.ImageId
-                        updateImageDetail(cloneDeep(e))
-                        const size = e.Size
-                        if (size) {
-                          form.options['disk-size'] = `${size}`
-                        }
-                      }
-                    })
-                  "
-                ></KIcon>
-              </template>
-            </string-form>
-            <!-- <string-form v-model.trim="form.options['disk-category']" label="Disk Category"
-              :desc="desc.options['disk-category']" :readonly="readonly" /> -->
             <KComboBox
               v-model="form.options['disk-category']"
               label="Disk Category"
@@ -162,8 +155,6 @@
                 </div>
               </template>
             </KComboBox>
-            <!-- <string-form v-model.trim="form.options['v-switch']" label="V-Switch" :desc="desc.options['v-switch']"
-              :readonly="readonly" /> -->
             <KComboBox
               v-model="form.options['v-switch']"
               label="V-Switch"
@@ -186,12 +177,6 @@
               :desc="desc.options['internet-max-bandwidth-out']"
               :readonly="readonly"
             />
-            <!-- <string-form
-              v-model.trim="form.options['security-group']"
-              label="Security Group"
-              :desc="desc.options['security-group']"
-              :readonly="readonly"
-            /> -->
             <KComboBox
               v-model="form.options['security-group']"
               label="Security Group"
@@ -218,12 +203,6 @@
         <template #subtitle>Params used to login to instance via ssh, e.g. key-pair, ssh user, ssh port</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <!-- <string-form
-              v-model.trim="form.options['key-pair']"
-              label="Key Pair"
-              :desc="desc.options['key-pair']"
-              :readonly="readonly"
-            /> -->
             <KComboBox
               v-model="form.options['key-pair']"
               label="Key Pair"
@@ -301,37 +280,12 @@
           :desc="desc.config['enable'] || desc.config['ui']"
           :readonly="readonly"
         />
-        <!-- <k-select
-          v-model="uiOptions"
-          :desc="desc.config['enable']"
-          label="UI"
-          :disabled="readonly"
-          placeholder="Disable"
-          multiple
-        >
-          <k-option value="explorer" label="explorer"></k-option>
-        </k-select> -->
         <boolean-form
           v-model="form.options['cloud-controller-manager']"
           label="Cloud Controller Manager"
           :desc="desc.options['cloud-controller-manager']"
           :readonly="readonly"
         />
-        <!-- <boolean-form
-          v-model="form.options['terway']"
-          label="Terway"
-          :desc="desc.options['terway']"
-          true-value="eni"
-          false-value="none"
-          :readonly="readonly"
-        />
-        <string-form
-          v-show="form.options['terway'] === 'eni'"
-          v-model="form.options['terway-max-pool-size']"
-          label="Terway Max Pool Size"
-          type="number"
-          :readonly="readonly"
-        ></string-form> -->
         <div class="col-span-1 sm:col-span-2">
           <AddonForm
             ref="addons"

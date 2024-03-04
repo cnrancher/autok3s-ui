@@ -41,7 +41,6 @@
         <template #default>
           <div class="grid gap-10px grid-cols-1 sm:grid-cols-2">
             <string-form v-model.trim="form.options.region" label="Region" :desc="desc.options.region" disabled />
-            <!-- <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" :readonly="readonly" /> -->
             <KComboBox
               v-model="form.options.zone"
               label="Zone"
@@ -52,48 +51,6 @@
               clearable
               @change="zoneChange($event)"
             ></KComboBox>
-            <!-- <string-form
-              v-model.trim="form.options['instance-type']"
-              label="Instance Type"
-              :desc="desc.options['instance-type']"
-              :readonly="readonly"
-            /> -->
-            <KComboBox
-              v-model="form.options['instance-type']"
-              label="Machine Type"
-              :desc="desc.options['instance-type']"
-              :disabled="readonly"
-              :loading="instanceTypeInfo.loading || imageDetail.loading"
-              :options="instanceTypeOptions"
-              search-field="value"
-              clearable
-              searchable
-            >
-              <template #default="{ option: v, query }">
-                <template v-if="query">
-                  <div class="flex">
-                    {{ v.value.slice(0, v.matchedStart) }}
-                    <span class="text-$info">{{ v.value.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
-                    {{ v.value.slice(v.matchedStart + v.matchedLen) }}
-                  </div>
-                  <div class="flex gap-2 text-sm text-gray-500">
-                    <div>Family: {{ v.group }}</div>
-                    <div>{{ v.vCPU }} vCPU</div>
-                    <div>{{ v.memory }} GiB Memory</div>
-                  </div>
-                </template>
-                <template v-else>
-                  <div>
-                    {{ v.value }}
-                  </div>
-                  <div class="flex gap-2 text-sm text-gray-500">
-                    <div>Family: {{ v.group }}</div>
-                    <div>{{ v.vCPU }} vCPU</div>
-                    <div>{{ v.memory }} GiB Memory</div>
-                  </div>
-                </template>
-              </template>
-            </KComboBox>
             <string-form
               v-model.trim="form.options['ami']"
               label="AMI"
@@ -131,12 +88,42 @@
                 ></KIcon>
               </template>
             </string-form>
-            <!-- <string-form
-              v-model.trim="form.options['volume-type']"
-              label="Volume Type"
-              :desc="desc.options['volume-type']"
-              :readonly="readonly"
-            /> -->
+            <KComboBox
+              v-model="form.options['instance-type']"
+              label="Machine Type"
+              :desc="desc.options['instance-type']"
+              :disabled="readonly"
+              :loading="instanceTypeInfo.loading || imageDetail.loading"
+              :options="instanceTypeOptions"
+              search-field="value"
+              clearable
+              searchable
+            >
+              <template #default="{ option: v, query }">
+                <template v-if="query">
+                  <div class="flex">
+                    {{ v.value.slice(0, v.matchedStart) }}
+                    <span class="text-$info">{{ v.value.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                    {{ v.value.slice(v.matchedStart + v.matchedLen) }}
+                  </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>Family: {{ v.group }}</div>
+                    <div>{{ v.vCPU }} vCPU</div>
+                    <div>{{ v.memory }} GiB Memory</div>
+                  </div>
+                </template>
+                <template v-else>
+                  <div>
+                    {{ v.value }}
+                  </div>
+                  <div class="flex gap-2 text-sm text-gray-500">
+                    <div>Family: {{ v.group }}</div>
+                    <div>{{ v.vCPU }} vCPU</div>
+                    <div>{{ v.memory }} GiB Memory</div>
+                  </div>
+                </template>
+              </template>
+            </KComboBox>
             <KSelect
               v-model="form.options['volume-type']"
               label="Volume Type"
@@ -174,12 +161,6 @@
         <template #title>Network</template>
         <template #default>
           <div class="grid gap-10px grid-cols-1 sm:grid-cols-2">
-            <!-- <string-form
-              v-model.trim="form.options['vpc-id']"
-              label="VPC ID"
-              :desc="desc.options['vpc-id']"
-              :readonly="readonly"
-            /> -->
             <KComboBox
               v-model="form.options['vpc-id']"
               label="VPC ID"
@@ -211,12 +192,6 @@
                 </div>
               </template>
             </KComboBox>
-            <!-- <string-form
-              v-model.trim="form.options['subnet-id']"
-              label="Subnet ID"
-              :desc="desc.options['subnet-id']"
-              :readonly="readonly"
-            /> -->
             <KComboBox
               v-model="form.options['subnet-id']"
               label="Subnet ID"
@@ -234,12 +209,6 @@
                 </div>
               </template>
             </KComboBox>
-            <!-- <string-form
-              v-model.trim="form.options['security-group']"
-              label="Security Group"
-              :desc="desc.options['security-group']"
-              :readonly="readonly"
-            /> -->
             <KComboBox
               v-model="form.options['security-group']"
               label="Security Group"
@@ -270,12 +239,6 @@
         <template #subtitle>Params used to login to instance via ssh, e.g. key-pair, ssh user, ssh port</template>
         <template #default>
           <div class="grid gap-10px grid-cols-1 sm:grid-cols-2">
-            <!-- <string-form
-              v-model.trim="form.options['keypair-name']"
-              label="Keypair Name"
-              :desc="desc.options['keypair-name']"
-              :readonly="readonly"
-            /> -->
             <KComboBox
               v-model="form.options['keypair-name']"
               label="Keypair Name"
@@ -375,29 +338,12 @@
           :desc="desc.config['enable'] || desc.config['ui']"
           :readonly="readonly"
         />
-        <!-- <k-select
-          v-model="uiOptions"
-          :desc="desc.config['enable']"
-          label="UI"
-          :disabled="readonly"
-          placeholder="Disable"
-          multiple
-        >
-          <k-option value="explorer" label="explorer"></k-option>
-        </k-select> -->
         <boolean-form
           v-model="form.options['cloud-controller-manager']"
           label="Cloud Controller Manager"
           :desc="desc.options['cloud-controller-manager']"
           :readonly="readonly"
         />
-        <!-- <string-form
-          v-show="form.options['cloud-controller-manager']"
-          v-model.trim="form.options['iam-instance-profile-control']"
-          label="IAM Instance Profile Control"
-          :desc="desc.options['iam-instance-profile-control']"
-          :readonly="readonly"
-        /> -->
         <KComboBox
           v-show="form.options['cloud-controller-manager']"
           v-model.trim="form.options['iam-instance-profile-control']"
@@ -428,14 +374,6 @@
             </div>
           </template>
         </KComboBox>
-
-        <!-- <string-form
-          v-show="form.options['cloud-controller-manager']"
-          v-model.trim="form.options['iam-instance-profile-worker']"
-          label="IAM Instance Profile Worker"
-          :desc="desc.options['iam-instance-profile-worker']"
-          :readonly="readonly"
-        /> -->
         <KComboBox
           v-show="form.options['cloud-controller-manager']"
           v-model.trim="form.options['iam-instance-profile-worker']"
