@@ -45,12 +45,6 @@
               :desc="desc.options['project']"
               disabled
             />
-            <!-- <string-form
-              v-model.trim="form.options.region"
-              label="Region"
-              :desc="desc.options.region"
-              :readonly="readonly"
-            /> -->
             <KComboBox
               v-model.trim="form.options.region"
               label="Region"
@@ -61,7 +55,6 @@
               clearable
               @change="reginChange($event)"
             ></KComboBox>
-            <!-- <string-form v-model.trim="form.options.zone" label="Zone" :desc="desc.options.zone" :readonly="readonly" /> -->
             <KComboBox
               v-model="form.options.zone"
               label="Zone"
@@ -72,12 +65,29 @@
               clearable
               @change="zoneChange($event)"
             ></KComboBox>
-            <!-- <string-form
-              v-model.trim="form.options['machine-type']"
-              label="Machine Type"
-              :desc="desc.options['machine-type']"
+            <string-form
+              v-model.trim="form.options['machine-image']"
+              label="Source Image"
+              :desc="desc.options['machine-image']"
               :readonly="readonly"
-            /> -->
+            >
+              <template v-if="keyInfo.valid" #suffix>
+                <KIcon
+                  type="search"
+                  :size="18"
+                  class="cursor-pointer"
+                  @click="
+                    showSearchImageModal({
+                      imageInfo,
+                      fetchImages,
+                      onSelect: (e) => {
+                        form.options['machine-image'] = e.imageId
+                      }
+                    })
+                  "
+                ></KIcon>
+              </template>
+            </string-form>
             <KComboBox
               v-model="form.options['machine-type']"
               label="Machine Type"
@@ -119,35 +129,6 @@
                 </div>
               </template>
             </KComboBox>
-            <string-form
-              v-model.trim="form.options['machine-image']"
-              label="Source Image"
-              :desc="desc.options['machine-image']"
-              :readonly="readonly"
-            >
-              <template v-if="keyInfo.valid" #suffix>
-                <KIcon
-                  type="search"
-                  :size="18"
-                  class="cursor-pointer"
-                  @click="
-                    showSearchImageModal({
-                      imageInfo,
-                      fetchImages,
-                      onSelect: (e) => {
-                        form.options['machine-image'] = e.imageId
-                      }
-                    })
-                  "
-                ></KIcon>
-              </template>
-            </string-form>
-            <!-- <string-form
-              v-model.trim="form.options['disk-type']"
-              label="Disk Type"
-              :desc="desc.options['disk-type']"
-              :readonly="readonly"
-            /> -->
             <KComboBox
               v-model="form.options['disk-type']"
               label="Disk Type"
@@ -211,12 +192,6 @@
         <template #title>Network</template>
         <template #default>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <!-- <string-form
-              v-model.trim="form.options['network']"
-              label="Network"
-              :desc="desc.options['network']"
-              :readonly="readonly"
-            /> -->
             <KComboBox
               v-model="form.options['network']"
               label="Network"
@@ -255,12 +230,6 @@
                 </div>
               </template>
             </KComboBox>
-            <!-- <string-form
-              v-model.trim="form.options['subnetwork']"
-              label="Subnetwork"
-              :desc="desc.options['subnetwork']"
-              :readonly="readonly"
-            /> -->
             <KComboBox
               v-model="form.options['subnetwork']"
               label="Subnetwork"
@@ -289,37 +258,6 @@
           </div>
         </template>
       </form-group>
-      <!-- <hr class="section-divider">
-      <form-group>
-        <template #title>
-          SSH Public
-        </template>
-        <template #subtitle>
-          Params used to login to instance via ssh, e.g. key-pair, ssh user, ssh port
-        </template>
-        <template #default>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
-            <string-form
-              v-model.trim="form.options['keypair-name']"
-              label="Keypair Name"
-              :desc="desc.options['keypair-name']"
-              :readonly="readonly"
-            />
-            <string-form
-              v-model.trim="form.config['ssh-user']"
-              label="SSH User"
-              :desc="desc.config['ssh-user']"
-              :readonly="readonly"
-            />
-            <string-form
-              v-model.trim="form.config['ssh-port']"
-              label="SSH Port"
-              :desc="desc.config['ssh-port']"
-              :readonly="readonly"
-            />
-          </div>
-        </template>
-      </form-group> -->
       <hr class="section-divider" />
       <form-group>
         <template #title>SSH Private</template>
@@ -380,36 +318,12 @@
           :desc="desc.config['enable'] || desc.config['ui']"
           :readonly="readonly"
         />
-        <!-- <k-select
-          v-model="uiOptions"
-          :desc="desc.config['enable']"
-          label="UI"
-          :disabled="readonly"
-          placeholder="Disable"
-          multiple
-        >
-          <k-option value="explorer" label="explorer"></k-option>
-        </k-select> -->
         <boolean-form
           v-model="form.options['cloud-controller-manager']"
           label="Cloud Controller Manager"
           :desc="desc.options['cloud-controller-manager']"
           :readonly="readonly"
         />
-        <!-- <string-form
-          v-show="form.options['cloud-controller-manager']"
-          v-model.trim="form.options['iam-instance-profile-control']"
-          label="IAM Instance Profile Control"
-          :desc="desc.options['iam-instance-profile-control']"
-          :readonly="readonly"
-        />
-         <string-form
-          v-show="form.options['cloud-controller-manager']"
-          v-model.trim="form.options['iam-instance-profile-worker']"
-          label="IAM Instance Profile Worker"
-          :desc="desc.options['iam-instance-profile-worker']"
-          :readonly="readonly"
-        /> -->
         <div class="col-span-1 sm:col-span-2">
           <AddonForm
             ref="addons"
