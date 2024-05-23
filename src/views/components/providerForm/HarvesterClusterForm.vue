@@ -352,7 +352,7 @@ const dashboardUI = ref(false)
 // decode options
 watch(
   () => props.initValue,
-  (initValue) => {
+  () => {
     ;({ config: form.config, options: form.options, provider: form.provider } = cloneDeep(props.initValue))
     needDecodeOptionKeys.forEach((k) => {
       const v = form.options[k]
@@ -360,11 +360,16 @@ watch(
         form.options[k] = Base64.decode(v)
       }
     })
-    if (initValue?.config?.enable) {
-      dashboardUI.value = initValue?.config?.enable?.findIndex((item) => item === 'explorer') !== -1
-    } else if (initValue.config?.ui) {
+    dashboardUI.value = props.initValue?.config?.enable?.includes('explorer') ?? false
+    // Compatible with older versions start
+    if (props.initValue?.config?.ui === true) {
       dashboardUI.value = true
+      delete form.config.ui
+    } else if (props.initValue?.config?.ui === false) {
+      dashboardUI.value = false
+      delete form.config.ui
     }
+    // Compatible with older versions end
   },
   { immediate: true }
 )
