@@ -126,20 +126,26 @@ const form = reactive({
   config: {},
   options: {}
 })
+const dashboardUI = ref(false)
 const tabPosition = inject('tab-position', 'left')
 watch(
   () => props.initValue,
-  (initValue) => {
+  () => {
     ;({ config: form.config, options: form.options, provider: form.provider } = cloneDeep(props.initValue))
-    if (initValue?.config?.enable) {
-      dashboardUI.value = initValue?.config?.enable?.findIndex((item) => item === 'explorer') !== -1
-    } else if (initValue.config?.ui) {
+    dashboardUI.value = props.initValue?.config?.enable?.includes('explorer') ?? false
+    // Compatible with older versions start
+    if (props.initValue?.config?.ui === true) {
       dashboardUI.value = true
+      delete form.config.ui
+    } else if (props.initValue?.config?.ui === false) {
+      dashboardUI.value = false
+      delete form.config.ui
     }
+    // Compatible with older versions end
   },
   { immediate: true }
 )
-const dashboardUI = ref(false)
+
 const { getForm: getSubform, validate: validateSubForm } = useFormManage()
 const addons = ref(null)
 const getForm = () => {

@@ -377,6 +377,7 @@ const form = reactive({
   config: {},
   options: {}
 })
+const dashboardUI = ref(false)
 // decode options
 watch(
   () => props.initValue,
@@ -388,6 +389,16 @@ watch(
         form.options[k] = Base64.decode(v)
       }
     })
+    dashboardUI.value = props.initValue?.config?.enable?.includes('explorer') ?? false
+    // Compatible with older versions start
+    if (props.initValue?.config?.ui === true) {
+      dashboardUI.value = true
+      delete form.config.ui
+    } else if (props.initValue?.config?.ui === false) {
+      dashboardUI.value = false
+      delete form.config.ui
+    }
+    // Compatible with older versions end
   },
   { immediate: true }
 )
@@ -395,7 +406,7 @@ const tabPosition = inject('tab-position', 'left')
 const { getForm: getSubform, validate: validateSubForm } = useFormManage()
 const advanceConfigVisible = ref(false)
 const acitiveTab = ref('instance')
-const dashboardUI = ref(false)
+
 const readonlyOption = computed(() => {
   return { readOnly: props.readonly }
 })
@@ -491,19 +502,14 @@ const validateCredentials = () => {
 }
 
 watch(
-  [credentialId, acitiveTab, () => props.readonly, () => props.initValue],
-  ([cId, tab, readonly, initValue], [oldTab]) => {
+  [credentialId, acitiveTab, () => props.readonly],
+  ([cId, tab, readonly], [oldTab]) => {
     if (
       readonly === false &&
       (!oldTab || tab !== 'credential') &&
       (keyInfo.credentialId !== cId || keyInfo.project !== form.options['project'])
     ) {
       validateCredentials()
-    }
-    if (initValue?.config?.enable) {
-      dashboardUI.value = initValue?.config?.enable?.findIndex((item) => item === 'explorer') !== -1
-    } else if (initValue.config?.ui) {
-      dashboardUI.value = true
     }
   },
   { immediate: true }
