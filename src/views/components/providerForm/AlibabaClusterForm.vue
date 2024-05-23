@@ -355,12 +355,9 @@ watch(
     })
     dashboardUI.value = props.initValue?.config?.enable?.includes('explorer') ?? false
     // Compatible with older versions start
+    delete form.config.ui
     if (props.initValue?.config?.ui === true) {
       dashboardUI.value = true
-      delete form.config.ui
-    } else if (props.initValue?.config?.ui === false) {
-      dashboardUI.value = false
-      delete form.config.ui
     }
     // Compatible with older versions end
   },
