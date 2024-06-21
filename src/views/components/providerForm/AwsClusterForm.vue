@@ -352,17 +352,29 @@
           :disabled="readonly"
           :loading="instanceProfileInfo.loading"
           :options="instanceProfileInfo.data"
+          search-field="value"
           clearable
+          searchable
         >
-          <template #default="{ option }">
-            <div>
+          <template #default="{ option: v, query }">
+            <template v-if="query">
+              <div class="flex">
+                {{ v.value.slice(0, v.matchedStart) }}
+                <span class="text-$info">{{ v.value.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                {{ v.value.slice(v.matchedStart + v.matchedLen) }}
+              </div>
+              <div class="flex gap-2 text-sm text-gray-500">
+                {{ v.raw.Arn }}
+              </div>
+            </template>
+            <template v-else>
               <div>
-                {{ option.label }}
+                {{ v.label }}
               </div>
               <div class="col-span-2 text-sm text-gray-500">
-                {{ option.raw.Arn }}
+                {{ v.raw.Arn }}
               </div>
-            </div>
+            </template>
           </template>
           <template #footer>
             <div
@@ -382,17 +394,29 @@
           :disabled="readonly"
           :loading="instanceProfileInfo.loading"
           :options="instanceProfileInfo.data"
+          search-field="value"
           clearable
+          searchable
         >
-          <template #default="{ option }">
-            <div>
+          <template #default="{ option: v, query }">
+            <template v-if="query">
+              <div class="flex">
+                {{ v.value.slice(0, v.matchedStart) }}
+                <span class="text-$info">{{ v.value.slice(v.matchedStart, v.matchedStart + v.matchedLen) }}</span>
+                {{ v.value.slice(v.matchedStart + v.matchedLen) }}
+              </div>
+              <div class="flex gap-2 text-sm text-gray-500">
+                {{ v.raw.Arn }}
+              </div>
+            </template>
+            <template v-else>
               <div>
-                {{ option.label }}
+                {{ v.label }}
               </div>
               <div class="col-span-2 text-sm text-gray-500">
-                {{ option.raw.Arn }}
+                {{ v.raw.Arn }}
               </div>
-            </div>
+            </template>
           </template>
           <template #footer>
             <div
