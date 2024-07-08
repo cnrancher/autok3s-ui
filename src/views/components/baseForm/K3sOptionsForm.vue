@@ -156,6 +156,21 @@
       </div>
     </template>
   </form-group>
+  <form-group>
+    <template #default>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-start">
+        <KeyValueArrayListForm
+          ref="serverInstallEnvRef"
+          v-model="config['server-install-env']"
+          :readonly="readonly"
+          label="Server Install Env"
+          :desc="desc.config['server-install-env']"
+          placeholder="e.g. foo=bar"
+          action-label="Add ENV"
+        />
+      </div>
+    </template>
+  </form-group>
   <hr class="section-divider" />
   <form-group>
     <template #title>Worker</template>
@@ -185,6 +200,22 @@
       </div>
     </template>
   </form-group>
+  <form-group>
+    <template #default>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px items-start">
+        <KeyValueArrayListForm
+          ref="agentInstallEnvRef"
+          v-model="config['agent-install-env']"
+          label="Agent Install Env"
+          :readonly="readonly"
+          :desc="desc.config['server-install-env']"
+          placeholder="e.g. foo=bar"
+          action-label="Add ENV"
+        />
+      </div>
+    </template>
+  </form-group>
+
   <hr class="section-divider" />
   <form-group>
     <template #title>Advanced</template>
@@ -225,6 +256,7 @@ import RegistryConfigForm from './RegistryConfigForm.vue'
 import FormGroup from './FormGroup.vue'
 import CommandArgs from './CommandArgs/index.vue'
 import ArrayListForm from '../baseForm/ArrayListForm.vue'
+import KeyValueArrayListForm from '../baseForm/KeyValueArrayListForm.vue'
 import KeyForm from './KeyForm.vue'
 import useFormRegist from '@/composables/useFormRegist.js'
 import usePackageStore from '@/store/usePackageStore.js'
@@ -307,7 +339,9 @@ const configFields = [
   'package-name',
   'datastore-cafile-content',
   'datastore-certfile-content',
-  'datastore-keyfile-content'
+  'datastore-keyfile-content',
+  'server-install-env',
+  'agent-install-env'
 ]
 
 const datastoreTypes = [
@@ -420,7 +454,8 @@ const handleHAChanged = (ha) => {
     config['cluster'] = true
   }
 }
-
+const serverInstallEnvRef = ref(null)
+const agentInstallEnvRef = ref(null)
 const getForm = () => {
   const keys = ['k3s-channel', 'k3s-version', 'k3s-install-script', 'system-default-registry']
   const flag = airGapInstall.value
@@ -438,6 +473,12 @@ const getForm = () => {
       let value = config[k]
       if (k === 'tls-sans') {
         value = tlsSansRef.value.getValue()
+      }
+      if (k === 'server-install-env') {
+        value = serverInstallEnvRef.value.getValue()
+      }
+      if (k === 'agent-install-env') {
+        value = agentInstallEnvRef.value.getValue()
       }
       if (flag === true && keys.includes(k)) {
         value = ''
