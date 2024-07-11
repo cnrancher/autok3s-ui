@@ -49,6 +49,9 @@ import YamlConfigForm from '@/views/components/baseForm/YamlConfigForm.vue'
 import { Base64 } from 'js-base64'
 import useFormRegist from '@/composables/useFormRegist.js'
 
+const needDecodeOptionKeys = ['startup-script-content']
+const needDecodeConfigKeys = ['server-config-file-content', 'agent-config-file-content']
+
 const props = defineProps({
   initValue: {
     type: Object,
@@ -73,6 +76,18 @@ watch(
   () => props.initValue,
   () => {
     ;({ config: form.config, options: form.options, provider: form.provider } = cloneDeep(props.initValue))
+    needDecodeOptionKeys.forEach((k) => {
+      const v = form.options[k]
+      if (v) {
+        form.options[k] = Base64.decode(v)
+      }
+    })
+    needDecodeConfigKeys.forEach((k) => {
+      const v = form.config[k]
+      if (v) {
+        form.config[k] = Base64.decode(v)
+      }
+    })
   },
   { immediate: true }
 )
@@ -94,10 +109,19 @@ const memorySize = computed({
 })
 const getForm = () => {
   const f = cloneDeep(form)
-  const v = f.options['kubeconfig-content']
-  if (v) {
-    f.options['kubeconfig-content'] = Base64.encode(v)
-  }
+  needDecodeOptionKeys.forEach((k) => {
+    const v = f.options[k]?.trim()
+    if (v) {
+      f.options[k] = Base64.encode(v)
+    }
+  })
+  needDecodeConfigKeys.forEach((k) => {
+    const v = f.config[k]?.trim()
+    if (v) {
+      f.config[k] = Base64.encode(v)
+    }
+  })
+
   return [
     { path: 'config', value: f.config },
     { path: 'options', value: f.options }
