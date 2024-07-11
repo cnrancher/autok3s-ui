@@ -3,7 +3,7 @@
   <form-group>
     <template #title>Basic</template>
     <template #default>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10px mb-10px">
         <label>
           <input
             v-model="airGapInstall"
@@ -122,6 +122,20 @@
           />
         </div>
       </div>
+      <EnvArgs
+        ref="installEnvRef"
+        label="Install Env"
+        :desc="desc.config['install-env']"
+        :readonly="readonly"
+        :init-value="config['install-env']"
+        :default-args="installEnvArgs"
+      />
+      <!-- <K3sInstallEnv
+        ref="installEnvRef"
+        :desc="desc.config['install-env']"
+        :readonly="readonly"
+        :init-value="config['install-env']"
+      /> -->
     </template>
   </form-group>
   <div v-show="onlyHAMode">
@@ -153,6 +167,17 @@
           :desc="desc.config['master-extra-args']"
           :readonly="readonly"
         ></command-args>
+        <form-group :closable="true" class="col-span-1 sm:col-span-2">
+          <template #title>Server Config File</template>
+          <template #default>
+            <yaml-config-form
+              v-model="config['server-config-file-content']"
+              label="Server Config File"
+              :options="readonlyOption"
+              :desc="desc.config['server-config-file-content']"
+            />
+          </template>
+        </form-group>
       </div>
     </template>
   </form-group>
@@ -197,6 +222,18 @@
           :desc="desc.config['worker-extra-args']"
           :readonly="readonly"
         ></command-args>
+        <form-group :closable="true" class="col-span-1 sm:col-span-2">
+          <template #title>Agent Config File</template>
+          <template #default>
+            <yaml-config-form
+              v-model="config['agent-config-file-content']"
+              class="col-span-1 sm:col-span-2"
+              label="Agent Config File"
+              :options="readonlyOption"
+              :desc="desc.config['agent-config-file-content']"
+            />
+          </template>
+        </form-group>
       </div>
     </template>
   </form-group>
@@ -260,6 +297,8 @@ import KeyValueArrayListForm from '../baseForm/KeyValueArrayListForm.vue'
 import KeyForm from './KeyForm.vue'
 import useFormRegist from '@/composables/useFormRegist.js'
 import usePackageStore from '@/store/usePackageStore.js'
+import EnvArgs from './EnvArgs.vue'
+import YamlConfigForm from '@/views/components/baseForm/YamlConfigForm.vue'
 
 const props = defineProps({
   initValue: {
@@ -301,6 +340,7 @@ const packages = computed(() => {
   return packageStore.data.filter((p) => p.state === 'Active')
 })
 
+const installEnvRef = ref(null)
 const airGapInstall = ref(false)
 watch(
   () => props.initValue?.config?.['package-name'],
@@ -341,7 +381,9 @@ const configFields = [
   'datastore-certfile-content',
   'datastore-keyfile-content',
   'server-install-env',
-  'agent-install-env'
+  'agent-install-env',
+  'server-config-file-content',
+  'agent-config-file-content'
 ]
 
 const datastoreTypes = [
@@ -493,6 +535,13 @@ const getForm = () => {
       }
     })
 
+  const env = installEnvRef.value.getForm()
+  if (Object.keys(env).length > 0) {
+    f.push({
+      path: ['config', 'install-env'],
+      value: env
+    })
+  }
   const clusterConfig = f.find(({ path: [, k] }) => k === 'cluster')
   const datastoreConfig = f.find(({ path: [, k] }) => k === 'datastore')
   const datastoreCAConfig = f.find(({ path: [, k] }) => k === 'datastore-cafile-content')
@@ -664,6 +713,60 @@ const workExtraArgs = [
     values: ['docker', 'containerd'],
     modelValue: true,
     desc: '(agent/runtime) Use docker instead of containerd'
+  }
+]
+
+const installEnvArgs = [
+  {
+    key: 'INSTALL_K3S_FORCE_RESTART',
+    flag: true,
+    default: false,
+    desc: 'If set to true will always restart the K3s service.'
+  },
+  {
+    key: 'INSTALL_K3S_SYMLINK',
+    enum: true,
+    default: '',
+    options: ['', 'skip', 'force'],
+    desc: "If set to 'skip' will not create symlinks, 'force' will overwrite, default will symlink if command does not exist in path."
+  },
+  {
+    key: 'INSTALL_K3S_SKIP_ENABLE',
+    flag: true,
+    default: false,
+    desc: 'If set to true will not enable or start k3s service.'
+  },
+  {
+    key: 'INSTALL_K3S_BIN_DIR',
+    default: '',
+    desc: 'Directory to install k3s binary, links, and uninstall script to, or use /usr/local/bin as the default.'
+  },
+  {
+    key: 'INSTALL_K3S_SYSTEMD_DIR',
+    default: '',
+    desc: 'Directory to install systemd service and environment files to, or use /etc/systemd/system as the default.'
+  },
+  {
+    key: 'INSTALL_K3S_NAME',
+    default: '',
+    desc: "Name of systemd service to create, will default from the k3s exec command if not specified. If specified the name will be prefixed with 'k3s-'."
+  },
+  {
+    key: 'INSTALL_K3S_SKIP_SELINUX_RPM',
+    flag: true,
+    default: false,
+    desc: 'If set to true will skip automatic installation of the k3s RPM.'
+  },
+  {
+    key: 'INSTALL_K3S_SELINUX_WARN',
+    flag: true,
+    default: false,
+    desc: 'If set to true will continue if k3s-selinux policy is not found.'
+  },
+  {
+    key: 'INSTALL_K3S_EXEC',
+    default: '',
+    desc: 'Command with flags to use for launching k3s in the systemd service, if the command is not specified will default to "agent" if K3S_URL is set or "server" if not. The final systemd command resolves to a combination of EXEC and script args ($@).'
   }
 ]
 </script>

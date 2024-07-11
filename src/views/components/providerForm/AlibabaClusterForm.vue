@@ -320,6 +320,7 @@ import CredentialSelectForm from '@/views/components/baseForm/CredentialSelectFo
 import AddonForm from '../baseForm/AddonsForm.vue'
 
 const needDecodeOptionKeys = ['user-data-content']
+const needDecodeConfigKeys = ['server-config-file-content', 'agent-config-file-content']
 
 const props = defineProps({
   desc: {
@@ -351,6 +352,12 @@ watch(
       const v = form.options[k]
       if (v) {
         form.options[k] = Base64.decode(v)
+      }
+    })
+    needDecodeConfigKeys.forEach((k) => {
+      const v = form.config[k]
+      if (v) {
+        form.config[k] = Base64.decode(v)
       }
     })
     dashboardUI.value = props.initValue?.config?.enable?.includes('explorer') ?? false
@@ -418,6 +425,12 @@ const getForm = () => {
     const v = f.options[k]?.trim()
     if (v) {
       f.options[k] = Base64.encode(v)
+    }
+  })
+  needDecodeConfigKeys.forEach((k) => {
+    const v = f.config[k]?.trim()
+    if (v) {
+      f.config[k] = Base64.encode(v)
     }
   })
   return [
