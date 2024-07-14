@@ -122,6 +122,18 @@
           />
         </div>
       </div>
+
+      <!-- <K3sInstallEnv
+        ref="installEnvRef"
+        :desc="desc.config['install-env']"
+        :readonly="readonly"
+        :init-value="config['install-env']"
+      /> -->
+    </template>
+  </form-group>
+  <form-group :closable="true" class="col-span-1 sm:col-span-2">
+    <template #title>Install Env</template>
+    <template #default>
       <EnvArgs
         ref="installEnvRef"
         label="Install Env"
@@ -130,12 +142,6 @@
         :init-value="config['install-env']"
         :default-args="installEnvArgs"
       />
-      <!-- <K3sInstallEnv
-        ref="installEnvRef"
-        :desc="desc.config['install-env']"
-        :readonly="readonly"
-        :init-value="config['install-env']"
-      /> -->
     </template>
   </form-group>
   <div v-show="onlyHAMode">
