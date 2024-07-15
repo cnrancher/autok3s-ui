@@ -19,7 +19,7 @@
   </div>
 </template>
 <script>
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 export default defineComponent({
   name: 'FormGroup',
   props: {
@@ -32,7 +32,7 @@ export default defineComponent({
       default: false
     }
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'on-show'],
   setup(props, { emit }) {
     const visible = ref(props.modelValue)
     const show = computed(() => {
@@ -45,6 +45,15 @@ export default defineComponent({
       visible.value = !visible.value
       emit('update:modelValue', visible.value)
     }
+    watch(
+      show,
+      (v) => {
+        if (v) {
+          emit('on-show', v)
+        }
+      },
+      { immediate: true }
+    )
     return {
       visible,
       show,

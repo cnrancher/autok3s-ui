@@ -41,6 +41,7 @@
     </div>
   </DefineTemplate>
   <div
+    v-bind="$attrs"
     ref="reference"
     class="env-args grid p-8px rounded border-solid border-1 border-$input-border min-h-60px"
     :class="{ disabled: disabled }"
@@ -175,7 +176,12 @@ const getForm = () => {
   return envs.value
     .filter((e) => e.value !== e.default)
     .reduce((t, c) => {
-      t[c.key] = c.value
+      if (c.flag) {
+        t[c.key] = `${c.value}`
+      } else {
+        t[c.key] = c.value
+      }
+
       return t
     }, {})
 }
