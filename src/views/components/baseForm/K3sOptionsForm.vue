@@ -264,7 +264,7 @@
   </form-group>
 </template>
 <script setup>
-import { provide, toRef, watch, computed, ref, reactive } from 'vue'
+import { provide, toRef, watch, computed, ref, reactive, nextTick } from 'vue'
 import StringForm from './StringForm.vue'
 import BooleanForm from './BooleanForm.vue'
 import RegistryConfigForm from './RegistryConfigForm.vue'
@@ -315,11 +315,15 @@ const emit = defineEmits(['errors'])
 
 const serverConfigFileRef = ref(null)
 const refreshServerConfigFile = () => {
-  serverConfigFileRef.value?.refresh()
+  nextTick(() => {
+    serverConfigFileRef.value?.refresh()
+  })
 }
 const agentConfigFileRef = ref(null)
 const refreshAgentConfigFile = () => {
-  agentConfigFileRef.value?.refresh()
+  nextTick(() => {
+    agentConfigFileRef.value?.refresh()
+  })
 }
 
 const packageStore = usePackageStore()

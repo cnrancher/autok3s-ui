@@ -42,7 +42,7 @@ export default function useClusterFormManage() {
         errors.push(err)
       }
     }
-    let serverConfig = form?.config?.['server-config-file-content']
+    let serverConfig = form?.config?.['server-config-file-content'] ?? ''
     if (needDecodeConfigKeys.includes('server-config-file-content')) {
       serverConfig = Base64.decode(serverConfig)
     }
@@ -53,7 +53,7 @@ export default function useClusterFormManage() {
         errors.push(err)
       }
     }
-    let agentConfig = form?.config?.['agent-config-file-content']
+    let agentConfig = form?.config?.['agent-config-file-content'] ?? ''
     if (needDecodeConfigKeys.includes('agent-config-file-content')) {
       agentConfig = Base64.decode(agentConfig)
     }
