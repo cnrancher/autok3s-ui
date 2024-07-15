@@ -1,19 +1,25 @@
 <template>
   <DefineTemplate v-slot="{ env }">
-    <div class="env-args-item grid grid-cols-[max-content_1fr_auto] gap-10px">
+    <div class="env-args-item grid grid-cols-[max-content_auto_1fr] gap-10px">
       <div>{{ env.key }}</div>
+      <k-tooltip append-to-body>
+        <k-icon type="prompt"></k-icon>
+        <template #popover>
+          <span>{{ env.desc }}</span>
+        </template>
+      </k-tooltip>
       <div v-if="env.enum" class="flex gap-3">
         <template v-if="env.options.length > 3">
           <select v-model="env.value" class="focus-visible:outline-none border-solid border-1 rounded">
             <option v-for="v in env.options" :key="v" :value="v">
-              {{ v === '' ? 'Empty Value' : v }}
+              {{ v === '' ? 'default value' : v }}
             </option>
           </select>
         </template>
         <template v-else>
           <label v-for="v in env.options" :key="v" class="flex gap-1">
             <input v-model="env.value" type="radio" :value="v" class="accent-$primary" />
-            {{ v === '' ? 'Empty Value' : v }}
+            {{ v === '' ? 'default value' : v }}
           </label>
         </template>
       </div>
@@ -32,12 +38,6 @@
       <div v-else>
         <input v-model="env.value" class="focus-visible:outline-none border-solid border-1 rounded w-full" />
       </div>
-      <k-tooltip append-to-body>
-        <k-icon type="prompt"></k-icon>
-        <template #popover>
-          <span>{{ env.desc }}</span>
-        </template>
-      </k-tooltip>
     </div>
   </DefineTemplate>
   <div

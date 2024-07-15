@@ -218,7 +218,7 @@ const cmdOptions = computed(() => {
   }
   const ignoreValues = [null, undefined, '', false]
   const extraArgs = ['master-extra-args', 'worker-extra-args', 'datastore']
-  const objectArgs = ['values', 'server-install-env', 'agent-install-env', 'install-env']
+  const objectArgs = ['values', 'install-env']
   const provider = props.clusterForm.provider
 
   const filterArgs = (k, v) => {
