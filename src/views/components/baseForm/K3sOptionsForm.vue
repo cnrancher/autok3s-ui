@@ -173,10 +173,11 @@
           :desc="desc.config['master-extra-args']"
           :readonly="readonly"
         ></command-args>
-        <form-group :closable="true" class="col-span-1 sm:col-span-2">
+        <form-group :closable="true" class="col-span-1 sm:col-span-2" @on-show="refreshServerConfigFile">
           <template #title>Server Config File</template>
           <template #default>
             <yaml-config-form
+              ref="serverConfigFileRef"
               v-model="config['server-config-file-content']"
               label="Server Config File"
               :options="readonlyOption"
@@ -214,10 +215,11 @@
           :desc="desc.config['worker-extra-args']"
           :readonly="readonly"
         ></command-args>
-        <form-group :closable="true" class="col-span-1 sm:col-span-2">
+        <form-group :closable="true" class="col-span-1 sm:col-span-2" @on-show="refreshAgentConfigFile">
           <template #title>Agent Config File</template>
           <template #default>
             <yaml-config-form
+              ref="agentConfigFileRef"
               v-model="config['agent-config-file-content']"
               class="col-span-1 sm:col-span-2"
               label="Agent Config File"
@@ -310,6 +312,16 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['errors'])
+
+const serverConfigFileRef = ref(null)
+const refreshServerConfigFile = () => {
+  serverConfigFileRef.value?.refresh()
+}
+const agentConfigFileRef = ref(null)
+const refreshAgentConfigFile = () => {
+  agentConfigFileRef.value?.refresh()
+}
+
 const packageStore = usePackageStore()
 const packages = computed(() => {
   return packageStore.data.filter((p) => p.state === 'Active')
