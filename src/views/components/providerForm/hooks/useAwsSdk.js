@@ -703,7 +703,7 @@ export default function useAwsSdk() {
           // '898082745236', // Deep Learning AMI
           // '652529143229' // with SQL Server
         ],
-        namePrefix: ['ubuntu/images/hvm-ssd/ubuntu-']
+        namePrefix: ['ubuntu/images/hvm-ssd/ubuntu-', 'ubuntu/images/hvm-ssd-gp3/ubuntu-']
       },
       amazonLinux: {
         ownerIds: [
