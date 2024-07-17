@@ -1,6 +1,6 @@
 {
   "name": "autoK3s-ui",
-  "version": "v0.9.2",
+  "version": "v0.9.3-rc1",
   "description": "The Graphical User Interface For AutoK3s",
   "repository": "https://github.com/cnrancher/autok3s-ui",
   "license": "Apache-2.0",
@@ -19,8 +19,8 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@aws-sdk/client-ec2": "^3.220.0",
-    "@aws-sdk/client-iam": "^3.218.0",
+    "@aws-sdk/client-ec2": "^3.614.0",
+    "@aws-sdk/client-iam": "^3.614.0",
     "@floating-ui/vue": "^1.0.2",
     "@vueuse/core": "^10.11.0",
     "ansi_up": "^5.1.0",
