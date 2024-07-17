@@ -60,6 +60,7 @@ import { computed } from 'vue'
 import Clipboard from 'clipboard'
 import useNotificationStore from '@/store/useNotificationStore.js'
 import { startCase } from 'lodash-es'
+import { Base64 } from 'js-base64'
 
 const props = defineProps({
   clusterForm: {
@@ -144,6 +145,26 @@ const sshCertContent = computed(() => {
   }
   return content
 })
+const serverConfigContent = computed(() => {
+  if (!props.visible) {
+    return ''
+  }
+  const content = props.clusterForm.config['server-config-file-content']?.trim()
+  if (!content) {
+    return ''
+  }
+  return Base64.decode(content)
+})
+const agentConfigContent = computed(() => {
+  if (!props.visible) {
+    return ''
+  }
+  const content = props.clusterForm.config['agent-config-file-content']?.trim()
+  if (!content) {
+    return ''
+  }
+  return Base64.decode(content)
+})
 const contentArgs = computed(() => {
   const contents = [
     {
@@ -187,6 +208,20 @@ const contentArgs = computed(() => {
       placehoder: '<ssh-cert-path>',
       name: 'ssh cert path',
       suffix: '.cert'
+    },
+    {
+      key: 'server-config-file-content',
+      value: serverConfigContent.value,
+      placehoder: '<server-config-file-path>',
+      name: 'server config file',
+      suffix: '.yaml'
+    },
+    {
+      key: 'agent-config-file-content',
+      value: agentConfigContent.value,
+      placehoder: '<agent-config-file-path>',
+      name: 'agent config file',
+      suffix: '.yaml'
     }
   ]
 
@@ -211,7 +246,11 @@ const cmdOptions = computed(() => {
     'datastore-keyfile-content',
     'datastore-keyfile',
     'ssh-key',
-    'ssh-cert'
+    'ssh-cert',
+    'server-config-file-content',
+    'server-config-file',
+    'agent-config-file-content',
+    'agent-config-file'
   ]
   const keyMap = {
     values: 'set'
