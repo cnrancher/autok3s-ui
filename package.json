@@ -1,6 +1,6 @@
 {
   "name": "autoK3s-ui",
-  "version": "v0.9.3-rc1",
+  "version": "v0.9.3",
   "description": "The Graphical User Interface For AutoK3s",
   "repository": "https://github.com/cnrancher/autok3s-ui",
   "license": "Apache-2.0",
