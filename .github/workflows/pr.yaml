@@ -1,0 +1,24 @@
+name: Push to Master
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+  pr-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/gallium
+      - name: build
+        run: |
+          npm install
+          npm run lint
+          UI_BASE_PATH=//s3-ap-southeast-2.amazonaws.com/autok3s-ui/static/ npm run build
