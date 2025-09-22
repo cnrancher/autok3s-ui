@@ -103,6 +103,9 @@ import useFormManage from '@/composables/useFormManage.js'
 import useFormRegist from '@/composables/useFormRegist.js'
 import AddonForm from '../baseForm/AddonsForm.vue'
 import BooleanForm from '../baseForm/BooleanForm.vue'
+import { Base64 } from 'js-base64'
+
+const needDecodeConfigKeys = ['server-config-file-content', 'agent-config-file-content']
 
 const props = defineProps({
   desc: {
@@ -139,6 +142,12 @@ watch(
       dashboardUI.value = true
     }
     // Compatible with older versions end
+    needDecodeConfigKeys.forEach((k) => {
+      const v = form.config[k]
+      if (v) {
+        form.config[k] = Base64.decode(v)
+      }
+    })
   },
   { immediate: true }
 )
@@ -166,6 +175,12 @@ const getForm = () => {
   if (dashboardUI.value) {
     f.config.enable.push('explorer')
   }
+  needDecodeConfigKeys.forEach((k) => {
+    const v = f.config[k]?.trim()
+    if (v) {
+      f.config[k] = Base64.encode(v)
+    }
+  })
   return [
     { path: 'config', value: f.config },
     { path: 'options', value: f.options }
